@@ -1,13 +1,30 @@
 import { useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { ContactHero } from "@/components/ContactHero";
-import { TestimonialsSection } from "@/components/TestimonialsSection";
-import { Button } from "@/components/ui/button";
+import { SectionHeader } from "@/components/framer/SectionHeader";
+import { TestimonialsCarousel, type Testimonial } from "@/components/framer/TestimonialsCarousel";
+import { CTAButton } from "@/components/framer/CTAButton";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { ArrowRight, Mail, Phone } from "lucide-react";
+
+const contactTestimonials: Testimonial[] = [
+  {
+    quote: "They translated our ideas into a deeply personal remembrance. Every guest felt included and uplifted.",
+    author: "Ama K. Boadu",
+    role: "Celebration Planner",
+  },
+  {
+    quote: "Coordinating across continents felt effortless. Beiza handled the live stream and archive flawlessly.",
+    author: "Kojo Adjei",
+    role: "Family Historian",
+  },
+  {
+    quote: "Their team listened, created, and supported us like family. The tribute film still brings tears of joy.",
+    author: "Naomi Afriyie",
+    role: "Daughter",
+  },
+];
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -15,115 +32,123 @@ const ContactPage = () => {
     email: "",
     phone: "",
     service: "",
-    message: ""
+    message: "",
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
     console.log("Form submitted:", formData);
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      service: "",
-      message: ""
-    });
+    setFormData({ name: "", email: "", phone: "", service: "", message: "" });
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Navigation />
+      <main className="space-y-24 pb-24 pt-32 lg:space-y-32 lg:pb-32">
+        <section className="mx-auto max-w-6xl px-6">
+          <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="space-y-10">
+              <SectionHeader
+                eyebrow="Contact"
+                title="Let's create a celebration that feels like them"
+                description="Tell us about the tribute you have in mind — we’ll craft a roadmap, timeline, and experience that honours your loved one."
+              />
 
-      {/* Hero Section with Form (Desktop) */}
-      <ContactHero
-        formData={formData}
-        handleInputChange={handleInputChange}
-        handleSubmit={handleSubmit}
-      />
-
-      {/* Contact Form - Mobile only */}
-      <main className="md:hidden py-16 bg-black">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Name and Email Row */}
-                <div className="grid md:grid-cols-2 gap-6">
+              <div className="glass-panel flex flex-col gap-6 rounded-3xl border border-white/10 p-6 md:p-8">
+                <div className="flex items-center gap-4">
+                  <span className="ring-background flex h-12 w-12 items-center justify-center rounded-full text-white">
+                    <Phone className="h-5 w-5" strokeWidth={1.5} />
+                  </span>
                   <div>
-                    <label htmlFor="name" className="block text-sm font-manrope font-medium text-white mb-2">
+                    <p className="text-sm uppercase tracking-[0.3em] text-subtle">Phone</p>
+                    <a href="tel:+233559000111" className="text-lg font-medium text-white transition hover:text-white/80">
+                      +233 55 900 0111
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <span className="ring-background flex h-12 w-12 items-center justify-center rounded-full text-white">
+                    <Mail className="h-5 w-5" strokeWidth={1.5} />
+                  </span>
+                  <div>
+                    <p className="text-sm uppercase tracking-[0.3em] text-subtle">Email</p>
+                    <a href="mailto:hello@beiza.tv" className="text-lg font-medium text-white transition hover:text-white/80">
+                      hello@beiza.tv
+                    </a>
+                  </div>
+                </div>
+
+                <CTAButton href="https://calendly.com" external label="Book a discovery call" className="bg-primary text-black" />
+              </div>
+            </div>
+
+            <div className="glass-panel rounded-[32px] border border-white/10 p-6 shadow-glass md:p-10">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div>
+                    <label htmlFor="name" className="text-sm uppercase tracking-[0.3em] text-subtle">
                       Name
                     </label>
                     <Input
                       id="name"
                       name="name"
-                      type="text"
-                      required
+                      placeholder="Adwoa Mensah"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-black font-manrope focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                      placeholder="Jane Smith"
+                      required
+                      className="mt-2 bg-white text-black"
                     />
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-manrope font-medium text-white mb-2">
+                    <label htmlFor="email" className="text-sm uppercase tracking-[0.3em] text-subtle">
                       Email
                     </label>
                     <Input
                       id="email"
                       name="email"
                       type="email"
-                      required
+                      placeholder="hello@family.com"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-black font-manrope focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                      placeholder="example@example.com"
+                      required
+                      className="mt-2 bg-white text-black"
                     />
                   </div>
                 </div>
 
-                {/* Phone and Packages Row */}
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid gap-6 md:grid-cols-2">
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-manrope font-medium text-white mb-2">
-                      Phone <span className="text-gray-400 font-normal">(optional)</span>
+                    <label htmlFor="phone" className="text-sm uppercase tracking-[0.3em] text-subtle">
+                      Phone <span className="text-subtle lowercase">(optional)</span>
                     </label>
                     <Input
                       id="phone"
                       name="phone"
                       type="tel"
+                      placeholder="+233 20 000 0000"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-black font-manrope focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
-                      placeholder="+123456789"
+                      className="mt-2 bg-white text-black"
                     />
                   </div>
                   <div>
-                    <label htmlFor="service" className="block text-sm font-manrope font-medium text-white mb-2">
-                      Packages <span className="text-gray-400 font-normal">(optional)</span>
+                    <label htmlFor="service" className="text-sm uppercase tracking-[0.3em] text-subtle">
+                      Package <span className="text-subtle lowercase">(optional)</span>
                     </label>
                     <select
                       id="service"
                       name="service"
                       value={formData.service}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-black font-manrope focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+                      className="mt-2 w-full rounded-xl border border-white/10 bg-white px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-primary"
                     >
-                      <option value="">Select...</option>
+                      <option value="">Select…</option>
                       <option value="Lite">Lite</option>
                       <option value="Standard">Standard</option>
                       <option value="Signature">Signature</option>
@@ -131,45 +156,43 @@ const ContactPage = () => {
                   </div>
                 </div>
 
-                {/* Message */}
                 <div>
-                  <label htmlFor="message" className="block text-sm font-manrope font-medium text-white mb-2">
+                  <label htmlFor="message" className="text-sm uppercase tracking-[0.3em] text-subtle">
                     Message
                   </label>
                   <Textarea
                     id="message"
                     name="message"
-                    required
-                    rows={6}
+                    placeholder="Tell us about the loved one, the story, and the moments you want preserved."
                     value={formData.message}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-black font-manrope focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent resize-none"
-                    placeholder="I'm planning a farewell and would love guidance on the right package."
+                    required
+                    rows={5}
+                    className="mt-2 bg-white text-black"
                   />
                 </div>
 
-                {/* Submit Button */}
-                <div>
-                  <Button
-                    type="submit"
-                    className="bg-white text-black hover:bg-white/90 rounded-full px-8 py-4 text-lg font-manrope font-medium h-auto border-0 w-full flex items-center justify-center gap-3"
-                    style={{ color: 'rgba(0, 0, 0, 0.8)' }}
-                  >
-                    <span>Submit form</span>
-                    <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">
-                      <ArrowRight className="w-4 h-4 text-white rotate-[-45deg]" />
-                    </div>
-                  </Button>
-                </div>
+                <button type="submit" className="button-pill w-full justify-center">
+                  <span>Submit form</span>
+                  <span className="ring-background flex h-8 w-8 items-center justify-center rounded-full bg-black text-white">
+                    <ArrowRight className="h-4 w-4 -rotate-45" />
+                  </span>
+                </button>
               </form>
-            </motion.div>
+            </div>
           </div>
-        </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-6">
+          <SectionHeader
+            eyebrow="Kind Words"
+            title="Families who reached out"
+            description="We craft every experience with empathy, rhythm, and respect — these notes remind us why."
+            align="center"
+          />
+          <TestimonialsCarousel testimonials={contactTestimonials} className="mt-12" />
+        </section>
       </main>
-
-      {/* Testimonials Section */}
-      <TestimonialsSection />
-
       <Footer />
     </div>
   );

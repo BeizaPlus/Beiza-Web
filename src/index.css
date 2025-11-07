@@ -1,72 +1,61 @@
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700;1,800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/satoshi');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    /* Beiza Funeral Theme - Pure Dark */
-    --background: 0 0% 7%;
-    --foreground: 0 0% 95%;
+    /* Global palette derived from Framer export (HSL values) */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 10%;
-    --card-foreground: 0 0% 95%;
+    --surface: 0 0% 5%;
+    --surface-raised: 0 0% 7%;
 
-    --popover: 0 0% 10%;
-    --popover-foreground: 0 0% 95%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 100%;
 
-    --primary: 45 93% 47%;
-    --primary-foreground: 0 0% 10%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 18%;
-    --secondary-foreground: 0 0% 95%;
+    --primary: 43 91.8% 52%;
+    --primary-foreground: 0 0% 0%;
 
-    --muted: 0 0% 18%;
+    --secondary: 0 0% 18.4%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 18.4%;
     --muted-foreground: 0 0% 60%;
 
-    --accent: 45 93% 47%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 93 100% 59%;
+    --accent-foreground: 0 0% 12%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-    --ring: 45 93% 47%;
+    --border: 0 0% 18.4%;
+    --input: 0 0% 18.4%;
+    --ring: 43 91.8% 52%;
 
-    --radius: 0.5rem;
+    --radius: 1.5rem;
 
-    /* Brand Colors */
-    --brand: 45 93% 47%;
-    --brand-light: 45 100% 60%;
-    --brand-dark: 45 80% 35%;
+    /* Supporting tokens */
+    --accent-gold: 43 91.8% 52%;
+    --accent-mint: 129 6.9% 37.1%;
+    --text-subtle: 0 0% 88.2%;
+    --glass-border: 0 0% 18.4%;
+    --glass-overlay: hsla(0 0% 5% / 0.85);
+    --shadow-soft: 0 140px 120px -80px rgba(99, 106, 125, 0.04);
+    --shadow-focus: 0 0 0 2px hsla(43 91.8% 52% / 0.35);
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(45 93% 47%), hsl(45 80% 35%));
-    --gradient-accent: linear-gradient(135deg, hsl(45 93% 47%), hsl(30 100% 50%));
-    --gradient-subtle: linear-gradient(180deg, hsl(0 0% 7%), hsl(0 0% 10%));
-
-    /* Shadows */
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
-    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.7);
-    --shadow-brand: 0 10px 40px rgba(245, 158, 11, 0.3);
-
-    /* Animation */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-studio: cubic-bezier(0.12, 0.23, 0.5, 1);
   }
 
   .dark {
-    --background: 0 0% 7%;
-    --foreground: 0 0% 95%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
   }
 }
 
@@ -77,9 +66,10 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Manrope', 'Inter', system-ui, sans-serif;
     font-weight: 400;
     line-height: 1.6;
+    color-scheme: dark;
   }
 
   h1,
@@ -88,94 +78,46 @@ All colors MUST be HSL.
   h4,
   h5,
   h6 {
-    font-family: 'EB Garamond', serif;
-    @apply font-semibold tracking-tight;
-    line-height: 1.2;
+    font-family: 'Manrope', 'Inter', system-ui, sans-serif;
+    font-weight: 500;
+    letter-spacing: -0.04em;
+    line-height: 1.1;
   }
 
-  /* Enhanced header sizing for EB Garamond elegance */
   h1 {
-    font-size: 2.5rem;
-    /* 40px mobile */
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    font-size: clamp(2.75rem, 8vw, 4.5rem);
   }
 
   h2 {
-    font-size: 2rem;
-    /* 32px mobile */
-    font-weight: 600;
-    letter-spacing: -0.01em;
+    font-size: clamp(2.25rem, 6vw, 3.5rem);
   }
 
   h3 {
-    font-size: 1.75rem;
-    /* 28px mobile */
-    font-weight: 500;
-    letter-spacing: -0.01em;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
   }
 
   h4 {
-    font-size: 1.5rem;
-    /* 24px mobile */
-    font-weight: 500;
+    font-size: clamp(1.5rem, 3vw, 2rem);
   }
 
   h5 {
-    font-size: 1.25rem;
-    /* 20px mobile */
-    font-weight: 500;
+    font-size: clamp(1.25rem, 2.4vw, 1.75rem);
   }
 
   h6 {
-    font-size: 1.125rem;
-    /* 18px mobile */
-    font-weight: 500;
+    font-size: clamp(1.125rem, 1.8vw, 1.5rem);
   }
 
-  /* Responsive sizing for larger screens */
-  @media (min-width: 640px) {
-    h1 {
-      font-size: 3rem;
-      /* 48px tablet */
-    }
-
-    h2 {
-      font-size: 2.5rem;
-      /* 40px tablet */
-    }
-
-    h3 {
-      font-size: 2rem;
-      /* 32px tablet */
-    }
-
-    h4 {
-      font-size: 1.75rem;
-      /* 28px tablet */
-    }
+  p {
+    letter-spacing: -0.01em;
   }
 
-  @media (min-width: 1024px) {
-    h1 {
-      font-size: 3.5rem;
-      /* 56px desktop */
-    }
+  strong {
+    font-weight: 600;
+  }
 
-    h2 {
-      font-size: 2.75rem;
-      /* 44px desktop */
-    }
-
-    h3 {
-      font-size: 2.25rem;
-      /* 36px desktop */
-    }
-
-    h4 {
-      font-size: 1.875rem;
-      /* 30px desktop */
-    }
+  a {
+    transition: color 0.3s var(--transition-studio);
   }
 
   /* Smooth scrolling */
@@ -193,6 +135,14 @@ All colors MUST be HSL.
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
     }
   }
 
@@ -213,125 +163,105 @@ All colors MUST be HSL.
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-primary/80;
   }
+}
 
-  /* Typography */
-  .font-serif {
-    font-family: 'EB Garamond', serif;
-  }
-
-  .font-body {
-    font-family: 'Inter', system-ui, sans-serif;
-  }
-
-  /* Legacy-focused typography utilities */
-  .font-elegant {
-    font-family: 'EB Garamond', serif;
+@layer components {
+  .text-display-xl {
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 4.75rem);
     font-weight: 500;
-    letter-spacing: 0.025em;
+    letter-spacing: -0.05em;
+    line-height: 1.05;
   }
 
-  .font-readable {
-    font-family: 'Inter', system-ui, sans-serif;
-    font-weight: 400;
-    line-height: 1.7;
-  }
-
-  .font-memorial {
-    font-family: 'EB Garamond', serif;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    line-height: 1.3;
-  }
-
-  /* Enhanced elegant typography for larger displays */
-  .font-hero {
-    font-family: 'EB Garamond', serif;
-    font-size: 4rem;
-    font-weight: 600;
-    letter-spacing: -0.03em;
+  .text-display-lg {
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: clamp(2.75rem, 7vw, 3.75rem);
+    font-weight: 500;
+    letter-spacing: -0.04em;
     line-height: 1.1;
   }
 
-  .font-display {
-    font-family: 'EB Garamond', serif;
-    font-size: 3rem;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+  .text-eyebrow {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: hsl(var(--text-subtle));
   }
 
-  .font-title {
-    font-family: 'EB Garamond', serif;
-    font-size: 2.5rem;
+  .glass-panel {
+    background: var(--glass-overlay);
+    border: 1px solid hsla(var(--glass-border) / 0.35);
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: saturate(135%) blur(12px);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid hsla(var(--text-subtle) / 0.2);
+    background: hsla(0 0% 100% / 0.05);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ring-background {
+    border-radius: 9999px;
+    @apply border border-white/20 bg-white/10;
+  }
+
+  .button-pill {
+    display: inline-flex;
+    gap: 0.75rem;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 0.9rem 1.8rem;
+    font-family: 'Inter', system-ui, sans-serif;
     font-weight: 500;
+    line-height: 1;
     letter-spacing: -0.01em;
-    line-height: 1.3;
+    transition: transform 0.35s var(--transition-studio), box-shadow 0.35s var(--transition-studio);
   }
 
-  /* Responsive hero sizing */
-  @media (min-width: 640px) {
-    .font-hero {
-      font-size: 5rem;
-    }
-
-    .font-display {
-      font-size: 3.5rem;
-    }
-
-    .font-title {
-      font-size: 3rem;
-    }
+  .button-pill:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-focus);
   }
 
-  @media (min-width: 1024px) {
-    .font-hero {
-      font-size: 6rem;
-    }
-
-    .font-display {
-      font-size: 4rem;
-    }
-
-    .font-title {
-      font-size: 3.5rem;
-    }
+  .button-pill:focus-visible {
+    outline: 3px solid hsla(var(--accent-gold) / 0.4);
+    outline-offset: 2px;
   }
 
-  /* Glassmorphism utilities */
-  .glass-card {
-    backdrop-filter: blur(40px);
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(35% 42% at 50% 50%, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%);
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: fade-up 0.6s var(--transition-studio) both;
   }
 
-  .glass-hover:hover {
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+  .animate-fade-in-blur {
+    animation: fade-in-blur 0.8s var(--transition-studio) both;
   }
 
-  .glass-card-dark {
-    backdrop-filter: blur(40px);
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+  .animate-scale-in {
+    animation: scale-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
-  /* Hero section styles */
-  .hero-gradient {
-    background: linear-gradient(135deg,
-        rgba(0, 0, 0, 0.7) 0%,
-        rgba(0, 0, 0, 0.4) 50%,
-        rgba(0, 0, 0, 0.7) 100%);
-  }
-
-  /* Smooth animations */
-  .animate-fade-in {
-    animation: fadeIn 0.8s ease-out;
-  }
-
-  @keyframes fadeIn {
+  @keyframes fade-up {
     from {
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(24px);
     }
 
     to {
@@ -339,39 +269,38 @@ All colors MUST be HSL.
       transform: translateY(0);
     }
   }
-}
 
-/* Artistic canvas effects */
-.canvas-texture {
-  background-image:
-    radial-gradient(circle at 20% 30%, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(245, 158, 11, 0.08) 0%, transparent 50%),
-    linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.02) 50%, transparent 70%);
-}
+  @keyframes fade-in-blur {
+    from {
+      opacity: 0;
+      filter: blur(12px);
+    }
 
-.turbulent-waves {
-  background-blend-mode: multiply, overlay, soft-light;
-  filter: blur(1px) contrast(1.1) saturate(1.2);
-}
+    to {
+      opacity: 1;
+      filter: blur(0);
+    }
+  }
 
-.artistic-overlay {
-  background:
-    radial-gradient(ellipse at top left, rgba(245, 158, 11, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse at bottom right, rgba(245, 158, 11, 0.1) 0%, transparent 50%),
-    linear-gradient(135deg, rgba(0, 0, 0, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.1) 100%);
-}
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(1.05);
+    }
 
-/* Enhanced glassmorphism for artistic effect */
-.glass-card-artistic {
-  backdrop-filter: blur(40px) saturate(1.2);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
 
-/* Glow effect for canvas images */
-.shadow-glow-lg {
-  box-shadow: 0 0 20px rgba(245, 158, 11, 0.3), 0 0 40px rgba(245, 158, 11, 0.2);
+  .bg-checker {
+    background-image: linear-gradient(90deg, hsla(var(--glass-border) / 0.25) 1px, transparent 0),
+      linear-gradient(hsla(var(--glass-border) / 0.25) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+
+  .accent-ring {
+    box-shadow: 0 0 0 1px hsla(var(--glass-border) / 0.4), 0 0 0 4px hsla(var(--accent-gold) / 0.12);
+  }
 }

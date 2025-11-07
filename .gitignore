@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+tmp/
+.venv
+b80d662c-4d92-429b-9db2-712aca4a365c

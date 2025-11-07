@@ -1,13 +1,15 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
-import { Button } from "./ui/button";
+import { CTAButton } from "./framer/CTAButton";
 
 interface HeroProps {
-  headline: string;
-  paragraph: string;
-  ctaText: string;
-  ctaLink: string;
+  headline?: string;
+  title?: string;
+  paragraph?: string;
+  description?: string;
+  ctaText?: string;
+  ctaLabel?: string;
+  ctaLink?: string;
+  ctaHref?: string;
   reviews?: string;
   backgroundImage?: string;
   showReviews?: boolean;
@@ -15,126 +17,96 @@ interface HeroProps {
 
 export const Hero = ({
   headline,
+  title,
   paragraph,
+  description,
   ctaText,
+  ctaLabel,
   ctaLink,
+  ctaHref,
   reviews = "100+ Positive Client Reviews",
   backgroundImage,
   showReviews = true,
 }: HeroProps) => {
+  const heroTitle = title ?? headline ?? "Crafting Meaningful Farewells";
+  const heroDescription = description ?? paragraph ?? "We believe farewells are not the end — they're the final chapter of love.";
+  const buttonLabel = ctaLabel ?? ctaText ?? "Create a Memoir";
+  const buttonTarget = ctaLink ?? ctaHref ?? "/contact#hero";
+
   return (
-    <header className="relative min-h-screen w-full flex items-center justify-center overflow-hidden" id="hero">
-      {/* Background Image */}
-      {backgroundImage && (
+    <header
+      className="relative -mt-24 flex min-h-[calc(100vh+6rem)] items-stretch justify-center overflow-hidden"
+      id="hero"
+    >
+      {backgroundImage ? (
         <motion.div
-          className="absolute inset-0 z-0"
+          className="absolute inset-0"
           initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 2, ease: [0.12, 0.23, 0.5, 1] }}
+          transition={{ duration: 1.4, ease: [0.12, 0.23, 0.5, 1] }}
         >
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${backgroundImage})` }}
+          <img
+            src={backgroundImage}
+            alt="Hero background"
+            className="h-full w-full object-cover"
+            loading="lazy"
           />
         </motion.div>
-      )}
+      ) : null}
 
-      {/* Dark Overlay */}
-      <div
-        className="absolute inset-0 z-[1]"
-        style={{
-          background: 'radial-gradient(35% 42% at 50% 50%, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0) 100%)'
-        }}
-      />
+      <div className="hero-overlay" />
 
-      {/* Content Container */}
-      <div className="relative z-10 container mx-auto px-6 py-20">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Headline */}
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end px-6 py-24 md:px-12">
+        <div className="max-w-xl text-left">
           <motion.h1
-            className="font-manrope font-medium text-white mb-6"
-            style={{
-              letterSpacing: '-0.05em',
-            }}
-            initial={{ opacity: 0.001, filter: 'blur(6px)', scale: 1.4 }}
-            animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            initial={{ opacity: 0, filter: "blur(16px)", scale: 1.12 }}
+            animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
+            transition={{ duration: 0.8, ease: [0.12, 0.23, 0.5, 1] }}
+            className="text-display-xl text-white"
           >
-            <span
-              className="hidden md:block"
-              style={{ fontSize: '72px', lineHeight: '70px' }}
-            >
-              {headline}
-            </span>
-            <span
-              className="md:hidden"
-              style={{ fontSize: '49px', lineHeight: '50px' }}
-            >
-              {headline}
-            </span>
+            {heroTitle}
           </motion.h1>
 
-          {/* Paragraph */}
           <motion.p
-            className="text-lg md:text-xl text-white mb-8 max-w-2xl mx-auto leading-relaxed font-manrope"
-            initial={{ opacity: 0.001, y: 20 }}
+            initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1 }}
+            transition={{ duration: 0.7, delay: 0.2, ease: [0.12, 0.23, 0.5, 1] }}
+            className="mt-6 max-w-2xl text-lg leading-relaxed text-subtle md:text-xl"
           >
-            {paragraph}
+            {heroDescription}
           </motion.p>
 
-          {/* CTA Button */}
           <motion.div
-            initial={{ opacity: 0.001, y: 20 }}
+            initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1.2 }}
-            className="mb-8"
+            transition={{ duration: 0.7, delay: 0.35, ease: [0.12, 0.23, 0.5, 1] }}
+            className="mt-10 flex"
           >
-            <Link to={ctaLink} className="inline-block">
-              <Button
-                className="bg-white text-black hover:bg-white/90 rounded-full px-8 py-4 text-lg font-manrope font-medium h-auto border-0 shadow-lg flex items-center gap-3"
-              >
-                <span>{ctaText}</span>
-                <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">
-                  <ArrowRight className="w-4 h-4 text-white rotate-[-45deg]" />
-                </div>
-              </Button>
-            </Link>
+            <CTAButton to={buttonTarget} label={buttonLabel} />
           </motion.div>
 
-          {/* Reviews */}
-          {showReviews && (
+          {showReviews ? (
             <motion.div
-              className="flex items-center justify-center gap-3"
-              initial={{ opacity: 0.001, y: 20 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1.4 }}
+              transition={{ duration: 0.7, delay: 0.45, ease: [0.12, 0.23, 0.5, 1] }}
+              className="mt-8 flex items-center gap-3 text-white"
             >
-              {/* Stars */}
-              <div className="flex gap-1">
-                {[...Array(5)].map((_, i) => (
-                  <svg
-                    key={i}
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    className="text-white"
-                  >
-                    <path
-                      d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                      fill="currentColor"
-                    />
+              <div className="flex gap-1 text-primary">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <svg key={index} width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z" />
                   </svg>
                 ))}
               </div>
-              <p className="text-white font-manrope text-lg">{reviews}</p>
+              <span className="text-sm font-medium uppercase tracking-[0.3em] text-subtle">{reviews}</span>
             </motion.div>
-          )}
+          ) : null}
         </div>
       </div>
     </header>
   );
 };
+
+export default Hero;
 

@@ -11,9 +11,10 @@ export const siteConfig = {
   
   // Social Media Links
   social: {
-    instagram: "https://instagram.com/yourhandle",
+    instagram: "https://instagram.com/beizaplus",
+    facebook: "https://facebook.com/beizaplus",
+    tiktok: "https://tiktok.com/@beizaplus",
     youtube: "https://youtube.com/@beizaplus",
-    facebook: "https://facebook.com/yourpage",
   },
   
   // Footer Copyright Year
