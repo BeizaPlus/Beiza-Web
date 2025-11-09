@@ -7,6 +7,7 @@ import { layoutArtwork, PIXELS_PER_CM } from '../lib/geometry';
 import { TouchZoom } from '../lib/TouchZoom';
 
 const SIDEBAR_WIDTH = 420;
+const DEFAULT_ZOOM = 1.1;
 
 export interface GalleryImage {
   id: string;
@@ -20,14 +21,19 @@ export interface GalleryImage {
 export interface CanvasGalleryProps {
   images: GalleryImage[];
   onImageClick?: (image: GalleryImage) => void;
+  resetViewToken?: number;
 }
 
-const CanvasGallery: React.FC<CanvasGalleryProps> = ({ images, onImageClick }) => {
+const CanvasGallery: React.FC<CanvasGalleryProps> = ({
+  images,
+  onImageClick,
+  resetViewToken = 0,
+}) => {
   const frameRef = useRef<HTMLDivElement>(null);
   const touchZoomRef = useRef<TouchZoom | null>(null);
 
   const [center, setCenter] = useState<[number, number]>([0, 0]);
-  const [zoom, setZoom] = useState(2.0); // Increased default zoom for much better image visibility
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [lastMove, setLastMove] = useState(0);
   const [selected, setSelected] = useState<GalleryImage | null>(null);
 
@@ -36,10 +42,15 @@ const CanvasGallery: React.FC<CanvasGalleryProps> = ({ images, onImageClick }) =
     {
       touchZoomRef.current = new TouchZoom(frameRef.current);
 
-      // Set initial zoom to match our default
-      touchZoomRef.current.zoom = 2.0;
-      setCenter(touchZoomRef.current.center);
+      // Set initial positioning and zoom
+      touchZoomRef.current.center = [0, 0];
+      touchZoomRef.current.zoom = DEFAULT_ZOOM;
+      setCenter(touchZoomRef.current.center as [number, number]);
       setZoom(touchZoomRef.current.zoom);
+      void touchZoomRef.current.moveTo(
+        touchZoomRef.current.center,
+        touchZoomRef.current.zoom
+      );
 
       const unsubscribe = touchZoomRef.current.onMove((manual) => {
         if (touchZoomRef.current)
@@ -65,6 +76,12 @@ const CanvasGallery: React.FC<CanvasGalleryProps> = ({ images, onImageClick }) =
       };
     }
   }, []);
+
+  useEffect(() => {
+    if (!touchZoomRef.current) return;
+    void touchZoomRef.current.moveTo([0, 0], DEFAULT_ZOOM);
+    setSelected(null);
+  }, [resetViewToken]);
 
   function getTransform(pos: number[], center: number[], zoom: number): string {
     // Calculate parallax offset based on position and center
@@ -139,7 +156,7 @@ const CanvasGallery: React.FC<CanvasGalleryProps> = ({ images, onImageClick }) =
           (image.width * PIXELS_PER_CM)
         );
 
-      touchZoomRef.current?.moveTo(
+      void touchZoomRef.current?.moveTo(
         [
           pos[0] * PIXELS_PER_CM + (0.5 * sidebarOffset) / desiredZoom,
           pos[1] * PIXELS_PER_CM,

@@ -1,9 +1,19 @@
+import { type FormEvent, useState } from "react";
+
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { CTAButton } from "@/components/framer/CTAButton";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
 
 const Events = () => {
+  const [query, setQuery] = useState("");
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navigation />
@@ -15,6 +25,48 @@ const Events = () => {
             description="Explore the full Monica Manu celebration to see how we choreograph stages, tributes, and live experiences for families across the globe."
             align="center"
           />
+        </section>
+
+        <section className="mx-auto max-w-6xl px-6">
+          <div className="glass-panel overflow-hidden rounded-[32px] border border-white/10">
+            <div className="space-y-8 p-8 md:p-12">
+              <div className="space-y-3">
+                <p className="text-eyebrow">Search Events</p>
+                <h2 className="text-display-sm leading-tight text-white">
+                  Find a celebration that mirrors your vision
+                </h2>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <label htmlFor="event-search" className="sr-only">
+                  Search events
+                </label>
+                <div className="relative flex flex-col gap-4 sm:flex-row">
+                  <div className="relative flex-1">
+                    <Search className="pointer-events-none absolute left-5 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      id="event-search"
+                      value={query}
+                      onChange={(event) => setQuery(event.target.value)}
+                      placeholder="Search by family, location, or theme"
+                      className="h-14 rounded-full border-white/10 bg-white/5 px-14 text-base text-white placeholder:text-white/60"
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    disabled
+                    className="h-14 rounded-full bg-white/90 px-8 text-base font-medium text-primary hover:bg-white"
+                  >
+                    Coming Soon
+                  </Button>
+                </div>
+              </form>
+
+              <p className="text-sm text-white/60">
+                We&apos;ll notify you as soon as tailored search results are live.
+              </p>
+            </div>
+          </div>
         </section>
 
         <section className="mx-auto max-w-6xl px-6">

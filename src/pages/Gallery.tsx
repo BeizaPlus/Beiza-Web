@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 
 const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<any>(null);
+  const [resetToken, setResetToken] = useState(0);
 
   const handleImageClick = (image: any) => {
     setSelectedImage(image);
@@ -12,12 +13,13 @@ const Gallery = () => {
 
   const handleCloseModal = () => {
     setSelectedImage(null);
+    setResetToken((token) => token + 1);
   };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Unified Canvas */}
-      <UnifiedCanvas onImageClick={handleImageClick} />
+      <UnifiedCanvas onImageClick={handleImageClick} resetViewToken={resetToken} />
 
       {/* Single Image Dialog */}
       {selectedImage && (

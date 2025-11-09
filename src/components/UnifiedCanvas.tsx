@@ -5,9 +5,10 @@ import CanvasGallery, { type GalleryImage } from "./CanvasGallery";
 
 interface UnifiedCanvasProps {
   onImageClick?: (image: any) => void;
+  resetViewToken?: number;
 }
 
-export const UnifiedCanvas = ({ onImageClick }: UnifiedCanvasProps) => {
+export const UnifiedCanvas = ({ onImageClick, resetViewToken = 0 }: UnifiedCanvasProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { images, loading } = usePublicImages();
@@ -44,6 +45,7 @@ export const UnifiedCanvas = ({ onImageClick }: UnifiedCanvasProps) => {
       <CanvasGallery
         images={galleryImages}
         onImageClick={onImageClick}
+        resetViewToken={resetViewToken}
       />
 
       {/* Beiza Logo Navigation (top-left corner) */}
