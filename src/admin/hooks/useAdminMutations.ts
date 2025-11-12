@@ -26,6 +26,7 @@ const ensurePrivilegedClient = () => {
 };
 
 export type MemoirStatus = "draft" | "review" | "scheduled" | "published" | "archived";
+export type BlogPostStatus = "draft" | "published" | "archived";
 
 export type MemoirUpsertInput = {
   memoir: {
@@ -1640,5 +1641,157 @@ export const useDeleteGalleryAssetMutation = () => {
       title: "Unable to delete gallery asset",
     },
     logScope: "[admin-gallery-assets]",
+  });
+};
+
+export type BlogPostUpsertInput = {
+  id?: string;
+  slug: string;
+  title: string;
+  excerpt?: string | null;
+  content: string;
+  featured_image?: Record<string, unknown> | null;
+  status: BlogPostStatus;
+  published_at?: string | null;
+  updated_by?: string | null;
+};
+
+export type BlogPostUpsertResult = {
+  id: string;
+  slug: string;
+};
+
+export const useUpsertBlogPostMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useSafeMutation<BlogPostUpsertResult, BlogPostUpsertInput>({
+    mutationFn: async (input) => {
+      const client = ensureClient();
+
+      let updatedBy: string | null | undefined = input.updated_by;
+      if (updatedBy) {
+        const { data: managerRow, error: managerError } = await client
+          .from("manager_profiles")
+          .select("id")
+          .eq("id", updatedBy)
+          .maybeSingle();
+
+        if (managerError || !managerRow) {
+          updatedBy = null;
+        }
+      }
+
+      const now = new Date().toISOString();
+      const shouldSetPublishedAt = input.status === "published" && !input.published_at;
+      const shouldSetLastPublishedAt = input.status === "published";
+
+      const blogPostPayload = {
+        ...input,
+        updated_by: updatedBy ?? null,
+        published_at: shouldSetPublishedAt ? now : input.published_at ?? null,
+        last_published_at: shouldSetLastPublishedAt ? now : input.id ? undefined : null,
+      };
+
+      // Remove undefined fields
+      if (blogPostPayload.last_published_at === undefined) {
+        delete blogPostPayload.last_published_at;
+      }
+
+      const { data: upsertedBlogPost, error: blogPostError } = await client
+        .from("blog_posts")
+        .upsert(blogPostPayload, { onConflict: "slug" })
+        .select("id, slug")
+        .single();
+
+      if (blogPostError || !upsertedBlogPost) {
+        throw new Error(blogPostError?.message ?? "Unable to save blog post record.");
+      }
+
+      return {
+        id: upsertedBlogPost.id,
+        slug: upsertedBlogPost.slug,
+      };
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-blog-posts"] });
+      void queryClient.invalidateQueries({ queryKey: ["public-blog-posts"] });
+    },
+    successToast: false,
+    errorToast: {
+      title: "Unable to save blog post",
+    },
+    logScope: "[admin-blog-posts]",
+  });
+};
+
+export const useUpdateBlogPostStatusMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useSafeMutation<{ id: string; status: BlogPostStatus }, { id: string; status: BlogPostStatus }>({
+    mutationFn: async ({ id, status }) => {
+      const client = ensureClient();
+      const now = new Date().toISOString();
+
+      const updatePayload: Record<string, unknown> = { status };
+      if (status === "published") {
+        updatePayload.last_published_at = now;
+        // Only set published_at if it hasn't been set before
+        const { data: existing } = await client.from("blog_posts").select("published_at").eq("id", id).single();
+        if (!existing?.published_at) {
+          updatePayload.published_at = now;
+        }
+      }
+
+      const { data, error } = await client
+        .from("blog_posts")
+        .update(updatePayload)
+        .eq("id", id)
+        .select("id, status")
+        .single();
+
+      if (error || !data) {
+        throw new Error(error?.message ?? "Unable to update blog post status.");
+      }
+
+      return {
+        id: data.id as string,
+        status: data.status as BlogPostStatus,
+      };
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-blog-posts"] });
+      void queryClient.invalidateQueries({ queryKey: ["public-blog-posts"] });
+    },
+    successToast: false,
+    errorToast: {
+      title: "Unable to update blog post status",
+    },
+    logScope: "[admin-blog-posts]",
+  });
+};
+
+export const useDeleteBlogPostMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useSafeMutation<void, { id: string }>({
+    mutationFn: async ({ id }) => {
+      const client = ensureClient();
+
+      const { error: deleteError } = await client.from("blog_posts").delete().eq("id", id);
+      if (deleteError) {
+        throw new Error(deleteError.message);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-blog-posts"] });
+      void queryClient.invalidateQueries({ queryKey: ["public-blog-posts"] });
+    },
+    successToast: {
+      title: "Blog post deleted",
+    },
+    errorToast: {
+      title: "Unable to delete blog post",
+    },
+    logScope: "[admin-blog-posts]",
   });
 };

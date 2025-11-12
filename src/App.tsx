@@ -9,6 +9,8 @@ import Contact from "./pages/Contact";
 import TributePage from "./pages/TributePage";
 import Events from "./pages/Events";
 import Memoirs from "./pages/Memoirs";
+import BlogPosts from "./pages/BlogPosts";
+import BlogPost from "./pages/BlogPost";
 import NotFound from "./pages/NotFound";
 import AdminApp from "./admin/AdminApp";
 
@@ -27,6 +29,8 @@ const App = () => (
           <Route path="/tribute/:id?" element={<TributePage />} />
           <Route path="/events" element={<Events />} />
           <Route path="/memoirs/:slug?" element={<Memoirs />} />
+          <Route path="/blog" element={<BlogPosts />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/admin/*" element={<AdminApp />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

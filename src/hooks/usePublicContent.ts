@@ -830,3 +830,120 @@ export const useGalleryAssets = (pageSize = GALLERY_PAGE_SIZE) => {
   };
 };
 
+export type BlogPost = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  content: string;
+  featuredImage?: {
+    src: string;
+    alt?: string | null;
+  } | null;
+  publishedAt: string | null;
+  updatedAt: string;
+};
+
+type BlogPostRow = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  content: string;
+  featured_image: {
+    src: string;
+    alt?: string | null;
+  } | null;
+  published_at: string | null;
+  updated_at: string;
+};
+
+const mapBlogPost = (row: BlogPostRow): BlogPost => {
+  // Convert featured_image src from storage path to public URL if needed
+  let featuredImageSrc: string | undefined = undefined;
+  if (row.featured_image?.src) {
+    const src = row.featured_image.src;
+    // If it's already a full URL (http/https), use it as-is
+    if (src.startsWith("http://") || src.startsWith("https://")) {
+      featuredImageSrc = src;
+    } else {
+      // Otherwise, it's a storage path - convert to public URL
+      const { data } = supabase.storage.from("public-assets").getPublicUrl(src);
+      featuredImageSrc = data.publicUrl;
+    }
+  }
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    excerpt: row.excerpt,
+    content: row.content,
+    featuredImage: featuredImageSrc
+      ? {
+          src: featuredImageSrc,
+          alt: row.featured_image?.alt ?? row.title,
+        }
+      : null,
+    publishedAt: row.published_at,
+    updatedAt: row.updated_at,
+  };
+};
+
+const fetchBlogPosts = async (): Promise<BlogPost[]> => {
+  if (!isSupabaseReady) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select("id, slug, title, excerpt, content, featured_image, published_at, updated_at")
+    .eq("status", "published")
+    .order("published_at", { ascending: false, nullsFirst: false })
+    .order("updated_at", { ascending: false });
+
+  if (error || !data) {
+    handleError("blog_posts.list", error);
+    return [];
+  }
+
+  return data.map(mapBlogPost);
+};
+
+const fetchBlogPost = async (slug: string): Promise<BlogPost | undefined> => {
+  if (!slug) return undefined;
+
+  if (!isSupabaseReady) {
+    return undefined;
+  }
+
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .select("id, slug, title, excerpt, content, featured_image, published_at, updated_at")
+    .eq("slug", slug)
+    .eq("status", "published")
+    .maybeSingle<BlogPostRow>();
+
+  if (error || !data) {
+    handleError("blog_posts.detail", error);
+    return undefined;
+  }
+
+  return mapBlogPost(data);
+};
+
+export const useBlogPosts = () =>
+  useQuery({
+    queryKey: ["public-blog-posts"],
+    staleTime: STALE_TIME,
+    queryFn: fetchBlogPosts,
+  });
+
+export const useBlogPost = (slug?: string) =>
+  useQuery({
+    queryKey: ["public-blog-post", slug],
+    queryFn: () => fetchBlogPost(slug as string),
+    staleTime: STALE_TIME,
+    enabled: Boolean(slug),
+  });
+

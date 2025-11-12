@@ -8,6 +8,8 @@ import { SignIn } from "./pages/SignIn";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Memoirs = lazy(() => import("./pages/Memoirs"));
 const MemoirEditor = lazy(() => import("./pages/MemoirEditor"));
+const BlogPosts = lazy(() => import("./pages/BlogPosts"));
+const BlogPostEditor = lazy(() => import("./pages/BlogPostEditor"));
 const ContentLibrary = lazy(() => import("./pages/ContentLibrary"));
 const Testimonials = lazy(() => import("./pages/Testimonials"));
 const Offerings = lazy(() => import("./pages/Offerings"));
@@ -47,6 +49,11 @@ export const AdminApp = () => {
             <Route index element={<Memoirs />} />
             <Route path="new" element={<MemoirEditor />} />
             <Route path=":slug" element={<MemoirEditor />} />
+          </Route>
+          <Route path="blog-posts">
+            <Route index element={<BlogPosts />} />
+            <Route path="new" element={<BlogPostEditor />} />
+            <Route path=":slug" element={<BlogPostEditor />} />
           </Route>
           <Route path="events" element={<Events />} />
           <Route path="content-library" element={<ContentLibrary />} />

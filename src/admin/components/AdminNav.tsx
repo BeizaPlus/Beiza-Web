@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { BookOpen, CalendarDays, Images, LayoutDashboard, ListChecks, Megaphone, Settings, Users, DollarSign } from "lucide-react";
+import { BookOpen, CalendarDays, Images, LayoutDashboard, ListChecks, Megaphone, Settings, Users, DollarSign, FileText } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { useSupabaseSession } from "@/hooks/useSupabaseSession";
 
@@ -7,6 +7,7 @@ const navItems = [
   { to: "/admin", label: "Overview", icon: LayoutDashboard, end: true },
   { to: "/admin/events", label: "Events", icon: CalendarDays },
   { to: "/admin/memoirs", label: "Memoirs", icon: BookOpen },
+  { to: "/admin/blog-posts", label: "Blog Posts", icon: FileText },
   { to: "/admin/content-library", label: "Content Library", icon: Images },
   { to: "/admin/settings", label: "Site Settings", icon: Settings },
   { to: "/admin/offerings", label: "Offerings", icon: ListChecks },

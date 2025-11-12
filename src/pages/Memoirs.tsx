@@ -161,6 +161,14 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
     caption?: string;
   } | null>(null);
 
+  // Content warning consent state - stored per memoir slug
+  const [hasConsented, setHasConsented] = useState<boolean>(() => {
+    if (typeof window !== "undefined" && slug) {
+      return localStorage.getItem(`memoir-gallery-consent-${slug}`) === "true";
+    }
+    return false;
+  });
+
   const {
     data: detail,
     isLoading: detailLoading,
@@ -197,6 +205,21 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
   useEffect(() => {
     setActiveSubTab(desiredSubTab as "gallery" | "tributes");
   }, [desiredSubTab, slug]);
+
+  // Reset consent when switching to a different memoir
+  useEffect(() => {
+    if (slug && typeof window !== "undefined") {
+      const consented = localStorage.getItem(`memoir-gallery-consent-${slug}`) === "true";
+      setHasConsented(consented);
+    }
+  }, [slug]);
+
+  const handleContentWarningConsent = () => {
+    if (slug && typeof window !== "undefined") {
+      localStorage.setItem(`memoir-gallery-consent-${slug}`, "true");
+      setHasConsented(true);
+    }
+  };
 
   const handleTabChange = (value: string) => {
     if (value !== "story" && value !== "live") return;
@@ -399,59 +422,102 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                         description="A glimpse into the performances, colours, and togetherness that honored this life."
                         align="center"
                       />
-                      {shouldLoadHighlights && highlightsLoading && highlights.length === 0 ? (
-                        <div className="mt-12 grid gap-6 lg:grid-cols-3">
-                          {Array.from({ length: 3 }).map((_, index) => (
-                            <div
-                              key={index}
-                              className="glass-panel h-80 animate-pulse rounded-3xl border border-white/10 bg-white/5"
-                            />
-                          ))}
-                        </div>
-                      ) : null}
-                      {shouldLoadHighlights && highlights.length > 0 ? (
-                        <>
-                          <div className="mt-12 grid gap-6 lg:grid-cols-3">
-                            {highlights.map((highlight) => (
-                              <figure
-                                key={highlight.id}
-                                className="glass-panel overflow-hidden rounded-3xl border border-white/10 cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
-                                onClick={() => handleImageClick(highlight)}
-                              >
-                                <img
-                                  src={highlight.media.src}
-                                  alt={highlight.media.alt || summary?.title || "Memoir highlight"}
-                                  className="h-80 w-full object-cover"
-                                  loading="lazy"
+                      <div className="relative mt-12">
+                        {/* Gallery Content */}
+                        <div
+                          className={
+                            !hasConsented && shouldLoadHighlights && (highlightsLoading || highlights.length > 0)
+                              ? "blur-md pointer-events-none select-none"
+                              : ""
+                          }
+                        >
+                          {shouldLoadHighlights && highlightsLoading && highlights.length === 0 ? (
+                            <div className="grid gap-6 lg:grid-cols-3">
+                              {Array.from({ length: 3 }).map((_, index) => (
+                                <div
+                                  key={index}
+                                  className="glass-panel h-80 animate-pulse rounded-3xl border border-white/10 bg-white/5"
                                 />
-                                {highlight.caption ? (
-                                  <figcaption className="p-4 text-sm text-subtle">{highlight.caption}</figcaption>
-                                ) : null}
-                              </figure>
-                            ))}
-                          </div>
-                          {hasMoreHighlights ? (
-                            <div className="mt-8 flex justify-center">
-                              <Button
-                                variant="outline"
-                                className="rounded-full border-white/20 text-white hover:bg-white/10"
-                                onClick={() => fetchNextHighlights()}
-                                disabled={fetchingMoreHighlights}
-                              >
-                                {fetchingMoreHighlights ? "Loading images…" : "Load more images"}
-                              </Button>
+                              ))}
                             </div>
                           ) : null}
-                        </>
-                      ) : !shouldLoadHighlights ? (
-                        <div className="mt-12 text-center text-subtle">
-                          <p className="text-sm">Switch to the Gallery tab to view images.</p>
+                          {shouldLoadHighlights && highlights.length > 0 ? (
+                            <>
+                              <div className="grid gap-6 lg:grid-cols-3">
+                                {highlights.map((highlight) => (
+                                  <figure
+                                    key={highlight.id}
+                                    className="glass-panel overflow-hidden rounded-3xl border border-white/10 cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
+                                    onClick={() => handleImageClick(highlight)}
+                                  >
+                                    <img
+                                      src={highlight.media.src}
+                                      alt={highlight.media.alt || summary?.title || "Memoir highlight"}
+                                      className="h-80 w-full object-cover"
+                                      loading="lazy"
+                                    />
+                                    {highlight.caption ? (
+                                      <figcaption className="p-4 text-sm text-subtle">{highlight.caption}</figcaption>
+                                    ) : null}
+                                  </figure>
+                                ))}
+                              </div>
+                              {hasMoreHighlights ? (
+                                <div className="mt-8 flex justify-center">
+                                  <Button
+                                    variant="outline"
+                                    className="rounded-full border-white/20 text-white hover:bg-white/10"
+                                    onClick={() => fetchNextHighlights()}
+                                    disabled={fetchingMoreHighlights}
+                                  >
+                                    {fetchingMoreHighlights ? "Loading images…" : "Load more images"}
+                                  </Button>
+                                </div>
+                              ) : null}
+                            </>
+                          ) : !shouldLoadHighlights ? (
+                            <div className="text-center text-subtle">
+                              <p className="text-sm">Switch to the Gallery tab to view images.</p>
+                            </div>
+                          ) : highlights.length === 0 && !highlightsLoading ? (
+                            <div className="text-center text-subtle">
+                              <p className="text-sm">No gallery images available yet.</p>
+                            </div>
+                          ) : null}
                         </div>
-                      ) : highlights.length === 0 && !highlightsLoading ? (
-                        <div className="mt-12 text-center text-subtle">
-                          <p className="text-sm">No gallery images available yet.</p>
-                        </div>
-                      ) : null}
+
+                        {/* Content Warning Overlay */}
+                        {!hasConsented && shouldLoadHighlights && (highlightsLoading || highlights.length > 0) ? (
+                          <div className="absolute inset-0 z-10 flex items-center justify-center min-h-[400px]">
+                            <div className="glass-panel mx-4 max-w-lg rounded-3xl border border-white/20 bg-black/60 p-8 text-center backdrop-blur-md">
+                              <div className="space-y-6">
+                                <div className="space-y-2">
+                                  <h3 className="text-2xl font-semibold text-white">Content Warning</h3>
+                                  <p className="text-sm text-subtle leading-relaxed">
+                                    This gallery may contain sensitive visual or emotional content related to memorial
+                                    celebrations. Please be aware that some images may be emotionally impactful.
+                                  </p>
+                                </div>
+                                <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+                                  <Button
+                                    onClick={handleContentWarningConsent}
+                                    className="rounded-full bg-primary px-6 py-2 text-primary-foreground hover:bg-primary/90"
+                                  >
+                                    I understand, show content
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => handleSubTabChange("tributes")}
+                                    className="rounded-full border-white/20 px-6 py-2 text-white hover:bg-white/10"
+                                  >
+                                    View tributes instead
+                                  </Button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
                     </TabsContent>
 
                     <TabsContent value="tributes">

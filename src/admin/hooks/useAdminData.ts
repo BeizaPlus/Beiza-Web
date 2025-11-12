@@ -495,3 +495,46 @@ export const useGalleryAssetsAdmin = () =>
     retry: 1,
   });
 
+type BlogPostRecord = {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  status: "draft" | "published" | "archived";
+  published_at: string | null;
+  last_published_at: string | null;
+  updated_at: string;
+};
+
+async function fetchBlogPosts(): Promise<BlogPostRecord[]> {
+  const client = ensureClient();
+
+  const { data, error } = await client
+    .from("blog_posts")
+    .select("id, slug, title, excerpt, status, published_at, last_published_at, updated_at")
+    .order("updated_at", { ascending: false });
+
+  if (error) {
+    throw new Error(`Failed to load blog posts: ${error.message}`);
+  }
+
+  return (data ?? []).map((item) => ({
+    id: item.id,
+    slug: item.slug,
+    title: item.title,
+    excerpt: item.excerpt,
+    status: item.status,
+    published_at: item.published_at,
+    last_published_at: item.last_published_at,
+    updated_at: item.updated_at,
+  }));
+}
+
+export const useBlogPostsAdmin = () =>
+  useQuery({
+    queryKey: ["admin-blog-posts"],
+    queryFn: fetchBlogPosts,
+    staleTime: 1000 * 60,
+    retry: 1,
+  });
+
