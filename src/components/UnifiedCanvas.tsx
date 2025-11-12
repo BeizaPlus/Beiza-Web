@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { usePublicImages } from "@/hooks/usePublicImages";
+import { useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import CanvasGallery, { type GalleryImage } from "./CanvasGallery";
+import { useGalleryAssets } from "@/hooks/usePublicContent";
 
 interface UnifiedCanvasProps {
   onImageClick?: (image: any) => void;
@@ -11,28 +11,32 @@ interface UnifiedCanvasProps {
 export const UnifiedCanvas = ({ onImageClick, resetViewToken = 0 }: UnifiedCanvasProps) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { images, loading } = usePublicImages();
+  const { images, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useGalleryAssets();
 
-  // Convert public images to GalleryImage format with true sizes
-  const galleryImages: GalleryImage[] = images.map((image) => ({
-    id: image.id,
-    src: image.src,
-    width: 20, // Fixed width - will be overridden by actual image dimensions
-    height: 15, // Fixed height - will be overridden by actual image dimensions
-    alt: image.alt,
-    caption: image.caption,
-  }));
+  const galleryImages: GalleryImage[] = useMemo(
+    () =>
+      images.map((image) => ({
+        id: image.id,
+        src: image.src,
+        width: 20,
+        height: 15,
+        alt: image.alt,
+        caption: image.caption ?? undefined,
+        memoirSlug: image.memoirSlug ?? undefined,
+        memoirTitle: image.memoirTitle ?? undefined,
+      })),
+    [images],
+  );
 
   const handleLogoClick = () => {
-    navigate('/');
+    navigate("/");
   };
 
-  if (loading)
-  {
+  if (isLoading && galleryImages.length === 0) {
     return (
-      <div className="relative w-full h-screen overflow-hidden bg-transparent flex items-center justify-center">
+      <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-transparent">
         <div className="glass-card rounded-2xl p-8 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
           <p className="text-white">Loading gallery...</p>
         </div>
       </div>
@@ -40,49 +44,52 @@ export const UnifiedCanvas = ({ onImageClick, resetViewToken = 0 }: UnifiedCanva
   }
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-transparent">
-      {/* Canvas Gallery */}
-      <CanvasGallery
-        images={galleryImages}
-        onImageClick={onImageClick}
-        resetViewToken={resetViewToken}
-      />
+    <div className="relative h-screen w-full overflow-hidden bg-transparent">
+      <CanvasGallery images={galleryImages} onImageClick={onImageClick} resetViewToken={resetViewToken} />
 
-      {/* Beiza Logo Navigation (top-left corner) */}
-      <div className="absolute top-4 left-4 z-20">
+      <div className="absolute left-4 top-4 z-20">
         <button
           onClick={handleLogoClick}
-          className="flex items-center gap-3 glass-card rounded-xl p-3 hover:bg-white/10 transition-all duration-300 group"
+          className="group flex items-center gap-3 rounded-xl p-3 transition-all duration-300 hover:bg-white/10"
         >
           <img
             src="/Head.svg"
             alt="Beiza Plus"
-            className="h-6 w-auto group-hover:scale-110 transition-transform duration-300"
+            className="h-6 w-auto transition-transform duration-300 group-hover:scale-110"
           />
           <img
             src="/Beiza_White.svg"
             alt="Beiza Plus"
-            className="h-4 w-auto group-hover:scale-110 transition-transform duration-300"
+            className="h-4 w-auto transition-transform duration-300 group-hover:scale-110"
           />
         </button>
       </div>
 
-      {/* Page-specific content overlays */}
-      {location.pathname === '/' && (
-        <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10 hidden md:block">
-          <div className="glass-card rounded-2xl p-6 text-center border border-white/20 shadow-xl">
-            <h3 className="text-xl font-serif text-white mb-2">
+      {location.pathname === "/" && (
+        <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 transform z-10 md:block">
+          <div className="glass-card rounded-2xl border border-white/20 p-6 text-center shadow-xl">
+            <h3 className="mb-2 text-xl font-serif text-white">
               <em className="italic text-primary">Turbulent Waves</em> Gallery
             </h3>
-            <p className="text-sm text-muted-foreground">
-              Drag to explore • Click images to center
-            </p>
+            <p className="text-sm text-muted-foreground">Drag to explore • Click images to center</p>
           </div>
         </div>
       )}
 
-      {/* Instructions - Hidden on mobile to avoid interference */}
-      <div className="absolute bottom-8 left-8 z-10 text-white/60 text-sm hidden md:block">
+      {hasNextPage ? (
+        <div className="absolute bottom-8 right-8 z-20">
+          <button
+            type="button"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+            className="rounded-full bg-white/10 px-5 py-2 text-sm text-white backdrop-blur transition hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {isFetchingNextPage ? "Loading…" : "Load more images"}
+          </button>
+        </div>
+      ) : null}
+
+      <div className="absolute bottom-8 left-8 z-10 hidden text-sm text-white/60 md:block">
         <p>Drag to pan • Scroll to zoom • Click images to center</p>
       </div>
     </div>

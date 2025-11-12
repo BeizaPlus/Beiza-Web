@@ -1,21 +1,55 @@
 import { Link } from "react-router-dom";
-import siteConfig from "@/config/site-config";
-
-const sectionLinks = [
-  { label: "About Us", to: "/#about" },
-  { label: "Memoirs", to: "/memoirs/monica-manu" },
-  { label: "Tributes", to: "/gallery" },
-  { label: "Contact", to: "/contact#hero" },
-];
-
-const socialLinks = [
-  { label: "Facebook", href: siteConfig.social.facebook },
-  { label: "Instagram", href: siteConfig.social.instagram },
-  { label: "TikTok", href: siteConfig.social.tiktok },
-  { label: "YouTube", href: siteConfig.social.youtube },
-].filter((item) => Boolean(item.href));
+import { useMemo } from "react";
+import { useFooterLinks, useSiteSettings } from "@/hooks/usePublicContent";
 
 export const Footer = () => {
+  const { data: footerLinks } = useFooterLinks();
+  const { data: siteSettings } = useSiteSettings();
+
+  const settings = useMemo(() => {
+    return siteSettings ?? null;
+  }, [siteSettings]);
+
+  const groupedFooterLinks = useMemo(() => {
+    if (!footerLinks) return [];
+
+    const links = footerLinks.map((link) => ({
+      id: link.id,
+      label: link.label,
+      href: link.href,
+      groupLabel: link.groupLabel ?? "Sections",
+    }));
+
+    const map = new Map<string, { id: string; label: string; href: string }[]>();
+
+    links.forEach((link) => {
+      const key = link.groupLabel ?? "Sections";
+      if (!map.has(key))
+      {
+        map.set(key, []);
+      }
+      map.get(key)!.push({ id: link.id, label: link.label, href: link.href });
+    });
+
+    return Array.from(map.entries()).map(([groupLabel, groupLinks]) => ({
+      groupLabel,
+      links: groupLinks,
+    }));
+  }, [footerLinks]);
+
+  const socialLinks = useMemo(() => {
+    if (!settings?.social) return [];
+
+    return [
+      { label: "Facebook", href: settings.social.facebook },
+      { label: "Instagram", href: settings.social.instagram },
+      { label: "TikTok", href: settings.social.tiktok },
+      { label: "YouTube", href: settings.social.youtube },
+    ].filter((item) => Boolean(item.href));
+  }, [settings]);
+
+  const copyrightYear = new Date().getFullYear();
+
   return (
     <footer className="bg-black text-white">
       <div className="mx-auto w-full max-w-7xl px-8 py-24 lg:py-28">
@@ -29,25 +63,27 @@ export const Footer = () => {
               We design meaningful farewells — handcrafted tributes that celebrate life, culture, and legacy.
             </p>
             <p className="text-subtle text-xs uppercase tracking-[0.3em]">
-              © {siteConfig.copyrightYear} Beiza — Crafted with care, made to remember.
+              © {copyrightYear} {settings?.businessName ?? "Beiza Plus"} — Crafted with care, made to remember.
             </p>
           </div>
 
           <div className="grid w-full gap-12 sm:grid-cols-2 sm:gap-16">
-            <div className="space-y-5">
-              <p className="text-xs uppercase tracking-[0.3em] text-subtle">Sections</p>
-              <nav className="space-y-3 text-sm">
-                {sectionLinks.map((item) => (
-                  <Link
-                    key={item.label}
-                    to={item.to}
-                    className="block text-subtle transition-colors duration-200 hover:text-white"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
-            </div>
+            {groupedFooterLinks.map((group) => (
+              <div key={group.groupLabel} className="space-y-5">
+                <p className="text-xs uppercase tracking-[0.3em] text-subtle">{group.groupLabel}</p>
+                <nav className="space-y-3 text-sm">
+                  {group.links.map((item) => (
+                    <Link
+                      key={item.id}
+                      to={item.href}
+                      className="block text-subtle transition-colors duration-200 hover:text-white"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                </nav>
+              </div>
+            ))}
 
             <div className="space-y-5">
               <p className="text-xs uppercase tracking-[0.3em] text-subtle">Socials</p>
@@ -55,7 +91,7 @@ export const Footer = () => {
                 {socialLinks.map((item) => (
                   <a
                     key={item.label}
-                    href={item.href}
+                    href={item.href!}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block text-subtle transition-colors duration-200 hover:text-white"

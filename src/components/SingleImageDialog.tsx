@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { X, BookOpen } from "lucide-react";
 import { Button } from "./ui/button";
 
 interface SingleImageDialogProps {
@@ -9,12 +10,22 @@ interface SingleImageDialogProps {
     src: string;
     alt: string;
     caption?: string;
+    memoirSlug?: string | null;
+    memoirTitle?: string | null;
   };
 }
 
 export const SingleImageDialog = ({ isOpen, onClose, image }: SingleImageDialogProps) => {
+  const navigate = useNavigate();
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
+
+  const handleViewMemoir = () => {
+    if (image.memoirSlug) {
+      navigate(`/memoirs/${image.memoirSlug}`);
+      onClose();
+    }
+  };
 
   useEffect(() => {
     if (isOpen)
@@ -101,11 +112,25 @@ export const SingleImageDialog = ({ isOpen, onClose, image }: SingleImageDialogP
       </div>
 
       {/* Image info */}
-      {image.caption && (
+      {(image.caption || image.memoirSlug || image.alt) && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
-          <div className="glass-card rounded-xl p-4 text-center border border-white/20">
-            <p className="text-white font-medium mb-1">{image.alt}</p>
-            <p className="text-white/80 text-sm">{image.caption}</p>
+          <div className="glass-card rounded-xl p-4 text-center border border-white/20 max-w-md">
+            {image.alt && (
+              <p className="text-white font-medium mb-1">{image.alt}</p>
+            )}
+            {image.caption && (
+              <p className="text-white/80 text-sm mb-3">{image.caption}</p>
+            )}
+            {image.memoirSlug && (
+              <Button
+                onClick={handleViewMemoir}
+                className="rounded-full bg-white/10 hover:bg-white/20 text-white border border-white/20 mt-2"
+                size="sm"
+              >
+                <BookOpen className="w-4 h-4 mr-2" />
+                {image.memoirTitle ? `View ${image.memoirTitle}` : "View Memoir"}
+              </Button>
+            )}
           </div>
         </div>
       )}

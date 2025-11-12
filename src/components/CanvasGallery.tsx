@@ -16,6 +16,8 @@ export interface GalleryImage {
   height: number; // in cm
   alt: string;
   caption?: string;
+  memoirSlug?: string;
+  memoirTitle?: string;
 }
 
 export interface CanvasGalleryProps {

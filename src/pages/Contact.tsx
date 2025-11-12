@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { SectionHeader } from "@/components/framer/SectionHeader";
@@ -7,24 +7,7 @@ import { CTAButton } from "@/components/framer/CTAButton";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight, Mail, Phone } from "lucide-react";
-
-const contactTestimonials: Testimonial[] = [
-  {
-    quote: "They translated our ideas into a deeply personal remembrance. Every guest felt included and uplifted.",
-    author: "Ama K. Boadu",
-    role: "Celebration Planner",
-  },
-  {
-    quote: "Coordinating across continents felt effortless. Beiza handled the live stream and archive flawlessly.",
-    author: "Kojo Adjei",
-    role: "Family Historian",
-  },
-  {
-    quote: "Their team listened, created, and supported us like family. The tribute film still brings tears of joy.",
-    author: "Naomi Afriyie",
-    role: "Daughter",
-  },
-];
+import { useContactChannels, useTestimonials, useSiteSettings } from "@/hooks/usePublicContent";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -34,6 +17,42 @@ const ContactPage = () => {
     service: "",
     message: "",
   });
+  const { data: contactChannels } = useContactChannels();
+  const { data: contactTestimonials } = useTestimonials("contact");
+  const { data: siteSettings } = useSiteSettings();
+
+  const channels = useMemo(() => {
+    // First try to get from contact_channels table
+    const phoneChannel = contactChannels?.find((channel) => channel.channelType === "phone");
+    const emailChannel = contactChannels?.find((channel) => channel.channelType === "email");
+    const externalChannel = contactChannels?.find((channel) => channel.channelType === "external");
+
+    // Fallback to site_settings if not found in contact_channels
+    return {
+      phone: phoneChannel ?? {
+        id: "site-settings-phone",
+        channelType: "phone",
+        label: "Phone",
+        value: siteSettings?.phonePrimary ?? "",
+      },
+      email: emailChannel ?? {
+        id: "site-settings-email",
+        channelType: "email",
+        label: "Email",
+        value: siteSettings?.emailPrimary ?? "",
+      },
+      external: externalChannel ?? {
+        id: "site-settings-calendly",
+        channelType: "external",
+        label: "Book a discovery call",
+        value: siteSettings?.calendlyUrl ?? "",
+      },
+    };
+  }, [contactChannels, siteSettings]);
+
+  const testimonialsList = useMemo(() => {
+    return contactTestimonials?.filter((item) => item.surfaces.includes("contact")) ?? [];
+  }, [contactTestimonials]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = event.target;
@@ -65,9 +84,9 @@ const ContactPage = () => {
                     <Phone className="h-5 w-5" strokeWidth={1.5} />
                   </span>
                   <div>
-                    <p className="text-sm uppercase tracking-[0.3em] text-subtle">Phone</p>
-                    <a href="tel:+233559000111" className="text-lg font-medium text-white transition hover:text-white/80">
-                      +233 55 900 0111
+                    <p className="text-sm uppercase tracking-[0.3em] text-subtle">{channels.phone.label}</p>
+                    <a href={`tel:${channels.phone.value}`} className="text-lg font-medium text-white transition hover:text-white/80">
+                      {channels.phone.value}
                     </a>
                   </div>
                 </div>
@@ -77,14 +96,17 @@ const ContactPage = () => {
                     <Mail className="h-5 w-5" strokeWidth={1.5} />
                   </span>
                   <div>
-                    <p className="text-sm uppercase tracking-[0.3em] text-subtle">Email</p>
-                    <a href="mailto:hello@beiza.tv" className="text-lg font-medium text-white transition hover:text-white/80">
-                      hello@beiza.tv
+                    <p className="text-sm uppercase tracking-[0.3em] text-subtle">{channels.email.label}</p>
+                    <a
+                      href={`mailto:${channels.email.value}`}
+                      className="text-lg font-medium text-white transition hover:text-white/80"
+                    >
+                      {channels.email.value}
                     </a>
                   </div>
                 </div>
 
-                <CTAButton href="https://calendly.com" external label="Book a discovery call" className="bg-primary text-black" />
+                <CTAButton href={channels.external.value} external label={channels.external.label ?? "Book a discovery call"} className="bg-primary text-black" />
               </div>
             </div>
 
@@ -190,7 +212,7 @@ const ContactPage = () => {
             description="We craft every experience with empathy, rhythm, and respect — these notes remind us why."
             align="center"
           />
-          <TestimonialsCarousel testimonials={contactTestimonials} className="mt-12" />
+          <TestimonialsCarousel testimonials={testimonialsList} className="mt-12" />
         </section>
       </main>
       <Footer />
