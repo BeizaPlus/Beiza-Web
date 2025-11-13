@@ -3,6 +3,7 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import type { InfiniteData } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabaseClient";
+import { FALLBACK_NAVIGATION_LINKS, FALLBACK_FOOTER_LINKS } from "@/lib/fallbackContent";
 
 const STALE_TIME = 1000 * 60 * 5; // 5 minutes
 const GALLERY_PAGE_SIZE = 24;
@@ -153,64 +154,13 @@ const handleError = (scope: string, error: Error | null | undefined) => {
   console.warn(`[supabase:${scope}] falling back to static content:`, error.message);
 };
 
-type NavigationRow = {
-  id: string;
-  label: string;
-  href: string;
-  location?: string | null;
-  display_order?: number | null;
-  is_cta?: boolean | null;
-};
-
-type FooterRow = {
-  id: string;
-  label: string;
-  href: string;
-  group_label?: string | null;
-  display_order?: number | null;
-};
-
-const normalizeNavigation = (rows: NavigationRow[], location: string): NavigationLink[] =>
-  rows.map((row) => ({
-    id: row.id,
-    label: row.label,
-    href: row.href,
-    location: row.location ?? location,
-    displayOrder: row.display_order ?? 0,
-    isCta: Boolean(row.is_cta),
-  }));
-
-const mapFooterLinks = (rows: FooterRow[]): FooterLink[] =>
-  rows.map((row) => ({
-    id: row.id,
-    label: row.label,
-    href: row.href,
-    groupLabel: row.group_label ?? null,
-    displayOrder: row.display_order ?? 0,
-  }));
-
 export const useNavigationLinks = (location = "primary") =>
   useQuery({
     queryKey: ["public-navigation-links", location],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<NavigationLink[]> => {
-      if (!isSupabaseReady) {
-        return [];
-      }
-
-      const { data, error } = await supabase
-        .from("navigation_links")
-        .select("id, label, href, location, display_order, is_published")
-        .eq("location", location)
-        .eq("is_published", true)
-        .order("display_order", { ascending: true });
-
-      if (error || !data) {
-        handleError("navigation_links", error);
-        return [];
-      }
-
-      return normalizeNavigation(data, location);
+      // Use fallback content instead of Supabase
+      return FALLBACK_NAVIGATION_LINKS.filter((link) => link.location === location);
     },
   });
 
@@ -219,23 +169,8 @@ export const useFooterLinks = () =>
     queryKey: ["public-footer-links"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<FooterLink[]> => {
-      if (!isSupabaseReady) {
-        return [];
-      }
-
-      const { data, error } = await supabase
-        .from("footer_links")
-        .select("id, label, href, group_label, display_order, is_published")
-        .eq("is_published", true)
-        .order("group_label", { ascending: true })
-        .order("display_order", { ascending: true });
-
-      if (error || !data) {
-        handleError("footer_links", error);
-        return [];
-      }
-
-      return mapFooterLinks(data);
+      // Use fallback content instead of Supabase
+      return FALLBACK_FOOTER_LINKS;
     },
   });
 

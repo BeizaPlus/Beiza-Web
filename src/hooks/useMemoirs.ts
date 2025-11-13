@@ -138,6 +138,7 @@ type MemoirRow = {
   last_published_at: string | null;
   memoir_sections?: MemoirSectionRow[] | null;
   memoir_highlights?: MemoirHighlightRow[] | null;
+  live_url?: string | null;
   live_stream_platform?: string | null;
   live_stream_title?: string | null;
   live_stream_url?: string | null;
@@ -180,6 +181,9 @@ const mapSummary = (row: MemoirRow): MemoirSummary => {
     }
   }
 
+  // Use live_url if available, otherwise fall back to live_stream_url
+  const liveUrl = row.live_url?.trim() || row.live_stream_url?.trim() || undefined;
+
   return {
     id: row.id,
     slug: row.slug,
@@ -194,8 +198,8 @@ const mapSummary = (row: MemoirRow): MemoirSummary => {
         }
       : null,
     lastPublishedAt: row.last_published_at ?? undefined,
-    liveStreamActive: row.live_stream_is_active ?? undefined,
-    liveStreamUrl: row.live_stream_url ?? undefined,
+    liveStreamActive: row.live_stream_is_active ?? (liveUrl ? true : undefined),
+    liveStreamUrl: liveUrl,
   };
 };
 
@@ -245,11 +249,11 @@ const deriveYouTubeEmbedUrl = (url: string) => {
 };
 
 const mapLiveStream = (row: MemoirRow): MemoirLiveStream | undefined => {
-  // Check if there's any live stream data
-  const url = row.live_stream_url?.trim() || undefined;
+  // Use live_url if available, otherwise fall back to live_stream_url
+  const url = row.live_url?.trim() || row.live_stream_url?.trim() || undefined;
   const embedUrl = row.live_stream_embed_url?.trim() || undefined;
   const title = row.live_stream_title?.trim() || undefined;
-  const isActive = row.live_stream_is_active ?? false;
+  const isActive = row.live_stream_is_active ?? (url ? true : false);
   const platform = row.live_stream_platform?.trim() || undefined;
 
   // If there's no URL, embed URL, title, platform, or active status, return undefined
@@ -380,7 +384,7 @@ const fetchMemoirSummaries = async (): Promise<MemoirSummary[]> => {
   const { data, error } = await supabase
     .from("memoirs")
     .select(
-      "id, slug, title, subtitle, summary, hero_media, last_published_at, live_stream_url, live_stream_is_active"
+      "id, slug, title, subtitle, summary, hero_media, last_published_at, live_url, live_stream_url, live_stream_is_active"
     )
     .eq("status", "published")
     .order("last_published_at", { ascending: false, nullsFirst: false });
@@ -403,7 +407,7 @@ const fetchMemoirDetail = async (slug: string): Promise<MemoirDetail | undefined
   const { data, error } = await supabase
     .from("memoirs")
     .select(
-      "id, slug, title, subtitle, summary, hero_media, last_published_at, live_stream_platform, live_stream_title, live_stream_url, live_stream_embed_url, live_stream_is_active, memoir_sections(*), memoir_highlights(*)"
+      "id, slug, title, subtitle, summary, hero_media, last_published_at, live_url, live_stream_platform, live_stream_title, live_stream_url, live_stream_embed_url, live_stream_is_active, memoir_sections(*), memoir_highlights(*)"
     )
     .eq("slug", slug)
     .eq("status", "published")

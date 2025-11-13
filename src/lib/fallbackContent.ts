@@ -1,17 +1,22 @@
-export const FALLBACK_NAVIGATION_LINKS = [
-  { id: "fallback-nav-live", label: "Live Now", href: "/", location: "primary", display_order: 1 },
-  { id: "fallback-nav-events", label: "Events", href: "/events", location: "primary", display_order: 2 },
-  { id: "fallback-nav-gallery", label: "Gallery", href: "/gallery", location: "primary", display_order: 3 },
-  { id: "fallback-nav-memoirs", label: "Memoirs", href: "/memoirs", location: "primary", display_order: 4 },
-  { id: "fallback-nav-contact", label: "Contact", href: "/contact", location: "primary", display_order: 5, is_cta: true },
-] as const;
+import type { NavigationLink, FooterLink } from "@/hooks/usePublicContent";
 
-export const FALLBACK_FOOTER_LINKS = [
-  { id: "fallback-footer-about", label: "About Us", href: "/#about", group_label: "Sections", display_order: 1 },
-  { id: "fallback-footer-memoirs", label: "Memoirs", href: "/memoirs", group_label: "Sections", display_order: 2 },
-  { id: "fallback-footer-tributes", label: "Tributes", href: "/gallery", group_label: "Sections", display_order: 3 },
-  { id: "fallback-footer-contact", label: "Contact", href: "/contact#hero", group_label: "Sections", display_order: 4 },
-] as const;
+export const FALLBACK_NAVIGATION_LINKS: NavigationLink[] = [
+  { id: "fallback-nav-live", label: "Live Now", href: "/", location: "primary", displayOrder: 1 },
+  { id: "fallback-nav-events", label: "Events", href: "/events", location: "primary", displayOrder: 2 },
+  { id: "fallback-nav-gallery", label: "Gallery", href: "/gallery", location: "primary", displayOrder: 3 },
+  { id: "fallback-nav-memoirs", label: "Memoirs", href: "/memoirs", location: "primary", displayOrder: 4 },
+  { id: "fallback-nav-blog", label: "Blog", href: "/blog", location: "primary", displayOrder: 5 },
+  { id: "fallback-nav-contact", label: "Contact", href: "/contact", location: "primary", displayOrder: 6, isCta: true },
+];
+
+export const FALLBACK_FOOTER_LINKS: FooterLink[] = [
+  { id: "fallback-footer-about", label: "About Us", href: "/#about", groupLabel: "Sections", displayOrder: 1 },
+  { id: "fallback-footer-events", label: "Events", href: "/events", groupLabel: "Sections", displayOrder: 2 },
+  { id: "fallback-footer-gallery", label: "Gallery", href: "/gallery", groupLabel: "Sections", displayOrder: 3 },
+  { id: "fallback-footer-memoirs", label: "Memoirs", href: "/memoirs", groupLabel: "Sections", displayOrder: 4 },
+  { id: "fallback-footer-blog", label: "Blog", href: "/blog", groupLabel: "Sections", displayOrder: 5 },
+  { id: "fallback-footer-contact", label: "Contact", href: "/contact#hero", groupLabel: "Sections", displayOrder: 6 },
+];
 
 export const FALLBACK_SITE_SETTINGS = {
   businessName: "Beiza Plus",
