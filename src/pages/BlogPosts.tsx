@@ -4,12 +4,15 @@ import { Footer } from "@/components/Footer";
 import { Navigation } from "@/components/Navigation";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { useBlogPosts, type BlogPost } from "@/hooks/usePublicContent";
+import { AdZone } from "@/components/AdZone";
 
 const formatDisplayDate = (value?: string | null) => {
   if (!value) return undefined;
-  try {
+  try
+  {
     return format(new Date(value), "dd MMM yyyy");
-  } catch (error) {
+  } catch (error)
+  {
     return undefined;
   }
 };
@@ -19,7 +22,7 @@ const BlogPostCard = ({ blogPost }: { blogPost: BlogPost }) => {
 
   return (
     <Link to={`/blog/${blogPost.slug}`} className="group block" aria-label={`Read blog post: ${blogPost.title}`}>
-      <article className="glass-panel flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 transition-transform duration-300 group-hover:-translate-y-1">
+      <article className="glass-panel flex h-full flex-col overflow-hidden rounded-lg border border-white/10 transition-transform duration-300 group-hover:-translate-y-1">
         {blogPost.featuredImage?.src ? (
           <div className="relative h-64 overflow-hidden">
             <img
@@ -70,13 +73,13 @@ const BlogPosts = () => {
         </section>
         <section className="mx-auto w-full max-w-6xl px-6 py-8 lg:py-12">
           {isLoading && blogPosts.length === 0 ? (
-            <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-3xl border border-white/10 p-16 text-center">
+            <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-lg border border-white/10 p-16 text-center">
               <span className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-primary" />
               <p className="max-w-md text-sm text-subtle">Loading blog posts...</p>
             </div>
           ) : null}
           {!isLoading && blogPosts.length === 0 ? (
-            <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-3xl border border-white/10 p-16 text-center">
+            <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-lg border border-white/10 p-16 text-center">
               <p className="text-lg font-semibold text-white">No blog posts yet</p>
               <p className="max-w-md text-sm text-subtle">
                 Check back soon for new blog posts, or reach out to us if you have questions.
@@ -84,7 +87,7 @@ const BlogPosts = () => {
             </div>
           ) : null}
           {isError ? (
-            <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-3xl border border-white/10 p-16 text-center">
+            <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-lg border border-white/10 p-16 text-center">
               <p className="text-lg font-semibold text-white">Unable to load blog posts</p>
               <p className="max-w-md text-sm text-subtle">Please try again later.</p>
             </div>

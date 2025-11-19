@@ -146,10 +146,10 @@ export const HighlightForm = ({ memoirId, memoirSlug, trigger, highlight, defaul
     >
       <form className="space-y-6" onSubmit={(event) => event.preventDefault()}>
         {mutationError ? <MutationErrorBanner message={mutationError} /> : null}
-        <div className="space-y-3 rounded-2xl border border-dashed border-slate-200 bg-slate-100 p-4">
+        <div className="space-y-3 rounded-lg border border-dashed border-slate-200 bg-slate-100 p-4">
           <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Preview</p>
           <div className="flex flex-col gap-4 md:flex-row">
-            <div className="flex h-48 w-full items-center justify-center overflow-hidden rounded-xl border border-slate-200 bg-slate-200 md:w-1/2">
+            <div className="flex h-48 w-full items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-200 md:w-1/2">
               {previewUrl ? (
                 <img src={previewUrl} alt="Highlight preview" className="h-full w-full object-cover" />
               ) : (

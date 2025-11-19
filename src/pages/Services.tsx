@@ -111,7 +111,7 @@ const Services = () => {
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               {processSteps.map((step) => (
-                <div key={step.step} className="glass-panel rounded-2xl border border-white/10 p-6">
+                <div key={step.step} className="glass-panel rounded-lg border border-white/10 p-6">
                   <span className="text-xs uppercase tracking-[0.3em] text-subtle">{step.step}</span>
                   <h3 className="mt-2 text-lg font-semibold text-white">{step.title}</h3>
                   <p className="mt-3 text-subtle text-sm leading-relaxed">{step.copy}</p>

@@ -8,7 +8,8 @@ import { useSafeMutation } from "./useSafeMutation";
 
 const ensureClient = () => {
   const client = getSupabaseClient({ privileged: true }) ?? getSupabaseClient();
-  if (!client) {
+  if (!client)
+  {
     throw new Error("Supabase client is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
   }
 
@@ -17,7 +18,8 @@ const ensureClient = () => {
 
 const ensurePrivilegedClient = () => {
   const client = getSupabaseClient({ privileged: true });
-  if (!client) {
+  if (!client)
+  {
     throw new Error(
       "Privileged Supabase client is not configured. Set VITE_SUPABASE_PRIVILEGED_KEY (or move this operation to a secure environment)."
     );
@@ -122,14 +124,16 @@ export const useUpsertMemoirMutation = () => {
       const { memoir, sections = [], sectionIdsToDelete = [], tributes = [], tributeIdsToDelete = [] } = input;
 
       let updatedBy: string | null | undefined = memoir.updated_by;
-      if (updatedBy) {
+      if (updatedBy)
+      {
         const { data: managerRow, error: managerError } = await client
           .from("manager_profiles")
           .select("id")
           .eq("id", updatedBy)
           .maybeSingle();
 
-        if (managerError || !managerRow) {
+        if (managerError || !managerRow)
+        {
           updatedBy = null;
         }
       }
@@ -145,28 +149,34 @@ export const useUpsertMemoirMutation = () => {
         .select("id, slug")
         .single();
 
-      if (memoirError || !upsertedMemoir) {
+      if (memoirError || !upsertedMemoir)
+      {
         throw new Error(memoirError?.message ?? "Unable to save memoir record.");
       }
 
       const memoirId = upsertedMemoir.id;
 
-      if (sectionIdsToDelete.length > 0) {
+      if (sectionIdsToDelete.length > 0)
+      {
         const { error: deleteSectionsError } = await client.from("memoir_sections").delete().in("id", sectionIdsToDelete);
-        if (deleteSectionsError) {
+        if (deleteSectionsError)
+        {
           throw new Error(deleteSectionsError.message);
         }
       }
 
-      if (tributeIdsToDelete.length > 0) {
+      if (tributeIdsToDelete.length > 0)
+      {
         const { error: deleteTributesError } = await client.from("memoir_tributes").delete().in("id", tributeIdsToDelete);
-        if (deleteTributesError) {
+        if (deleteTributesError)
+        {
           throw new Error(deleteTributesError.message);
         }
       }
 
       let savedSections: { id: string }[] = [];
-      if (sections.length > 0) {
+      if (sections.length > 0)
+      {
         const sectionPayload = sections.map((section, index) => {
           const base = {
             memoir_id: memoirId,
@@ -175,11 +185,13 @@ export const useUpsertMemoirMutation = () => {
             display_order: section.display_order ?? index + 1,
           };
 
-          if (section.heading !== undefined) {
+          if (section.heading !== undefined)
+          {
             Object.assign(base, { heading: section.heading });
           }
 
-          if (section.id) {
+          if (section.id)
+          {
             Object.assign(base, { id: section.id });
           }
 
@@ -191,7 +203,8 @@ export const useUpsertMemoirMutation = () => {
           .upsert(sectionPayload, { onConflict: "id" })
           .select("id");
 
-        if (error) {
+        if (error)
+        {
           throw new Error(error.message);
         }
 
@@ -199,7 +212,8 @@ export const useUpsertMemoirMutation = () => {
       }
 
       let savedTributes: { id: string }[] = [];
-      if (tributes.length > 0) {
+      if (tributes.length > 0)
+      {
         const tributePayload = tributes.map((tribute, index) => {
           const base = {
             memoir_id: memoirId,
@@ -209,7 +223,8 @@ export const useUpsertMemoirMutation = () => {
             display_order: tribute.display_order ?? index + 1,
           };
 
-          if (tribute.id) {
+          if (tribute.id)
+          {
             Object.assign(base, { id: tribute.id });
           }
 
@@ -218,7 +233,8 @@ export const useUpsertMemoirMutation = () => {
 
         const { data, error } = await client.from("memoir_tributes").upsert(tributePayload, { onConflict: "id" }).select("id");
 
-        if (error) {
+        if (error)
+        {
           throw new Error(error.message);
         }
 
@@ -250,7 +266,8 @@ export const useUpdateMemoirStatusMutation = () => {
       const client = ensureClient();
       const { data, error } = await client.from("memoirs").update({ status }).eq("id", id).select("id, status").single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to update memoir status.");
       }
 
@@ -317,12 +334,14 @@ export const useDeleteMemoirMutation = () => {
         .eq("id", id)
         .single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to fetch memoir for deletion.");
       }
 
       const { error: deleteError } = await client.from("memoirs").delete().eq("id", id);
-      if (deleteError) {
+      if (deleteError)
+      {
         throw new Error(deleteError.message);
       }
 
@@ -344,7 +363,8 @@ export const useDeleteMemoirMutation = () => {
     },
     onSuccess: (result) => {
       void queryClient.invalidateQueries({ queryKey: ["admin-memoirs"] });
-      if (result.memoir.slug) {
+      if (result.memoir.slug)
+      {
         void queryClient.removeQueries({ queryKey: memoirTimelineAdminQueryKey(result.memoir.slug) });
       }
     },
@@ -379,35 +399,41 @@ export const useRestoreMemoirMutation = () => {
           { onConflict: "id" },
         );
 
-      if (memoError) {
+      if (memoError)
+      {
         throw new Error(memoError.message);
       }
 
-      if (sections.length > 0) {
+      if (sections.length > 0)
+      {
         const sectionPayload = sections.map((section) => ({
           ...section,
           memoir_id: memoir.id,
         }));
 
         const { error: sectionError } = await client.from("memoir_sections").upsert(sectionPayload, { onConflict: "id" });
-        if (sectionError) {
+        if (sectionError)
+        {
           throw new Error(sectionError.message);
         }
       }
 
-      if (tributes.length > 0) {
+      if (tributes.length > 0)
+      {
         const tributePayload = tributes.map((tribute) => ({
           ...tribute,
           memoir_id: memoir.id,
         }));
 
         const { error: tributeError } = await client.from("memoir_tributes").upsert(tributePayload, { onConflict: "id" });
-        if (tributeError) {
+        if (tributeError)
+        {
           throw new Error(tributeError.message);
         }
       }
 
-      if (highlights.length > 0) {
+      if (highlights.length > 0)
+      {
         const highlightPayload = highlights.map((highlight) => ({
           ...highlight,
           memoir_id: memoir.id,
@@ -416,14 +442,16 @@ export const useRestoreMemoirMutation = () => {
         const { error: highlightError } = await client
           .from("memoir_highlights")
           .upsert(highlightPayload, { onConflict: "id" });
-        if (highlightError) {
+        if (highlightError)
+        {
           throw new Error(highlightError.message);
         }
       }
     },
     onSuccess: (_, variables) => {
       void queryClient.invalidateQueries({ queryKey: ["admin-memoirs"] });
-      if (variables.memoir.slug) {
+      if (variables.memoir.slug)
+      {
         void queryClient.invalidateQueries({ queryKey: memoirTimelineAdminQueryKey(variables.memoir.slug) });
       }
     },
@@ -473,7 +501,8 @@ export const useUpsertMemoirSectionMutation = () => {
 
       const { data, error } = await client.from("memoir_sections").upsert(payload).select("id").single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to save memoir section.");
       }
 
@@ -497,7 +526,8 @@ export const useDeleteMemoirSectionMutation = () => {
     mutationFn: async ({ id }) => {
       const client = ensureClient();
       const { error } = await client.from("memoir_sections").delete().eq("id", id);
-      if (error) {
+      if (error)
+      {
         throw new Error(error.message);
       }
     },
@@ -580,7 +610,8 @@ export const useUpsertMemoirTributeMutation = () => {
 
       const { data, error } = await client.from("memoir_tributes").upsert(payload).select("id").single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to save memoir tribute.");
       }
 
@@ -588,7 +619,8 @@ export const useUpsertMemoirTributeMutation = () => {
     },
     onSuccess: (_, variables) => {
       void queryClient.invalidateQueries({ queryKey: ["admin-memoirs"] });
-      if (variables.memoir_id) {
+      if (variables.memoir_id)
+      {
         void queryClient.invalidateQueries({ queryKey: memoirTributesAdminQueryKey(variables.memoir_id) });
       }
     },
@@ -607,13 +639,15 @@ export const useDeleteMemoirTributeMutation = () => {
     mutationFn: async ({ id }) => {
       const client = ensureClient();
       const { error } = await client.from("memoir_tributes").delete().eq("id", id);
-      if (error) {
+      if (error)
+      {
         throw new Error(error.message);
       }
     },
     onSuccess: (_, variables) => {
       void queryClient.invalidateQueries({ queryKey: ["admin-memoirs"] });
-      if (variables.memoir_id) {
+      if (variables.memoir_id)
+      {
         void queryClient.invalidateQueries({ queryKey: memoirTributesAdminQueryKey(variables.memoir_id) });
       }
     },
@@ -631,7 +665,8 @@ export const useReorderMemoirTributesMutation = () => {
   return useSafeMutation<void, MemoirTributeReorderInput>({
     mutationFn: async ({ memoir_id, entries }) => {
       const client = ensureClient();
-      if (entries.length === 0) {
+      if (entries.length === 0)
+      {
         return;
       }
 
@@ -642,7 +677,8 @@ export const useReorderMemoirTributesMutation = () => {
       }));
 
       const { error } = await client.from("memoir_tributes").upsert(payload, { onConflict: "id" });
-      if (error) {
+      if (error)
+      {
         throw new Error(error.message);
       }
     },
@@ -680,7 +716,8 @@ export const useUpsertMemoirHighlightMutation = () => {
         .select("id, memoir_id")
         .single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to save memoir highlight.");
       }
 
@@ -689,7 +726,8 @@ export const useUpsertMemoirHighlightMutation = () => {
     onSuccess: (result, variables) => {
       const memoirId = result?.memoir_id ?? variables.memoir_id;
       void queryClient.invalidateQueries({ queryKey: ["admin-memoirs"] });
-      if (memoirId) {
+      if (memoirId)
+      {
         void queryClient.invalidateQueries({ queryKey: memoirHighlightsAdminQueryKey(memoirId) });
       }
     },
@@ -710,7 +748,8 @@ export const useDeleteMemoirHighlightMutation = () => {
     mutationFn: async ({ id }) => {
       const client = ensureClient();
       const { error } = await client.from("memoir_highlights").delete().eq("id", id);
-      if (error) {
+      if (error)
+      {
         throw new Error(error.message);
       }
     },
@@ -732,7 +771,8 @@ export const useReorderMemoirHighlightsMutation = () => {
   return useSafeMutation<void, MemoirHighlightReorderInput>({
     mutationFn: async ({ memoir_id, entries }) => {
       const client = ensureClient();
-      if (entries.length === 0) {
+      if (entries.length === 0)
+      {
         return;
       }
 
@@ -743,7 +783,8 @@ export const useReorderMemoirHighlightsMutation = () => {
       }));
 
       const { error } = await client.from("memoir_highlights").upsert(payload, { onConflict: "id" });
-      if (error) {
+      if (error)
+      {
         throw new Error(error.message);
       }
     },
@@ -773,7 +814,8 @@ export const useUpsertMemoirTimelineMutation = () => {
         .eq("slug", entry.memoir_slug)
         .single();
 
-      if (memoirError || !memoirData) {
+      if (memoirError || !memoirData)
+      {
         throw new Error(`Unable to find memoir with slug: ${entry.memoir_slug}`);
       }
 
@@ -798,7 +840,8 @@ export const useUpsertMemoirTimelineMutation = () => {
 
       const { data, error } = await client.from("memoir_timelines").upsert(payload).select("id").single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to save timeline entry.");
       }
 
@@ -825,7 +868,8 @@ export const useDeleteMemoirTimelineMutation = () => {
       const client = ensureClient();
       const { error } = await client.from("memoir_timelines").delete().eq("id", id);
 
-      if (error) {
+      if (error)
+      {
         throw new Error(error.message);
       }
     },
@@ -848,7 +892,8 @@ export const useReorderMemoirTimelineMutation = () => {
   return useSafeMutation<void, MemoirTimelineReorderInput>({
     mutationFn: async ({ entries }) => {
       const client = ensureClient();
-      if (entries.length === 0) {
+      if (entries.length === 0)
+      {
         return;
       }
 
@@ -859,7 +904,8 @@ export const useReorderMemoirTimelineMutation = () => {
 
       const { error } = await client.from("memoir_timelines").upsert(payload);
 
-      if (error) {
+      if (error)
+      {
         throw new Error(error.message);
       }
     },
@@ -899,7 +945,8 @@ export const useUpsertTestimonialMutation = () => {
 
       const { data, error } = await client.from("testimonials").upsert(payload).select().single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to save testimonial.");
       }
 
@@ -929,7 +976,8 @@ export const useDeleteTestimonialMutation = () => {
         .select("id, author, role, quote, surfaces, is_published")
         .single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to delete testimonial.");
       }
 
@@ -966,7 +1014,8 @@ export const useUpdateTestimonialPublishMutation = () => {
         .select("id, author, role, quote, surfaces, is_published")
         .single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to update testimonial.");
       }
 
@@ -1014,7 +1063,8 @@ export const useUpsertOfferingMutation = () => {
 
       const { data, error } = await client.from("offerings").upsert(payload).select().single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to save offering.");
       }
 
@@ -1044,7 +1094,8 @@ export const useDeleteOfferingMutation = () => {
         .select("id, title, description, icon_key, display_order, is_published")
         .single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to delete offering.");
       }
 
@@ -1081,7 +1132,8 @@ export const useUpdateOfferingPublishMutation = () => {
         .select("id, title, description, icon_key, display_order, is_published")
         .single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to update offering.");
       }
 
@@ -1149,16 +1201,19 @@ export const useUpsertPricingTierMutation = () => {
         .select()
         .single();
 
-      if (tierError || !tierData) {
+      if (tierError || !tierData)
+      {
         throw new Error(tierError?.message ?? "Unable to save pricing tier.");
       }
 
       const tierId = tierData.id;
 
       // Handle features
-      if (tier.features && tier.features.length > 0) {
+      if (tier.features && tier.features.length > 0)
+      {
         // Delete existing features if this is an update
-        if (tier.id) {
+        if (tier.id)
+        {
           await client.from("pricing_features").delete().eq("tier_id", tierId);
         }
 
@@ -1171,7 +1226,8 @@ export const useUpsertPricingTierMutation = () => {
 
         const { error: featuresError } = await client.from("pricing_features").insert(featurePayloads);
 
-        if (featuresError) {
+        if (featuresError)
+        {
           throw new Error(featuresError.message);
         }
       }
@@ -1206,7 +1262,8 @@ export const useDeletePricingTierMutation = () => {
         .select("id, name, tagline, price_label, description, badge_label, is_recommended, is_published, display_order")
         .single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to delete pricing tier.");
       }
 
@@ -1242,7 +1299,8 @@ export const useUpdatePricingTierPublishMutation = () => {
       const client = ensureClient();
       const { error } = await client.from("pricing_tiers").update({ is_published }).eq("id", id);
 
-      if (error) {
+      if (error)
+      {
         throw new Error(error.message);
       }
     },
@@ -1287,7 +1345,8 @@ export const useUpsertEventMutation = () => {
 
       const { data, error } = await client.from("events").upsert(payload, { onConflict: "slug" }).select().single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to save event.");
       }
 
@@ -1317,7 +1376,8 @@ export const useDeleteEventMutation = () => {
         .select("id, slug, title, location, occurs_on, hero_media, description, is_featured, is_published")
         .single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to delete event.");
       }
 
@@ -1357,10 +1417,12 @@ export const useUpdateEventStatusMutation = () => {
     mutationFn: async ({ id, is_published, is_featured }) => {
       const client = ensureClient();
       const payload: Partial<EventInput> = {};
-      if (typeof is_published === "boolean") {
+      if (typeof is_published === "boolean")
+      {
         payload.is_published = is_published;
       }
-      if (typeof is_featured === "boolean") {
+      if (typeof is_featured === "boolean")
+      {
         payload.is_featured = is_featured;
       }
 
@@ -1371,7 +1433,8 @@ export const useUpdateEventStatusMutation = () => {
         .select("id, slug, title, location, occurs_on, hero_media, description, is_featured, is_published")
         .single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to update event.");
       }
 
@@ -1410,7 +1473,8 @@ export const useUpsertSiteSettingsMutation = () => {
   return useSafeMutation<SiteSettingInput[], SiteSettingInput[]>({
     mutationFn: async (settings) => {
       const client = ensureClient();
-      if (settings.length === 0) {
+      if (settings.length === 0)
+      {
         return [];
       }
 
@@ -1421,7 +1485,8 @@ export const useUpsertSiteSettingsMutation = () => {
 
       const { error } = await client.from("site_settings").upsert(payload);
 
-      if (error) {
+      if (error)
+      {
         throw new Error(error.message);
       }
 
@@ -1467,7 +1532,8 @@ export const useCreateManagerMutation = () => {
         data: { role },
       });
 
-      if (inviteError || !inviteData?.user) {
+      if (inviteError || !inviteData?.user)
+      {
         throw new Error(inviteError?.message ?? "Unable to invite manager through auth service.");
       }
 
@@ -1488,7 +1554,8 @@ export const useCreateManagerMutation = () => {
         .select("id, email, role, status, display_name, last_sign_in_at")
         .single();
 
-      if (profileError || !profileData) {
+      if (profileError || !profileData)
+      {
         throw new Error(profileError?.message ?? "Unable to save manager profile.");
       }
 
@@ -1527,7 +1594,8 @@ export const useUpdateManagerMutation = () => {
 
       const { data, error } = await client.from("manager_profiles").update(payload).eq("id", manager.id).select().single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to update manager profile.");
       }
 
@@ -1575,7 +1643,8 @@ export const useUpsertGalleryAssetMutation = () => {
         updated_by: userId,
       };
 
-      if (asset.id) {
+      if (asset.id)
+      {
         // Update existing
         const { data, error } = await client
           .from("gallery_assets")
@@ -1584,17 +1653,20 @@ export const useUpsertGalleryAssetMutation = () => {
           .select()
           .single();
 
-        if (error || !data) {
+        if (error || !data)
+        {
           throw new Error(error?.message ?? "Unable to update gallery asset.");
         }
 
         return data as GalleryAssetInput;
-      } else {
+      } else
+      {
         // Insert new
         payload.created_by = userId;
         const { data, error } = await client.from("gallery_assets").insert(payload).select().single();
 
-        if (error || !data) {
+        if (error || !data)
+        {
           throw new Error(error?.message ?? "Unable to create gallery asset.");
         }
 
@@ -1619,13 +1691,14 @@ export const useUpsertGalleryAssetMutation = () => {
 export const useDeleteGalleryAssetMutation = () => {
   const queryClient = useQueryClient();
 
-  return useSafeMutation<string, void>({
-    mutationFn: async (id) => {
+  return useSafeMutation<void, { id: string }>({
+    mutationFn: async ({ id }) => {
       const client = ensureClient();
 
       const { error } = await client.from("gallery_assets").delete().eq("id", id);
 
-      if (error) {
+      if (error)
+      {
         throw new Error(error.message ?? "Unable to delete gallery asset.");
       }
     },
@@ -1669,14 +1742,16 @@ export const useUpsertBlogPostMutation = () => {
       const client = ensureClient();
 
       let updatedBy: string | null | undefined = input.updated_by;
-      if (updatedBy) {
+      if (updatedBy)
+      {
         const { data: managerRow, error: managerError } = await client
           .from("manager_profiles")
           .select("id")
           .eq("id", updatedBy)
           .maybeSingle();
 
-        if (managerError || !managerRow) {
+        if (managerError || !managerRow)
+        {
           updatedBy = null;
         }
       }
@@ -1693,7 +1768,8 @@ export const useUpsertBlogPostMutation = () => {
       };
 
       // Remove undefined fields
-      if (blogPostPayload.last_published_at === undefined) {
+      if (blogPostPayload.last_published_at === undefined)
+      {
         delete blogPostPayload.last_published_at;
       }
 
@@ -1703,7 +1779,8 @@ export const useUpsertBlogPostMutation = () => {
         .select("id, slug")
         .single();
 
-      if (blogPostError || !upsertedBlogPost) {
+      if (blogPostError || !upsertedBlogPost)
+      {
         throw new Error(blogPostError?.message ?? "Unable to save blog post record.");
       }
 
@@ -1733,11 +1810,13 @@ export const useUpdateBlogPostStatusMutation = () => {
       const now = new Date().toISOString();
 
       const updatePayload: Record<string, unknown> = { status };
-      if (status === "published") {
+      if (status === "published")
+      {
         updatePayload.last_published_at = now;
         // Only set published_at if it hasn't been set before
         const { data: existing } = await client.from("blog_posts").select("published_at").eq("id", id).single();
-        if (!existing?.published_at) {
+        if (!existing?.published_at)
+        {
           updatePayload.published_at = now;
         }
       }
@@ -1749,7 +1828,8 @@ export const useUpdateBlogPostStatusMutation = () => {
         .select("id, status")
         .single();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         throw new Error(error?.message ?? "Unable to update blog post status.");
       }
 
@@ -1778,7 +1858,8 @@ export const useDeleteBlogPostMutation = () => {
       const client = ensureClient();
 
       const { error: deleteError } = await client.from("blog_posts").delete().eq("id", id);
-      if (deleteError) {
+      if (deleteError)
+      {
         throw new Error(deleteError.message);
       }
     },
@@ -1793,5 +1874,100 @@ export const useDeleteBlogPostMutation = () => {
       title: "Unable to delete blog post",
     },
     logScope: "[admin-blog-posts]",
+  });
+};
+export type AdsInput = {
+  id?: string;
+  title: string;
+  image_url: string;
+  link_url: string;
+  placement: string;
+  status?: "draft" | "active" | "archived";
+};
+
+export const useUpsertAdMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useSafeMutation<{ id: string }, AdsInput>({
+    mutationFn: async (ad) => {
+      const client = ensureClient();
+      const payload = {
+        ...ad,
+        status: ad.status ?? "draft",
+      };
+
+      const { data, error } = await client.from("ads").upsert(payload).select("id").single();
+
+      if (error || !data)
+      {
+        throw new Error(error?.message ?? "Unable to save ad.");
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-ads"] });
+    },
+    successToast: {
+      title: "Ad saved",
+    },
+    errorToast: {
+      title: "Unable to save ad",
+    },
+    logScope: "[admin-ads]",
+  });
+};
+
+export const useDeleteAdMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useSafeMutation<void, { id: string }>({
+    mutationFn: async ({ id }) => {
+      const client = ensureClient();
+      const { error } = await client.from("ads").delete().eq("id", id);
+
+      if (error)
+      {
+        throw new Error(error.message);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-ads"] });
+    },
+    successToast: {
+      title: "Ad deleted",
+    },
+    errorToast: {
+      title: "Unable to delete ad",
+    },
+    logScope: "[admin-ads]",
+  });
+};
+
+export const useUpdateAdStatusMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useSafeMutation<{ id: string; status: string }, { id: string; status: "draft" | "active" | "archived" }>({
+    mutationFn: async ({ id, status }) => {
+      const client = ensureClient();
+      const { data, error } = await client.from("ads").update({ status }).eq("id", id).select("id, status").single();
+
+      if (error || !data)
+      {
+        throw new Error(error?.message ?? "Unable to update ad status.");
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-ads"] });
+    },
+    successToast: {
+      title: "Status updated",
+    },
+    errorToast: {
+      title: "Update failed",
+    },
+    logScope: "[admin-ads]",
   });
 };

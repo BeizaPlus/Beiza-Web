@@ -33,7 +33,7 @@ export const SignIn = () => {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 px-6 py-12 text-white">
-      <div className="w-full max-w-md rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
+      <div className="w-full max-w-md rounded-lg border border-white/10 bg-white/5 p-8 backdrop-blur">
         <div className="mb-6 space-y-2 text-center">
           <p className="text-xs uppercase tracking-[0.3em] text-white/60">Beiza Studio</p>
           <h1 className="text-2xl font-semibold text-white">Manager Access</h1>
@@ -43,7 +43,7 @@ export const SignIn = () => {
         </div>
 
         {status === "sent" ? (
-          <div className="space-y-3 rounded-3xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-sm text-emerald-100">
+          <div className="space-y-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-6 text-sm text-emerald-100">
             <p>Magic link sent to {email}.</p>
             <p>Please check your inbox (and spam) to continue.</p>
           </div>
@@ -53,7 +53,7 @@ export const SignIn = () => {
               <label htmlFor="email" className="text-xs uppercase tracking-[0.3em] text-white/60">
                 Manager email
               </label>
-              <div className="mt-2 flex items-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+              <div className="mt-2 flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-3">
                 <Mail className="h-4 w-4 text-white/40" aria-hidden />
                 <Input
                   id="email"

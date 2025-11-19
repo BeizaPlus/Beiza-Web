@@ -16,14 +16,14 @@ const LoadingState = () => (
           <span className="h-10 w-10 animate-pulse rounded-full bg-white/10" />
           <span className="h-24 w-1 shrink-0 animate-pulse rounded bg-white/10" />
         </div>
-        <div className="h-[320px] w-full animate-pulse rounded-3xl bg-white/5 lg:max-w-[520px]" />
+        <div className="h-[320px] w-full animate-pulse rounded-lg bg-white/5 lg:max-w-[520px]" />
       </div>
     ))}
   </div>
 );
 
 const EmptyState = () => (
-  <div className="rounded-3xl border border-white/10 bg-white/5 p-12 text-center text-white/70">
+  <div className="rounded-lg border border-white/10 bg-white/5 p-12 text-center text-white/70">
     <h3 className="text-2xl font-semibold text-white">Timeline coming soon</h3>
     <p className="mt-3 text-sm leading-relaxed text-white/70">
       The memoir curators are preparing this chapter. Please check back shortly for new stories.

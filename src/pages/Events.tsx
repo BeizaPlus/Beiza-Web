@@ -127,13 +127,13 @@ const Events = () => {
             {loading ? (
               <div className="grid gap-6 md:grid-cols-2">
                 {Array.from({ length: 4 }).map((_, index) => (
-                  <div key={index} className="glass-panel h-56 animate-pulse rounded-3xl border border-white/10 bg-white/5" />
+                  <div key={index} className="glass-panel h-56 animate-pulse rounded-lg border border-white/10 bg-white/5" />
                 ))}
               </div>
             ) : additionalEvents.length > 0 ? (
               <div className="grid gap-8 md:grid-cols-2">
                 {additionalEvents.map((event) => (
-                  <article key={event.id} className="glass-panel flex h-full flex-col overflow-hidden rounded-3xl border border-white/10">
+                  <article key={event.id} className="glass-panel flex h-full flex-col overflow-hidden rounded-lg border border-white/10">
                     {event.heroMedia?.src && event.heroMedia.src.trim() ? (
                       <div className="relative h-48 w-full overflow-hidden bg-black/20">
                         <img

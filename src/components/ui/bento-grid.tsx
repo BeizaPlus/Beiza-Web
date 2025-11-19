@@ -43,7 +43,7 @@ const BentoCard = ({
   <div
     key={name}
     className={cn(
-      "group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-xl",
+      "group relative col-span-3 flex flex-col justify-between overflow-hidden rounded-lg",
       // Glassmorphism dark theme
       "bg-white/10 backdrop-blur-md border border-white/20",
       "hover:bg-white/20 hover:border-white/30 transition-all duration-300",

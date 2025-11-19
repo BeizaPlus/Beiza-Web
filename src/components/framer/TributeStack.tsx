@@ -22,7 +22,7 @@ export const TributeStack = ({ tributes, className }: TributeStackProps) => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.5, ease: [0.12, 0.23, 0.5, 1], delay: index * 0.05 }}
-          className="glass-panel flex flex-col gap-4 rounded-3xl border border-white/10 p-6"
+          className="glass-panel flex flex-col gap-4 rounded-lg border border-white/10 p-6"
         >
           <div className="flex items-center gap-3">
             <div className="ring-background flex h-12 w-12 items-center justify-center rounded-full text-sm font-semibold uppercase text-white">

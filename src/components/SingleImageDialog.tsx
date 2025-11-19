@@ -114,7 +114,7 @@ export const SingleImageDialog = ({ isOpen, onClose, image }: SingleImageDialogP
       {/* Image info */}
       {(image.caption || image.memoirSlug || image.alt) && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
-          <div className="glass-card rounded-xl p-4 text-center border border-white/20 max-w-md">
+          <div className="glass-card rounded-lg p-4 text-center border border-white/20 max-w-md">
             {image.alt && (
               <p className="text-white font-medium mb-1">{image.alt}</p>
             )}

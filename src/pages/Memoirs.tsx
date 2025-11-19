@@ -19,6 +19,7 @@ import { useMemoirTimeline } from "@/hooks/useMemoirTimeline";
 import type { MemoirSummary, MemoirHighlight } from "@/types/memoir";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { ProductsPanel } from "@/components/shopify/ProductsPanel";
 
 const CTA_LABEL = "Commission a memoir";
 const CTA_HREF = "/contact";
@@ -40,7 +41,7 @@ const MemoirCard = ({ memoir }: { memoir: MemoirSummary }) => {
 
   return (
     <Link to={`/memoirs/${memoir.slug}`} className="group block" aria-label={`Open memoir: ${memoir.title}`}>
-      <article className="glass-panel flex h-full flex-col overflow-hidden rounded-3xl border border-white/10 transition-transform duration-300 group-hover:-translate-y-1">
+      <article className="glass-panel flex h-full flex-col overflow-hidden rounded-lg border border-white/10 transition-transform duration-300 group-hover:-translate-y-1">
         {memoir.heroMedia?.src ? (
           <div className="relative h-64 overflow-hidden">
             <img
@@ -106,7 +107,7 @@ const MemoirListView = ({
       </section>
       <section className="mx-auto w-full max-w-6xl px-6 py-8 lg:py-12">
         {isLoading && memoirs.length === 0 ? (
-          <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-3xl border border-white/10 p-16 text-center">
+          <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-lg border border-white/10 p-16 text-center">
             <span className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-primary" />
             <p className="max-w-md text-sm text-subtle">
               Fetching published memoirs. Please hold on as we load the stories.
@@ -114,7 +115,7 @@ const MemoirListView = ({
           </div>
         ) : null}
         {!isLoading && memoirs.length === 0 ? (
-          <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-3xl border border-white/10 p-16 text-center">
+          <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-lg border border-white/10 p-16 text-center">
             <p className="text-lg font-semibold text-white">Memoirs are on the way</p>
             <p className="max-w-md text-sm text-subtle">
               We’re crafting tribute memoirs for our families. Check back soon or start a conversation with us.
@@ -436,7 +437,7 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                               {Array.from({ length: 3 }).map((_, index) => (
                                 <div
                                   key={index}
-                                  className="glass-panel h-80 animate-pulse rounded-3xl border border-white/10 bg-white/5"
+                                  className="glass-panel h-80 animate-pulse rounded-lg border border-white/10 bg-white/5"
                                 />
                               ))}
                             </div>
@@ -447,7 +448,7 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                                 {highlights.map((highlight) => (
                                   <figure
                                     key={highlight.id}
-                                    className="glass-panel overflow-hidden rounded-3xl border border-white/10 cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
+                                    className="glass-panel overflow-hidden rounded-lg border border-white/10 cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
                                     onClick={() => handleImageClick(highlight)}
                                   >
                                     <img
@@ -489,7 +490,7 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                         {/* Content Warning Overlay */}
                         {!hasConsented && shouldLoadHighlights && (highlightsLoading || highlights.length > 0) ? (
                           <div className="absolute inset-0 z-10 flex items-center justify-center min-h-[400px]">
-                            <div className="glass-panel mx-4 max-w-lg rounded-3xl border border-white/20 bg-black/60 p-8 text-center backdrop-blur-md">
+                            <div className="glass-panel mx-4 max-w-lg rounded-lg border border-white/20 bg-black/60 p-8 text-center backdrop-blur-md">
                               <div className="space-y-6">
                                 <div className="space-y-2">
                                   <h3 className="text-2xl font-semibold text-white">Content Warning</h3>
@@ -532,7 +533,7 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                           {Array.from({ length: 3 }).map((_, index) => (
                             <div
                               key={index}
-                              className="glass-panel h-48 animate-pulse rounded-3xl border border-white/10 bg-white/5"
+                              className="glass-panel h-48 animate-pulse rounded-lg border border-white/10 bg-white/5"
                             />
                           ))}
                         </div>
@@ -574,7 +575,7 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                   {detailLoading && !liveStream ? (
                     <div className="space-y-6">
                       <div className="h-4 w-1/3 animate-pulse rounded-full bg-white/10" />
-                      <div className="aspect-video w-full animate-pulse rounded-3xl bg-white/5" />
+                      <div className="aspect-video w-full animate-pulse rounded-lg bg-white/5" />
                       <div className="h-4 w-1/2 animate-pulse rounded-full bg-white/10" />
                     </div>
                   ) : liveStream && (embedUrl || liveStream.url) ? (
@@ -590,7 +591,7 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                         </div>
                         <CTAButton to={CTA_HREF} label={CTA_LABEL} />
                       </div>
-                      <div className="relative w-full overflow-hidden rounded-3xl border border-white/10 bg-black">
+                      <div className="relative w-full overflow-hidden rounded-lg border border-white/10 bg-black">
                         {embedUrl ? (
                           <iframe
                             src={`${embedUrl}?rel=0&modestbranding=1`}
@@ -648,6 +649,9 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
             </div>
           </section>
         ) : null}
+
+        {/* Products Panel for memoir-related products */}
+        {memoirId && <ProductsPanel memoirId={memoirId} />}
       </main>
       <Footer />
 

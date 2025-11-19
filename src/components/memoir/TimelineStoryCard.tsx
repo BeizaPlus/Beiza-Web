@@ -19,12 +19,12 @@ export const TimelineStoryCard = ({ entry, orientation = "right", onSelect }: Ti
   return (
     <article
       className={cn(
-        "group relative flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 text-left text-white shadow-glass transition hover:-translate-y-1 hover:bg-white/10 hover:shadow-xl",
+        "group relative flex flex-col gap-4 rounded-lg border border-white/10 bg-white/5 p-6 text-left text-white shadow-glass transition hover:-translate-y-1 hover:bg-white/10 hover:shadow-xl",
         "backdrop-blur",
         orientation === "left" ? "lg:mr-14" : "lg:ml-14"
       )}
     >
-      <div className="overflow-hidden rounded-2xl border border-white/10">
+      <div className="overflow-hidden rounded-lg border border-white/10">
         <div className="relative aspect-[3/2] w-full overflow-hidden">
           <img
             src={entry.image.src}

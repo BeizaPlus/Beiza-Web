@@ -20,7 +20,7 @@ export const MutationErrorBanner = ({
 }: MutationErrorBannerProps) => (
   <div
     className={cn(
-      "flex items-start gap-3 rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-100",
+      "flex items-start gap-3 rounded-lg border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-100",
       className,
     )}
     role="alert"

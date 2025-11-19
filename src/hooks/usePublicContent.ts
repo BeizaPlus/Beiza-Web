@@ -179,7 +179,8 @@ export const useSiteSettings = () =>
     queryKey: ["public-site-settings"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<SiteSettings | null> => {
-      if (!isSupabaseReady) {
+      if (!isSupabaseReady)
+      {
         return null;
       }
 
@@ -188,7 +189,8 @@ export const useSiteSettings = () =>
         .select("key, value")
         .order("key", { ascending: true });
 
-      if (error || !data) {
+      if (error || !data)
+      {
         handleError("site_settings", error);
         return null;
       }
@@ -225,7 +227,8 @@ export const useHeroSection = (slug = "landing-hero") =>
     queryKey: ["public-hero-section", slug],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<HeroSection | null> => {
-      if (!isSupabaseReady) {
+      if (!isSupabaseReady)
+      {
         return null;
       }
 
@@ -236,7 +239,8 @@ export const useHeroSection = (slug = "landing-hero") =>
         .eq("is_published", true)
         .maybeSingle();
 
-      if (error || !data) {
+      if (error || !data)
+      {
         handleError("hero_sections", error);
         return null;
       }
@@ -258,7 +262,8 @@ export const useOfferings = () =>
     queryKey: ["public-offerings"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<Offering[]> => {
-      if (!isSupabaseReady) {
+      if (!isSupabaseReady)
+      {
         return [];
       }
 
@@ -268,7 +273,8 @@ export const useOfferings = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (error || !data) {
+      if (error || !data)
+      {
         handleError("offerings", error);
         return [];
       }
@@ -293,13 +299,15 @@ export const useTestimonials = (surfaces?: string | string[]) =>
 
       const applySurfaceFilter = (items: readonly Testimonial[]): Testimonial[] => {
         const normalized = items.map((item) => ({ ...item }));
-        if (filterSurfaces.length === 0) {
+        if (filterSurfaces.length === 0)
+        {
           return normalized;
         }
         return normalized.filter((item) => item.surfaces.some((surface) => filterSurfaces.includes(surface)));
       };
 
-      if (!isSupabaseReady) {
+      if (!isSupabaseReady)
+      {
         return [];
       }
 
@@ -309,13 +317,15 @@ export const useTestimonials = (surfaces?: string | string[]) =>
         .eq("is_published", true)
         .order("updated_at", { ascending: false });
 
-      if (filterSurfaces.length > 0) {
+      if (filterSurfaces.length > 0)
+      {
         query = query.contains("surfaces", filterSurfaces);
       }
 
       const { data, error } = await query;
 
-      if (error || !data) {
+      if (error || !data)
+      {
         handleError("testimonials", error);
         return [];
       }
@@ -337,7 +347,8 @@ export const useFaqs = () =>
     queryKey: ["public-faqs"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<Faq[]> => {
-      if (!isSupabaseReady) {
+      if (!isSupabaseReady)
+      {
         return [];
       }
 
@@ -347,7 +358,8 @@ export const useFaqs = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (error || !data) {
+      if (error || !data)
+      {
         handleError("faqs", error);
         return [];
       }
@@ -366,7 +378,8 @@ export const usePricingTiers = () =>
     queryKey: ["public-pricing-tiers"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<PricingTier[]> => {
-      if (!isSupabaseReady) {
+      if (!isSupabaseReady)
+      {
         return [];
       }
 
@@ -376,7 +389,8 @@ export const usePricingTiers = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (tiersError || !tiers) {
+      if (tiersError || !tiers)
+      {
         handleError("pricing_tiers", tiersError);
         return [];
       }
@@ -389,13 +403,15 @@ export const usePricingTiers = () =>
         .in("tier_id", tierIds)
         .order("display_order", { ascending: true });
 
-      if (featuresError || !features) {
+      if (featuresError || !features)
+      {
         handleError("pricing_features", featuresError);
       }
 
       const featuresByTier = new Map<string, string[]>();
       features?.forEach((feature) => {
-        if (!featuresByTier.has(feature.tier_id)) {
+        if (!featuresByTier.has(feature.tier_id))
+        {
           featuresByTier.set(feature.tier_id, []);
         }
         featuresByTier.get(feature.tier_id)!.push(feature.label);
@@ -420,7 +436,8 @@ export const useFeaturedEvent = () =>
     queryKey: ["public-featured-event"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<FeaturedEvent | null> => {
-      if (!isSupabaseReady) {
+      if (!isSupabaseReady)
+      {
         return null;
       }
 
@@ -434,48 +451,57 @@ export const useFeaturedEvent = () =>
         .order("updated_at", { ascending: false })
         .limit(1);
 
-      if (error || !data || data.length === 0) {
+      if (error || !data || data.length === 0)
+      {
         handleError("events", error);
         return null;
       }
 
       const event = data[0];
-      
+
       // Parse hero_media - it's stored as JSONB in Supabase
       let heroMedia: { src: string; alt?: string | null } | null = null;
-      if (event.hero_media) {
-        try {
+      if (event.hero_media)
+      {
+        try
+        {
           // Handle different possible structures
           let media: Record<string, unknown> | null = null;
-          
-          if (typeof event.hero_media === "string") {
+
+          if (typeof event.hero_media === "string")
+          {
             // If it's a string, try to parse it
             media = JSON.parse(event.hero_media) as Record<string, unknown>;
-          } else if (typeof event.hero_media === "object" && event.hero_media !== null) {
+          } else if (typeof event.hero_media === "object" && event.hero_media !== null)
+          {
             media = event.hero_media as Record<string, unknown>;
           }
-          
-            if (media) {
-              // Check for src in various possible locations
-              const srcValue = media.src || media.url || media.image || media.path || media.image_url;
-              if (typeof srcValue === "string" && srcValue.trim()) {
-                const src = srcValue.trim();
-                
-                // Convert storage path to public URL if needed
-                let finalSrc = src;
-                if (!src.startsWith("http://") && !src.startsWith("https://")) {
-                  // It's a storage path - convert to public URL
-                  const { data: publicUrlData } = supabase.storage.from("public-assets").getPublicUrl(src);
-                  finalSrc = publicUrlData.publicUrl;
-                }
-                
-                heroMedia = {
-                  src: finalSrc,
-                  alt: typeof media.alt === "string" ? media.alt : (typeof media.title === "string" ? media.title : null),
-                };
+
+          if (media)
+          {
+            // Check for src in various possible locations
+            const srcValue = media.src || media.url || media.image || media.path || media.image_url;
+            if (typeof srcValue === "string" && srcValue.trim())
+            {
+              const src = srcValue.trim();
+
+              // Convert storage path to public URL if needed
+              let finalSrc = src;
+              if (!src.startsWith("http://") && !src.startsWith("https://"))
+              {
+                // It's a storage path - convert to public URL
+                const { data: publicUrlData } = supabase.storage.from("public-assets").getPublicUrl(src);
+                finalSrc = publicUrlData.publicUrl;
               }
+
+              heroMedia = {
+                src: finalSrc,
+                alt: typeof media.alt === "string" ? media.alt : (typeof media.title === "string" ? media.title : null),
+              };
             }
-        } catch (error) {
+          }
+        } catch (error)
+        {
           console.warn("[usePublicContent] Failed to parse hero_media:", error);
         }
       }
@@ -498,7 +524,8 @@ export const usePublishedEvents = () =>
     queryKey: ["public-events"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<PublicEvent[]> => {
-      if (!isSupabaseReady) {
+      if (!isSupabaseReady)
+      {
         return [];
       }
 
@@ -510,7 +537,8 @@ export const usePublishedEvents = () =>
         .eq("is_published", true)
         .order("occurs_on", { ascending: true, nullsFirst: false });
 
-      if (error || !data) {
+      if (error || !data)
+      {
         handleError("events", error);
         return [];
       }
@@ -518,39 +546,47 @@ export const usePublishedEvents = () =>
       return data.map((event) => {
         // Parse hero_media - it's stored as JSONB in Supabase
         let heroMedia: { src: string; alt?: string | null } | null = null;
-        if (event.hero_media) {
-          try {
+        if (event.hero_media)
+        {
+          try
+          {
             // Handle different possible structures
             let media: Record<string, unknown> | null = null;
-            
-            if (typeof event.hero_media === "string") {
+
+            if (typeof event.hero_media === "string")
+            {
               // If it's a string, try to parse it
               media = JSON.parse(event.hero_media) as Record<string, unknown>;
-            } else if (typeof event.hero_media === "object" && event.hero_media !== null) {
+            } else if (typeof event.hero_media === "object" && event.hero_media !== null)
+            {
               media = event.hero_media as Record<string, unknown>;
             }
-            
-            if (media) {
+
+            if (media)
+            {
               // Check for src in various possible locations
               const srcValue = media.src || media.url || media.image || media.path || media.image_url;
-              if (typeof srcValue === "string" && srcValue.trim()) {
+              if (typeof srcValue === "string" && srcValue.trim())
+              {
                 const src = srcValue.trim();
-                
+
                 // Convert storage path to public URL if needed
                 let finalSrc = src;
-                if (!src.startsWith("http://") && !src.startsWith("https://")) {
+                if (!src.startsWith("http://") && !src.startsWith("https://"))
+                {
                   // It's a storage path - convert to public URL
                   const { data: publicUrlData } = supabase.storage.from("public-assets").getPublicUrl(src);
                   finalSrc = publicUrlData.publicUrl;
                 }
-                
+
                 heroMedia = {
                   src: finalSrc,
                   alt: typeof media.alt === "string" ? media.alt : (typeof media.title === "string" ? media.title : null),
                 };
               }
             }
-          } catch (error) {
+          } catch (error)
+          {
             console.warn("[usePublicContent] Failed to parse hero_media for event:", event.id, error);
           }
         }
@@ -576,7 +612,8 @@ export const useContactChannels = () =>
     queryKey: ["public-contact-channels"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<ContactChannel[]> => {
-      if (!isSupabaseReady) {
+      if (!isSupabaseReady)
+      {
         return [];
       }
 
@@ -586,7 +623,8 @@ export const useContactChannels = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (error || !data) {
+      if (error || !data)
+      {
         handleError("contact_channels", error);
         return [];
       }
@@ -606,7 +644,8 @@ export const useMemoirTributes = (memoirSlug: string) =>
     queryKey: ["public-memoir-tributes", memoirSlug],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<MemoirTribute[]> => {
-      if (!isSupabaseReady) {
+      if (!isSupabaseReady)
+      {
         return [];
       }
 
@@ -617,7 +656,8 @@ export const useMemoirTributes = (memoirSlug: string) =>
         .eq("status", "published")
         .maybeSingle();
 
-      if (memoirError || !memoir) {
+      if (memoirError || !memoir)
+      {
         handleError("memoirs", memoirError);
         return [];
       }
@@ -628,7 +668,8 @@ export const useMemoirTributes = (memoirSlug: string) =>
         .eq("memoir_id", memoir.id)
         .order("display_order", { ascending: true });
 
-      if (error || !data) {
+      if (error || !data)
+      {
         handleError("memoir_tributes", error);
         return [];
       }
@@ -644,7 +685,8 @@ export const useMemoirTributes = (memoirSlug: string) =>
   });
 
 const fetchGalleryPage = async (offset: number, limit: number): Promise<GalleryPage> => {
-  if (!isSupabaseReady) {
+  if (!isSupabaseReady)
+  {
     return { items: [], nextOffset: null };
   }
 
@@ -666,7 +708,8 @@ const fetchGalleryPage = async (offset: number, limit: number): Promise<GalleryP
     .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
-  if (!dbError && dbData && dbData.length > 0) {
+  if (!dbError && dbData && dbData.length > 0)
+  {
     // Use database records
     const items: GalleryImageAsset[] = dbData.map((row) => {
       const { data: publicUrlData } = supabase.storage.from("public-assets").getPublicUrl(row.storage_path);
@@ -700,7 +743,8 @@ const fetchGalleryPage = async (offset: number, limit: number): Promise<GalleryP
     sortBy: { column: "updated_at", order: "desc" },
   });
 
-  if (error || !data) {
+  if (error || !data)
+  {
     handleError("storage.public-assets", error);
     return { items: [], nextOffset: null };
   }
@@ -796,12 +840,15 @@ type BlogPostRow = {
 const mapBlogPost = (row: BlogPostRow): BlogPost => {
   // Convert featured_image src from storage path to public URL if needed
   let featuredImageSrc: string | undefined = undefined;
-  if (row.featured_image?.src) {
+  if (row.featured_image?.src)
+  {
     const src = row.featured_image.src;
     // If it's already a full URL (http/https), use it as-is
-    if (src.startsWith("http://") || src.startsWith("https://")) {
+    if (src.startsWith("http://") || src.startsWith("https://"))
+    {
       featuredImageSrc = src;
-    } else {
+    } else
+    {
       // Otherwise, it's a storage path - convert to public URL
       const { data } = supabase.storage.from("public-assets").getPublicUrl(src);
       featuredImageSrc = data.publicUrl;
@@ -816,9 +863,9 @@ const mapBlogPost = (row: BlogPostRow): BlogPost => {
     content: row.content,
     featuredImage: featuredImageSrc
       ? {
-          src: featuredImageSrc,
-          alt: row.featured_image?.alt ?? row.title,
-        }
+        src: featuredImageSrc,
+        alt: row.featured_image?.alt ?? row.title,
+      }
       : null,
     publishedAt: row.published_at,
     updatedAt: row.updated_at,
@@ -826,7 +873,8 @@ const mapBlogPost = (row: BlogPostRow): BlogPost => {
 };
 
 const fetchBlogPosts = async (): Promise<BlogPost[]> => {
-  if (!isSupabaseReady) {
+  if (!isSupabaseReady)
+  {
     return [];
   }
 
@@ -837,7 +885,8 @@ const fetchBlogPosts = async (): Promise<BlogPost[]> => {
     .order("published_at", { ascending: false, nullsFirst: false })
     .order("updated_at", { ascending: false });
 
-  if (error || !data) {
+  if (error || !data)
+  {
     handleError("blog_posts.list", error);
     return [];
   }
@@ -848,7 +897,8 @@ const fetchBlogPosts = async (): Promise<BlogPost[]> => {
 const fetchBlogPost = async (slug: string): Promise<BlogPost | undefined> => {
   if (!slug) return undefined;
 
-  if (!isSupabaseReady) {
+  if (!isSupabaseReady)
+  {
     return undefined;
   }
 
@@ -859,7 +909,8 @@ const fetchBlogPost = async (slug: string): Promise<BlogPost | undefined> => {
     .eq("status", "published")
     .maybeSingle<BlogPostRow>();
 
-  if (error || !data) {
+  if (error || !data)
+  {
     handleError("blog_posts.detail", error);
     return undefined;
   }
@@ -882,3 +933,43 @@ export const useBlogPost = (slug?: string) =>
     enabled: Boolean(slug),
   });
 
+export type Ad = {
+  id: string;
+  title: string;
+  imageUrl: string;
+  linkUrl: string;
+  placement: string;
+};
+
+export const useAds = (placement: string) =>
+  useQuery({
+    queryKey: ["public-ads", placement],
+    staleTime: STALE_TIME,
+    queryFn: async (): Promise<Ad[]> => {
+      if (!isSupabaseReady)
+      {
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from("ads")
+        .select("id, title, image_url, link_url, placement")
+        .eq("placement", placement)
+        .eq("status", "active")
+        .order("created_at", { ascending: false });
+
+      if (error || !data)
+      {
+        handleError("ads", error);
+        return [];
+      }
+
+      return data.map((ad) => ({
+        id: ad.id,
+        title: ad.title,
+        imageUrl: ad.image_url,
+        linkUrl: ad.link_url,
+        placement: ad.placement,
+      }));
+    },
+  });

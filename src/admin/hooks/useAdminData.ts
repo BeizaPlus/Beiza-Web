@@ -3,7 +3,8 @@ import { getSupabaseClient } from "@/lib/supabaseClient";
 
 const ensureClient = () => {
   const client = getSupabaseClient({ privileged: true }) ?? getSupabaseClient();
-  if (!client) {
+  if (!client)
+  {
     throw new Error("Supabase client is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
   }
   return client;
@@ -46,7 +47,7 @@ type OfferingRecord = {
   is_published: boolean;
 };
 
-type  EventRecord = {
+type EventRecord = {
   id: string;
   slug: string;
   title: string;
@@ -84,19 +85,23 @@ type GalleryAssetRecord = {
 const deriveAssetType = (name: string, mimeType?: string | null): ContentAsset["type"] => {
   const source = mimeType ?? name.split(".").pop()?.toLowerCase();
 
-  if (!source) {
+  if (!source)
+  {
     return "other";
   }
 
-  if (source.includes("image") || ["jpg", "jpeg", "png", "gif", "bmp", "svg", "webp", "avif"].includes(source)) {
+  if (source.includes("image") || ["jpg", "jpeg", "png", "gif", "bmp", "svg", "webp", "avif"].includes(source))
+  {
     return "image";
   }
 
-  if (source.includes("video") || ["mp4", "mov", "mkv", "webm"].includes(source)) {
+  if (source.includes("video") || ["mp4", "mov", "mkv", "webm"].includes(source))
+  {
     return "video";
   }
 
-  if (source.includes("audio") || ["mp3", "wav", "aac", "ogg", "flac"].includes(source)) {
+  if (source.includes("audio") || ["mp3", "wav", "aac", "ogg", "flac"].includes(source))
+  {
     return "audio";
   }
 
@@ -120,7 +125,8 @@ async function fetchMemoirs(): Promise<MemoirRecord[]> {
     )
     .order("updated_at", { ascending: false });
 
-  if (error) {
+  if (error)
+  {
     throw new Error(`Failed to load memoirs: ${error.message}`);
   }
 
@@ -151,7 +157,8 @@ async function fetchAssets(): Promise<ContentAsset[]> {
     sortBy: { column: "updated_at", order: "desc" },
   });
 
-  if (!rootError && rootData) {
+  if (!rootError && rootData)
+  {
     // Get subdirectories from root
     const subdirs = rootData
       .filter((item) => item && !item.id && item.name.endsWith("/"))
@@ -173,7 +180,8 @@ async function fetchAssets(): Promise<ContentAsset[]> {
   }
 
   // List files from each directory
-  for (const dir of directoriesToCheck) {
+  for (const dir of directoriesToCheck)
+  {
     if (dir === "") continue; // Already processed root
 
     const { data, error } = await client.storage.from(bucket).list(dir, {
@@ -181,7 +189,8 @@ async function fetchAssets(): Promise<ContentAsset[]> {
       sortBy: { column: "updated_at", order: "desc" },
     });
 
-    if (error) {
+    if (error)
+    {
       // Directory might not exist, skip silently
       continue;
     }
@@ -232,7 +241,8 @@ async function fetchTestimonials(): Promise<TestimonialRecord[]> {
     .select("id, author, role, quote, surfaces, is_published, updated_at")
     .order("updated_at", { ascending: false });
 
-  if (error) {
+  if (error)
+  {
     throw new Error(`Failed to load testimonials: ${error.message}`);
   }
 
@@ -256,7 +266,8 @@ async function fetchOfferings(): Promise<OfferingRecord[]> {
     .order("display_order", { ascending: true })
     .order("updated_at", { ascending: false });
 
-  if (error) {
+  if (error)
+  {
     throw new Error(`Failed to load offerings: ${error.message}`);
   }
 
@@ -278,7 +289,8 @@ async function fetchEvents(): Promise<EventRecord[]> {
     .select("id, title, slug, location, occurs_on, is_featured, is_published")
     .order("occurs_on", { ascending: false });
 
-  if (error) {
+  if (error)
+  {
     throw new Error(`Failed to load events: ${error.message}`);
   }
 
@@ -293,7 +305,8 @@ async function fetchSettings(): Promise<SiteSettingRecord[]> {
     .select("key, value")
     .order("key", { ascending: true });
 
-  if (error) {
+  if (error)
+  {
     throw new Error(`Failed to load settings: ${error.message}`);
   }
 
@@ -308,7 +321,8 @@ async function fetchManagers(): Promise<ManagerRecord[]> {
     .select("id, email, role, status, last_sign_in_at")
     .order("created_at", { ascending: true });
 
-  if (error) {
+  if (error)
+  {
     throw new Error(`Failed to load managers: ${error.message}`);
   }
 
@@ -392,11 +406,13 @@ async function fetchPricingTiers(): Promise<PricingTierRecord[]> {
     .select("id, name, tagline, price_label, description, badge_label, is_recommended, is_published, display_order, updated_at")
     .order("display_order", { ascending: true });
 
-  if (tiersError) {
+  if (tiersError)
+  {
     throw new Error(`Failed to load pricing tiers: ${tiersError.message}`);
   }
 
-  if (!tiers || tiers.length === 0) {
+  if (!tiers || tiers.length === 0)
+  {
     return [];
   }
 
@@ -408,7 +424,8 @@ async function fetchPricingTiers(): Promise<PricingTierRecord[]> {
     .in("tier_id", tierIds)
     .order("display_order", { ascending: true });
 
-  if (featuresError) {
+  if (featuresError)
+  {
     throw new Error(`Failed to load pricing features: ${featuresError.message}`);
   }
 
@@ -463,13 +480,14 @@ async function fetchGalleryAssets(): Promise<GalleryAssetRecord[]> {
     )
     .order("created_at", { ascending: false });
 
-  if (error) {
+  if (error)
+  {
     throw new Error(`Failed to load gallery assets: ${error.message}`);
   }
 
   return (data ?? []).map((item) => {
     const memoirs = item.memoirs as { title: string } | { title: string }[] | null;
-    const memoirTitle = Array.isArray(memoirs) 
+    const memoirTitle = Array.isArray(memoirs)
       ? (memoirs[0]?.title ?? null)
       : (memoirs?.title ?? null);
 
@@ -514,7 +532,8 @@ async function fetchBlogPosts(): Promise<BlogPostRecord[]> {
     .select("id, slug, title, excerpt, status, published_at, last_published_at, updated_at")
     .order("updated_at", { ascending: false });
 
-  if (error) {
+  if (error)
+  {
     throw new Error(`Failed to load blog posts: ${error.message}`);
   }
 
@@ -538,3 +557,37 @@ export const useBlogPostsAdmin = () =>
     retry: 1,
   });
 
+export type AdsRecord = {
+  id: string;
+  title: string;
+  image_url: string;
+  link_url: string;
+  placement: string;
+  status: "draft" | "active" | "archived";
+  created_at: string;
+  updated_at: string;
+};
+
+async function fetchAds(): Promise<AdsRecord[]> {
+  const client = ensureClient();
+
+  const { data, error } = await client
+    .from("ads")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error)
+  {
+    throw new Error(`Failed to load ads: ${error.message}`);
+  }
+
+  return data ?? [];
+}
+
+export const useAdsAdmin = () =>
+  useQuery({
+    queryKey: ["admin-ads"],
+    queryFn: fetchAds,
+    staleTime: 1000 * 60,
+    retry: 1,
+  });

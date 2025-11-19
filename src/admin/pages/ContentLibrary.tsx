@@ -79,8 +79,8 @@ const ContentLibrary = () => {
                   {galleryAssets.map((asset) => {
                     const imageUrl = getImageUrl(asset.storage_path);
                     return (
-                      <div key={asset.id} className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
-                        <div className="aspect-video overflow-hidden rounded-xl border border-white/10 bg-black/40">
+                      <div key={asset.id} className="flex flex-col gap-3 rounded-lg border border-white/10 bg-white/5 p-4">
+                        <div className="aspect-video overflow-hidden rounded-lg border border-white/10 bg-black/40">
                           {imageUrl ? (
                             <img src={imageUrl} alt={asset.alt} className="h-full w-full object-cover" loading="lazy" />
                           ) : (
@@ -168,8 +168,8 @@ const ContentLibrary = () => {
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {assets.map((asset) => (
-                    <div key={asset.id} className="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 p-4">
-                      <div className="aspect-video overflow-hidden rounded-xl border border-white/10 bg-black/40">
+                    <div key={asset.id} className="flex flex-col gap-3 rounded-lg border border-white/10 bg-white/5 p-4">
+                      <div className="aspect-video overflow-hidden rounded-lg border border-white/10 bg-black/40">
                         {asset.type === "image" ? (
                           <img src={asset.publicUrl} alt={asset.name} className="h-full w-full object-cover" loading="lazy" />
                         ) : (

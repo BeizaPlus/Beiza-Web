@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { BookOpen, CalendarDays, Images, LayoutDashboard, ListChecks, Megaphone, Settings, Users, DollarSign, FileText } from "lucide-react";
+import { BookOpen, CalendarDays, Images, LayoutDashboard, ListChecks, Megaphone, Settings, Users, DollarSign, FileText, Package, ShoppingCart, RefreshCw, MessageSquare } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { useSupabaseSession } from "@/hooks/useSupabaseSession";
 
@@ -12,8 +12,12 @@ const navItems = [
   { to: "/admin/settings", label: "Site Settings", icon: Settings },
   { to: "/admin/offerings", label: "Offerings", icon: ListChecks },
   { to: "/admin/pricing", label: "Pricing", icon: DollarSign },
-  { to: "/admin/testimonials", label: "Testimonials", icon: Megaphone },
+  { to: "/admin/testimonials", label: "Testimonials", icon: MessageSquare },
   { to: "/admin/users", label: "Users & Roles", icon: Users },
+  { to: "/admin/products", label: "Shopify Products", icon: Package },
+  { to: "/admin/orders", label: "Orders", icon: ShoppingCart },
+  { to: "/admin/shopify-sync", label: "Shopify Sync", icon: RefreshCw },
+  { to: "/admin/ads", label: "Ads & Sponsorships", icon: Megaphone },
 ];
 
 const signOut = async () => {
@@ -42,7 +46,7 @@ export const AdminNav = () => {
             to={item.to}
             end={item.end}
             className={({ isActive }) =>
-              `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition ${isActive
+              `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${isActive
                 ? "admin-keep-white bg-slate-900 text-white shadow-sm"
                 : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
               }`
@@ -55,14 +59,14 @@ export const AdminNav = () => {
       </nav>
 
       <div className="mt-6 space-y-3">
-        <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+        <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
           <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Signed in as</p>
           <p className="mt-1 text-sm font-medium text-slate-700">{userEmail}</p>
         </div>
         <button
           type="button"
           onClick={signOut}
-          className="w-full rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+          className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
         >
           Sign out
         </button>

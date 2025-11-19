@@ -18,12 +18,12 @@ export const FeatureCard = ({ title, description, icon, chips, className }: Feat
       transition={{ duration: 0.6, ease: [0.12, 0.23, 0.5, 1] }}
       viewport={{ once: true, margin: "-100px" }}
       className={clsx(
-        "glass-panel flex h-full flex-col gap-4 rounded-[30px] border border-white/10 p-6 md:p-8",
+        "glass-panel flex h-full flex-col gap-4 rounded-lg border border-white/10 p-6 md:p-8",
         className
       )}
     >
       {icon ? (
-        <div className="ring-background mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-black/60 text-white">
+        <div className="ring-background mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-black/60 text-white">
           {icon}
         </div>
       ) : null}

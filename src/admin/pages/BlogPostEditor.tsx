@@ -334,7 +334,7 @@ const BlogPostEditor = () => {
   ) : (
     <>
       {formError ? (
-        <div className="flex items-center gap-2 rounded-xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+        <div className="flex items-center gap-2 rounded-lg border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
           <AlertCircle className="h-4 w-4" />
           <span>{formError}</span>
         </div>
@@ -420,9 +420,9 @@ const BlogPostEditor = () => {
               <p className="text-sm text-white/70">
                 Upload a featured image that will be displayed with the blog post.
               </p>
-              <div className="space-y-3 rounded-2xl border border-dashed border-white/20 bg-white/5 p-4">
+              <div className="space-y-3 rounded-lg border border-dashed border-white/20 bg-white/5 p-4">
                 <div className="flex flex-col gap-4 md:flex-row">
-                  <div className="flex h-48 w-full items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/40 md:w-1/2">
+                  <div className="flex h-48 w-full items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-black/40 md:w-1/2">
                     {featuredImagePreview ? (
                       <img src={featuredImagePreview} alt="Featured image preview" className="h-full w-full object-cover" />
                     ) : (

@@ -33,7 +33,7 @@ export const TestimonialsCarousel = ({ testimonials, className, variant = "dark"
   }, [emblaApi]);
 
   const wrapperClasses = clsx(
-    "rounded-3xl border p-6 md:p-10",
+    "rounded-lg border p-6 md:p-10",
     variant === "light"
       ? "border-black/10 bg-white text-black shadow-glass"
       : "glass-panel border-white/10 text-white"
@@ -44,8 +44,8 @@ export const TestimonialsCarousel = ({ testimonials, className, variant = "dark"
     : "ring-background flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-white/20";
 
   const cardClasses = variant === "light"
-    ? "min-w-0 shrink-0 grow-0 basis-full space-y-4 rounded-3xl border border-black/10 bg-black/5 p-6 md:basis-1/2"
-    : "min-w-0 shrink-0 grow-0 basis-full space-y-4 rounded-3xl border border-white/10 bg-black/40 p-6 md:basis-1/2";
+    ? "min-w-0 shrink-0 grow-0 basis-full space-y-4 rounded-lg border border-black/10 bg-black/5 p-6 md:basis-1/2"
+    : "min-w-0 shrink-0 grow-0 basis-full space-y-4 rounded-lg border border-white/10 bg-black/40 p-6 md:basis-1/2";
 
   const quoteClasses = variant === "light" ? "text-base leading-relaxed text-neutral-800" : "text-base leading-relaxed text-white";
   const authorClasses = variant === "light" ? "font-medium text-neutral-900" : "font-medium text-white";

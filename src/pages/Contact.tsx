@@ -78,7 +78,7 @@ const ContactPage = () => {
                 description="Tell us about the tribute you have in mind — we’ll craft a roadmap, timeline, and experience that honours your loved one."
               />
 
-              <div className="glass-panel flex flex-col gap-6 rounded-3xl border border-white/10 p-6 md:p-8">
+              <div className="glass-panel flex flex-col gap-6 rounded-lg border border-white/10 p-6 md:p-8">
                 <div className="flex items-center gap-4">
                   <span className="ring-background flex h-12 w-12 items-center justify-center rounded-full text-white">
                     <Phone className="h-5 w-5" strokeWidth={1.5} />
@@ -168,7 +168,7 @@ const ContactPage = () => {
                       name="service"
                       value={formData.service}
                       onChange={handleInputChange}
-                      className="mt-2 w-full rounded-xl border border-white/10 bg-white px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="mt-2 w-full rounded-lg border border-white/10 bg-white px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="">Select…</option>
                       <option value="Lite">Lite</option>

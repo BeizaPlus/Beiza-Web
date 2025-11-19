@@ -17,10 +17,14 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 const Events = lazy(() => import("./pages/Events"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Users = lazy(() => import("./pages/Users"));
+const Products = lazy(() => import("./pages/Products"));
+const Orders = lazy(() => import("./pages/Orders"));
+const ShopifySync = lazy(() => import("./pages/ShopifySync"));
+const Ads = lazy(() => import("./pages/Ads"));
 
 const LoadingView = () => (
   <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
-    <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-6 py-4">
+    <div className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/5 px-6 py-4">
       <Loader2 className="h-5 w-5 animate-spin" />
       <span className="text-sm uppercase tracking-[0.3em] text-white/70">Loading admin...</span>
     </div>
@@ -62,6 +66,10 @@ export const AdminApp = () => {
           <Route path="offerings" element={<Offerings />} />
           <Route path="pricing" element={<Pricing />} />
           <Route path="users" element={<Users />} />
+          <Route path="products" element={<Products />} />
+          <Route path="orders" element={<Orders />} />
+          <Route path="shopify-sync" element={<ShopifySync />} />
+          <Route path="ads" element={<Ads />} />
           <Route path="*" element={<Navigate to="." replace />} />
         </Routes>
       </Suspense>

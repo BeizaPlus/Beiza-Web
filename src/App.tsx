@@ -11,6 +11,8 @@ import Events from "./pages/Events";
 import Memoirs from "./pages/Memoirs";
 import BlogPosts from "./pages/BlogPosts";
 import BlogPost from "./pages/BlogPost";
+import OrderConfirmation from "./pages/OrderConfirmation";
+import Download from "./pages/Download";
 import NotFound from "./pages/NotFound";
 import AdminApp from "./admin/AdminApp";
 
@@ -31,6 +33,8 @@ const App = () => (
           <Route path="/memoirs/:slug?" element={<Memoirs />} />
           <Route path="/blog" element={<BlogPosts />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
+          <Route path="/order-confirmation" element={<OrderConfirmation />} />
+          <Route path="/download" element={<Download />} />
           <Route path="/admin/*" element={<AdminApp />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

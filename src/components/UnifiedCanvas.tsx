@@ -35,7 +35,7 @@ export const UnifiedCanvas = ({ onImageClick, resetViewToken = 0 }: UnifiedCanva
   if (isLoading && galleryImages.length === 0) {
     return (
       <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-transparent">
-        <div className="glass-card rounded-2xl p-8 text-center">
+        <div className="glass-card rounded-lg p-8 text-center">
           <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
           <p className="text-white">Loading gallery...</p>
         </div>
@@ -50,7 +50,7 @@ export const UnifiedCanvas = ({ onImageClick, resetViewToken = 0 }: UnifiedCanva
       <div className="absolute left-4 top-4 z-20">
         <button
           onClick={handleLogoClick}
-          className="group flex items-center gap-3 rounded-xl p-3 transition-all duration-300 hover:bg-white/10"
+          className="group flex items-center gap-3 rounded-lg p-3 transition-all duration-300 hover:bg-white/10"
         >
           <img
             src="/Head.svg"
@@ -67,7 +67,7 @@ export const UnifiedCanvas = ({ onImageClick, resetViewToken = 0 }: UnifiedCanva
 
       {location.pathname === "/" && (
         <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 transform z-10 md:block">
-          <div className="glass-card rounded-2xl border border-white/20 p-6 text-center shadow-xl">
+          <div className="glass-card rounded-lg border border-white/20 p-6 text-center shadow-xl">
             <h3 className="mb-2 text-xl font-serif text-white">
               <em className="italic text-primary">Turbulent Waves</em> Gallery
             </h3>

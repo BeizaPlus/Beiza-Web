@@ -6,6 +6,8 @@ import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FeatureCard } from "@/components/framer/FeatureCard";
 import { TestimonialsCarousel } from "@/components/framer/TestimonialsCarousel";
 import { CTAButton } from "@/components/framer/CTAButton";
+import { ProductsPanel } from "@/components/shopify/ProductsPanel";
+import { AdZone } from "@/components/AdZone";
 import { Palette, Heart, FileText, Monitor, Box, Cloud, Sparkles } from "lucide-react";
 import {
   useFaqs,
@@ -158,6 +160,9 @@ const Landing = () => {
       />
 
       <main className="flex flex-col pb-24 lg:pb-32">
+        <div className="mx-auto mt-8 w-full max-w-6xl px-6">
+          <AdZone placement="home_hero" />
+        </div>
         <section className="mx-auto max-w-6xl px-6 py-24 lg:py-32">
           <SectionHeader
             eyebrow="Offerings"
@@ -199,7 +204,7 @@ const Landing = () => {
                 {faqList.map((faq) => (
                   <details
                     key={faq.id}
-                    className="rounded-3xl border border-black/10 bg-white p-6 shadow-glass transition hover:shadow-lg"
+                    className="rounded-lg border border-black/10 bg-white p-6 shadow-glass transition hover:shadow-lg"
                   >
                     <summary className="cursor-pointer list-none text-left text-lg font-medium text-black">{faq.question}</summary>
                     <p className="mt-3 text-sm leading-relaxed text-neutral-600">{faq.answer}</p>
@@ -250,7 +255,7 @@ const Landing = () => {
                 {pricingList.map((tier) => (
                   <div
                     key={tier.id}
-                    className={`rounded-3xl border p-8 shadow-glass transition hover:-translate-y-1 hover:shadow-xl ${tier.isRecommended ? "border-white/20 bg-white/10" : "border-white/10 bg-white/5"
+                    className={`rounded-lg border p-8 shadow-glass transition hover:-translate-y-1 hover:shadow-xl ${tier.isRecommended ? "border-white/20 bg-white/10" : "border-white/10 bg-white/5"
                       }`}
                   >
                     <div className="flex items-center justify-between">
@@ -284,6 +289,9 @@ const Landing = () => {
             ) : null}
           </div>
         </section>
+
+        {/* Products Panel */}
+        <ProductsPanel title="Featured Products" description="Explore our collection of memorial products and services." />
       </main>
 
       <Footer />

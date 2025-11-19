@@ -284,7 +284,7 @@ function TiptapImage(props: NodeViewProps) {
                 }}
                 onTouchStart={(event) => handleTouchStart(event, "left")}
               >
-                <div className="z-20 h-[70px] w-1 rounded-xl border bg-[rgba(0,0,0,0.65)] opacity-0 transition-all group-hover:opacity-100" />
+                <div className="z-20 h-[70px] w-1 rounded-lg border bg-[rgba(0,0,0,0.65)] opacity-0 transition-all group-hover:opacity-100" />
               </div>
               <div
                 className="absolute inset-y-0 z-20 flex w-[25px] cursor-col-resize items-center justify-end p-2"
@@ -294,7 +294,7 @@ function TiptapImage(props: NodeViewProps) {
                 }}
                 onTouchStart={(event) => handleTouchStart(event, "right")}
               >
-                <div className="z-20 h-[70px] w-1 rounded-xl border bg-[rgba(0,0,0,0.65)] opacity-0 transition-all group-hover:opacity-100" />
+                <div className="z-20 h-[70px] w-1 rounded-lg border bg-[rgba(0,0,0,0.65)] opacity-0 transition-all group-hover:opacity-100" />
               </div>
             </>
           )}

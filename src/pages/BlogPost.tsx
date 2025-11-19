@@ -40,7 +40,7 @@ const BlogPost = () => {
         <Navigation />
         <main className="flex flex-col pb-24 pt-4 lg:pb-32">
           <section className="mx-auto w-full max-w-4xl px-6 py-8">
-            <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-3xl border border-white/10 p-16 text-center">
+            <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-lg border border-white/10 p-16 text-center">
               <span className="h-10 w-10 animate-spin rounded-full border-2 border-white/10 border-t-primary" />
               <p className="max-w-md text-sm text-subtle">Loading blog post...</p>
             </div>
@@ -75,7 +75,7 @@ const BlogPost = () => {
 
         {blogPost.featuredImage?.src ? (
           <section className="mx-auto w-full max-w-4xl px-6 py-8">
-            <div className="relative h-96 overflow-hidden rounded-3xl border border-white/10">
+            <div className="relative h-96 overflow-hidden rounded-lg border border-white/10">
               <img
                 src={blogPost.featuredImage.src}
                 alt={blogPost.featuredImage.alt ?? blogPost.title}
