@@ -23,13 +23,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // Get Shopify configuration from environment variables
-  const storeDomain = process.env.VITE_SHOPIFY_STORE_DOMAIN || process.env.SHOPIFY_STORE_DOMAIN;
-  const adminApiToken = process.env.VITE_SHOPIFY_ADMIN_API_TOKEN || process.env.SHOPIFY_ADMIN_API_TOKEN;
-  const apiVersion = process.env.VITE_SHOPIFY_API_VERSION || process.env.SHOPIFY_API_VERSION || '2024-01';
+  // Note: Vercel serverless functions need regular env vars (not VITE_* prefixed)
+  // Priority: Check non-VITE first, then VITE_* as fallback
+  const storeDomain = process.env.SHOPIFY_STORE_DOMAIN || process.env.VITE_SHOPIFY_STORE_DOMAIN;
+  const adminApiToken = process.env.SHOPIFY_ADMIN_API_TOKEN || process.env.VITE_SHOPIFY_ADMIN_API_TOKEN;
+  const apiVersion = process.env.SHOPIFY_API_VERSION || process.env.VITE_SHOPIFY_API_VERSION || '2024-01';
+
+  // Log configuration status (without exposing sensitive data)
+  console.log('Shopify Proxy Config:', {
+    storeDomain: storeDomain ? `${storeDomain.substring(0, 10)}...` : 'MISSING',
+    hasToken: !!adminApiToken,
+    apiVersion,
+  });
 
   if (!storeDomain || !adminApiToken) {
+    console.error('Shopify configuration missing:', {
+      hasStoreDomain: !!storeDomain,
+      hasAdminApiToken: !!adminApiToken,
+      envKeys: Object.keys(process.env).filter(key => key.includes('SHOPIFY')),
+    });
     return res.status(500).json({
-      error: 'Shopify configuration missing. Please set SHOPIFY_STORE_DOMAIN and SHOPIFY_ADMIN_API_TOKEN environment variables.',
+      error: 'Shopify configuration missing. Please set SHOPIFY_STORE_DOMAIN and SHOPIFY_ADMIN_API_TOKEN environment variables in Vercel.',
+      details: 'Note: For serverless functions, use environment variables WITHOUT the VITE_ prefix.',
     });
   }
 
@@ -67,14 +82,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const contentType = shopifyResponse.headers.get('content-type');
     const isJson = contentType?.includes('application/json');
     
-    const data = isJson 
-      ? await shopifyResponse.json()
-      : await shopifyResponse.text();
+    let data: unknown;
+    try {
+      data = isJson 
+        ? await shopifyResponse.json()
+        : await shopifyResponse.text();
+    } catch (parseError) {
+      console.error('Failed to parse Shopify response:', parseError);
+      data = { error: 'Failed to parse Shopify API response' };
+    }
 
     // Forward status code and data
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    
+    // If Shopify returned an error, log it for debugging
+    if (!shopifyResponse.ok) {
+      console.error('Shopify API error:', {
+        status: shopifyResponse.status,
+        statusText: shopifyResponse.statusText,
+        url: shopifyUrl.replace(adminApiToken, 'REDACTED'),
+        response: data,
+      });
+    }
     
     res.status(shopifyResponse.status);
     
