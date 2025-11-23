@@ -51,7 +51,8 @@ function mapShopifyStatusToOrderStatus(
 }
 
 /**
- * Processes an order webhook from Shopify
+ * Processes an order from Shopify (used for syncing orders to local database)
+ * @deprecated This function was only used for webhooks. Consider removing if orders are not synced.
  */
 export async function processOrderWebhook(shopifyOrder: ShopifyOrder): Promise<string> {
   const supabase = getSupabaseClient({ privileged: true });

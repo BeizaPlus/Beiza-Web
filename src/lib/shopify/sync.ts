@@ -82,6 +82,7 @@ export async function syncOfferingToShopify(offeringId: string): Promise<void> {
 
 /**
  * Handles inventory updates from Shopify
+ * @deprecated This function was only used for webhooks. Consider removing if inventory sync is not needed.
  */
 export async function handleInventoryUpdate(
   variantId: number,

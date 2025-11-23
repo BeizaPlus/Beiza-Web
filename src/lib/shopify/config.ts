@@ -6,7 +6,6 @@
 export interface ShopifyConfig {
   storeDomain: string;
   adminApiToken: string;
-  webhookSecret: string;
   apiVersion: string;
 }
 
@@ -21,7 +20,6 @@ const getEnvVar = (key: string, required = true): string => {
 export const getShopifyConfig = (): ShopifyConfig => {
   const storeDomain = getEnvVar("VITE_SHOPIFY_STORE_DOMAIN");
   const adminApiToken = getEnvVar("VITE_SHOPIFY_ADMIN_API_TOKEN");
-  const webhookSecret = getEnvVar("VITE_SHOPIFY_WEBHOOK_SECRET", false);
   const apiVersion = getEnvVar("VITE_SHOPIFY_API_VERSION", false) || "2024-01";
 
   // Validate store domain format
@@ -34,7 +32,6 @@ export const getShopifyConfig = (): ShopifyConfig => {
   return {
     storeDomain,
     adminApiToken,
-    webhookSecret,
     apiVersion,
   };
 };

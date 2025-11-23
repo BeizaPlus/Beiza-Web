@@ -81,7 +81,7 @@ export async function syncProductToShopify(
 }
 
 /**
- * Syncs product data from Shopify webhook to local database
+ * Syncs product data from Shopify to local database
  */
 export async function syncProductFromShopify(
   shopifyProduct: ShopifyProduct

@@ -27,7 +27,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Priority: Check non-VITE first, then VITE_* as fallback
   const storeDomain = process.env.SHOPIFY_STORE_DOMAIN || process.env.VITE_SHOPIFY_STORE_DOMAIN;
   const adminApiToken = process.env.SHOPIFY_ADMIN_API_TOKEN || process.env.VITE_SHOPIFY_ADMIN_API_TOKEN;
-  const apiVersion = process.env.SHOPIFY_API_VERSION || process.env.VITE_SHOPIFY_API_VERSION || '2024-01';
+  let apiVersion = process.env.SHOPIFY_API_VERSION || process.env.VITE_SHOPIFY_API_VERSION || '2024-01';
+
+  // Validate and fix API version format (Shopify uses YYYY-MM format, e.g., 2024-01)
+  // Fix common mistakes like 2025-10 (future date) or invalid formats
+  const apiVersionPattern = /^(\d{4})-(\d{2})$/;
+  const match = apiVersion.match(apiVersionPattern);
+  
+  if (!match) {
+    console.warn(`Invalid API version format: ${apiVersion}. Using default: 2024-01`);
+    apiVersion = '2024-01';
+  } else {
+    const year = parseInt(match[1], 10);
+    const month = parseInt(match[2], 10);
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+    
+    // Validate year and month
+    if (year > currentYear || (year === currentYear && month > currentMonth + 3)) {
+      console.warn(`API version ${apiVersion} appears to be in the future. Using default: 2024-01`);
+      apiVersion = '2024-01';
+    } else if (year < 2020 || month < 1 || month > 12) {
+      console.warn(`Invalid API version ${apiVersion}. Using default: 2024-01`);
+      apiVersion = '2024-01';
+    }
+  }
 
   // Log configuration status (without exposing sensitive data)
   const availableEnvKeys = Object.keys(process.env).filter(key => 
