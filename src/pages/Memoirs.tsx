@@ -164,7 +164,8 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
 
   // Content warning consent state - stored per memoir slug
   const [hasConsented, setHasConsented] = useState<boolean>(() => {
-    if (typeof window !== "undefined" && slug) {
+    if (typeof window !== "undefined" && slug)
+    {
       return localStorage.getItem(`memoir-gallery-consent-${slug}`) === "true";
     }
     return false;
@@ -209,14 +210,16 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
 
   // Reset consent when switching to a different memoir
   useEffect(() => {
-    if (slug && typeof window !== "undefined") {
+    if (slug && typeof window !== "undefined")
+    {
       const consented = localStorage.getItem(`memoir-gallery-consent-${slug}`) === "true";
       setHasConsented(consented);
     }
   }, [slug]);
 
   const handleContentWarningConsent = () => {
-    if (slug && typeof window !== "undefined") {
+    if (slug && typeof window !== "undefined")
+    {
       localStorage.setItem(`memoir-gallery-consent-${slug}`, "true");
       setHasConsented(true);
     }
@@ -319,16 +322,6 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
       <Navigation />
       <main className="flex flex-col pb-24 pt-4 lg:pb-32">
         <section className="mx-auto w-full max-w-6xl px-6">
-          <div className="flex items-center justify-between gap-4 py-8">
-            <Link
-              to="/memoirs"
-              className="inline-flex items-center gap-2 text-sm font-medium text-subtle transition-colors hover:text-white"
-            >
-              <span aria-hidden>←</span>
-              All memoirs
-            </Link>
-            {/* <CTAButton to={CTA_HREF} label={CTA_LABEL} /> */}
-          </div>
           <SectionHeader
             eyebrow="Tribute Memoir"
             title={summary?.title ?? "Memoir"}
@@ -370,7 +363,7 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                                 <h3 className="text-lg font-medium text-white">{section.heading}</h3>
                               ) : null}
                               <div
-                                className="prose prose-invert max-w-none text-base leading-relaxed md:text-lg"
+                                className="memoir-content prose prose-invert max-w-none text-base leading-relaxed md:text-lg"
                                 dangerouslySetInnerHTML={{ __html: section.body }}
                               />
                             </div>
@@ -652,6 +645,16 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
 
         {/* Products Panel for memoir-related products */}
         {memoirId && <ProductsPanel memoirId={memoirId} />}
+
+        <div className="flex items-center justify-center gap-4 py-8">
+          <Link
+            to="/memoirs"
+            className="button-pill text-black inline-flex items-center gap-2 text-sm font-medium text-subtle transition-colors hover:text-white"
+          >
+            <span aria-hidden>←</span>
+            Back to memoirs
+          </Link>
+        </div>
       </main>
       <Footer />
 

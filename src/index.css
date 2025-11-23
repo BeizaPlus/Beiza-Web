@@ -216,6 +216,42 @@
     letter-spacing: -0.01em;
   }
 
+  p:empty {
+    min-height: 1.5em;
+    line-height: 1.5;
+  }
+
+  p:empty::before {
+    content: '\200B';
+    display: inline-block;
+  }
+
+  .memoir-content {
+    line-height: 1.6;
+  }
+
+  .memoir-content p {
+    /* margin-top: 1em;
+    margin-bottom: 1em; */
+    min-height: 1.5em;
+    line-height: 1.6;
+    display: block;
+    /* Ensure block-level display */
+  }
+
+  /* .memoir-content p:first-child {
+    margin-top: 0;
+  }
+
+  .memoir-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  .memoir-content p:empty {
+    min-height: 1.5em;
+    line-height: 1.6;
+  } */
+
   strong {
     font-weight: 600;
   }

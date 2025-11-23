@@ -141,23 +141,28 @@ class ShopifyClient {
     path: string,
     body?: unknown
   ): Promise<T> {
-    const url = getShopifyApiUrl(this.config, path);
+    // Use proxy endpoint to avoid CORS issues
+    // The proxy runs server-side where there are no CORS restrictions
+    const proxyUrl = "/api/shopify/proxy";
     const headers: HeadersInit = {
       "Content-Type": "application/json",
-      "X-Shopify-Access-Token": this.config.adminApiToken,
     };
 
     try {
-      const response = await fetch(url, {
-        method,
+      const response = await fetch(proxyUrl, {
+        method: "POST",
         headers,
-        body: body ? JSON.stringify(body) : undefined,
+        body: JSON.stringify({
+          method,
+          path,
+          body,
+        }),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new ShopifyApiError(
-          errorData.errors?.message || `Shopify API error: ${response.statusText}`,
+          errorData.error || errorData.errors?.message || `Shopify API error: ${response.statusText}`,
           response.status,
           errorData
         );
