@@ -30,21 +30,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const apiVersion = process.env.SHOPIFY_API_VERSION || process.env.VITE_SHOPIFY_API_VERSION || '2024-01';
 
   // Log configuration status (without exposing sensitive data)
+  const availableEnvKeys = Object.keys(process.env).filter(key => 
+    key.includes('SHOPIFY') || key.includes('shopify')
+  );
+  
   console.log('Shopify Proxy Config:', {
-    storeDomain: storeDomain ? `${storeDomain.substring(0, 10)}...` : 'MISSING',
+    storeDomain: storeDomain || 'MISSING',
     hasToken: !!adminApiToken,
+    tokenLength: adminApiToken ? adminApiToken.length : 0,
+    tokenPrefix: adminApiToken ? adminApiToken.substring(0, 10) + '...' : 'N/A',
     apiVersion,
+    availableEnvKeys,
   });
 
   if (!storeDomain || !adminApiToken) {
     console.error('Shopify configuration missing:', {
       hasStoreDomain: !!storeDomain,
       hasAdminApiToken: !!adminApiToken,
-      envKeys: Object.keys(process.env).filter(key => key.includes('SHOPIFY')),
+      availableEnvKeys,
     });
     return res.status(500).json({
       error: 'Shopify configuration missing. Please set SHOPIFY_STORE_DOMAIN and SHOPIFY_ADMIN_API_TOKEN environment variables in Vercel.',
       details: 'Note: For serverless functions, use environment variables WITHOUT the VITE_ prefix.',
+      availableKeys: availableEnvKeys,
+    });
+  }
+
+  // Validate token format (Shopify tokens are typically 32+ characters)
+  if (adminApiToken.length < 10) {
+    console.error('Shopify token appears invalid (too short):', {
+      length: adminApiToken.length,
+    });
+    return res.status(500).json({
+      error: 'Shopify Admin API token appears to be invalid (too short). Please check your SHOPIFY_ADMIN_API_TOKEN in Vercel.',
     });
   }
 
@@ -70,6 +88,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       'Content-Type': 'application/json',
       'X-Shopify-Access-Token': adminApiToken,
     };
+
+    // Log request details (without exposing token)
+    console.log('Making Shopify API request:', {
+      method,
+      url: shopifyUrl,
+      hasBody: !!body,
+      tokenSet: !!adminApiToken,
+    });
 
     // Make request to Shopify API
     const shopifyResponse = await fetch(shopifyUrl, {
