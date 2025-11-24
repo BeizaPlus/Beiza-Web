@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Loader2, Mail } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { getUrl } from "@/lib/url";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -19,7 +20,8 @@ export const SignIn = () => {
 
     setStatus("submitting");
     setError(null);
-    const { error: signInError } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: `${window.location.origin}/admin` } });
+    const redirectUrl = getUrl("/admin");
+    const { error: signInError } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectUrl } });
 
     if (signInError)
     {

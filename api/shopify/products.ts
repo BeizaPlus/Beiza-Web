@@ -45,15 +45,53 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
+  // Log configuration status (without exposing sensitive data)
+  const availableEnvKeys = Object.keys(process.env).filter(key => 
+    key.includes('SHOPIFY') || key.includes('shopify')
+  );
+  
+  console.log('Shopify Products API Config:', {
+    storeDomain: storeDomain || 'MISSING',
+    hasToken: !!adminApiToken,
+    tokenLength: adminApiToken ? adminApiToken.length : 0,
+    tokenPrefix: adminApiToken ? adminApiToken.substring(0, 10) + '...' : 'N/A',
+    apiVersion,
+    availableEnvKeys,
+  });
+
   if (!storeDomain || !adminApiToken) {
     console.error('Shopify configuration missing:', {
       hasStoreDomain: !!storeDomain,
       hasAdminApiToken: !!adminApiToken,
+      availableEnvKeys,
     });
     return res.status(500).json({
       error: 'Shopify configuration missing. Please set SHOPIFY_STORE_DOMAIN and SHOPIFY_ADMIN_API_TOKEN environment variables in Vercel.',
+      details: 'Note: For serverless functions, use environment variables WITHOUT the VITE_ prefix.',
+      availableKeys: availableEnvKeys,
     });
   }
+
+  // Validate token format (Shopify tokens can start with 'shpat_' or 'shpss_')
+  if (adminApiToken.length < 10) {
+    console.error('Shopify token appears invalid (too short):', {
+      length: adminApiToken.length,
+    });
+    return res.status(500).json({
+      error: 'Shopify Admin API token appears to be invalid (too short). Please check your SHOPIFY_ADMIN_API_TOKEN in Vercel.',
+    });
+  }
+
+  // Log token type for debugging (Shopify tokens can be shpat_ or shpss_)
+  const tokenType = adminApiToken.startsWith('shpat_') ? 'Admin API Token' 
+    : adminApiToken.startsWith('shpss_') ? 'Session Token' 
+    : 'Unknown Format';
+  
+  console.log('Token type detected:', {
+    tokenType,
+    tokenPrefix: adminApiToken.substring(0, 6),
+    tokenLength: adminApiToken.length,
+  });
 
   try {
     // Get query parameters from request
@@ -76,6 +114,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Construct Shopify API URL
     const shopifyUrl = `https://${storeDomain}/admin/api/${apiVersion}/products.json?${queryParams.toString()}`;
 
+    // Log request details (without exposing token)
+    console.log('Making Shopify API request:', {
+      url: shopifyUrl.replace(adminApiToken, 'REDACTED'),
+      hasToken: !!adminApiToken,
+    });
+
     // Make request to Shopify API
     const shopifyResponse = await fetch(shopifyUrl, {
       method: 'GET',
@@ -90,12 +134,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.error('Shopify API error:', {
         status: shopifyResponse.status,
         statusText: shopifyResponse.statusText,
+        url: shopifyUrl.replace(adminApiToken, 'REDACTED'),
         error: errorData,
+        tokenSet: !!adminApiToken,
+        tokenLength: adminApiToken ? adminApiToken.length : 0,
       });
+      
+      // Return more detailed error information
+      const errorMessage = errorData.errors || shopifyResponse.statusText;
+      const isInvalidToken = errorMessage?.includes('Invalid API key') || errorMessage?.includes('Invalid API key or access token');
       
       return res.status(shopifyResponse.status).json({
         error: 'Failed to fetch products from Shopify',
-        details: errorData.errors || shopifyResponse.statusText,
+        details: errorMessage,
+        status: shopifyResponse.status,
+        configStatus: {
+          hasStoreDomain: !!storeDomain,
+          hasAdminApiToken: !!adminApiToken,
+          tokenType: tokenType,
+          apiVersion,
+        },
+        ...(isInvalidToken && {
+          hint: 'Your token might be a Client Secret (shpss_) instead of an Admin API access token (shpat_). See SHOPIFY_TOKEN_FIX.md for instructions on getting the correct token.',
+        }),
       });
     }
 
