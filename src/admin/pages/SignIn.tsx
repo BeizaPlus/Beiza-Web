@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Loader2, Mail } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { getUrl } from "@/lib/url";
+import { canAuthenticate } from "@/lib/authValidation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -20,8 +21,31 @@ export const SignIn = () => {
 
     setStatus("submitting");
     setError(null);
+
+    // Validate email before sending OTP
+    const normalizedEmail = email.toLowerCase().trim();
+    const validation = await canAuthenticate(normalizedEmail);
+    
+    if (!validation.allowed) {
+      setStatus("error");
+      setError(validation.reason ?? "This email is not authorized to access the admin panel.");
+      return;
+    }
+
+    // Construct redirect URL - Supabase will append hash fragments
     const redirectUrl = getUrl("/admin");
-    const { error: signInError } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: redirectUrl } });
+    
+    // Log redirect URL for debugging (remove in production if desired)
+    if (import.meta.env.DEV) {
+      console.log("[auth] Redirect URL:", redirectUrl);
+    }
+    
+    const { error: signInError } = await supabase.auth.signInWithOtp({ 
+      email: normalizedEmail, 
+      options: { 
+        emailRedirectTo: redirectUrl 
+      } 
+    });
 
     if (signInError)
     {

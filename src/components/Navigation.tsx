@@ -42,7 +42,7 @@ export const Navigation = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-40 w-full bg-transparent">
+    <nav className="sticky top-0 z-40 w-full bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20 border-b border-white/5">
       <div className="mx-auto max-w-6xl px-6 py-6">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
