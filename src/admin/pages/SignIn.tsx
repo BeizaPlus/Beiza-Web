@@ -34,6 +34,7 @@ export const SignIn = () => {
     }
 
     // Construct redirect URL - Supabase will append hash fragments
+    // CRITICAL: This MUST match a URL in your Supabase dashboard Redirect URLs list
     const redirectUrl = getUrl("/admin");
 
     // Validate redirect URL - warn if it looks like localhost in production
@@ -54,16 +55,35 @@ export const SignIn = () => {
       console.log("[auth] Redirect URL:", redirectUrl);
     }
 
+    // CRITICAL FIX: Ensure we're using the production URL
+    // If VITE_APP_URL is not set, this will fail in production
+    const envUrl = import.meta.env.VITE_APP_URL;
+    if (!envUrl && import.meta.env.PROD)
+    {
+      console.error(
+        "[auth] CRITICAL: VITE_APP_URL is not set in production!",
+        "Supabase will use the Site URL from dashboard (likely localhost).",
+        "Set VITE_APP_URL=https://beizaplus.com in your production environment."
+      );
+    }
+
     // Log the full options being sent to Supabase for debugging
     const signInOptions = {
       emailRedirectTo: redirectUrl
     };
-    console.log("[auth] Supabase signInWithOtp options:", signInOptions);
+    console.log("[auth] Supabase signInWithOtp options:", JSON.stringify(signInOptions, null, 2));
+    console.log("[auth] VITE_APP_URL env var:", envUrl || "NOT SET");
+    console.log("[auth] Current window.location.origin:", typeof window !== 'undefined' ? window.location.origin : 'N/A');
 
-    // Important: Supabase will use the Site URL from dashboard settings if:
-    // 1. The redirect URL is not in the allowed Redirect URLs list, OR
-    // 2. The Site URL is configured and takes precedence
-    // Make sure https://beizaplus.com/** is in your Supabase dashboard Redirect URLs!
+    // IMPORTANT: Supabase will IGNORE emailRedirectTo if:
+    // 1. The redirect URL is NOT in the allowed Redirect URLs list in dashboard, OR
+    // 2. The Site URL in dashboard is set to localhost (it takes precedence)
+    // 
+    // TO FIX IN SUPABASE DASHBOARD:
+    // 1. Go to: Authentication → URL Configuration
+    // 2. Set Site URL to: https://beizaplus.com
+    // 3. Add to Redirect URLs: https://beizaplus.com/**
+    // 4. Save and test again
 
     const { error: signInError, data } = await supabase.auth.signInWithOtp({
       email: normalizedEmail,
