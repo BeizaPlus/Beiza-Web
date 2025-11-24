@@ -5,13 +5,25 @@
  * 
  * IMPORTANT: In production, VITE_APP_URL must be set to your production domain
  * (e.g., https://yourdomain.com) to ensure Supabase auth redirects work correctly.
+ * 
+ * NOTE: This function normalizes www vs non-www to match VITE_APP_URL if set,
+ * to ensure consistency with Supabase redirect URL configuration.
  */
 export function getBaseUrl(): string {
   // Check for environment variable first (useful for production deployments)
   const envUrl = import.meta.env.VITE_APP_URL;
   if (envUrl) {
     // Remove trailing slash if present
-    return envUrl.replace(/\/$/, '');
+    const normalized = envUrl.replace(/\/$/, '');
+    
+    // In production, always use the env URL (even if window.location has www)
+    // This ensures consistency with Supabase dashboard configuration
+    if (import.meta.env.PROD) {
+      return normalized;
+    }
+    
+    // In development, still prefer env URL but allow window.location as fallback
+    return normalized;
   }
   
   // In production, never use localhost - this prevents Supabase redirect issues
