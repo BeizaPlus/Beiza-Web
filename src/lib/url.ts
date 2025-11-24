@@ -2,6 +2,9 @@
  * Get the base URL for the application.
  * Uses VITE_APP_URL environment variable if available, otherwise falls back to window.location.origin.
  * This ensures redirect URLs work correctly across different environments.
+ * 
+ * IMPORTANT: In production, VITE_APP_URL must be set to your production domain
+ * (e.g., https://yourdomain.com) to ensure Supabase auth redirects work correctly.
  */
 export function getBaseUrl(): string {
   // Check for environment variable first (useful for production deployments)
@@ -11,9 +14,23 @@ export function getBaseUrl(): string {
     return envUrl.replace(/\/$/, '');
   }
   
-  // Fall back to window.location.origin (works in browser)
+  // In production, never use localhost - this prevents Supabase redirect issues
+  // Only use window.location.origin in development
   if (typeof window !== 'undefined') {
-    return window.location.origin;
+    const origin = window.location.origin;
+    // If we're in production (not localhost), use the origin
+    // But warn if we don't have VITE_APP_URL set
+    if (!origin.includes('localhost') && !origin.includes('127.0.0.1')) {
+      if (import.meta.env.PROD) {
+        console.warn(
+          '[url] VITE_APP_URL is not set in production. Using window.location.origin as fallback.',
+          'Please set VITE_APP_URL environment variable to your production domain.'
+        );
+      }
+      return origin;
+    }
+    // In development, localhost is fine
+    return origin;
   }
   
   // Fallback for SSR or other environments

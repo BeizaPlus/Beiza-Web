@@ -12,15 +12,22 @@ const privilegedKey =
 
 export type SupabaseClient = SupabaseJsClient;
 
-const createSharedClient = (key: string, storageKey?: string) =>
-  createClient(supabaseUrl!, key, {
+const createSharedClient = (key: string, storageKey?: string) => {
+  // Get the base URL for redirects - use environment variable if available
+  const appUrl = import.meta.env.VITE_APP_URL;
+  const redirectTo = appUrl ? `${appUrl.replace(/\/$/, '')}/admin` : undefined;
+  
+  return createClient(supabaseUrl!, key, {
     auth: {
       persistSession: storageKey !== undefined,
       autoRefreshToken: Boolean(storageKey),
       detectSessionInUrl: Boolean(storageKey),
       storageKey,
+      // Set default redirectTo for auth flows if VITE_APP_URL is configured
+      ...(redirectTo && { redirectTo }),
     },
   });
+};
 
 const createBrowserClient = (key: string | undefined, storageKey?: string): SupabaseClient | null => {
   if (!supabaseUrl || !key) {

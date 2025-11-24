@@ -35,8 +35,17 @@ export const SignIn = () => {
     // Construct redirect URL - Supabase will append hash fragments
     const redirectUrl = getUrl("/admin");
     
-    // Log redirect URL for debugging (remove in production if desired)
-    if (import.meta.env.DEV) {
+    // Validate redirect URL - warn if it looks like localhost in production
+    if (redirectUrl.includes('localhost') || redirectUrl.includes('127.0.0.1')) {
+      if (import.meta.env.PROD) {
+        console.error(
+          "[auth] WARNING: Redirect URL is using localhost in production!",
+          "Set VITE_APP_URL environment variable to your production domain."
+        );
+      } else {
+        console.log("[auth] Using localhost redirect URL (development mode):", redirectUrl);
+      }
+    } else {
       console.log("[auth] Redirect URL:", redirectUrl);
     }
     
