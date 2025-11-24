@@ -25,8 +25,9 @@ export const SignIn = () => {
     // Validate email before sending OTP
     const normalizedEmail = email.toLowerCase().trim();
     const validation = await canAuthenticate(normalizedEmail);
-    
-    if (!validation.allowed) {
+
+    if (!validation.allowed)
+    {
       setStatus("error");
       setError(validation.reason ?? "This email is not authorized to access the admin panel.");
       return;
@@ -34,27 +35,51 @@ export const SignIn = () => {
 
     // Construct redirect URL - Supabase will append hash fragments
     const redirectUrl = getUrl("/admin");
-    
+
     // Validate redirect URL - warn if it looks like localhost in production
-    if (redirectUrl.includes('localhost') || redirectUrl.includes('127.0.0.1')) {
-      if (import.meta.env.PROD) {
+    if (redirectUrl.includes('localhost') || redirectUrl.includes('127.0.0.1'))
+    {
+      if (import.meta.env.PROD)
+      {
         console.error(
           "[auth] WARNING: Redirect URL is using localhost in production!",
           "Set VITE_APP_URL environment variable to your production domain."
         );
-      } else {
+      } else
+      {
         console.log("[auth] Using localhost redirect URL (development mode):", redirectUrl);
       }
-    } else {
+    } else
+    {
       console.log("[auth] Redirect URL:", redirectUrl);
     }
-    
-    const { error: signInError } = await supabase.auth.signInWithOtp({ 
-      email: normalizedEmail, 
-      options: { 
-        emailRedirectTo: redirectUrl 
-      } 
+
+    // Log the full options being sent to Supabase for debugging
+    const signInOptions = {
+      emailRedirectTo: redirectUrl
+    };
+    console.log("[auth] Supabase signInWithOtp options:", signInOptions);
+
+    // Important: Supabase will use the Site URL from dashboard settings if:
+    // 1. The redirect URL is not in the allowed Redirect URLs list, OR
+    // 2. The Site URL is configured and takes precedence
+    // Make sure https://beizaplus.com/** is in your Supabase dashboard Redirect URLs!
+
+    const { error: signInError, data } = await supabase.auth.signInWithOtp({
+      email: normalizedEmail,
+      options: signInOptions
     });
+
+    // Log response for debugging
+    if (data)
+    {
+      console.log("[auth] Supabase signInWithOtp response:", data);
+    }
+
+    if (signInError)
+    {
+      console.error("[auth] Supabase signInWithOtp error:", signInError);
+    }
 
     if (signInError)
     {
