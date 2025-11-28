@@ -9,6 +9,7 @@ import { SectionHeader } from "@/components/framer/SectionHeader";
 import { TributeStack } from "@/components/framer/TributeStack";
 import { UnifiedTimeline } from "@/components/memoir/UnifiedTimeline";
 import { SingleImageDialog } from "@/components/SingleImageDialog";
+import { TributeFormDialog } from "@/components/tribute/TributeFormDialog";
 import {
   useMemoirDetail,
   useMemoirHighlightPages,
@@ -521,6 +522,14 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                         description="Voices of gratitude and remembrance shared during the celebration."
                         align="center"
                       />
+                      {memoirId ? (
+                        <div className="mt-8 flex justify-center">
+                          <TributeFormDialog
+                            memoirId={memoirId}
+                            memoirTitle={summary?.title}
+                          />
+                        </div>
+                      ) : null}
                       {shouldLoadTributes && tributesLoading && tributeCards.length === 0 ? (
                         <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                           {Array.from({ length: 3 }).map((_, index) => (
