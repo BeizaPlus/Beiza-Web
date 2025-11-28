@@ -6,6 +6,7 @@ import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FeatureCard } from "@/components/framer/FeatureCard";
 import { TestimonialsCarousel } from "@/components/framer/TestimonialsCarousel";
 import { CTAButton } from "@/components/framer/CTAButton";
+import { FAQItem } from "@/components/framer/FAQItem";
 import { ProductsPanel } from "@/components/shopify/ProductsPanel";
 import { AdZone } from "@/components/AdZone";
 import { Palette, Heart, FileText, Monitor, Box, Cloud, Sparkles } from "lucide-react";
@@ -194,21 +195,14 @@ const Landing = () => {
           <div className="mx-auto max-w-5xl px-6">
             <SectionHeader
               eyebrow="FAQ"
-              title="Questions We Hear Often"
-              description="We blend broadcast-quality production with the intimacy families deserve. If you don’t see your question please reach out."
+              title="Everything you need to know"
               align="center"
               variant="light"
             />
             {faqList.length > 0 ? (
-              <div className="mt-10 space-y-4">
+              <div className="mt-12">
                 {faqList.map((faq) => (
-                  <details
-                    key={faq.id}
-                    className="rounded-lg border border-black/10 bg-white p-6 shadow-glass transition hover:shadow-lg"
-                  >
-                    <summary className="cursor-pointer list-none text-left text-lg font-medium text-black">{faq.question}</summary>
-                    <p className="mt-3 text-sm leading-relaxed text-neutral-600">{faq.answer}</p>
-                  </details>
+                  <FAQItem key={faq.id} question={faq.question} answer={faq.answer} />
                 ))}
               </div>
             ) : null}
