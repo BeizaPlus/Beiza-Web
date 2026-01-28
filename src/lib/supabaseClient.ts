@@ -16,7 +16,7 @@ const createSharedClient = (key: string, storageKey?: string) => {
   // Get the base URL for redirects - use environment variable if available
   const appUrl = import.meta.env.VITE_APP_URL;
   const redirectTo = appUrl ? `${appUrl.replace(/\/$/, '')}/admin` : undefined;
-  
+
   return createClient(supabaseUrl!, key, {
     auth: {
       persistSession: storageKey !== undefined,
@@ -30,8 +30,10 @@ const createSharedClient = (key: string, storageKey?: string) => {
 };
 
 const createBrowserClient = (key: string | undefined, storageKey?: string): SupabaseClient | null => {
-  if (!supabaseUrl || !key) {
-    if (!supabaseUrl || !publicKey) {
+  if (!supabaseUrl || !key)
+  {
+    if (!supabaseUrl || !publicKey)
+    {
       console.warn("[supabase] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY environment variables.");
     }
     return null;
@@ -45,20 +47,23 @@ const supabasePublic = createBrowserClient(publicKey, "beiza-admin-session");
 const supabasePrivileged =
   supabaseUrl && privilegedKey
     ? (() => {
-        if (typeof window !== "undefined") {
-          console.warn(
-            "[supabase] A privileged API key is configured in the browser environment. Move privileged operations to a server or Edge function to keep your data secure."
-          );
-        }
-        return createSharedClient(privilegedKey);
-      })()
+      if (typeof window !== "undefined")
+      {
+        console.error(
+          "[supabase] SECURITY: Privileged API key detected in browser. Refusing to instantiate. Move privileged operations to a server or Edge function."
+        );
+        return null;
+      }
+      return createSharedClient(privilegedKey);
+    })()
     : null;
 
 export const supabase = supabasePublic;
 export { supabasePublic, supabasePrivileged };
 
 export const getSupabaseClient = (options?: { privileged?: boolean }): SupabaseClient | null => {
-  if (options?.privileged && supabasePrivileged) {
+  if (options?.privileged && supabasePrivileged)
+  {
     return supabasePrivileged;
   }
   return supabasePublic;

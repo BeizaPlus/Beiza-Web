@@ -10,37 +10,43 @@ import type { User } from "@supabase/supabase-js";
  * - No managers exist yet (first user scenario)
  */
 export async function verifyManagerAccess(user: User): Promise<boolean> {
-  if (!supabase || !user?.email) {
+  if (!supabase || !user?.email)
+  {
     return false;
   }
 
-  try {
+  try
+  {
     const normalizedEmail = user.email.toLowerCase().trim();
-    
+
     // Check if any managers exist
     const { data: managerCount, error: countError } = await supabase
       .from("manager_profiles")
       .select("id", { count: "exact", head: true });
 
-    if (countError) {
+    if (countError)
+    {
       console.error("[auth] Error checking manager count:", countError);
       // Fail securely - deny access on error
       return false;
     }
 
     // If no managers exist, allow first user
-    if ((managerCount ?? 0) === 0) {
+    if ((managerCount ?? 0) === 0)
+    {
       return true;
     }
 
-    // Check if user's email exists in manager_profiles
+    // Check if user's email exists in manager_profiles with active status
     const { data: profile, error: profileError } = await supabase
       .from("manager_profiles")
       .select("id, email, status")
       .eq("email", normalizedEmail)
+      .eq("status", "active")
       .maybeSingle();
 
-    if (profileError) {
+    if (profileError)
+    {
       console.error("[auth] Error checking manager profile:", profileError);
       // Fail securely - deny access on error
       return false;
@@ -48,7 +54,8 @@ export async function verifyManagerAccess(user: User): Promise<boolean> {
 
     // User must have a profile to access admin
     return profile !== null;
-  } catch (error) {
+  } catch (error)
+  {
     console.error("[auth] Exception verifying manager access:", error);
     // Fail securely - deny access on exception
     return false;
