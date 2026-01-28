@@ -8,7 +8,8 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
+  if (req.method === 'OPTIONS')
+  {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -16,40 +17,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // Only allow GET requests
-  if (req.method !== 'GET') {
+  if (req.method !== 'GET')
+  {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   // Get Shopify configuration from environment variables
   const storeDomain = process.env.SHOPIFY_STORE_DOMAIN || process.env.VITE_SHOPIFY_STORE_DOMAIN;
   const adminApiToken = process.env.SHOPIFY_ADMIN_API_TOKEN || process.env.VITE_SHOPIFY_ADMIN_API_TOKEN;
-  let apiVersion = process.env.SHOPIFY_API_VERSION || process.env.VITE_SHOPIFY_API_VERSION || '2024-01';
+  let apiVersion = process.env.SHOPIFY_API_VERSION || process.env.VITE_SHOPIFY_API_VERSION || '2024-10';
 
   // Validate and fix API version format
   const apiVersionPattern = /^(\d{4})-(\d{2})$/;
   const match = apiVersion.match(apiVersionPattern);
-  
-  if (!match) {
+
+  if (!match)
+  {
     apiVersion = '2024-01';
-  } else {
+  } else
+  {
     const year = parseInt(match[1], 10);
     const month = parseInt(match[2], 10);
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth() + 1;
-    
-    if (year > currentYear || (year === currentYear && month > currentMonth + 3)) {
+
+    if (year > currentYear || (year === currentYear && month > currentMonth + 3))
+    {
       apiVersion = '2024-01';
-    } else if (year < 2020 || month < 1 || month > 12) {
+    } else if (year < 2020 || month < 1 || month > 12)
+    {
       apiVersion = '2024-01';
     }
   }
 
   // Log configuration status (without exposing sensitive data)
-  const availableEnvKeys = Object.keys(process.env).filter(key => 
+  const availableEnvKeys = Object.keys(process.env).filter(key =>
     key.includes('SHOPIFY') || key.includes('shopify')
   );
-  
+
   console.log('Shopify Products API Config:', {
     storeDomain: storeDomain || 'MISSING',
     hasToken: !!adminApiToken,
@@ -59,7 +65,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     availableEnvKeys,
   });
 
-  if (!storeDomain || !adminApiToken) {
+  if (!storeDomain || !adminApiToken)
+  {
     console.error('Shopify configuration missing:', {
       hasStoreDomain: !!storeDomain,
       hasAdminApiToken: !!adminApiToken,
@@ -73,7 +80,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // Validate token format (Shopify tokens can start with 'shpat_' or 'shpss_')
-  if (adminApiToken.length < 10) {
+  if (adminApiToken.length < 10)
+  {
     console.error('Shopify token appears invalid (too short):', {
       length: adminApiToken.length,
     });
@@ -83,17 +91,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   // Log token type for debugging (Shopify tokens can be shpat_ or shpss_)
-  const tokenType = adminApiToken.startsWith('shpat_') ? 'Admin API Token' 
-    : adminApiToken.startsWith('shpss_') ? 'Session Token' 
-    : 'Unknown Format';
-  
+  const tokenType = adminApiToken.startsWith('shpat_') ? 'Admin API Token'
+    : adminApiToken.startsWith('shpss_') ? 'Session Token'
+      : 'Unknown Format';
+
   console.log('Token type detected:', {
     tokenType,
     tokenPrefix: adminApiToken.substring(0, 6),
     tokenLength: adminApiToken.length,
   });
 
-  try {
+  try
+  {
     // Get query parameters from request
     const {
       limit = '250',
@@ -129,7 +138,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       },
     });
 
-    if (!shopifyResponse.ok) {
+    if (!shopifyResponse.ok)
+    {
       const errorData = await shopifyResponse.json().catch(() => ({}));
       console.error('Shopify API error:', {
         status: shopifyResponse.status,
@@ -139,11 +149,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         tokenSet: !!adminApiToken,
         tokenLength: adminApiToken ? adminApiToken.length : 0,
       });
-      
+
       // Return more detailed error information
       const errorMessage = errorData.errors || shopifyResponse.statusText;
       const isInvalidToken = errorMessage?.includes('Invalid API key') || errorMessage?.includes('Invalid API key or access token');
-      
+
       return res.status(shopifyResponse.status).json({
         error: 'Failed to fetch products from Shopify',
         details: errorMessage,
@@ -162,15 +172,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // Parse response
     const data = await shopifyResponse.json();
-    
+
     // Return products with CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     res.setHeader('Content-Type', 'application/json');
-    
+
     return res.status(200).json(data);
-  } catch (error) {
+  } catch (error)
+  {
     console.error('Error fetching Shopify products:', error);
     res.setHeader('Access-Control-Allow-Origin', '*');
     return res.status(500).json({

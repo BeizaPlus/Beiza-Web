@@ -11,7 +11,8 @@ export interface ShopifyConfig {
 
 const getEnvVar = (key: string, required = true): string => {
   const value = import.meta.env[key];
-  if (required && !value) {
+  if (required && !value)
+  {
     throw new Error(`Missing required environment variable: ${key}`);
   }
   return value || "";
@@ -20,10 +21,11 @@ const getEnvVar = (key: string, required = true): string => {
 export const getShopifyConfig = (): ShopifyConfig => {
   const storeDomain = getEnvVar("VITE_SHOPIFY_STORE_DOMAIN");
   const adminApiToken = getEnvVar("VITE_SHOPIFY_ADMIN_API_TOKEN");
-  const apiVersion = getEnvVar("VITE_SHOPIFY_API_VERSION", false) || "2024-01";
+  const apiVersion = getEnvVar("VITE_SHOPIFY_API_VERSION", false) || "2024-10";
 
   // Validate store domain format
-  if (storeDomain && !storeDomain.match(/^[a-zA-Z0-9-]+\.myshopify\.com$/)) {
+  if (storeDomain && !storeDomain.match(/^[a-zA-Z0-9-]+\.myshopify\.com$/))
+  {
     throw new Error(
       `Invalid Shopify store domain format: ${storeDomain}. Expected format: store-name.myshopify.com`
     );
