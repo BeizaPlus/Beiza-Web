@@ -31,10 +31,12 @@ export const Navigation = () => {
   };
 
   const isActiveLink = (href: string) => {
-    if (href.startsWith("/memoirs")) {
+    if (href.startsWith("/memoirs"))
+    {
       return location.pathname.startsWith("/memoirs");
     }
-    if (href.startsWith("/blog")) {
+    if (href.startsWith("/blog"))
+    {
       return location.pathname.startsWith("/blog");
     }
 
@@ -57,9 +59,8 @@ export const Navigation = () => {
                 <Link
                   key={link.id}
                   to={link.href}
-                  className={`font-manrope text-lg font-medium transition-colors ${
-                    isActive ? "text-white" : "text-white/80 hover:text-white"
-                  }`}
+                  className={`font-manrope text-lg font-medium transition-colors ${isActive ? "text-white" : "text-white/80 hover:text-white"
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -79,7 +80,7 @@ export const Navigation = () => {
             <button onClick={toggleMobileMenu} className="text-white transition-colors hover:text-white/80">
               {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
-            <Link to={ctaLink.href}>
+            <Link to={ctaLink.href} className="hidden sm:block">
               <Button className="rounded-full bg-red-500 px-6 py-3 text-sm font-manrope font-medium text-white hover:bg-red-600">
                 {ctaLink.label ?? "Get Started"}
               </Button>
@@ -96,9 +97,8 @@ export const Navigation = () => {
                   key={link.id}
                   to={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block rounded-lg px-3 py-3 text-lg font-manrope font-medium transition-colors ${
-                    isActive ? "text-white" : "text-white/80 hover:text-white"
-                  }`}
+                  className={`block rounded-lg px-3 py-3 text-lg font-manrope font-medium transition-colors ${isActive ? "text-white" : "text-white/80 hover:text-white"
+                    }`}
                 >
                   {link.label}
                 </Link>

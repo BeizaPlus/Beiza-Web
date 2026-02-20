@@ -1,4 +1,5 @@
 import { type ReactNode, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
@@ -14,6 +15,7 @@ const EmptyState = ({ title, description }: { title: string; description: ReactN
 );
 
 const Events = () => {
+  const navigate = useNavigate();
   const { data: featuredEvent, isLoading: featuredLoading } = useFeaturedEvent();
   const { data: events = [], isLoading: eventsLoading } = usePublishedEvents();
 
@@ -65,7 +67,10 @@ const Events = () => {
               <div className="relative h-full bg-white/5" />
             </div>
           ) : primaryEvent ? (
-            <div className="glass-panel grid overflow-hidden rounded-[32px] border border-white/10 md:grid-cols-[1.05fr_0.95fr]">
+            <div 
+              onClick={() => navigate(`/memoirs/${primaryEvent.memoirSlug}`)}
+              className="glass-panel group cursor-pointer hover:border-white/20 transition-colors grid overflow-hidden rounded-[32px] border border-white/10 md:grid-cols-[1.05fr_0.95fr]"
+            >
               <div className="flex flex-col justify-between gap-6 p-8 md:p-12">
                 <div className="space-y-4">
                   <p className="text-eyebrow">Featured Tribute</p>
@@ -77,7 +82,7 @@ const Events = () => {
                     {primaryEvent.location ?? "Location TBC"} • {primaryEvent.occursOn ?? "Date TBC"}
                   </p>
                 </div>
-                <CTAButton to="/memoirs" label="View memoirs" />
+                <CTAButton to={`/memoirs/${primaryEvent.memoirSlug}`} label="View memoirs" />
               </div>
               <div className="relative min-h-[400px] w-full md:min-h-full">
                 {primaryEvent.heroMedia?.src && primaryEvent.heroMedia.src.trim() ? (
@@ -133,7 +138,11 @@ const Events = () => {
             ) : additionalEvents.length > 0 ? (
               <div className="grid gap-8 md:grid-cols-2">
                 {additionalEvents.map((event) => (
-                  <article key={event.id} className="glass-panel flex h-full flex-col overflow-hidden rounded-lg border border-white/10">
+                  <article 
+                    key={event.id} 
+                    onClick={() => navigate(`/memoirs/${event.memoirSlug}`)}
+                    className="glass-panel group cursor-pointer hover:border-white/20 transition-colors flex h-full flex-col overflow-hidden rounded-lg border border-white/10"
+                  >
                     {event.heroMedia?.src && event.heroMedia.src.trim() ? (
                       <div className="relative h-48 w-full overflow-hidden bg-black/20">
                         <img
@@ -171,7 +180,7 @@ const Events = () => {
                       </div>
                       <div className="mt-6 flex items-center justify-between text-sm text-white/60">
                         <span>{event.occursOn ? new Date(event.occursOn).toLocaleDateString() : "Date TBC"}</span>
-                        <CTAButton to="/memoirs" label="View memoirs" />
+                        <CTAButton to={`/memoirs/${event.memoirSlug}`} label="View memoirs" />
                       </div>
                     </div>
                   </article>
