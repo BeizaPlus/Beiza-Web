@@ -1,6 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import { getSupabaseClient } from "@/lib/supabaseClient";
 
+export const AUTH_ERROR_EVENT = "supabase-unauthorized";
+
+export const handlePostgrestError = (error: unknown, context: string) => {
+  // PostgREST typically throws PGRST301 or includes JWT in the message when the token is invalid or expired
+  const typedError = error as { code?: string; message?: string; details?: string };
+  const isAuthError =
+    typedError?.code === "PGRST301" ||
+    typedError?.message?.toLowerCase().includes("jwt") ||
+    typedError?.details?.toLowerCase().includes("jwt");
+
+  if (isAuthError)
+  {
+    console.warn(`[auth] Unauthorized API call detected in ${context}. Forcing session refresh.`);
+    window.dispatchEvent(new Event(AUTH_ERROR_EVENT));
+  }
+
+  throw new Error(`Failed to load ${context}: ${typedError?.message ?? 'Unknown error'}`);
+};
+
 const ensureClient = () => {
   const client = getSupabaseClient({ privileged: true }) ?? getSupabaseClient();
   if (!client)
@@ -127,7 +146,7 @@ async function fetchMemoirs(): Promise<MemoirRecord[]> {
 
   if (error)
   {
-    throw new Error(`Failed to load memoirs: ${error.message}`);
+    handlePostgrestError(error, "memoirs");
   }
 
   const records = data ?? [];
@@ -243,7 +262,7 @@ async function fetchTestimonials(): Promise<TestimonialRecord[]> {
 
   if (error)
   {
-    throw new Error(`Failed to load testimonials: ${error.message}`);
+    handlePostgrestError(error, "testimonials");
   }
 
   return (data ?? []).map((item) => ({
@@ -268,7 +287,7 @@ async function fetchOfferings(): Promise<OfferingRecord[]> {
 
   if (error)
   {
-    throw new Error(`Failed to load offerings: ${error.message}`);
+    handlePostgrestError(error, "offerings");
   }
 
   return (data ?? []).map((item) => ({
@@ -291,7 +310,7 @@ async function fetchEvents(): Promise<EventRecord[]> {
 
   if (error)
   {
-    throw new Error(`Failed to load events: ${error.message}`);
+    handlePostgrestError(error, "events");
   }
 
   return data ?? [];
@@ -307,7 +326,7 @@ async function fetchSettings(): Promise<SiteSettingRecord[]> {
 
   if (error)
   {
-    throw new Error(`Failed to load settings: ${error.message}`);
+    handlePostgrestError(error, "settings");
   }
 
   return data ?? [];
@@ -323,7 +342,7 @@ async function fetchManagers(): Promise<ManagerRecord[]> {
 
   if (error)
   {
-    throw new Error(`Failed to load managers: ${error.message}`);
+    handlePostgrestError(error, "managers");
   }
 
   return data ?? [];
@@ -408,7 +427,7 @@ async function fetchPricingTiers(): Promise<PricingTierRecord[]> {
 
   if (tiersError)
   {
-    throw new Error(`Failed to load pricing tiers: ${tiersError.message}`);
+    handlePostgrestError(tiersError, "pricing tiers");
   }
 
   if (!tiers || tiers.length === 0)
@@ -426,7 +445,7 @@ async function fetchPricingTiers(): Promise<PricingTierRecord[]> {
 
   if (featuresError)
   {
-    throw new Error(`Failed to load pricing features: ${featuresError.message}`);
+    handlePostgrestError(featuresError, "pricing features");
   }
 
   return (tiers ?? []).map((tier) => ({
@@ -482,7 +501,7 @@ async function fetchGalleryAssets(): Promise<GalleryAssetRecord[]> {
 
   if (error)
   {
-    throw new Error(`Failed to load gallery assets: ${error.message}`);
+    handlePostgrestError(error, "gallery assets");
   }
 
   return (data ?? []).map((item) => {
@@ -534,7 +553,7 @@ async function fetchBlogPosts(): Promise<BlogPostRecord[]> {
 
   if (error)
   {
-    throw new Error(`Failed to load blog posts: ${error.message}`);
+    handlePostgrestError(error, "blog posts");
   }
 
   return (data ?? []).map((item) => ({
@@ -578,7 +597,7 @@ async function fetchAds(): Promise<AdsRecord[]> {
 
   if (error)
   {
-    throw new Error(`Failed to load ads: ${error.message}`);
+    handlePostgrestError(error, "ads");
   }
 
   return data ?? [];

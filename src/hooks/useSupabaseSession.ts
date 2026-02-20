@@ -93,8 +93,18 @@ export const useSupabaseSession = () => {
       setLoading(false);
     });
 
+    const handleAuthError = async () => {
+      console.warn("[auth] Caught global AUTH_ERROR_EVENT. Forcing sign out.");
+      await supabase.auth.signOut();
+      setSession(null);
+      setLoading(false);
+    };
+
+    window.addEventListener("supabase-unauthorized", handleAuthError);
+
     return () => {
       subscription.unsubscribe();
+      window.removeEventListener("supabase-unauthorized", handleAuthError);
     };
   }, [navigate, location]);
 
