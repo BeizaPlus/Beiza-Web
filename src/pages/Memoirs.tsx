@@ -374,7 +374,9 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                           <p className="text-xs uppercase tracking-[0.3em] text-subtle">
                             {publishedOn ? `Last updated ${publishedOn}` : "Continuously updated"}
                           </p>
-                          <CTAButton to={CTA_HREF} label={CTA_LABEL} />
+                          {memoirId ? (
+                            <TributeFormDialog memoirId={memoirId} memoirTitle={summary?.title} />
+                          ) : null}
                         </div>
                       </>
                     )}
@@ -591,7 +593,9 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                             {liveStream.title ?? summary?.title ?? "Celebration livestream"}
                           </h3>
                         </div>
-                        <CTAButton to={CTA_HREF} label={CTA_LABEL} />
+                        {memoirId ? (
+                          <TributeFormDialog memoirId={memoirId} memoirTitle={summary?.title} />
+                        ) : null}
                       </div>
                       <div className="relative w-full overflow-hidden rounded-lg border border-white/10 bg-black">
                         {embedUrl ? (
