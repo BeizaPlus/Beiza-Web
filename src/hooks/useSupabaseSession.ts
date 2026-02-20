@@ -1,8 +1,7 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabaseClient";
-import { ensureManagerProfile } from "@/lib/ensureManagerProfile";
 import { verifyManagerAccess } from "@/lib/verifyManagerAccess";
 
 export const useSupabaseSession = () => {
@@ -10,44 +9,6 @@ export const useSupabaseSession = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
-  const sessionRef = useRef<Session | null>(null);
-
-  // Keep ref in sync with session state for use in interval callback
-  useEffect(() => {
-    sessionRef.current = session;
-  }, [session]);
-
-  // Periodic revalidation callback - checks manager access every interval
-  const revalidateAccess = useCallback(async () => {
-    const currentSession = sessionRef.current;
-    if (!supabase || !currentSession?.user)
-    {
-      return;
-    }
-
-    const hasAccess = await verifyManagerAccess(currentSession.user);
-    if (!hasAccess)
-    {
-      console.warn("[auth] Periodic check: Manager access revoked, signing out");
-      await supabase.auth.signOut();
-      setSession(null);
-    }
-  }, []);
-
-  // Set up periodic revalidation (every 5 minutes)
-  useEffect(() => {
-    if (!supabase || !session)
-    {
-      return;
-    }
-
-    const REVALIDATION_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
-    const intervalId = setInterval(revalidateAccess, REVALIDATION_INTERVAL_MS);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [session, revalidateAccess]);
 
   useEffect(() => {
     if (!supabase)
@@ -57,8 +18,6 @@ export const useSupabaseSession = () => {
     }
 
     const loadSession = async () => {
-      // Supabase client with detectSessionInUrl will automatically process hash fragments
-      // But we should clean up the URL hash after processing
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const hasAuthHash = hashParams.has("access_token") || hashParams.has("error");
 
@@ -69,27 +28,23 @@ export const useSupabaseSession = () => {
         console.error("[supabase] Failed to load session", error);
       }
 
-      // Clean up URL hash after session is loaded
       if (hasAuthHash && window.location.hash)
       {
         const cleanUrl = window.location.pathname + window.location.search;
         window.history.replaceState(null, "", cleanUrl);
       }
 
-      // Verify user has manager access before setting session
       if (data.session?.user)
       {
-        const hasAccess = await verifyManagerAccess(data.session.user);
+        const hasAccess = verifyManagerAccess(data.session.user);
         if (!hasAccess)
         {
-          // User authenticated but not authorized - sign them out
-          console.warn("[auth] User authenticated but not in manager_profiles, signing out");
+          console.warn("[auth] User missing manager_status claim, signing out");
           await supabase.auth.signOut();
           setSession(null);
         } else
         {
           setSession(data.session);
-          void ensureManagerProfile(data.session.user);
         }
       } else
       {
@@ -103,36 +58,28 @@ export const useSupabaseSession = () => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, newSession) => {
-      // Verify user has manager access before setting session
       if (newSession?.user)
       {
-        const hasAccess = await verifyManagerAccess(newSession.user);
+        const hasAccess = verifyManagerAccess(newSession.user);
         if (!hasAccess)
         {
-          // User authenticated but not authorized - sign them out
-          console.warn("[auth] User authenticated but not in manager_profiles, signing out");
+          console.warn("[auth] User missing manager_status claim, signing out");
           await supabase.auth.signOut();
           setSession(null);
           setLoading(false);
           return;
         }
 
-        // User is authorized - set session and ensure profile
         setSession(newSession);
-        void ensureManagerProfile(newSession.user);
 
-        // After successful sign-in, ensure we're on the admin page
         if (event === "SIGNED_IN")
         {
-          // Clean up any remaining hash fragments
           if (window.location.hash)
           {
             const cleanUrl = window.location.pathname + window.location.search;
             window.history.replaceState(null, "", cleanUrl);
           }
 
-          // If we're in the admin route but showing sign-in, the AdminApp will handle the redirect
-          // But if we're on a different path, navigate to admin
           if (!location.pathname.startsWith("/admin"))
           {
             navigate("/admin", { replace: true });

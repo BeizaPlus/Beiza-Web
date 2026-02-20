@@ -6,7 +6,7 @@ returns boolean
 language sql
 security definer set search_path = public
 as $$
-  select coalesce(public.manager_role(), 'viewer') = 'super_admin';
+  select nullif(current_setting('request.jwt.claims', true)::jsonb -> 'app_metadata' ->> 'manager_role', '')::manager_role = 'super_admin';
 $$;
 
 drop policy if exists "Managers view manager profiles" on public.manager_profiles;

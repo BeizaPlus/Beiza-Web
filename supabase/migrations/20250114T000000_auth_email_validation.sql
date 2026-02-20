@@ -25,17 +25,17 @@ begin
     return 'first_user';
   end if;
   
-  -- Check if email exists in manager_profiles
+  -- Check if email exists in manager_profiles AND is not suspended
   select count(*) into email_count
   from public.manager_profiles
-  where email = normalized_email;
+  where email = normalized_email and status in ('active', 'invited');
   
-  -- If email exists, allow authentication
+  -- If email exists and is valid, allow authentication
   if email_count > 0 then
     return 'allowed';
   end if;
   
-  -- Email not found and managers exist - not authorized
+  -- Email not found, suspended, or managers exist - not authorized
   return 'not_authorized';
 end;
 $$;
@@ -43,5 +43,5 @@ $$;
 -- Grant execute permission only to anon role (unauthenticated users)
 grant execute on function public.can_authenticate_email(text) to anon;
 
-comment on function public.can_authenticate_email is 'Secure function for unauthenticated users to check if an email can authenticate. Returns: "allowed" if email in manager_profiles, "first_user" if no managers exist, "not_authorized" otherwise.';
+comment on function public.can_authenticate_email is 'Secure function for unauthenticated users to check if an email can authenticate. Returns: "allowed" if email in manager_profiles (not suspended), "first_user" if no managers exist, "not_authorized" otherwise.';
 
