@@ -20,8 +20,8 @@ const createTributeFormSchema = (hasDefaultMemoir: boolean) =>
   z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
     email: z.union([z.string().email("Please enter a valid email address"), z.literal("")]).optional(),
-    phone: z.string().optional(),
-    relationship: z.string().optional(),
+    phone: z.string().min(1, "Please enter a phone number"),
+    relationship: z.string().min(1, "Please enter your relationship"),
     message: z.string().min(12, "Message must be at least 12 characters"),
     memoirId: hasDefaultMemoir
       ? z.string().optional()
@@ -31,8 +31,8 @@ const createTributeFormSchema = (hasDefaultMemoir: boolean) =>
 export type TributeFormValues = {
   name: string;
   email: string;
-  phone?: string;
-  relationship?: string;
+  phone: string;
+  relationship: string;
   message: string;
   memoirId: string;
 };
@@ -148,7 +148,7 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="phone" className="text-sm uppercase tracking-[0.3em] text-subtle">
-            Phone <span className="text-subtle lowercase">(optional)</span>
+            Phone
           </Label>
           <Input
             id="phone"
@@ -165,7 +165,7 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
 
         <div className="space-y-2">
           <Label htmlFor="relationship" className="text-sm uppercase tracking-[0.3em] text-subtle">
-            Relationship <span className="text-subtle lowercase">(optional)</span>
+            Relationship
           </Label>
           <Input
             id="relationship"
@@ -174,6 +174,9 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
             className="mt-2 bg-white text-black"
             disabled={isSubmitting}
           />
+          {form.formState.errors.relationship && (
+            <p className="text-xs text-red-400 mt-1">{form.formState.errors.relationship.message}</p>
+          )}
         </div>
       </div>
 
