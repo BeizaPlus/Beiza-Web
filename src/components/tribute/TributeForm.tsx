@@ -19,7 +19,7 @@ import type { MemoirSummary } from "@/types/memoir";
 const createTributeFormSchema = (hasDefaultMemoir: boolean) =>
   z.object({
     name: z.string().min(2, "Name must be at least 2 characters"),
-    email: z.string().email("Please enter a valid email address"),
+    email: z.union([z.string().email("Please enter a valid email address"), z.literal("")]).optional(),
     phone: z.string().optional(),
     relationship: z.string().optional(),
     message: z.string().min(12, "Message must be at least 12 characters"),
@@ -64,7 +64,8 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
 
   // Update form when defaultMemoirId changes (e.g., when dialog opens)
   useEffect(() => {
-    if (defaultMemoirId) {
+    if (defaultMemoirId)
+    {
       form.setValue("memoirId", defaultMemoirId);
     }
   }, [defaultMemoirId, form]);
@@ -73,10 +74,12 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
     // Always use defaultMemoirId if provided, otherwise use the selected value
     const finalValues = {
       ...values,
+      email: values.email || "anonymous@tribute.com",
       memoirId: defaultMemoirId || values.memoirId || "",
     };
     const success = await onSubmit(finalValues as TributeFormValues);
-    if (success) {
+    if (success)
+    {
       form.reset({
         name: "",
         email: "",
@@ -90,6 +93,23 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-2">
+        <Label htmlFor="message" className="text-sm uppercase tracking-[0.3em] text-subtle">
+          Message
+        </Label>
+        <Textarea
+          id="message"
+          {...form.register("message")}
+          placeholder="Share your thoughts, memories, or words of tribute..."
+          rows={5}
+          className="mt-2 bg-white text-black"
+          disabled={isSubmitting}
+        />
+        {form.formState.errors.message && (
+          <p className="text-xs text-red-400 mt-1">{form.formState.errors.message.message}</p>
+        )}
+      </div>
+
       <div className="grid gap-6 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name" className="text-sm uppercase tracking-[0.3em] text-subtle">
@@ -109,7 +129,7 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
 
         <div className="space-y-2">
           <Label htmlFor="email" className="text-sm uppercase tracking-[0.3em] text-subtle">
-            Email
+            Email <span className="text-subtle lowercase">(optional)</span>
           </Label>
           <Input
             id="email"
@@ -194,23 +214,6 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
           )}
         </div>
       )}
-
-      <div className="space-y-2">
-        <Label htmlFor="message" className="text-sm uppercase tracking-[0.3em] text-subtle">
-          Message
-        </Label>
-        <Textarea
-          id="message"
-          {...form.register("message")}
-          placeholder="Share your thoughts, memories, or words of tribute..."
-          rows={5}
-          className="mt-2 bg-white text-black"
-          disabled={isSubmitting}
-        />
-        {form.formState.errors.message && (
-          <p className="text-xs text-red-400 mt-1">{form.formState.errors.message.message}</p>
-        )}
-      </div>
 
       <Button
         type="submit"

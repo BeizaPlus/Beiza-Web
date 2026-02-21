@@ -14,7 +14,7 @@ export type TributeStackProps = {
 
 export const TributeStack = ({ tributes, className }: TributeStackProps) => {
   return (
-    <div className={clsx("grid gap-4 md:grid-cols-2 lg:grid-cols-3", className)}>
+    <div className={clsx("grid items-start gap-4 md:grid-cols-2 lg:grid-cols-3", className)}>
       {tributes.map((tribute, index) => (
         <motion.div
           key={`${tribute.name}-${index}`}
