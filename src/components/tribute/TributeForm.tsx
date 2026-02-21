@@ -93,6 +93,45 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+
+      {hasDefaultMemoir ? (
+        <div className="space-y-2">
+          <Label className="text-sm uppercase tracking-[0.3em] text-subtle">
+            Memoir
+          </Label>
+          <div className="mt-2 rounded-lg border border-white/20 bg-white/5 px-4 py-3">
+            <p className="text-sm font-medium text-white">{memoirTitle || "Selected Memoir"}</p>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          <Label htmlFor="memoir" className="text-sm uppercase tracking-[0.3em] text-subtle">
+            Select Memoir
+          </Label>
+          <Controller
+            name="memoirId"
+            control={form.control}
+            render={({ field }) => (
+              <Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
+                <SelectTrigger className="mt-2 bg-white text-black">
+                  <SelectValue placeholder="Choose a memoir..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {memoirs.map((memoir) => (
+                    <SelectItem key={memoir.id} value={memoir.id}>
+                      {memoir.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          />
+          {form.formState.errors.memoirId && (
+            <p className="text-xs text-red-400 mt-1">{form.formState.errors.memoirId.message}</p>
+          )}
+        </div>
+      )}
+
       <div className="space-y-2">
         <Label htmlFor="message" className="text-sm uppercase tracking-[0.3em] text-subtle">
           Message
@@ -129,7 +168,7 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
 
         <div className="space-y-2">
           <Label htmlFor="email" className="text-sm uppercase tracking-[0.3em] text-subtle">
-            Email <span className="text-subtle lowercase">(optional)</span>
+            Email
           </Label>
           <Input
             id="email"
@@ -179,44 +218,6 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
           )}
         </div>
       </div>
-
-      {hasDefaultMemoir ? (
-        <div className="space-y-2">
-          <Label className="text-sm uppercase tracking-[0.3em] text-subtle">
-            Memoir
-          </Label>
-          <div className="mt-2 rounded-lg border border-white/20 bg-white/5 px-4 py-3">
-            <p className="text-sm font-medium text-white">{memoirTitle || "Selected Memoir"}</p>
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-2">
-          <Label htmlFor="memoir" className="text-sm uppercase tracking-[0.3em] text-subtle">
-            Select Memoir
-          </Label>
-          <Controller
-            name="memoirId"
-            control={form.control}
-            render={({ field }) => (
-              <Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
-                <SelectTrigger className="mt-2 bg-white text-black">
-                  <SelectValue placeholder="Choose a memoir..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {memoirs.map((memoir) => (
-                    <SelectItem key={memoir.id} value={memoir.id}>
-                      {memoir.title}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-          {form.formState.errors.memoirId && (
-            <p className="text-xs text-red-400 mt-1">{form.formState.errors.memoirId.message}</p>
-          )}
-        </div>
-      )}
 
       <Button
         type="submit"

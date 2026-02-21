@@ -300,7 +300,6 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
   );
   const publishedOn = formatDisplayDate(summary?.lastPublishedAt);
   const liveStream = detail?.liveStream;
-  const otherMemoirs = useMemo(() => memoirs.filter((memoir) => memoir.slug !== slug), [memoirs, slug]);
   const embedUrl = useMemo(
     () => ensureEmbedUrl(liveStream?.url, liveStream?.embedUrl),
     [liveStream?.embedUrl, liveStream?.url]
@@ -640,31 +639,14 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
           </Tabs>
         </section>
 
-        {otherMemoirs.length > 0 ? (
-          <section className="mx-auto max-w-6xl px-6 py-24">
-            <SectionHeader
-              eyebrow="More Memoirs"
-              title="Discover other celebrations"
-              description="Explore additional families and stories we've preserved."
-              align="center"
-            />
-            <div className="mt-12 grid gap-8 md:grid-cols-2">
-              {otherMemoirs.map((memoir) => (
-                <MemoirCard key={memoir.id} memoir={memoir} />
-              ))}
-            </div>
-          </section>
-        ) : null}
-
         {/* Products Panel for memoir-related products */}
         {memoirId && <ProductsPanel memoirId={memoirId} />}
 
         <div className="flex items-center justify-center gap-4 py-8">
           <Link
             to="/memoirs"
-            className="button-pill text-black inline-flex items-center gap-2 text-sm font-medium text-subtle transition-colors hover:text-white"
+            className="button-pill text-black inline-flex items-center gap-2 text-sm font-medium text-subtle transition-colors hover:text-white outline outline-1 outline-white/10"
           >
-            <span aria-hidden>←</span>
             Back to memoirs
           </Link>
         </div>
