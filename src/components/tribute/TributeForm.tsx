@@ -92,14 +92,13 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
   });
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-
+    <form onSubmit={handleSubmit} className="space-y-4">
       {hasDefaultMemoir ? (
         <div className="space-y-2">
           <Label className="text-sm uppercase tracking-[0.3em] text-subtle">
             Memoir
           </Label>
-          <div className="mt-2 rounded-lg border border-white/20 bg-white/5 px-4 py-3">
+          <div className="mt-1 rounded-lg border border-white/20 bg-white/5 px-4 py-2">
             <p className="text-sm font-medium text-white">{memoirTitle || "Selected Memoir"}</p>
           </div>
         </div>
@@ -113,7 +112,7 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
             control={form.control}
             render={({ field }) => (
               <Select onValueChange={field.onChange} value={field.value} disabled={isSubmitting}>
-                <SelectTrigger className="mt-2 bg-white text-black">
+                <SelectTrigger className="mt-1 bg-white text-black">
                   <SelectValue placeholder="Choose a memoir..." />
                 </SelectTrigger>
                 <SelectContent>
@@ -132,24 +131,7 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
         </div>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="message" className="text-sm uppercase tracking-[0.3em] text-subtle">
-          Message
-        </Label>
-        <Textarea
-          id="message"
-          {...form.register("message")}
-          placeholder="Share your thoughts, memories, or words of tribute..."
-          rows={5}
-          className="mt-2 bg-white text-black"
-          disabled={isSubmitting}
-        />
-        {form.formState.errors.message && (
-          <p className="text-xs text-red-400 mt-1">{form.formState.errors.message.message}</p>
-        )}
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="name" className="text-sm uppercase tracking-[0.3em] text-subtle">
             Name
@@ -158,11 +140,28 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
             id="name"
             {...form.register("name")}
             placeholder="Your name"
-            className="mt-2 bg-white text-black"
+            className="mt-1 bg-white text-black"
             disabled={isSubmitting}
           />
           {form.formState.errors.name && (
             <p className="text-xs text-red-400 mt-1">{form.formState.errors.name.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="phone" className="text-sm uppercase tracking-[0.3em] text-subtle">
+            Phone
+          </Label>
+          <Input
+            id="phone"
+            type="tel"
+            {...form.register("phone")}
+            placeholder="+233 20 000 0000"
+            className="mt-1 bg-white text-black"
+            disabled={isSubmitting}
+          />
+          {form.formState.errors.phone && (
+            <p className="text-xs text-red-400 mt-1">{form.formState.errors.phone.message}</p>
           )}
         </div>
 
@@ -174,31 +173,12 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
             id="email"
             type="email"
             {...form.register("email")}
-            placeholder="your.email@example.com"
-            className="mt-2 bg-white text-black"
+            placeholder="your.email@example.com (optional)"
+            className="mt-1 bg-white text-black"
             disabled={isSubmitting}
           />
           {form.formState.errors.email && (
             <p className="text-xs text-red-400 mt-1">{form.formState.errors.email.message}</p>
-          )}
-        </div>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="space-y-2">
-          <Label htmlFor="phone" className="text-sm uppercase tracking-[0.3em] text-subtle">
-            Phone
-          </Label>
-          <Input
-            id="phone"
-            type="tel"
-            {...form.register("phone")}
-            placeholder="+233 20 000 0000"
-            className="mt-2 bg-white text-black"
-            disabled={isSubmitting}
-          />
-          {form.formState.errors.phone && (
-            <p className="text-xs text-red-400 mt-1">{form.formState.errors.phone.message}</p>
           )}
         </div>
 
@@ -210,13 +190,30 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
             id="relationship"
             {...form.register("relationship")}
             placeholder="Sibling, Friend, Colleague"
-            className="mt-2 bg-white text-black"
+            className="mt-1 bg-white text-black"
             disabled={isSubmitting}
           />
           {form.formState.errors.relationship && (
             <p className="text-xs text-red-400 mt-1">{form.formState.errors.relationship.message}</p>
           )}
         </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="message" className="text-sm uppercase tracking-[0.3em] text-subtle">
+          Message
+        </Label>
+        <Textarea
+          id="message"
+          {...form.register("message")}
+          placeholder="Share your thoughts, memories, or words of tribute..."
+          rows={3}
+          className="mt-1 bg-white text-black resize-none"
+          disabled={isSubmitting}
+        />
+        {form.formState.errors.message && (
+          <p className="text-xs text-red-400 mt-1">{form.formState.errors.message.message}</p>
+        )}
       </div>
 
       <Button

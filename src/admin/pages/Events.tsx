@@ -173,15 +173,6 @@ const Events = () => {
                       </Button>
                     }
                   />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="rounded-full"
-                    onClick={() => window.open(`/events/${event.occurs_on ? new Date(event.occurs_on).toISOString() : "date-tbc"}`, "_blank", "noopener")}
-                  >
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    Preview
-                  </Button>
                   <Dialog>
                     <DialogTrigger asChild>
                       <Button type="button" variant="outline" className="rounded-full">
