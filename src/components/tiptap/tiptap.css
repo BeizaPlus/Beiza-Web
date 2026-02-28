@@ -134,14 +134,14 @@
 
 /* Typography Styles */
 .ProseMirror p {
-  line-height: 1.75;
-  margin: var(--editor-spacing-4) 0;
+  line-height: 1.5;
+  margin: 0 0 1.5rem 0;
   color: var(--editor-text-default);
   font-size: 1.125rem;
 }
 
 .ProseMirror > p {
-  margin: var(--editor-spacing-6) 0;
+  margin: 0 0 1.5rem 0;
 }
 
 .ProseMirror h1,

@@ -56,7 +56,8 @@ const createExtensions = (placeholder?: string): Extension[] => [
   Placeholder.configure({
     emptyNodeClass: "is-editor-empty",
     placeholder: ({ node }) => {
-      switch (node.type.name) {
+      switch (node.type.name)
+      {
         case "heading":
           return `Heading ${node.attrs.level}`;
         case "detailsSummary":
@@ -126,11 +127,13 @@ export function RichTextEditor({
   );
 
   useEffect(() => {
-    if (!editor) {
+    if (!editor)
+    {
       return;
     }
 
-    if (typeof editable === "boolean") {
+    if (typeof editable === "boolean")
+    {
       editor.setEditable(editable);
     }
   }, [editor, editable]);
@@ -139,18 +142,21 @@ export function RichTextEditor({
     if (!editor) return;
     if (value === undefined || value === null) return;
 
-    if (typeof value === "string") {
-      if (lastHtmlRef.current === value) {
+    if (typeof value === "string")
+    {
+      if (lastHtmlRef.current === value)
+      {
         return;
       }
-      editor.commands.setContent(value, false);
+      editor.commands.setContent(value, { emitUpdate: false });
       lastHtmlRef.current = value;
       lastJsonRef.current = JSON.stringify(editor.getJSON());
       return;
     }
 
     const serializedJson = JSON.stringify(value);
-    if (lastJsonRef.current === serializedJson) {
+    if (lastJsonRef.current === serializedJson)
+    {
       return;
     }
 
@@ -164,7 +170,7 @@ export function RichTextEditor({
   return (
     <div
       className={cn(
-        "relative max-h-[calc(100dvh-6rem)] w-full overflow-hidden overflow-y-auto rounded-lg border border-white/10 bg-card pb-[60px] sm:pb-0",
+        "relative w-full rounded-lg border border-white/10 bg-card pb-[60px] sm:pb-0",
         className
       )}
     >

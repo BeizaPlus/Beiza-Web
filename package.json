@@ -74,6 +74,7 @@
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
     "pdfjs-dist": "^5.4.296",
+    "qrcode.react": "^4.2.0",
     "rbush": "^4.0.1",
     "react": "^18.3.1",
     "react-countup": "^6.5.3",

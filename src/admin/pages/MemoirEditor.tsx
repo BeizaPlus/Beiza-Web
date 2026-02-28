@@ -72,12 +72,14 @@ const escapeHtml = (value: string) =>
     .replace(/'/g, "&#39;");
 
 const applyMarks = (text: string, marks?: JSONContent["marks"]): string => {
-  if (!marks || marks.length === 0) {
+  if (!marks || marks.length === 0)
+  {
     return text;
   }
 
   return marks.reduce((acc, mark) => {
-    switch (mark.type) {
+    switch (mark.type)
+    {
       case "bold":
         return `<strong>${acc}</strong>`;
       case "italic":
@@ -101,16 +103,19 @@ const applyMarks = (text: string, marks?: JSONContent["marks"]): string => {
 };
 
 const renderNodeToHtml = (node: JSONContent | null | undefined): string => {
-  if (!node) {
+  if (!node)
+  {
     return "";
   }
 
-  if (node.type === "text") {
+  if (node.type === "text")
+  {
     const text = escapeHtml(node.text ?? "");
     return applyMarks(text, node.marks);
   }
 
-  if (node.type === "hardBreak") {
+  if (node.type === "hardBreak")
+  {
     return "<br />";
   }
 
@@ -118,7 +123,8 @@ const renderNodeToHtml = (node: JSONContent | null | undefined): string => {
     ? node.content.map((child) => renderNodeToHtml(child)).join("")
     : "";
 
-  switch (node.type) {
+  switch (node.type)
+  {
     case "paragraph":
       return `<p>${renderedChildren}</p>`;
     case "heading":
@@ -139,7 +145,8 @@ const renderNodeToHtml = (node: JSONContent | null | undefined): string => {
 };
 
 const convertTiptapJsonToHtml = (doc: JSONContent): string => {
-  if (!doc || doc.type !== "doc" || !Array.isArray(doc.content)) {
+  if (!doc || doc.type !== "doc" || !Array.isArray(doc.content))
+  {
     return "";
   }
 
@@ -147,24 +154,30 @@ const convertTiptapJsonToHtml = (doc: JSONContent): string => {
 };
 
 const normaliseBody = (body: string | null): string => {
-  if (!body) {
+  if (!body)
+  {
     return DEFAULT_CONTENT;
   }
   const trimmed = body.trim();
-  if (!trimmed) {
+  if (!trimmed)
+  {
     return DEFAULT_CONTENT;
   }
 
-  if (trimmed.startsWith("<")) {
+  if (trimmed.startsWith("<"))
+  {
     return trimmed;
   }
 
-  if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
-    try {
+  if (trimmed.startsWith("{") && trimmed.endsWith("}"))
+  {
+    try
+    {
       const parsed = JSON.parse(trimmed) as JSONContent;
       const html = convertTiptapJsonToHtml(parsed);
       return html || DEFAULT_CONTENT;
-    } catch (error) {
+    } catch (error)
+    {
       console.warn("[memoir-editor] Failed to parse section body JSON", error);
     }
   }
@@ -207,9 +220,11 @@ const MemoirEditor = () => {
 
   // Hero media image upload
   const getHeroMediaInitialUrl = useMemo(() => {
-    if (heroMediaSrc) {
+    if (heroMediaSrc)
+    {
       // If it's already a full URL, return it
-      if (heroMediaSrc.startsWith("http")) {
+      if (heroMediaSrc.startsWith("http"))
+      {
         return heroMediaSrc;
       }
       // If it's a storage path, get the public URL
@@ -267,7 +282,8 @@ const MemoirEditor = () => {
   } = useMemoirTributesAdmin(memoirId ?? undefined);
 
   useEffect(() => {
-    if (isNewMemoir) {
+    if (isNewMemoir)
+    {
       setMemoirId(null);
       setSectionId(null);
       setTitle("");
@@ -286,7 +302,8 @@ const MemoirEditor = () => {
     }
 
     const client = getSupabaseClient({ privileged: true }) ?? getSupabaseClient();
-    if (!client) {
+    if (!client)
+    {
       setLoadError("Supabase client is not configured. Check environment variables.");
       return;
     }
@@ -305,7 +322,8 @@ const MemoirEditor = () => {
 
       if (!isMounted) return;
 
-      if (memoirError || !memoirData) {
+      if (memoirError || !memoirData)
+      {
         setLoadError(memoirError?.message ?? "Memoir not found.");
         setLoading(false);
         return;
@@ -319,7 +337,8 @@ const MemoirEditor = () => {
 
       if (!isMounted) return;
 
-      if (sectionError) {
+      if (sectionError)
+      {
         setLoadError(sectionError.message);
         setLoading(false);
         return;
@@ -333,17 +352,19 @@ const MemoirEditor = () => {
       setSubtitle(memoirData.subtitle ?? "");
       setSummary(memoirData.summary ?? "");
       setLiveUrl(memoirData.live_url ?? "");
-      
+
       // Parse hero_media
       const heroMedia = memoirData.hero_media as { src?: string; alt?: string } | null;
-      if (heroMedia && typeof heroMedia === "object") {
+      if (heroMedia && typeof heroMedia === "object")
+      {
         setHeroMediaSrc(heroMedia.src ?? "");
         setHeroMediaAlt(heroMedia.alt ?? "");
-      } else {
+      } else
+      {
         setHeroMediaSrc("");
         setHeroMediaAlt("");
       }
-      
+
       setStatus((memoirData.status as MemoirStatus) ?? "draft");
       setSlugValue(memoirData.slug ?? "");
       setSlugTouched(true);
@@ -360,17 +381,20 @@ const MemoirEditor = () => {
   }, [isNewMemoir, slugParam]);
 
   useEffect(() => {
-    if (!isNewMemoir && slugParam) {
+    if (!isNewMemoir && slugParam)
+    {
       setSlugTouched(true);
     }
   }, [isNewMemoir, slugParam]);
 
   useEffect(() => {
-    if (!isNewMemoir || slugTouched) {
+    if (!isNewMemoir || slugTouched)
+    {
       return;
     }
 
-    if (!title.trim()) {
+    if (!title.trim())
+    {
       setSlugValue("");
       return;
     }
@@ -379,7 +403,8 @@ const MemoirEditor = () => {
   }, [isNewMemoir, slugTouched, title]);
 
   useEffect(() => {
-    if (dirty) {
+    if (dirty)
+    {
       setLastSavedAt(null);
     }
   }, [dirty]);
@@ -387,7 +412,8 @@ const MemoirEditor = () => {
   const handleTitleChange = (value: string) => {
     setTitle(value);
     setDirty(true);
-    if (isNewMemoir && !slugTouched) {
+    if (isNewMemoir && !slugTouched)
+    {
       setSlugValue(slugify(value));
     }
   };
@@ -401,7 +427,8 @@ const MemoirEditor = () => {
   const handleSlugBlur = () => {
     setSlugValue((current) => {
       const sanitized = slugify(current);
-      if (sanitized !== current) {
+      if (sanitized !== current)
+      {
         setDirty(true);
       }
       return sanitized;
@@ -413,25 +440,28 @@ const MemoirEditor = () => {
     const trimmedSlug = slugify(slugValue);
 
     const validation = memoirMetadataSchema.safeParse({ title: trimmedTitle, slug: trimmedSlug, status });
-    if (!validation.success) {
+    if (!validation.success)
+    {
       setFormError(validation.error.issues[0]?.message ?? "Please review the highlighted fields.");
       return;
     }
 
-    if (!session?.user?.id) {
+    if (!session?.user?.id)
+    {
       setFormError("You must be signed in to save memoirs.");
       return;
     }
 
     setFormError(null);
 
-    try {
+    try
+    {
       // Prepare hero_media
       const heroMedia = heroMediaSrc.trim()
         ? {
-            src: heroMediaSrc.trim(),
-            alt: heroMediaAlt.trim() || trimmedTitle,
-          }
+          src: heroMediaSrc.trim(),
+          alt: heroMediaAlt.trim() || trimmedTitle,
+        }
         : null;
 
       const result = await upsertMemoir.mutateAsync({
@@ -458,7 +488,8 @@ const MemoirEditor = () => {
 
       setMemoirId(result.memoir.id);
       setSlugValue(result.memoir.slug);
-      if (result.sections[0]?.id) {
+      if (result.sections[0]?.id)
+      {
         setSectionId(result.sections[0].id);
       }
       setDirty(false);
@@ -467,11 +498,13 @@ const MemoirEditor = () => {
         description: "Your changes have been stored successfully.",
       });
 
-      if (isNewMemoir) {
+      if (isNewMemoir)
+      {
         navigate(`/admin/memoirs/${result.memoir.slug}`, { replace: true });
       }
       setLastSavedAt(new Date());
-    } catch (error) {
+    } catch (error)
+    {
       const message = error instanceof Error ? error.message : "Unable to save memoir.";
       setFormError(message);
       toast({
@@ -489,7 +522,8 @@ const MemoirEditor = () => {
         const orderA = a.display_order ?? Number.MAX_SAFE_INTEGER;
         const orderB = b.display_order ?? Number.MAX_SAFE_INTEGER;
 
-        if (orderA !== orderB) {
+        if (orderA !== orderB)
+        {
           return orderA - orderB;
         }
 
@@ -537,17 +571,20 @@ const MemoirEditor = () => {
   const formatTimelineDate = (value: string) =>
     new Date(value).toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric" });
   const handleTimelineReorder = (entryId: string, direction: "up" | "down") => {
-    if (!timelineEnabled || !activeTimelineSlug) {
+    if (!timelineEnabled || !activeTimelineSlug)
+    {
       return;
     }
 
     const currentIndex = timelineEntriesWithOrder.findIndex((entry) => entry.id === entryId);
-    if (currentIndex === -1) {
+    if (currentIndex === -1)
+    {
       return;
     }
 
     const swapIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
-    if (swapIndex < 0 || swapIndex >= timelineEntriesWithOrder.length) {
+    if (swapIndex < 0 || swapIndex >= timelineEntriesWithOrder.length)
+    {
       return;
     }
 
@@ -566,17 +603,20 @@ const MemoirEditor = () => {
     });
   };
   const handleHighlightReorder = (entryId: string, direction: "up" | "down") => {
-    if (!memoirId) {
+    if (!memoirId)
+    {
       return;
     }
 
     const currentIndex = highlightEntriesWithOrder.findIndex((entry) => entry.id === entryId);
-    if (currentIndex === -1) {
+    if (currentIndex === -1)
+    {
       return;
     }
 
     const swapIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
-    if (swapIndex < 0 || swapIndex >= highlightEntriesWithOrder.length) {
+    if (swapIndex < 0 || swapIndex >= highlightEntriesWithOrder.length)
+    {
       return;
     }
 
@@ -595,17 +635,20 @@ const MemoirEditor = () => {
     });
   };
   const handleTributeReorder = (entryId: string, direction: "up" | "down") => {
-    if (!memoirId) {
+    if (!memoirId)
+    {
       return;
     }
 
     const currentIndex = tributeEntriesWithOrder.findIndex((entry) => entry.id === entryId);
-    if (currentIndex === -1) {
+    if (currentIndex === -1)
+    {
       return;
     }
 
     const swapIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
-    if (swapIndex < 0 || swapIndex >= tributeEntriesWithOrder.length) {
+    if (swapIndex < 0 || swapIndex >= tributeEntriesWithOrder.length)
+    {
       return;
     }
 
@@ -896,6 +939,16 @@ const MemoirEditor = () => {
               isError={isTimelineError}
               errorMessage={timelineErrorMessage}
               emptyMessage="No timeline entries yet."
+              columns={
+                <tr>
+                  <th className="px-6 py-3 text-left font-medium">Order</th>
+                  <th className="px-6 py-3 text-left font-medium">Title</th>
+                  <th className="px-6 py-3 text-left font-medium">Date</th>
+                  <th className="px-6 py-3 text-left font-medium">Era</th>
+                  <th className="px-6 py-3 text-left font-medium">Status</th>
+                  <th className="px-6 py-3 text-right font-medium">Actions</th>
+                </tr>
+              }
             >
               {timelineEntriesWithOrder.map((entry, index) => {
                 const isFirst = index === 0;
@@ -915,9 +968,8 @@ const MemoirEditor = () => {
                     <td className="px-6 py-4 text-white/60">{entry.era_label ?? "—"}</td>
                     <td className="px-6 py-4">
                       <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
-                          entry.is_published ? "bg-emerald-500/20 text-emerald-300" : "bg-amber-500/20 text-amber-200"
-                        }`}
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${entry.is_published ? "bg-emerald-500/20 text-emerald-300" : "bg-amber-500/20 text-amber-200"
+                          }`}
                       >
                         {entry.is_published ? "Published" : "Draft"}
                       </span>
@@ -1047,10 +1099,10 @@ const MemoirEditor = () => {
                 const isDeleting = deleteHighlight.isPending && currentDeleteHighlightId === highlight.id;
                 const updatedDisplay = highlight.updated_at
                   ? new Date(highlight.updated_at).toLocaleString(undefined, {
-                      year: "numeric",
-                      month: "short",
-                      day: "numeric",
-                    })
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })
                   : "—";
 
                 return (
@@ -1315,6 +1367,19 @@ const MemoirEditor = () => {
       </header>
 
       {body}
+
+      {/* Floating Save Button */}
+      <div className="fixed bottom-8 right-8 z-[100]">
+        <Button
+          size="lg"
+          className="rounded-full bg-white text-black hover:bg-white/90 shadow-2xl px-6 h-14"
+          disabled={!canSave}
+          onClick={handleSave}
+        >
+          {upsertMemoir.isPending ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Save className="mr-2 h-5 w-5" />}
+          {upsertMemoir.isPending ? "Saving..." : "Save changes"}
+        </Button>
+      </div>
     </div>
   );
 };

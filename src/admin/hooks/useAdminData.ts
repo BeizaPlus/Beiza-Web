@@ -69,6 +69,7 @@ type OfferingRecord = {
 type EventRecord = {
   id: string;
   slug: string;
+  memoir_slug: string | null;
   title: string;
   location: string | null;
   occurs_on: string | null;
@@ -305,7 +306,7 @@ async function fetchEvents(): Promise<EventRecord[]> {
 
   const { data, error } = await client
     .from("events")
-    .select("id, title, slug, location, occurs_on, is_featured, is_published")
+    .select("id, title, slug, memoir_slug, location, occurs_on, is_featured, is_published")
     .order("occurs_on", { ascending: false });
 
   if (error)

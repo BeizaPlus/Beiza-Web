@@ -1,9 +1,18 @@
-import { Calendar as CalendarIcon, ExternalLink, Trash2 } from "lucide-react";
+import { Calendar as CalendarIcon, ExternalLink, Trash2, QrCode } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { Switch } from "@/components/ui/switch";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { CrudTable, ConfirmDialog } from "@/admin/components/crud";
 import { EventForm } from "@/admin/components/events";
 import {
@@ -173,6 +182,32 @@ const Events = () => {
                     <ExternalLink className="mr-2 h-4 w-4" />
                     Preview
                   </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button type="button" variant="outline" className="rounded-full">
+                        <QrCode className="mr-2 h-4 w-4" />
+                        QR
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Event QR Code</DialogTitle>
+                        <DialogDescription>
+                          Scan this code to view the associated memoir page for "{event.title}".
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="flex justify-center p-6">
+                        <QRCodeSVG
+                          value={`${window.location.origin}/memoirs/${event.memoir_slug || event.slug}`}
+                          size={256}
+                          bgColor="#ffffff"
+                          fgColor="#000000"
+                          level="Q"
+                          includeMargin={false}
+                        />
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                   <ConfirmDialog
                     title="Delete event?"
                     description={`"${event.title}" will be removed from the schedule.`}

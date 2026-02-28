@@ -4,9 +4,9 @@ export const FALLBACK_NAVIGATION_LINKS: NavigationLink[] = [
   { id: "fallback-nav-live", label: "Live Now", href: "/", location: "primary", displayOrder: 1 },
   { id: "fallback-nav-events", label: "Events", href: "/events", location: "primary", displayOrder: 2 },
   { id: "fallback-nav-gallery", label: "Gallery", href: "/gallery", location: "primary", displayOrder: 3 },
-  { id: "fallback-nav-memoirs", label: "Memoirs", href: "/memoirs", location: "primary", displayOrder: 4 },
-  { id: "fallback-nav-blog", label: "Blog", href: "/blog", location: "primary", displayOrder: 5 },
-  { id: "fallback-nav-contact", label: "Contact", href: "/contact", location: "primary", displayOrder: 6, isCta: true },
+  // { id: "fallback-nav-memoirs", label: "Memoirs", href: "/memoirs", location: "primary", displayOrder: 4 },
+  { id: "fallback-nav-blog", label: "Blog", href: "/blog", location: "primary", displayOrder: 4 },
+  { id: "fallback-nav-contact", label: "Contact", href: "/contact", location: "primary", displayOrder: 5, isCta: true },
 ];
 
 export const FALLBACK_FOOTER_LINKS: FooterLink[] = [

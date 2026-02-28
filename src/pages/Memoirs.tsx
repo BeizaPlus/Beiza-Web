@@ -157,10 +157,9 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
   const [activeTab, setActiveTab] = useState<"story" | "live">(desiredTab as "story" | "live");
   const desiredSubTab = searchParams.get("subtab") === "tributes" ? "tributes" : "gallery";
   const [activeSubTab, setActiveSubTab] = useState<"gallery" | "tributes">(desiredSubTab as "gallery" | "tributes");
-  const [selectedImage, setSelectedImage] = useState<{
-    src: string;
-    alt: string;
-    caption?: string;
+  const [galleryState, setGalleryState] = useState<{
+    images: { src: string; alt: string; caption?: string }[];
+    initialIndex: number;
   } | null>(null);
 
   // Content warning consent state - stored per memoir slug
@@ -263,16 +262,19 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
     setSearchParams(next, { replace: true });
   };
 
-  const handleImageClick = (highlight: MemoirHighlight) => {
-    setSelectedImage({
-      src: highlight.media.src,
-      alt: highlight.media.alt,
-      caption: highlight.caption ?? undefined,
+  const handleImageClick = (highlightsList: MemoirHighlight[], index: number) => {
+    setGalleryState({
+      images: highlightsList.map((h) => ({
+        src: h.media.src,
+        alt: h.media.alt || summary?.title || "Memoir highlight",
+        caption: h.caption ?? undefined,
+      })),
+      initialIndex: index,
     });
   };
 
   const handleCloseImageDialog = () => {
-    setSelectedImage(null);
+    setGalleryState(null);
   };
 
   const sections = detail?.sections ?? [];
@@ -328,6 +330,19 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
             description={summary?.subtitle ?? summary?.summary ?? undefined}
             align="center"
           />
+          {memoirId ? (
+            <div className="mt-8 flex justify-center">
+              <TributeFormDialog
+                memoirId={memoirId}
+                memoirTitle={summary?.title}
+                trigger={
+                  <Button className="button-pill !h-14 !px-8 text-lg md:text-xl font-semibold shadow-lg bg-primary text-primary-foreground hover:bg-primary/90">
+                    Share a Tribute
+                  </Button>
+                }
+              />
+            </div>
+          ) : null}
         </section>
 
         <section className="mx-auto w-full max-w-6xl px-6 py-12">
@@ -363,7 +378,7 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                                 <h3 className="text-lg font-medium text-white">{section.heading}</h3>
                               ) : null}
                               <div
-                                className="memoir-content prose prose-invert max-w-none text-base leading-relaxed md:text-lg"
+                                className="memoir-content prose prose-invert max-w-none text-base leading-relaxed md:text-lg prose-strong:font-bold prose-strong:text-white"
                                 dangerouslySetInnerHTML={{ __html: section.body }}
                               />
                             </div>
@@ -440,11 +455,11 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                           {shouldLoadHighlights && highlights.length > 0 ? (
                             <>
                               <div className="grid gap-6 lg:grid-cols-3">
-                                {highlights.map((highlight) => (
+                                {highlights.map((highlight, index) => (
                                   <figure
                                     key={highlight.id}
                                     className="glass-panel overflow-hidden rounded-lg border border-white/10 cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
-                                    onClick={() => handleImageClick(highlight)}
+                                    onClick={() => handleImageClick(highlights, index)}
                                   >
                                     <img
                                       src={highlight.media.src}
@@ -654,11 +669,12 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
       <Footer />
 
       {/* Image Dialog */}
-      {selectedImage && (
+      {galleryState && (
         <SingleImageDialog
-          isOpen={!!selectedImage}
+          isOpen={!!galleryState}
           onClose={handleCloseImageDialog}
-          image={selectedImage}
+          images={galleryState.images}
+          initialIndex={galleryState.initialIndex}
         />
       )}
     </div>

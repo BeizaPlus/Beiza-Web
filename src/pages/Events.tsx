@@ -67,7 +67,7 @@ const Events = () => {
               <div className="relative h-full bg-white/5" />
             </div>
           ) : primaryEvent ? (
-            <div 
+            <div
               onClick={() => navigate(`/memoirs/${primaryEvent.memoirSlug}`)}
               className="glass-panel group cursor-pointer hover:border-white/20 transition-colors grid overflow-hidden rounded-[32px] border border-white/10 md:grid-cols-[1.05fr_0.95fr]"
             >
@@ -124,7 +124,7 @@ const Events = () => {
           <div className="space-y-12">
             <SectionHeader
               eyebrow="All Events"
-              title="Upcoming celebrations"
+              title="Celebrations"
               description="Families can request access to private itineraries, tribute rehearsals, and livestreams for these productions."
               align="center"
             />
@@ -138,8 +138,8 @@ const Events = () => {
             ) : additionalEvents.length > 0 ? (
               <div className="grid gap-8 md:grid-cols-2">
                 {additionalEvents.map((event) => (
-                  <article 
-                    key={event.id} 
+                  <article
+                    key={event.id}
                     onClick={() => navigate(`/memoirs/${event.memoirSlug}`)}
                     className="glass-panel group cursor-pointer hover:border-white/20 transition-colors flex h-full flex-col overflow-hidden rounded-lg border border-white/10"
                   >
