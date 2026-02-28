@@ -1,4 +1,4 @@
-import { Calendar as CalendarIcon, ExternalLink, Trash2, QrCode } from "lucide-react";
+import { Calendar as CalendarIcon, ExternalLink, Trash2, QrCode, Download } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -196,8 +196,9 @@ const Events = () => {
                           Scan this code to view the associated memoir page for "{event.title}".
                         </DialogDescription>
                       </DialogHeader>
-                      <div className="flex justify-center p-6">
+                      <div className="flex flex-col items-center gap-6 p-6">
                         <QRCodeSVG
+                          id={`qr-code-${event.id}`}
                           value={`${window.location.origin}/memoirs/${event.memoir_slug || event.slug}`}
                           size={256}
                           bgColor="#ffffff"
@@ -205,6 +206,38 @@ const Events = () => {
                           level="Q"
                           includeMargin={false}
                         />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="rounded-full w-full max-w-[256px]"
+                          onClick={() => {
+                            const svg = document.getElementById(`qr-code-${event.id}`);
+                            if (!svg) return;
+                            const svgData = new XMLSerializer().serializeToString(svg);
+                            const canvas = document.createElement("canvas");
+                            const ctx = canvas.getContext("2d");
+                            const img = new Image();
+                            img.onload = () => {
+                              canvas.width = img.width;
+                              canvas.height = img.height;
+                              if (ctx)
+                              {
+                                ctx.fillStyle = "#ffffff";
+                                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                                ctx.drawImage(img, 0, 0);
+                                const pngFile = canvas.toDataURL("image/png");
+                                const downloadLink = document.createElement("a");
+                                downloadLink.download = `qr-${event.slug}.png`;
+                                downloadLink.href = `${pngFile}`;
+                                downloadLink.click();
+                              }
+                            };
+                            img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
+                          }}
+                        >
+                          <Download className="mr-2 h-4 w-4" />
+                          Download
+                        </Button>
                       </div>
                     </DialogContent>
                   </Dialog>
