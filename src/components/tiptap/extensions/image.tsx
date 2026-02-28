@@ -67,7 +67,8 @@ export const ImageExtension = Image.extend({
         default: null,
         parseHTML: (element) => element.getAttribute("data-storage-path"),
         renderHTML: (attributes) => {
-          if (!attributes.storagePath) {
+          if (!attributes.storagePath)
+          {
             return {};
           }
           return { "data-storage-path": attributes.storagePath };
@@ -107,7 +108,7 @@ function TiptapImage(props: NodeViewProps) {
   } = useImageUpload({
     bucket: "memoir-media",
     folder: "editor",
-    makePublic: false,
+    makePublic: true,
     signedUrlDurationSeconds: 60 * 60 * 24,
     onUpload: (result) => {
       const storageLocation = `storage://${result.bucket}/${result.path}`;
@@ -136,7 +137,8 @@ function TiptapImage(props: NodeViewProps) {
     event.preventDefault();
     setResizing(true);
     setResizeInitialMouseX(event.clientX);
-    if (imageRef.current) {
+    if (imageRef.current)
+    {
       setResizeInitialWidth(imageRef.current.offsetWidth);
     }
   }
@@ -145,14 +147,16 @@ function TiptapImage(props: NodeViewProps) {
     if (!resizing) return;
 
     let dx = event.clientX - resizeInitialMouseX;
-    if (resizingPosition === "left") {
+    if (resizingPosition === "left")
+    {
       dx = resizeInitialMouseX - event.clientX;
     }
 
     const newWidth = Math.max(resizeInitialWidth + dx, 150);
     const parentWidth = nodeRef.current?.parentElement?.offsetWidth ?? 0;
 
-    if (newWidth < parentWidth) {
+    if (newWidth < parentWidth)
+    {
       updateAttributes({
         width: newWidth,
       });
@@ -173,7 +177,8 @@ function TiptapImage(props: NodeViewProps) {
     setResizing(true);
     setResizingPosition(position);
     setResizeInitialMouseX(event.touches[0]?.clientX ?? 0);
-    if (imageRef.current) {
+    if (imageRef.current)
+    {
       setResizeInitialWidth(imageRef.current.offsetWidth);
     }
   }
@@ -182,14 +187,16 @@ function TiptapImage(props: NodeViewProps) {
     if (!resizing) return;
 
     let dx = (event.touches[0]?.clientX ?? resizeInitialMouseX) - resizeInitialMouseX;
-    if (resizingPosition === "left") {
+    if (resizingPosition === "left")
+    {
       dx = resizeInitialMouseX - (event.touches[0]?.clientX ?? resizeInitialMouseX);
     }
 
     const newWidth = Math.max(resizeInitialWidth + dx, 150);
     const parentWidth = nodeRef.current?.parentElement?.offsetWidth ?? 0;
 
-    if (newWidth < parentWidth) {
+    if (newWidth < parentWidth)
+    {
       updateAttributes({
         width: newWidth,
       });
@@ -213,13 +220,15 @@ function TiptapImage(props: NodeViewProps) {
   }
 
   function handleCaptionKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "Enter") {
+    if (e.key === "Enter")
+    {
       handleCaptionBlur();
     }
   }
 
   const handleImageUrlSubmit = () => {
-    if (imageUrl) {
+    if (imageUrl)
+    {
       updateAttributes({
         src: imageUrl,
         alt: altText,
@@ -449,7 +458,8 @@ function TiptapImage(props: NodeViewProps) {
                 <DropdownMenuItem
                   onClick={() => {
                     const aspectRatio = node.attrs.aspectRatio;
-                    if (aspectRatio) {
+                    if (aspectRatio)
+                    {
                       const parentWidth =
                         nodeRef.current?.parentElement?.offsetWidth ?? 0;
                       updateAttributes({
