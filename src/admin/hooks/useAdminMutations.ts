@@ -1522,42 +1522,26 @@ export const useCreateManagerMutation = () => {
 
   return useSafeMutation<ManagerInviteInput & { id: string; last_sign_in_at: string | null }, ManagerInviteInput>({
     mutationFn: async (manager) => {
-      const client = ensurePrivilegedClient();
+      const client = ensureClient();
       const email = manager.email.trim().toLowerCase();
       const role = manager.role.trim();
       const status = manager.status ?? "invited";
       const displayName = manager.display_name ?? null;
 
-      const { data: inviteData, error: inviteError } = await client.auth.admin.inviteUserByEmail(email, {
-        data: { role },
+      const { data, error } = await client.functions.invoke("invite-manager", {
+        body: {
+          email,
+          role,
+          status,
+          display_name: displayName,
+        },
       });
 
-      if (inviteError || !inviteData?.user)
-      {
-        throw new Error(inviteError?.message ?? "Unable to invite manager through auth service.");
+      if (error) {
+        throw new Error(`Unable to invite manager. ${error.message}`);
       }
 
-      const userId = inviteData.user.id;
-
-      const { data: profileData, error: profileError } = await client
-        .from("manager_profiles")
-        .upsert(
-          {
-            id: userId,
-            email,
-            role,
-            status,
-            display_name: displayName,
-          },
-          { onConflict: "id" }
-        )
-        .select("id, email, role, status, display_name, last_sign_in_at")
-        .single();
-
-      if (profileError || !profileData)
-      {
-        throw new Error(profileError?.message ?? "Unable to save manager profile.");
-      }
+      const profileData = data;
 
       return {
         email: profileData.email,
