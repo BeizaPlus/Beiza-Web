@@ -12,6 +12,7 @@ import { MutationErrorBanner } from "../crud/MutationErrorBanner";
 import {
   useCreateManagerMutation,
   useUpdateManagerMutation,
+  useDeleteManagerMutation,
   type ManagerInviteInput,
   type ManagerUpdateInput,
 } from "../../hooks/useAdminMutations";
@@ -46,6 +47,7 @@ export const ManagerForm = ({ trigger, manager }: ManagerFormProps) => {
   const [open, setOpen] = useState(false);
   const createManager = useCreateManagerMutation();
   const updateManager = useUpdateManagerMutation();
+  const deleteManager = useDeleteManagerMutation();
 
   const defaultValues = useMemo<ManagerFormValues>(
     () => ({
@@ -63,17 +65,20 @@ export const ManagerForm = ({ trigger, manager }: ManagerFormProps) => {
   });
 
   useEffect(() => {
-    if (open) {
+    if (open)
+    {
       form.reset(defaultValues);
     }
   }, [open, defaultValues, form]);
 
   const createError = createManager.isError ? extractSupabaseErrorMessage(createManager.error) : null;
   const updateError = updateManager.isError ? extractSupabaseErrorMessage(updateManager.error) : null;
-  const mutationError = manager ? updateError : createError;
+  const deleteError = deleteManager.isError ? extractSupabaseErrorMessage(deleteManager.error) : null;
+  const mutationError = deleteError || (manager ? updateError : createError);
 
   const handleSubmit = form.handleSubmit(async (values) => {
-    if (manager) {
+    if (manager)
+    {
       const payload: ManagerUpdateInput = {
         id: manager.id,
         role: values.role.trim(),
@@ -86,7 +91,8 @@ export const ManagerForm = ({ trigger, manager }: ManagerFormProps) => {
         title: "Manager updated",
         description: `${manager.email} permissions have been updated.`,
       });
-    } else {
+    } else
+    {
       const payload: ManagerInviteInput = {
         email: values.email.trim(),
         role: values.role.trim(),
@@ -104,7 +110,16 @@ export const ManagerForm = ({ trigger, manager }: ManagerFormProps) => {
     setOpen(false);
   });
 
-  const isSubmitting = manager ? updateManager.isPending : createManager.isPending;
+  const handleDelete = async () => {
+    if (!manager) return;
+    if (window.confirm("Are you sure you want to revoke this manager's access? This action cannot be undone."))
+    {
+      await deleteManager.mutateAsync({ id: manager.id });
+      setOpen(false);
+    }
+  };
+
+  const isSubmitting = createManager.isPending || updateManager.isPending || deleteManager.isPending;
 
   return (
     <CrudFormDrawer
@@ -115,15 +130,24 @@ export const ManagerForm = ({ trigger, manager }: ManagerFormProps) => {
       onOpenChange={setOpen}
       size="md"
       footer={
-        <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-end">
-          <DrawerClose asChild>
-            <Button variant="outline" disabled={isSubmitting}>
-              Cancel
+        <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-between">
+          <div>
+            {manager ? (
+              <Button type="button" variant="destructive" onClick={handleDelete} disabled={isSubmitting}>
+                {deleteManager.isPending ? "Revoking..." : "Revoke access"}
+              </Button>
+            ) : null}
+          </div>
+          <div className="flex gap-2 flex-col sm:flex-row">
+            <DrawerClose asChild>
+              <Button variant="outline" disabled={isSubmitting}>
+                Cancel
+              </Button>
+            </DrawerClose>
+            <Button onClick={handleSubmit} disabled={isSubmitting}>
+              {isSubmitting ? "Saving…" : manager ? "Save changes" : "Send invite"}
             </Button>
-          </DrawerClose>
-          <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? "Saving…" : manager ? "Save changes" : "Send invite"}
-          </Button>
+          </div>
         </div>
       }
     >

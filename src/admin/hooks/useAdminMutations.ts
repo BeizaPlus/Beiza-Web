@@ -1570,17 +1570,18 @@ export const useUpdateManagerMutation = () => {
 
   return useSafeMutation<ManagerUpdateInput, ManagerUpdateInput>({
     mutationFn: async (manager) => {
-      const client = ensurePrivilegedClient();
+      const client = ensureClient();
       const payload = {
         ...manager,
         display_name: manager.display_name ?? null,
       };
 
-      const { data, error } = await client.from("manager_profiles").update(payload).eq("id", manager.id).select().single();
+      const { data, error } = await client.functions.invoke("update-manager", {
+        body: payload,
+      });
 
-      if (error || !data)
-      {
-        throw new Error(error?.message ?? "Unable to update manager profile.");
+      if (error) {
+        throw new Error(`Unable to update manager profile. ${error.message}`);
       }
 
       return data as ManagerUpdateInput;
@@ -1591,6 +1592,35 @@ export const useUpdateManagerMutation = () => {
     successToast: false,
     errorToast: {
       title: "Unable to update manager",
+    },
+    logScope: "[admin-managers]",
+  });
+};
+
+export const useDeleteManagerMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useSafeMutation<void, { id: string }>({
+    mutationFn: async ({ id }) => {
+      const client = ensureClient();
+
+      const { error } = await client.functions.invoke("remove-manager", {
+        body: { id },
+      });
+
+      if (error) {
+        throw new Error(`Unable to delete manager. ${error.message}`);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-managers"] });
+    },
+    successToast: {
+      title: "Manager access revoked",
+      description: "The user has been completely removed from the system.",
+    },
+    errorToast: {
+      title: "Unable to revoke manager access",
     },
     logScope: "[admin-managers]",
   });
