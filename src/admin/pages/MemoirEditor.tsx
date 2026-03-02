@@ -16,6 +16,7 @@ import { CrudTable, ConfirmDialog } from "@/admin/components/crud";
 import { TimelineEntryForm } from "@/admin/components/memoirs/TimelineEntryForm";
 import { HighlightForm } from "@/admin/components/memoirs/HighlightForm";
 import { TributeForm } from "@/admin/components/memoirs/TributeForm";
+import { AudioPlayer } from "@/components/tribute/AudioPlayer";
 import { useImageUpload } from "@/hooks/use-image-upload";
 import {
   useDeleteMemoirTimelineMutation,
@@ -1265,9 +1266,8 @@ const MemoirEditor = () => {
                       <div className="flex flex-col gap-2">
                         <span className="line-clamp-3">{entry.message}</span>
                         {entry.audio_url && (
-                          <div className="flex items-center gap-1 text-xs text-emerald-400">
-                            <Mic className="h-3 w-3" />
-                            <span>Audio Note</span>
+                          <div className="mt-1 w-64 max-w-full">
+                            <AudioPlayer url={entry.audio_url} />
                           </div>
                         )}
                       </div>

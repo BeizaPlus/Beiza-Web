@@ -39,7 +39,7 @@ const submitTribute = async (tribute: TributeSubmission): Promise<void> => {
   
   if (tribute.audioBlob) {
     try {
-      const fileExt = tribute.audioBlob.type.replace("audio/", "") || "webm";
+      const fileExt = tribute.audioBlob.type.replace("audio/", "").split(";")[0] || "webm";
       const fileName = `${tribute.memoirId}/${Date.now()}.${fileExt}`;
       
       const { data: uploadData, error: uploadError } = await supabase.storage

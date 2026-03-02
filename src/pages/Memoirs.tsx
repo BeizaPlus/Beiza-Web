@@ -297,6 +297,7 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
         name: tribute.name,
         relationship: tribute.relationship ?? "Loved one",
         message: tribute.message,
+        audio_url: tribute.audio_url,
       })),
     [tributes],
   );

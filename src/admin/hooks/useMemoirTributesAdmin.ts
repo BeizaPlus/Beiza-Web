@@ -69,7 +69,21 @@ const fetchMemoirTributes = async (memoirId: string): Promise<MemoirTributeAdmin
     throw new Error(extractSupabaseErrorMessage(error, "Failed to load memoir tributes."));
   }
 
-  const rows = (data ?? []).map(mapRow);
+  const rows = (data ?? []).map((row) => {
+    let publicAudioUrl = row.audio_url;
+    if (publicAudioUrl && !publicAudioUrl.startsWith("http")) {
+      const { data: publicData } = client.storage
+        .from("tribute-uploads")
+        .getPublicUrl(publicAudioUrl);
+      publicAudioUrl = publicData.publicUrl;
+    }
+    
+    return mapRow({
+      ...row,
+      audio_url: publicAudioUrl,
+    });
+  });
+
   return sortEntries(rows);
 };
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import clsx from "clsx";
+import { AudioPlayer } from "@/components/tribute/AudioPlayer";
 
 export type Tribute = {
   name: string;
@@ -59,11 +60,7 @@ const TributeCard = ({ tribute, index }: { tribute: Tribute; index: number }) =>
 
       {tribute.audio_url && (
         <div className="mt-2 pt-4 border-t border-white/10 shrink-0">
-          <audio
-            controls
-            src={tribute.audio_url}
-            className="h-8 w-full outline-none max-w-[200px] opacity-80 hover:opacity-100 transition-opacity"
-          />
+          <AudioPlayer url={tribute.audio_url} className="w-full" />
         </div>
       )}
     </motion.div>

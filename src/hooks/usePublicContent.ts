@@ -664,7 +664,7 @@ export const useMemoirTributes = (memoirSlug: string) =>
 
       const { data, error } = await supabase
         .from("memoir_tributes")
-        .select("id, name, relationship, message, display_order")
+        .select("id, name, relationship, message, display_order, audio_url")
         .eq("memoir_id", memoir.id)
         .order("display_order", { ascending: true });
 
@@ -674,13 +674,24 @@ export const useMemoirTributes = (memoirSlug: string) =>
         return [];
       }
 
-      return data.map((row) => ({
-        id: row.id,
-        name: row.name,
-        relationship: row.relationship,
-        message: row.message,
-        displayOrder: row.display_order ?? 0,
-      }));
+      return data.map((row) => {
+        let publicAudioUrl = undefined;
+        if (row.audio_url) {
+          const { data: publicData } = supabase.storage
+            .from("tribute-uploads")
+            .getPublicUrl(row.audio_url);
+          publicAudioUrl = publicData.publicUrl;
+        }
+        
+        return {
+          id: row.id,
+          name: row.name,
+          relationship: row.relationship,
+          message: row.message,
+          displayOrder: row.display_order ?? 0,
+          audio_url: publicAudioUrl,
+        };
+      });
     },
   });
 

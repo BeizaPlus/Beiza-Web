@@ -307,7 +307,7 @@ export const AudioRecorder = ({ onRecordingComplete, disabled = false }: AudioRe
       {/* Maximum length note */}
       {!audioUrl && !isRecording && (
         <p className="text-xs text-subtle mt-2 opacity-70">
-          Max 3 minutes. Safari, Chrome, and Firefox supported.
+          Safari, Chrome, and Firefox supported.
         </p>
       )}
     </div>
