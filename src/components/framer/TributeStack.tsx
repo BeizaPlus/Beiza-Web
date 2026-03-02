@@ -6,6 +6,7 @@ export type Tribute = {
   name: string;
   relationship: string;
   message: string;
+  audio_url?: string;
 };
 
 export type TributeStackProps = {
@@ -55,6 +56,16 @@ const TributeCard = ({ tribute, index }: { tribute: Tribute; index: number }) =>
           </button>
         )}
       </div>
+
+      {tribute.audio_url && (
+        <div className="mt-2 pt-4 border-t border-white/10 shrink-0">
+          <audio
+            controls
+            src={tribute.audio_url}
+            className="h-8 w-full outline-none max-w-[200px] opacity-80 hover:opacity-100 transition-opacity"
+          />
+        </div>
+      )}
     </motion.div>
   );
 };

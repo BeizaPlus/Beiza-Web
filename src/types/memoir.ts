@@ -77,6 +77,7 @@ export type MemoirTribute = {
   relationship?: string | null;
   message: string;
   displayOrder: number;
+  audio_url?: string;
 };
 
 

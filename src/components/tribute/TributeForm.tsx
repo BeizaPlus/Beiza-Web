@@ -1,5 +1,5 @@
 import { useForm, Controller } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowRight } from "lucide-react";
 import type { MemoirSummary } from "@/types/memoir";
+import { AudioRecorder } from "./AudioRecorder";
 
 const createTributeFormSchema = (hasDefaultMemoir: boolean) =>
   z.object({
@@ -35,6 +36,7 @@ export type TributeFormValues = {
   relationship: string;
   message: string;
   memoirId: string;
+  audioBlob?: Blob | null;
 };
 
 type TributeFormProps = {
@@ -47,6 +49,7 @@ type TributeFormProps = {
 
 export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId = "", memoirTitle }: TributeFormProps) => {
   const hasDefaultMemoir = Boolean(defaultMemoirId);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const schema = createTributeFormSchema(hasDefaultMemoir);
   type FormValues = z.infer<typeof schema>;
 
@@ -76,6 +79,7 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
       ...values,
       email: values.email || "anonymous@tribute.com",
       memoirId: defaultMemoirId || values.memoirId || "",
+      audioBlob: audioBlob
     };
     const success = await onSubmit(finalValues as TributeFormValues);
     if (success)
@@ -88,6 +92,7 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
         message: "",
         memoirId: defaultMemoirId || "",
       });
+      setAudioBlob(null);
     }
   });
 
@@ -214,6 +219,13 @@ export const TributeForm = ({ memoirs, onSubmit, isSubmitting, defaultMemoirId =
         {form.formState.errors.message && (
           <p className="text-xs text-red-400 mt-1">{form.formState.errors.message.message}</p>
         )}
+      </div>
+
+      <div className="space-y-4">
+        <AudioRecorder
+          onRecordingComplete={setAudioBlob}
+          disabled={isSubmitting}
+        />
       </div>
 
       <Button

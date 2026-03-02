@@ -7,6 +7,7 @@ type TributeSubmission = {
   name: string;
   relationship?: string | null;
   message: string;
+  audioBlob?: Blob | null;
 };
 
 const getNextDisplayOrder = async (memoirId: string): Promise<number> => {
@@ -34,12 +35,41 @@ const submitTribute = async (tribute: TributeSubmission): Promise<void> => {
 
   const displayOrder = await getNextDisplayOrder(tribute.memoirId);
 
+  let audio_url: string | null = null;
+  
+  if (tribute.audioBlob) {
+    try {
+      const fileExt = tribute.audioBlob.type.replace("audio/", "") || "webm";
+      const fileName = `${tribute.memoirId}/${Date.now()}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("tribute-uploads")
+        .upload(fileName, tribute.audioBlob, {
+          cacheControl: "3600",
+          upsert: false
+        });
+        
+      if (uploadError) {
+        throw new Error(`Failed to upload audio: ${uploadError.message}`);
+      }
+      
+      // We store the relative path in DB to be consistent with existing logic 
+      // where we extract public URL at runtime using getPublicUrl
+      audio_url = uploadData.path;
+      
+    } catch (err: any) {
+      console.error("[tribute] Audio upload error:", err);
+      throw new Error(err.message || "Failed to upload your voice note");
+    }
+  }
+
   const { error } = await supabase.from("memoir_tributes").insert({
     memoir_id: tribute.memoirId,
     name: tribute.name.trim(),
     relationship: tribute.relationship?.trim() || null,
     message: tribute.message.trim(),
     display_order: displayOrder,
+    audio_url: audio_url
   });
 
   if (error) {

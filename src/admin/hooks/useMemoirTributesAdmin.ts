@@ -19,6 +19,7 @@ export type MemoirTributeAdminEntry = {
   message: string;
   display_order: number | null;
   updated_at: string | null;
+  audio_url: string | null;
 };
 
 type MemoirTributeRow = {
@@ -29,6 +30,7 @@ type MemoirTributeRow = {
   message: string;
   display_order: number | null;
   updated_at: string | null;
+  audio_url: string | null;
 };
 
 const mapRow = (row: MemoirTributeRow): MemoirTributeAdminEntry => ({
@@ -39,6 +41,7 @@ const mapRow = (row: MemoirTributeRow): MemoirTributeAdminEntry => ({
   message: row.message,
   display_order: row.display_order,
   updated_at: row.updated_at,
+  audio_url: row.audio_url,
 });
 
 const sortEntries = (entries: MemoirTributeAdminEntry[]) =>
@@ -57,7 +60,7 @@ const fetchMemoirTributes = async (memoirId: string): Promise<MemoirTributeAdmin
   const client = ensureClient();
   const { data, error } = await client
     .from("memoir_tributes")
-    .select("id, memoir_id, name, relationship, message, display_order, updated_at")
+    .select("id, memoir_id, name, relationship, message, display_order, updated_at, audio_url")
     .eq("memoir_id", memoirId)
     .order("display_order", { ascending: true })
     .order("created_at", { ascending: true });

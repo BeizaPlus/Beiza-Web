@@ -20,6 +20,7 @@ type TributeFormValues = {
   relationship?: string;
   message: string;
   memoirId: string;
+  audioBlob?: Blob | null;
 };
 
 type TributeFormDialogProps = {
@@ -36,24 +37,28 @@ export const TributeFormDialog = ({ memoirId, memoirTitle, trigger }: TributeFor
 
   const handleOpenChange = (newOpen: boolean) => {
     setOpen(newOpen);
-    if (!newOpen) {
+    if (!newOpen)
+    {
       // Reset form when dialog closes
       setFormKey((prev) => prev + 1);
     }
   };
 
   const handleSubmit = async (values: TributeFormValues): Promise<boolean> => {
-    try {
+    try
+    {
       // Always use the memoirId from props (current memoir being viewed)
       await submitTribute.mutateAsync({
         memoirId: memoirId, // Use the memoirId from props, not from form
         name: values.name,
         relationship: values.relationship || null,
         message: values.message,
+        audioBlob: values.audioBlob,
       });
       setOpen(false); // Close dialog on success
       return true;
-    } catch (error) {
+    } catch (error)
+    {
       return false;
     }
   };

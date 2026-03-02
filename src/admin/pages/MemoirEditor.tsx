@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Loader2, Save, ArrowLeft, AlertCircle, Plus, ArrowUp, ArrowDown, Trash2, Pencil } from "lucide-react";
+import { Loader2, Save, ArrowLeft, AlertCircle, Plus, ArrowUp, ArrowDown, Trash2, Pencil, Mic } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { z } from "zod";
 import { getSupabaseClient } from "@/lib/supabaseClient";
@@ -1262,7 +1262,15 @@ const MemoirEditor = () => {
                     <td className="px-6 py-4 text-white">{entry.name}</td>
                     <td className="px-6 py-4 text-white/70">{entry.relationship ?? "—"}</td>
                     <td className="px-6 py-4 text-sm text-white/70">
-                      <span className="line-clamp-3">{entry.message}</span>
+                      <div className="flex flex-col gap-2">
+                        <span className="line-clamp-3">{entry.message}</span>
+                        {entry.audio_url && (
+                          <div className="flex items-center gap-1 text-xs text-emerald-400">
+                            <Mic className="h-3 w-3" />
+                            <span>Audio Note</span>
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1">

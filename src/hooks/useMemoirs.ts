@@ -350,7 +350,7 @@ const fetchMemoirTributePage = async ({
 
   const { data, error } = await supabase
     .from("memoir_tributes")
-    .select("id, name, relationship, message, display_order")
+    .select("id, name, relationship, message, display_order, audio_url")
     .eq("memoir_id", memoirId)
     .order("display_order", { ascending: true })
     .order("created_at", { ascending: true })
@@ -361,13 +361,24 @@ const fetchMemoirTributePage = async ({
     return { items: [], nextOffset: null };
   }
 
-  const items = data.map((row, index) => ({
-    id: row.id as string,
-    name: row.name as string,
-    relationship: (row.relationship as string | null) ?? null,
-    message: row.message as string,
-    displayOrder: ensurePositive(row.display_order as number | null, offset + index + 1),
-  }));
+  const items = data.map((row, index) => {
+    let publicAudioUrl = undefined;
+    if (row.audio_url) {
+      const { data: publicData } = supabase.storage
+        .from("tribute-uploads")
+        .getPublicUrl(row.audio_url);
+      publicAudioUrl = publicData.publicUrl;
+    }
+
+    return {
+      id: row.id as string,
+      name: row.name as string,
+      relationship: (row.relationship as string | null) ?? null,
+      message: row.message as string,
+      displayOrder: ensurePositive(row.display_order as number | null, offset + index + 1),
+      audio_url: publicAudioUrl,
+    };
+  });
 
   const hasMore = data.length === limit;
   return {
@@ -461,6 +472,7 @@ export const useMemoirHighlightPages = (
         offset: pageParam,
         limit: pageSize,
       }),
+    initialPageParam: 0,
     staleTime: STALE_TIME,
     enabled: enabled && Boolean(memoirId ?? memoirSlug),
     getNextPageParam: (lastPage) => lastPage.nextOffset ?? undefined,
@@ -481,6 +493,7 @@ export const useMemoirTributePages = (
         offset: pageParam,
         limit: pageSize,
       }),
+    initialPageParam: 0,
     staleTime: STALE_TIME,
     enabled: enabled && Boolean(memoirId ?? memoirSlug),
     getNextPageParam: (lastPage) => lastPage.nextOffset ?? undefined,
