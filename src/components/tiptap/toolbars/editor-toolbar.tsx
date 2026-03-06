@@ -24,7 +24,7 @@ import { CodeBlockToolbar } from "./code-block";
 
 export const EditorToolbar = ({ editor }: { editor: Editor }) => {
   return (
-    <div className="sticky top-0 z-20 w-full border-b bg-background hidden sm:block">
+    <div className="w-full shrink-0 border-b bg-background">
       <ToolbarProvider editor={editor}>
         <TooltipProvider>
           <ScrollArea className="h-fit py-0.5">
@@ -39,7 +39,7 @@ export const EditorToolbar = ({ editor }: { editor: Editor }) => {
                 <HeadingsToolbar />
                 <BlockquoteToolbar />
                 <CodeToolbar />
-                <CodeBlockToolbar/>
+                <CodeBlockToolbar />
                 <Separator orientation="vertical" className="mx-1 h-7" />
 
                 {/* Basic Formatting Group */}

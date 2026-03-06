@@ -160,7 +160,7 @@ export function RichTextEditor({
       return;
     }
 
-    editor.commands.setContent(value, false);
+    editor.commands.setContent(value, { emitUpdate: false });
     lastJsonRef.current = serializedJson;
     lastHtmlRef.current = editor.getHTML();
   }, [editor, value]);
@@ -170,14 +170,16 @@ export function RichTextEditor({
   return (
     <div
       className={cn(
-        "relative w-full rounded-lg border border-white/10 bg-card pb-[60px] sm:pb-0",
+        "relative flex flex-col w-full rounded-lg border border-white/10 bg-card focus-within:ring-1 focus-within:ring-ring overflow-hidden min-h-[400px]",
         className
       )}
     >
       {editable ? <EditorToolbar editor={editor} /> : null}
       {editable ? <FloatingToolbar editor={editor} /> : null}
       {editable ? <TipTapFloatingMenu editor={editor} /> : null}
-      <EditorContent editor={editor} className="min-h-[400px] w-full min-w-full cursor-text sm:p-6" />
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6 custom-scrollbar">
+        <EditorContent editor={editor} className="min-h-full w-full min-w-full cursor-text" />
+      </div>
     </div>
   );
 }
