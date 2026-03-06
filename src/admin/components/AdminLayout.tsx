@@ -16,7 +16,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-900">
       <AdminNav />
-      <main className="flex-1 overflow-y-auto bg-slate-100 p-6 lg:p-10">
+      <main className="flex-1 bg-slate-100 p-6 lg:p-10">
         <div className="admin-content mx-auto flex max-w-6xl flex-col gap-6">{children}</div>
       </main>
     </div>
