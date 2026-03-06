@@ -1,5 +1,6 @@
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { BookOpen, CalendarDays, Images, LayoutDashboard, ListChecks, Megaphone, Settings, Users, DollarSign, FileText, Package, ShoppingCart, RefreshCw, MessageSquare } from "lucide-react";
+import { BookOpen, CalendarDays, Images, LayoutDashboard, ListChecks, Megaphone, Settings, Users, DollarSign, FileText, Package, ShoppingCart, RefreshCw, MessageSquare, PanelLeftClose, PanelLeftOpen, LogOut } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { useSupabaseSession } from "@/hooks/useSupabaseSession";
 
@@ -32,43 +33,72 @@ export const AdminNav = () => {
   const { session } = useSupabaseSession();
   const userEmail = session?.user?.email ?? "Unknown user";
 
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const saved = localStorage.getItem("adminSidebarCollapsed");
+    return saved === "true";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("adminSidebarCollapsed", isCollapsed.toString());
+  }, [isCollapsed]);
+
   return (
-    <aside className="hidden w-72 flex-col border-r border-slate-200 bg-white px-5 py-8 shadow-sm lg:flex">
-      <div className="mb-8">
-        <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Beiza Studio</p>
-        <h1 className="mt-2 text-xl font-semibold text-slate-900">Admin Console</h1>
+    <aside
+      className={`hidden flex-col border-r border-slate-200 bg-white py-8 shadow-sm transition-all duration-300 lg:flex ${isCollapsed ? "w-[88px] items-center px-4" : "w-72 px-5"
+        }`}
+    >
+      <div className={`mb-8 flex w-full ${isCollapsed ? "justify-center" : "items-center justify-between"}`}>
+        {!isCollapsed && (
+          <div>
+            <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Beiza Studio</p>
+            <h1 className="mt-1 text-lg font-semibold text-slate-900">Admin Console</h1>
+          </div>
+        )}
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition"
+          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          {isCollapsed ? <PanelLeftOpen className="h-5 w-5" /> : <PanelLeftClose className="h-5 w-5" />}
+        </button>
       </div>
 
-      <nav className="flex-1 space-y-1">
+      <nav className="flex-1 space-y-1 w-full flex flex-col items-center">
         {navItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
             end={item.end}
+            title={isCollapsed ? item.label : undefined}
             className={({ isActive }) =>
-              `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${isActive
+              `flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition w-full ${isCollapsed ? "justify-center px-0" : ""
+              } ${isActive
                 ? "admin-keep-white bg-slate-900 text-white shadow-sm"
                 : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
               }`
             }
           >
-            <item.icon className="h-4 w-4" />
-            <span>{item.label}</span>
+            <item.icon className={`shrink-0 ${isCollapsed ? "h-5 w-5" : "h-4 w-4"}`} />
+            {!isCollapsed && <span className="truncate">{item.label}</span>}
           </NavLink>
         ))}
       </nav>
 
-      <div className="mt-6 space-y-3">
-        <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Signed in as</p>
-          <p className="mt-1 text-sm font-medium text-slate-700">{userEmail}</p>
-        </div>
+      <div className="mt-6 space-y-3 w-full">
+        {!isCollapsed && (
+          <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+            <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Signed in as</p>
+            <p className="mt-1 text-sm font-medium text-slate-700 truncate">{userEmail}</p>
+          </div>
+        )}
         <button
           type="button"
           onClick={signOut}
-          className="w-full rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+          title={isCollapsed ? "Sign out" : undefined}
+          className={`flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 ${isCollapsed ? "px-0 py-3" : ""
+            }`}
         >
-          Sign out
+          {isCollapsed ? <LogOut className="h-5 w-5" /> : "Sign out"}
         </button>
       </div>
     </aside>
