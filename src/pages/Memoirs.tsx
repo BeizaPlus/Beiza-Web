@@ -337,9 +337,18 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                 memoirId={memoirId}
                 memoirTitle={summary?.title}
                 trigger={
-                  <Button className="button-pill !h-14 !px-8 text-lg md:text-xl font-semibold shadow-lg bg-primary text-primary-foreground hover:bg-primary/90">
-                    Share a Tribute
-                  </Button>
+                  <CTAButton
+                    label="Share a Tribute"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 border-0"
+                    icon={
+                      <span className="ring-background flex h-8 w-8 items-center justify-center rounded-full bg-primary-foreground text-primary">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M4 12L12 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                          <path d="M6 4H12V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                    }
+                  />
                 }
               />
             </div>
