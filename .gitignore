@@ -29,3 +29,7 @@ b80d662c-4d92-429b-9db2-712aca4a365c
 
 .env
 supabase/supabase/
+
+# beiza-legacy sandbox — full sun-stories clone stays local; see beiza-legacy/README.md
+beiza-legacy/*
+!beiza-legacy/README.md

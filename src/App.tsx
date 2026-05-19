@@ -15,6 +15,11 @@ import OrderConfirmation from "./pages/OrderConfirmation";
 import Download from "./pages/Download";
 import NotFound from "./pages/NotFound";
 import AdminApp from "./admin/AdminApp";
+import { LegacyLayout } from "./components/legacy/LegacyLayout";
+import LegacyHomePage from "./pages/legacy/index";
+import LegacyRecordPage from "./pages/legacy/record";
+import LegacyVaultPage from "./pages/legacy/vault";
+import LegacyFamilyPage from "./pages/legacy/family";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +41,12 @@ const App = () => (
           <Route path="/order-confirmation" element={<OrderConfirmation />} />
           <Route path="/download" element={<Download />} />
           <Route path="/admin/*" element={<AdminApp />} />
+          <Route path="/legacy" element={<LegacyLayout />}>
+            <Route index element={<LegacyHomePage />} />
+            <Route path="record" element={<LegacyRecordPage />} />
+            <Route path="vault" element={<LegacyVaultPage />} />
+            <Route path="family" element={<LegacyFamilyPage />} />
+          </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
