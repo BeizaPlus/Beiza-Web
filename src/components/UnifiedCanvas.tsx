@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import CanvasGallery, { type GalleryImage } from "./CanvasGallery";
 import { useGalleryAssets } from "@/hooks/usePublicContent";
 
@@ -9,7 +10,6 @@ interface UnifiedCanvasProps {
 }
 
 export const UnifiedCanvas = ({ onImageClick, resetViewToken = 0 }: UnifiedCanvasProps) => {
-  const navigate = useNavigate();
   const location = useLocation();
   const { images, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useGalleryAssets();
 
@@ -28,10 +28,6 @@ export const UnifiedCanvas = ({ onImageClick, resetViewToken = 0 }: UnifiedCanva
     [images],
   );
 
-  const handleLogoClick = () => {
-    navigate("/");
-  };
-
   if (isLoading && galleryImages.length === 0) {
     return (
       <div className="relative flex h-screen w-full items-center justify-center overflow-hidden bg-transparent">
@@ -48,21 +44,11 @@ export const UnifiedCanvas = ({ onImageClick, resetViewToken = 0 }: UnifiedCanva
       <CanvasGallery images={galleryImages} onImageClick={onImageClick} resetViewToken={resetViewToken} />
 
       <div className="absolute left-4 top-4 z-20">
-        <button
-          onClick={handleLogoClick}
-          className="group flex items-center gap-3 rounded-lg p-3 transition-all duration-300 hover:bg-white/10"
-        >
-          <img
-            src="/Beiza-head.png"
-            alt="Beiza mascot"
-            className="h-6 w-auto transition-transform duration-300 group-hover:scale-110"
-          />
-          <img
-            src="/Beiza_White.svg"
-            alt="Beiza"
-            className="h-4 w-auto transition-transform duration-300 group-hover:scale-110"
-          />
-        </button>
+        <BeizaLogoLink
+          className="rounded-lg p-3 transition-all duration-300 hover:bg-white/10"
+          mascotClassName="h-6 w-auto"
+          wordmarkClassName="h-4 w-auto"
+        />
       </div>
 
       {location.pathname === "/" && (

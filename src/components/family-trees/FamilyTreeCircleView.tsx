@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import { FamilyTreeCanvas } from "@/components/legacy/family-tree/FamilyTreeCanvas";
 import { FamilyTreeMobileFocus } from "@/components/legacy/family-tree/FamilyTreeMobileFocus";
 import { PersonBiographyPanel } from "@/components/legacy/family-tree/PersonBiographyPanel";
@@ -45,6 +46,7 @@ export function FamilyTreeCircleView({
     <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white">
       <header className="z-10 flex shrink-0 flex-col gap-4 border-b border-[#1a1a1a] px-4 py-4 sm:flex-row sm:items-center sm:justify-between md:px-8">
         <div>
+          <BeizaLogoLink variant="wordmark" wordmarkClassName="mb-3 h-4 w-auto opacity-80" />
           <Link
             to={backHref}
             className="text-sm text-[#666666] transition-colors hover:text-white"

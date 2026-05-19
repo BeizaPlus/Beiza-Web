@@ -4,6 +4,7 @@
 
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,7 +67,7 @@ export default function FamilyTreeEnterPage() {
   return (
     <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white">
       <div className="flex flex-1 flex-col items-center px-6 py-12">
-        <img src="/Beiza_White.svg" alt="Beiza" className="h-5 w-auto opacity-90" />
+        <BeizaLogoLink variant="wordmark" wordmarkClassName="h-5 w-auto opacity-90" />
 
         {isLoading ? (
           <p className="mt-16 flex items-center gap-2 text-[#666666]">

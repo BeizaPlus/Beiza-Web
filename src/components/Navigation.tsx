@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { PRODUCT_NAV_LINKS } from "@/config/productNav";
+import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
@@ -79,10 +80,7 @@ export const Navigation = () => {
       <nav className="sticky top-0 z-40 w-full border-b border-white/5 bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20">
         <div className="mx-auto max-w-6xl px-6 py-6">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-3">
-              <img src="/Beiza-head.png" alt="Beiza mascot" className="h-10 w-auto" />
-              <img src="/Beiza_White.svg" alt="Beiza" className="h-6 w-auto" />
-            </Link>
+            <BeizaLogoLink />
 
             <div className="hidden items-center gap-10 md:flex">
               {PRODUCT_NAV_LINKS.map((link) => (
@@ -119,7 +117,12 @@ export const Navigation = () => {
             onClick={closeDrawer}
           />
           <div className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-[#0a0a0a] px-8 py-10 shadow-2xl">
-            <div className="flex justify-end">
+            <div className="flex items-center justify-between">
+              <BeizaLogoLink
+                variant="wordmark"
+                wordmarkClassName="h-5 w-auto"
+                onClick={closeDrawer}
+              />
               <button type="button" onClick={closeDrawer} className="text-white" aria-label="Close">
                 <X className="h-6 w-6" />
               </button>
