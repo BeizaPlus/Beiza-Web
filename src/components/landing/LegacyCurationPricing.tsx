@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Lock } from "lucide-react";
 import { SectionHeader } from "@/components/framer/SectionHeader";
+import { CasketIcon } from "@/components/icons/CasketIcon";
 import { cn } from "@/lib/utils";
 
 const GOLD = "#E6A817";
@@ -102,7 +103,7 @@ export function LegacyCurationPricing() {
             <div
               key={tier.id}
               className={cn(
-                "flex h-full flex-col rounded-2xl border p-8",
+                "pricing-card flex h-full flex-col rounded-2xl border p-8",
                 tier.popular
                   ? "border-[#3a2800] bg-[#0e0c00]"
                   : tier.featured
@@ -110,74 +111,76 @@ export function LegacyCurationPricing() {
                     : "border-[#1e1e1e] bg-[#111]",
               )}
             >
-              <div className="flex min-h-9 items-start justify-between gap-2">
-                <h3 className="font-sans text-2xl font-semibold text-white">{tier.name}</h3>
-                {tier.badge ? (
-                  <span
-                    className="shrink-0 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                    style={{ backgroundColor: `${GOLD}33`, color: GOLD }}
-                  >
-                    {tier.badge}
-                  </span>
-                ) : tier.featured ? (
-                  <span className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-[10px] uppercase tracking-wider text-white">
-                    Free
-                  </span>
-                ) : (
-                  <span className="invisible shrink-0 px-3 py-1 text-xs" aria-hidden>
-                    —
-                  </span>
-                )}
-              </div>
-              <p className="mt-4 font-sans text-xs uppercase tracking-[0.3em] text-[#888]">
-                {tier.tagline}
-              </p>
-              <p className="mt-2 font-sans text-3xl font-semibold text-white">
-                {tier.price}
-                {tier.id === "keeper" ? (
-                  <span className="text-base font-normal text-[#888]">/mo</span>
-                ) : null}
-                {tier.id === "heritage" ? (
-                  <span className="text-base font-normal text-[#888]">/yr</span>
-                ) : null}
-              </p>
-              <p className="mt-4 min-h-[4rem] font-sans text-sm leading-relaxed text-[#888]">
-                {tier.description}
-              </p>
-
-              {tier.whiteSwan ? (
-                <div className="mb-4 rounded-[10px] border border-[#1a1a1a] bg-[#0e0e0e] p-4">
-                  <p className="text-lg" aria-hidden>
-                    🦢
-                  </p>
-                  <p className="mt-1 font-sans text-sm font-semibold text-white">
-                    {tier.whiteSwan.title}
-                  </p>
-                  <p className="mt-2 font-sans text-xs leading-relaxed text-[#888]">
-                    {tier.whiteSwan.body}
-                  </p>
-                </div>
-              ) : null}
-
-              <ul className="flex-1 space-y-2 font-sans text-sm text-[#ccc]">
-                {tier.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2">
+              <div className="pricing-card-body flex flex-1 flex-col">
+                <div className="flex min-h-9 items-start justify-between gap-2">
+                  <h3 className="font-sans text-2xl font-semibold text-white">{tier.name}</h3>
+                  {tier.badge ? (
                     <span
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full"
-                      style={{ backgroundColor: GOLD }}
-                    />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-                {tier.lockedFeatures?.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2 text-[#555]">
-                    <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
+                      className="shrink-0 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                      style={{ backgroundColor: `${GOLD}33`, color: GOLD }}
+                    >
+                      {tier.badge}
+                    </span>
+                  ) : tier.featured ? (
+                    <span className="shrink-0 rounded-full bg-white/10 px-3 py-1 text-[10px] uppercase tracking-wider text-white">
+                      Free
+                    </span>
+                  ) : (
+                    <span className="invisible shrink-0 px-3 py-1 text-xs" aria-hidden>
+                      —
+                    </span>
+                  )}
+                </div>
+                <p className="mt-4 font-sans text-xs uppercase tracking-[0.3em] text-[#888]">
+                  {tier.tagline}
+                </p>
+                <p className="mt-2 font-sans text-3xl font-semibold text-white">
+                  {tier.price}
+                  {tier.id === "keeper" ? (
+                    <span className="text-base font-normal text-[#888]">/mo</span>
+                  ) : null}
+                  {tier.id === "heritage" ? (
+                    <span className="text-base font-normal text-[#888]">/yr</span>
+                  ) : null}
+                </p>
+                <p className="mt-4 font-sans text-sm leading-relaxed text-[#888]">
+                  {tier.description}
+                </p>
 
-              <div className="mt-auto w-full pt-8">
+                {tier.whiteSwan ? (
+                  <div className="mb-4 mt-4 rounded-[10px] border border-[#1a1a1a] bg-[#0e0e0e] p-4">
+                    <div className="mb-2 flex items-center gap-2.5">
+                      <CasketIcon size={24} color={GOLD} />
+                      <span className="font-sans text-[13px] font-medium text-white">
+                        {tier.whiteSwan.title}
+                      </span>
+                    </div>
+                    <p className="font-sans text-xs leading-relaxed text-[#888]">
+                      {tier.whiteSwan.body}
+                    </p>
+                  </div>
+                ) : null}
+
+                <ul className="mt-4 space-y-2 font-sans text-sm text-[#ccc]">
+                  {tier.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2">
+                      <span
+                        className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full"
+                        style={{ backgroundColor: GOLD }}
+                      />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                  {tier.lockedFeatures?.map((feature) => (
+                    <li key={feature} className="flex items-start gap-2 text-[#555]">
+                      <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="pricing-card-cta mt-auto w-full pt-6">
                 <Link
                   to={tier.href}
                   className={cn(
@@ -197,8 +200,12 @@ export function LegacyCurationPricing() {
                   {tier.cta}
                 </Link>
                 {tier.note ? (
-                  <p className="mt-3 text-center font-sans text-[11px] text-[#555]">{tier.note}</p>
-                ) : null}
+                  <p className="mt-3 min-h-[2.5rem] text-center font-sans text-[11px] leading-snug text-[#555]">
+                    {tier.note}
+                  </p>
+                ) : (
+                  <p className="mt-3 min-h-[2.5rem]" aria-hidden />
+                )}
               </div>
             </div>
           ))}

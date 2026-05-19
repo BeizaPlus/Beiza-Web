@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   BookOpen,
-  Building2,
   Check,
   Film,
   Infinity,
@@ -16,6 +15,7 @@ import {
   LandingLayoutStudioPanel,
   useLandingLayoutStudio,
 } from "@/components/dev/LandingLayoutStudio";
+import { CasketIcon } from "@/components/icons/CasketIcon";
 import { cn } from "@/lib/utils";
 import { isWhiteSwanIncludedForUser, HERITAGE_GOLD } from "@/lib/legacy/heritage";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
@@ -51,10 +51,10 @@ const FEATURES = [
     body: "Every recording, photo, and memory — stored in your family's vault with no cap, forever.",
   },
   {
-    icon: Building2,
     title: "White Swan — the gathering",
     body: "When a family member passes, we coordinate the memorial experience on the ground. Photography, tribute screening, and family gathering included.",
     featured: true,
+    casket: true,
   },
 ] as const;
 
@@ -178,7 +178,7 @@ export default function HeritagePage() {
         </div>
         <div className="mx-auto mt-12 max-w-5xl overflow-hidden rounded-2xl border border-[#1e1e1e] md:grid md:grid-cols-2 md:gap-px md:bg-[#1e1e1e]">
           {FEATURES.map((item) => {
-            const Icon = item.icon;
+            const Icon = "icon" in item ? item.icon : null;
             return (
               <div
                 key={item.title}
@@ -187,12 +187,16 @@ export default function HeritagePage() {
                   "featured" in item && item.featured && "bg-[#0e0c00] md:border-[#3a2800]",
                 )}
               >
-                <Icon
-                  className="h-6 w-6"
-                  style={{ color: HERITAGE_GOLD }}
-                  strokeWidth={1.5}
-                  aria-hidden
-                />
+                {"casket" in item && item.casket ? (
+                  <CasketIcon size={24} color={HERITAGE_GOLD} />
+                ) : Icon ? (
+                  <Icon
+                    className="h-6 w-6"
+                    style={{ color: HERITAGE_GOLD }}
+                    strokeWidth={1.5}
+                    aria-hidden
+                  />
+                ) : null}
                 <h3
                   className={cn(
                     "mt-4 font-sans text-[15px] font-medium",
@@ -214,9 +218,12 @@ export default function HeritagePage() {
       <section className="border-y border-[#1a1a1a] bg-[#080808] px-6 py-16 md:py-24">
         <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
-            <p className="font-sans text-[11px] uppercase tracking-[0.2em] text-[#888888]">
-              🦢 White Swan
-            </p>
+            <div className="flex items-center gap-2.5">
+              <CasketIcon size={24} color={HERITAGE_GOLD} />
+              <span className="font-sans text-[11px] uppercase tracking-[0.2em] text-[#888888]">
+                White Swan
+              </span>
+            </div>
             <h2 className="mt-4 font-display text-[32px] italic leading-[1.3] text-white">
               When the time comes, we&apos;re already there.
             </h2>
@@ -242,8 +249,9 @@ export default function HeritagePage() {
           </div>
 
           <div className="rounded-[20px] border border-[#3a2800] bg-[#0e0c00] p-7 md:p-8">
-            <span className="inline-block rounded-full bg-[#1a1200] px-3 py-1 font-sans text-[11px] tracking-wide text-[#E6A817]">
-              🦢 White Swan
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#1a1200] px-3 py-1.5 font-sans text-[11px] tracking-wide text-[#E6A817]">
+              <CasketIcon size={20} color={HERITAGE_GOLD} />
+              White Swan
             </span>
             <p className="mt-6 font-sans text-[10px] uppercase tracking-[0.2em] text-[#555555]">
               Standalone
