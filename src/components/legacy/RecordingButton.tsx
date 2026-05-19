@@ -1,61 +1,45 @@
-import { useRef } from "react";
 import { cn } from "@/lib/utils";
-import { Mic } from "lucide-react";
+import { Mic, Square } from "lucide-react";
+
+const GOLD = "#E6A817";
 
 type RecordingButtonProps = {
-  active: boolean;
+  isRecording: boolean;
   disabled?: boolean;
-  onPressStart: () => void;
-  onPressEnd: () => void;
+  onPress: () => void;
 };
 
-export function RecordingButton({
-  active,
-  disabled,
-  onPressStart,
-  onPressEnd,
-}: RecordingButtonProps) {
-  const holdingRef = useRef(false);
-
-  const endPress = () => {
-    if (!holdingRef.current) return;
-    holdingRef.current = false;
-    onPressEnd();
-  };
-
+export function RecordingButton({ isRecording, disabled, onPress }: RecordingButtonProps) {
   return (
-    <button
-      type="button"
-      disabled={disabled}
-      aria-label={active ? "Recording memory — release to finish" : "Hold to record a memory"}
-      className={cn(
-        "relative mx-auto flex h-28 w-28 touch-none select-none items-center justify-center rounded-full border-4 transition-all",
-        "border-primary bg-primary/10 text-primary shadow-focus-ring",
-        active && "scale-105 border-accent bg-primary text-primary-foreground animate-pulse",
-        disabled && "cursor-not-allowed opacity-50",
-      )}
-      onPointerDown={(e) => {
-        if (disabled || holdingRef.current) return;
-        e.preventDefault();
-        holdingRef.current = true;
-        e.currentTarget.setPointerCapture(e.pointerId);
-        onPressStart();
-      }}
-      onPointerUp={(e) => {
-        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-          e.currentTarget.releasePointerCapture(e.pointerId);
-        }
-        endPress();
-      }}
-      onPointerCancel={(e) => {
-        if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-          e.currentTarget.releasePointerCapture(e.pointerId);
-        }
-        endPress();
-      }}
-      onLostPointerCapture={endPress}
-    >
-      <Mic className="h-10 w-10 pointer-events-none" strokeWidth={1.5} />
-    </button>
+    <div className="flex flex-col items-center gap-3">
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={onPress}
+        aria-label={isRecording ? "Stop recording" : "Tap to record a memory"}
+        aria-pressed={isRecording}
+        className={cn(
+          "relative flex h-28 w-28 items-center justify-center rounded-full border-4 transition-all",
+          disabled && "cursor-not-allowed opacity-50",
+          isRecording
+            ? "border-red-500/60 bg-[#1a0000] text-red-400 ring-4 ring-red-500/40 animate-pulse"
+            : "border-[#E6A817]/40 text-[#0a0a0a] shadow-focus-ring",
+        )}
+        style={!isRecording ? { backgroundColor: GOLD } : undefined}
+      >
+        {isRecording ? (
+          <Square className="h-9 w-9 fill-current pointer-events-none" strokeWidth={0} />
+        ) : (
+          <Mic className="h-10 w-10 pointer-events-none" strokeWidth={1.5} />
+        )}
+      </button>
+      <p className="text-center font-sans text-sm text-muted-foreground">
+        {disabled && !isRecording
+          ? "Starting microphone…"
+          : isRecording
+            ? "Recording — tap to stop"
+            : "Tap to record"}
+      </p>
+    </div>
   );
 }

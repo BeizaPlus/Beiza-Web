@@ -49,7 +49,6 @@ export default function LegacyRecordPage() {
   const chunksRef = useRef<Blob[]>([]);
   const mimeTypeRef = useRef<string>("audio/webm");
   const startedAtRef = useRef<number>(0);
-  const stopOnReadyRef = useRef(false);
   const [durationSeconds, setDurationSeconds] = useState(0);
   const blobRef = useRef<Blob | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -109,7 +108,6 @@ export default function LegacyRecordPage() {
   const startRecording = async () => {
     if (isRequestingMic || phase === "recording" || phase === "upload") return;
     setIsRequestingMic(true);
-    stopOnReadyRef.current = false;
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -138,7 +136,7 @@ export default function LegacyRecordPage() {
             setElapsedSeconds(0);
             toast({
               title: "Nothing captured",
-              description: "Hold the button a little longer and try again.",
+              description: "Record a little longer and try again.",
               variant: "destructive",
             });
             return;
@@ -176,9 +174,6 @@ export default function LegacyRecordPage() {
         setElapsedSeconds(Math.floor((Date.now() - startedAtRef.current) / 1000));
       }, 200);
 
-      if (stopOnReadyRef.current) {
-        finishRecording();
-      }
     } catch {
       setIsRequestingMic(false);
       releaseStream();
@@ -191,12 +186,12 @@ export default function LegacyRecordPage() {
     }
   };
 
-  const handlePressEnd = () => {
-    if (isRequestingMic || mediaRef.current?.state !== "recording") {
-      stopOnReadyRef.current = true;
+  const handleRecordTap = () => {
+    if (phase === "recording") {
+      finishRecording();
       return;
     }
-    finishRecording();
+    void startRecording();
   };
 
   const resetForAnother = () => {
@@ -207,7 +202,6 @@ export default function LegacyRecordPage() {
     setElapsedSeconds(0);
     setTitle("");
     setPhase("prepare");
-    stopOnReadyRef.current = false;
     setIsRequestingMic(false);
     void loadPrompts();
   };
@@ -280,22 +274,12 @@ export default function LegacyRecordPage() {
       {isHoldPhase && (
         <div className="flex flex-col items-center gap-4">
           <RecordingButton
-            active={phase === "recording"}
+            isRecording={phase === "recording"}
             disabled={isRequestingMic}
-            onPressStart={() => void startRecording()}
-            onPressEnd={handlePressEnd}
+            onPress={handleRecordTap}
           />
-          <p className="text-sm text-muted-foreground">
-            {phase === "recording"
-              ? `Listening… ${elapsedSeconds}s — release or tap Done when finished`
-              : isRequestingMic
-                ? "Starting microphone…"
-                : "Hold the button to answer"}
-          </p>
           {phase === "recording" ? (
-            <Button type="button" variant="secondary" size="sm" onClick={finishRecording}>
-              Done
-            </Button>
+            <p className="text-sm tabular-nums text-muted-foreground">{elapsedSeconds}s</p>
           ) : null}
           {phase === "prepare" ? (
             <Button
