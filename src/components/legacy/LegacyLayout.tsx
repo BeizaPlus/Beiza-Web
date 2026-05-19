@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { LegacyAuthGate } from "@/components/legacy/LegacyAuthGate";
+import { LegacyBeizaMascot } from "@/components/legacy/LegacyBeizaMascot";
 import { LegacyNavIcon, type LegacyNavIconName } from "@/components/legacy/LegacyNavIcon";
 import { cn } from "@/lib/utils";
 
@@ -23,7 +24,7 @@ export function LegacyLayout() {
       <header className="border-b border-border/60 bg-[hsl(var(--surface))]/90 backdrop-blur-md">
         <div className="mx-auto max-w-lg px-4 py-4">
           <Link to="/" className="flex items-center gap-3" aria-label="Back to Beiza homepage">
-            <LegacyNavIcon name="vault" active className="h-9 w-9 shrink-0 text-primary" />
+            <LegacyBeizaMascot />
             <div>
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
                 Beiza Legacy
