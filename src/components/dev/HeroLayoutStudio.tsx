@@ -83,9 +83,9 @@ export function HeroLayoutStudioPanel({ page, frame, onChange }: PanelProps) {
         <SliderRow label="Background Y" value={frame.posY} min={0} max={100} onChange={(posY) => patch({ posY })} />
         <ZoomControls value={frame.scale} onChange={(scale) => patch({ scale })} />
         <SliderRow
-          label="Copy raise (vh)"
+          label="Copy raise (% viewport height)"
           value={frame.copyBottomVh}
-          min={18}
+          min={8}
           max={52}
           onChange={(copyBottomVh) => patch({ copyBottomVh })}
         />

@@ -135,9 +135,9 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
             onChange={(scale) => patchHero({ scale })}
           />
           <SliderRow
-            label="Copy raise (vh)"
+            label="Copy raise (% viewport height)"
             value={state.hero.copyBottomVh}
-            min={18}
+            min={8}
             max={52}
             onChange={(copyBottomVh) => patchHero({ copyBottomVh })}
           />

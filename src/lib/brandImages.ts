@@ -19,6 +19,7 @@ export const HERO_SHELL_CLASS =
 export const HERO_CONTENT_CLASS =
   "relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end px-6 pt-28 md:px-12 md:pt-32";
 
+/** Bottom padding for hero copy — always % of viewport height (see --hero-copy-raise). */
 export const HERO_CONTENT_BOTTOM_STYLE = {
-  paddingBottom: "max(7rem, var(--hero-copy-bottom, 38vh))",
+  paddingBottom: "calc(var(--hero-copy-raise, 38) * 1vh)",
 } as const;

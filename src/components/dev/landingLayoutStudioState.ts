@@ -76,7 +76,7 @@ export function studioCssVars(state: LandingLayoutStudioState): Record<string, s
     "--hero-bg-pos-x": `${state.hero.posX}%`,
     "--hero-bg-pos-y": `${state.hero.posY}%`,
     "--hero-bg-scale": `${state.hero.scale}%`,
-    "--hero-copy-bottom": `${state.hero.copyBottomVh}vh`,
+    "--hero-copy-raise": `${state.hero.copyBottomVh}`,
     "--offerings-offset-y": `${state.offerings.offsetY}px`,
     "--offerings-padding-top": `${state.offerings.paddingTop}px`,
     "--faq-offset-y": `${state.faq.offsetY}px`,

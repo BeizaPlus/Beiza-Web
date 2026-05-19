@@ -33,7 +33,7 @@ export function heroStudioCssVars(frame: HeroFrame): Record<string, string> {
     "--hero-bg-pos-x": `${frame.posX}%`,
     "--hero-bg-pos-y": `${frame.posY}%`,
     "--hero-bg-scale": `${frame.scale}%`,
-    "--hero-copy-bottom": `${frame.copyBottomVh}vh`,
+    "--hero-copy-raise": `${frame.copyBottomVh}`,
   };
 }
 
