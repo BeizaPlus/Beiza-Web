@@ -1,21 +1,23 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { LegacyVaultMemoryCard } from "@/components/legacy/LegacyVaultMemoryCard";
+import { LegacyVaultPlusUpsell } from "@/components/legacy/LegacyVaultPlusUpsell";
 import { useLegacyRecordings, useMyLegacyCircle } from "@/hooks/useLegacy";
-import { Play, Pause } from "lucide-react";
 import { useRef, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
-function formatDuration(seconds: number) {
-  const m = Math.floor(seconds / 60);
-  const s = seconds % 60;
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
+/** When true, vault delete/rename is enabled (Legacy Plus). */
+const LEGACY_PLUS_ENABLED = import.meta.env.VITE_LEGACY_PLUS_ENABLED === "true";
 
 export default function LegacyVaultPage() {
+  const { toast } = useToast();
   const { data: circleCtx } = useMyLegacyCircle();
   const circle = circleCtx?.circle;
   const { data: recordings = [], isLoading } = useLegacyRecordings(circle?.id);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
+
+  const canManageVault = LEGACY_PLUS_ENABLED;
 
   const togglePlay = (id: string, url: string | null) => {
     if (!url) return;
@@ -34,6 +36,13 @@ export default function LegacyVaultPage() {
     setPlayingId(id);
   };
 
+  const handleDeleteLocked = () => {
+    toast({
+      title: "Legacy Plus required",
+      description: "Upgrade to delete and organize memories in your vault.",
+    });
+  };
+
   if (!circle) {
     return (
       <div className="space-y-4 text-center">
@@ -46,12 +55,10 @@ export default function LegacyVaultPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <header>
-        <h2 className="font-heading text-xl font-semibold">Your Family&apos;s Legacy Vault</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Listen back to preserved voices and stories.
-        </p>
+        <h2 className="text-xl font-bold text-white">Your Family&apos;s Legacy Vault</h2>
+        <p className="mt-1 text-[13px] text-[#888]">Listen back to preserved voices and stories.</p>
       </header>
 
       {isLoading && (
@@ -59,46 +66,31 @@ export default function LegacyVaultPage() {
       )}
 
       {!isLoading && recordings.length === 0 && (
-        <div className="rounded-lg border border-dashed border-border p-8 text-center">
-          <p className="text-muted-foreground">No memories yet.</p>
+        <div className="rounded-xl border border-dashed border-[#2a2a2a] bg-[#1a1a1a] p-8 text-center">
+          <p className="text-[#888]">No memories yet.</p>
           <Button asChild className="mt-4">
             <Link to="/legacy/record">Record a memory</Link>
           </Button>
         </div>
       )}
 
-      <ul className="space-y-3">
-        {recordings.map((rec) => (
-          <li
-            key={rec.id}
-            className="flex items-start gap-3 rounded-lg border border-border bg-card p-4"
-          >
-            <button
-              type="button"
-              className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary"
-              onClick={() => togglePlay(rec.id, rec.audio_url)}
-              disabled={!rec.audio_url}
-              aria-label="Play memory"
-            >
-              {playingId === rec.id ? (
-                <Pause className="h-4 w-4" />
-              ) : (
-                <Play className="h-4 w-4" />
-              )}
-            </button>
-            <div className="min-w-0 flex-1">
-              <p className="font-medium text-foreground">
-                {rec.title || "Untitled memory"}
-              </p>
-              <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{rec.prompt}</p>
-              <p className="mt-2 text-xs text-muted-foreground">
-                {formatDuration(rec.duration_seconds ?? 0)} ·{" "}
-                {new Date(rec.created_at).toLocaleDateString()}
-              </p>
-            </div>
-          </li>
-        ))}
-      </ul>
+      {!isLoading && recordings.length > 0 && (
+        <>
+          <ul className="space-y-3">
+            {recordings.map((rec) => (
+              <LegacyVaultMemoryCard
+                key={rec.id}
+                recording={rec}
+                isPlaying={playingId === rec.id}
+                canDelete={canManageVault}
+                onPlay={() => togglePlay(rec.id, rec.audio_url)}
+                onDeleteLocked={handleDeleteLocked}
+              />
+            ))}
+          </ul>
+          {!canManageVault ? <LegacyVaultPlusUpsell /> : null}
+        </>
+      )}
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { RecordingButton } from "@/components/legacy/RecordingButton";
+import { LegacyPlaybackRow } from "@/components/legacy/LegacyPlaybackRow";
+import { LegacyRecordPrompt } from "@/components/legacy/LegacyRecordPrompt";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -29,12 +31,19 @@ export default function LegacyRecordPage() {
   const [title, setTitle] = useState("");
   const [loadingPrompts, setLoadingPrompts] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [recordedUri, setRecordedUri] = useState<string | null>(null);
 
   const mediaRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const startedAtRef = useRef<number>(0);
   const [durationSeconds, setDurationSeconds] = useState(0);
   const blobRef = useRef<Blob | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (recordedUri) URL.revokeObjectURL(recordedUri);
+    };
+  }, [recordedUri]);
 
   const loadPrompts = useCallback(async () => {
     if (!circle?.id) return;
@@ -65,7 +74,12 @@ export default function LegacyRecordPage() {
         stream.getTracks().forEach((t) => t.stop());
         const blob = new Blob(chunksRef.current, { type: "audio/webm" });
         blobRef.current = blob;
-        setDurationSeconds(Math.max(1, Math.round((Date.now() - startedAtRef.current) / 1000)));
+        const seconds = Math.max(1, Math.round((Date.now() - startedAtRef.current) / 1000));
+        setDurationSeconds(seconds);
+        setRecordedUri((prev) => {
+          if (prev) URL.revokeObjectURL(prev);
+          return URL.createObjectURL(blob);
+        });
         setPhase("upload");
       };
       mediaRef.current = recorder;
@@ -85,6 +99,16 @@ export default function LegacyRecordPage() {
     if (mediaRef.current?.state === "recording") {
       mediaRef.current.stop();
     }
+  };
+
+  const resetForAnother = () => {
+    blobRef.current = null;
+    if (recordedUri) URL.revokeObjectURL(recordedUri);
+    setRecordedUri(null);
+    setDurationSeconds(0);
+    setTitle("");
+    setPhase("prepare");
+    void loadPrompts();
   };
 
   const handleUpload = async () => {
@@ -133,11 +157,11 @@ export default function LegacyRecordPage() {
         <h2 className="mt-2 font-heading text-xl font-semibold">Record a memory</h2>
       </div>
 
-      {phase !== "seal" && (
-        <blockquote className="rounded-lg border border-border bg-card px-4 py-6 text-center text-lg leading-relaxed">
-          {prompt}
-        </blockquote>
-      )}
+      {phase !== "seal" && <LegacyRecordPrompt prompt={prompt} />}
+
+      {phase === "upload" && recordedUri ? (
+        <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
+      ) : null}
 
       {phase === "prepare" && (
         <div className="flex flex-col items-center gap-6">
@@ -186,9 +210,7 @@ export default function LegacyRecordPage() {
       {phase === "seal" && (
         <div className="space-y-6 text-center">
           <div className="rounded-xl border border-primary/40 bg-primary/10 p-6">
-            <h3 className="font-heading text-lg font-semibold text-primary">
-              Memory preserved
-            </h3>
+            <h3 className="font-heading text-lg font-semibold text-primary">Memory preserved</h3>
             <p className="mt-2 text-sm text-muted-foreground">
               Keep their voice forever. Your family can hear this in the vault.
             </p>
@@ -196,15 +218,7 @@ export default function LegacyRecordPage() {
           <Button className="w-full" onClick={() => navigate("/legacy/vault")}>
             Open the vault
           </Button>
-          <Button
-            variant="secondary"
-            className="w-full"
-            onClick={() => {
-              setPhase("prepare");
-              blobRef.current = null;
-              void loadPrompts();
-            }}
-          >
+          <Button variant="secondary" className="w-full" onClick={resetForAnother}>
             Record another memory
           </Button>
         </div>

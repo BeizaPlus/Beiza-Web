@@ -22,8 +22,8 @@ export function LegacyLayout() {
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border/60 bg-[hsl(var(--surface))]/90 backdrop-blur-md">
         <div className="mx-auto max-w-lg px-4 py-4">
-          <div className="flex items-center gap-3">
-            <LegacyNavIcon name="vault" active className="h-8 w-8 text-primary" />
+          <Link to="/" className="flex items-center gap-3" aria-label="Back to Beiza homepage">
+            <LegacyNavIcon name="vault" active className="h-9 w-9 shrink-0 text-primary" />
             <div>
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
                 Beiza Legacy
@@ -32,7 +32,7 @@ export function LegacyLayout() {
                 Your Family&apos;s Legacy Vault
               </h1>
             </div>
-          </div>
+          </Link>
         </div>
         <nav className="mx-auto flex max-w-lg gap-1 px-4 pb-3" aria-label="Legacy">
           {nav.map((item) => {

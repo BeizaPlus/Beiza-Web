@@ -57,7 +57,7 @@ const TIERS = [
 
 export function LegacyCurationPricing() {
   return (
-    <section className="studio-pricing bg-black py-24 text-white">
+    <section id="legacy-curation" className="studio-pricing bg-black py-24 text-white">
       <div className="mx-auto max-w-6xl space-y-12 px-6">
         <SectionHeader
           eyebrow="Legacy Curation"
