@@ -40,6 +40,8 @@ export type RecordPhase = "prepare" | "recording" | "upload" | "tag" | "seal";
 
 export type FamilyPersonStatus = "living" | "gone" | "invited";
 
+export type FamilyPersonGender = "male" | "female";
+
 export type RecordingPersonLinkType = "about" | "by";
 
 export interface FamilyPerson {
@@ -48,6 +50,8 @@ export interface FamilyPerson {
   display_name: string;
   photo_url?: string | null;
   relation_label: string | null;
+  gender?: FamilyPersonGender | null;
+  career_path?: string | null;
   status: FamilyPersonStatus;
   user_id: string | null;
   member_id: string | null;

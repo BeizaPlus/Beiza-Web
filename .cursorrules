@@ -19,7 +19,8 @@ Canonical frame (`HERITAGE_HERO_DEFAULTS` / `src/data/heritage-hero-canonical.js
 - Fullscreen toggle must always be present on canvas controls
 
 ### Tree canvas nodes
-- **`family_people` gender/career:** `GET /api/circle/tree-data` uses `select("*")` on `family_people` — new columns arrive in the payload automatically; no read-path API changes needed. Wire UI/types from `people[]` in the response.
+- **`family_people` gender/career (read path):** `GET /api/circle/tree-data` does `SELECT *` on `family_people` — `gender`, `career`, and any new columns arrive in `people[]` automatically. **No changes to that API route** for reads; wire UI/types from the payload only. Writes may still need `tree-person` or Supabase updates if editable.
+- **Same-session prompts:** If gender/career UI is requested together with an earlier **alt+drag** (canvas pan) prompt in one Cursor session, alt+drag is already covered — do not duplicate that work; only add gender/career display/edit from `people[]`.
 - steven.oppong node with photo: DO NOT change the photo or layout
 - Edge color: rgba(68,102,255,0.5) — never white or gray
 - Handle color: #E6A817

@@ -8,6 +8,8 @@ export type PersonNodeData = {
   personId: string;
   name: string;
   relation: string;
+  gender?: FamilyPerson["gender"];
+  careerPath?: FamilyPerson["career_path"];
   status: FamilyPerson["status"];
   initials: string;
   memoryCount: number;
@@ -88,6 +90,8 @@ export function buildFamilyTreeFlow(params: {
         personId: person.id,
         name: person.display_name,
         relation: (person.relation_label ?? "").toUpperCase(),
+        gender: person.gender ?? null,
+        careerPath: person.career_path ?? null,
         status: person.status,
         initials: personInitials(person.display_name),
         memoryCount,

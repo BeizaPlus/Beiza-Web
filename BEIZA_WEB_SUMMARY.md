@@ -95,7 +95,7 @@ Fields: deceased name/contact, requester relation/email, optional document, mess
 ## Family tree (data & UI)
 
 **Tree nodes:** `family_people` (self-referential `parent_id`) — not a separate `tree_nodes` table.  
-**Person fields (gender, career, etc.):** Added on `family_people`; read via `GET /api/circle/tree-data` which does `select("*")` on people — no extra read API work; consume from `people[]` in the JSON payload.  
+**Person fields:** `gender?: "male" | "female" | null`, `career_path?: string | null` on `family_people`; read via `GET /api/circle/tree-data` (`SELECT *`) — no read API changes. Migration: `20260519T200000_family_people_gender_career.sql`. Writes via `tree-person` when edit UI is added.  
 **Tree edges:** `tree_edges` table — persists person-to-person connections with `relationship_type`.  
 **Links:** `recording_person_links` (`about` | `by`).  
 **Biography:** `get_person_biography()` RPC (fragments from recordings).  

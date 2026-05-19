@@ -119,6 +119,8 @@ export function buildFreeformTreeFlow(params: {
         personId: person.id,
         name: person.display_name,
         relation: (person.relation_label ?? "").toUpperCase(),
+        gender: person.gender ?? null,
+        careerPath: person.career_path ?? null,
         status: person.status,
         initials: personInitials(person.display_name),
         memoryCount,
