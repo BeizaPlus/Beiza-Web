@@ -100,7 +100,8 @@ Fields: deceased name/contact, requester relation/email, optional document, mess
 **Links:** `recording_person_links` (`about` | `by`).  
 **Biography:** `get_person_biography()` RPC (fragments from recordings).  
 **Canvas positions:** `family_people.canvas_x / canvas_y` — saved on drag-stop. New nodes: `getViewport()` + `screenToFlowPosition()` at viewport centre (not `(0,0)`).  
-**Person photos:** Photo API persists `photo_url` on `family_people` in one request — no follow-up `tree-person` PATCH for the URL.
+**Person photos:** `POST /api/circle/tree-person-photo` uploads to `family-people-photos` and sets `photo_url` in one request.  
+**Person profile:** `PATCH /api/circle/tree-person` supports `gender`, `career_path`, name, role. Right-click node → gender, career, photo, duplicate.
 
 **UI:** `FamilyTreeCanvas` (`@xyflow/react` v12), `PersonFlowNode` (8 handles, 4 sides), `PersonBiographyPanel`, `RelationshipPickerModal`, `TreeEdgeContextMenu`.  
 **Record flow:** “Who is this memory about?” on seal links person to recording.

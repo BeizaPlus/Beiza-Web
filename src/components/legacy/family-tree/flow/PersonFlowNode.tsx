@@ -69,6 +69,20 @@ function PersonFlowNodeComponent({ data }: NodeProps & { data: PersonNodeData })
         ) : null}
 
         <div className="relative h-[100px] w-full overflow-hidden">
+          {data.gender === "male" ? (
+            <span
+              className="absolute left-2 top-2 z-10 h-2.5 w-2.5 rounded-full bg-[#4466ff] ring-2 ring-[#0a0a0a]"
+              title="Male"
+              aria-hidden
+            />
+          ) : null}
+          {data.gender === "female" ? (
+            <span
+              className="absolute left-2 top-2 z-10 h-2.5 w-2.5 rounded-full bg-[#CE1126] ring-2 ring-[#0a0a0a]"
+              title="Female"
+              aria-hidden
+            />
+          ) : null}
           {showPhoto ? (
             <img
               src={data.photoUrl!}
@@ -93,6 +107,11 @@ function PersonFlowNodeComponent({ data }: NodeProps & { data: PersonNodeData })
           {data.relation ? (
             <p className="font-manrope text-[10px] font-normal uppercase tracking-[0.08em] text-[#555555]">
               {data.relation}
+            </p>
+          ) : null}
+          {data.careerPath ? (
+            <p className="truncate font-manrope text-[10px] font-normal italic text-[#888888]">
+              {data.careerPath}
             </p>
           ) : null}
           {data.memoryCount > 0 ? (

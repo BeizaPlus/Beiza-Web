@@ -1,0 +1,72 @@
+import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { verifyCircleSession } from "../lib/verifyCircleSession";
+
+type Body = {
+  circle_id?: string;
+  person_id?: string;
+  canvas_x?: number;
+  canvas_y?: number;
+};
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    return res.status(200).end();
+  }
+
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const body = (typeof req.body === "string" ? JSON.parse(req.body) : req.body) as Body;
+  const circleId = body.circle_id?.trim();
+  const personId = body.person_id?.trim();
+
+  if (!circleId || !personId) {
+    return res.status(400).json({ error: "circle_id and person_id are required." });
+  }
+
+  const session = await verifyCircleSession(req, circleId);
+  if (!session.ok) {
+    return res.status(session.status).json({ error: session.error });
+  }
+
+  const { data: source, error: fetchError } = await session.supabase
+    .from("family_people")
+    .select("*")
+    .eq("id", personId)
+    .eq("circle_id", circleId)
+    .maybeSingle();
+
+  if (fetchError || !source) {
+    return res.status(404).json({ error: "Person not found." });
+  }
+
+  const offsetX = typeof body.canvas_x === "number" ? body.canvas_x : (source.canvas_x ?? 0) + 48;
+  const offsetY = typeof body.canvas_y === "number" ? body.canvas_y : (source.canvas_y ?? 0) + 48;
+
+  const { data: created, error: insertError } = await session.supabase
+    .from("family_people")
+    .insert({
+      circle_id: circleId,
+      display_name: source.display_name,
+      relation_label: source.relation_label,
+      status: source.status,
+      gender: source.gender ?? null,
+      career_path: source.career_path ?? null,
+      photo_url: source.photo_url ?? null,
+      canvas_x: offsetX,
+      canvas_y: offsetY,
+    })
+    .select("*")
+    .single();
+
+  if (insertError) {
+    return res.status(500).json({ error: insertError.message });
+  }
+
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  return res.status(200).json({ person: created });
+}

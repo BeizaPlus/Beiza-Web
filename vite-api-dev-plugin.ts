@@ -10,6 +10,8 @@ const API_ROUTES: Record<string, string> = {
   "/api/circle/tree-edge": "/api/circle/tree-edge.ts",
   "/api/circle/tree-position": "/api/circle/tree-position.ts",
   "/api/circle/tree-person": "/api/circle/tree-person.ts",
+  "/api/circle/tree-person-photo": "/api/circle/tree-person-photo.ts",
+  "/api/circle/tree-person-duplicate": "/api/circle/tree-person-duplicate.ts",
   "/api/recovery-request": "/api/recovery-request.ts",
   "/api/heritage-inquiry": "/api/heritage-inquiry.ts",
 };

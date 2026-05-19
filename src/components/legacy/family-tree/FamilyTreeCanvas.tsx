@@ -46,9 +46,12 @@ import {
   deleteTreeEdgesForPerson,
   fetchTreeEdges,
   savePersonCanvasPosition,
+  duplicateFamilyPerson,
+  savePersonPhoto,
   savePersonProfile,
   saveTreeEdge,
 } from "@/lib/legacy/treeCanvasPersistence";
+import type { FamilyPersonGender } from "@/lib/legacy/types";
 import {
   formatRelationship,
   TREE_DEFAULT_EDGE_OPTIONS,
@@ -94,7 +97,7 @@ function FamilyTreeCanvasInner({
   onFullscreenChange,
   onPeopleChange,
 }: FamilyTreeCanvasProps) {
-  const { fitView, getNodes } = useReactFlow();
+  const { fitView, getNodes, screenToFlowPosition } = useReactFlow();
   const { toast } = useToast();
   const [treeEdgeRows, setTreeEdgeRows] = useState<TreeEdgeRow[]>(initialTreeEdges);
   const [positionOverrides, setPositionOverrides] = useState<Map<string, { x: number; y: number }>>(
@@ -108,9 +111,14 @@ function FamilyTreeCanvasInner({
   const [nodeContextMenu, setNodeContextMenu] = useState<{ x: number; y: number; personId: string } | null>(
     null,
   );
-  const [personEdits, setPersonEdits] = useState<Map<string, { display_name: string; relation_label: string }>>(
-    () => new Map(),
-  );
+  type PersonEdit = {
+    display_name?: string;
+    relation_label?: string;
+    gender?: FamilyPersonGender | null;
+    career_path?: string | null;
+    photo_url?: string | null;
+  };
+  const [personEdits, setPersonEdits] = useState<Map<string, PersonEdit>>(() => new Map());
   const groupStateRef = useRef<TreeGroupState>(emptyTreeGroupState());
 
   useEffect(() => {
@@ -138,7 +146,12 @@ function FamilyTreeCanvasInner({
           ...p,
           display_name: edit?.display_name ?? p.display_name,
           relation_label: edit?.relation_label ?? p.relation_label,
-          photo_url: portraitForPerson(p.id, p.photo_url, portraitPool) ?? p.photo_url,
+          gender: edit?.gender !== undefined ? edit.gender : p.gender,
+          career_path: edit?.career_path !== undefined ? edit.career_path : p.career_path,
+          photo_url:
+            edit?.photo_url ??
+            portraitForPerson(p.id, p.photo_url, portraitPool) ??
+            p.photo_url,
           canvas_x: override?.x ?? p.canvas_x,
           canvas_y: override?.y ?? p.canvas_y,
         };
@@ -165,6 +178,22 @@ function FamilyTreeCanvasInner({
   const [nodes, setNodes, onNodesChange] = useNodesState(flowSnapshot.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(flowSnapshot.edges);
 
+  const applyPersonPatch = useCallback(
+    (personId: string, patch: PersonEdit) => {
+      setPersonEdits((prev) => {
+        const next = new Map(prev);
+        next.set(personId, { ...prev.get(personId), ...patch });
+        return next;
+      });
+      if (onPeopleChange) {
+        onPeopleChange(
+          people.map((p) => (p.id === personId ? { ...p, ...patch } : p)),
+        );
+      }
+    },
+    [onPeopleChange, people],
+  );
+
   const handleEditPerson = useCallback(
     async (personId: string, displayName: string, relationLabel: string) => {
       if (!circleId) return;
@@ -176,25 +205,100 @@ function FamilyTreeCanvasInner({
           relationLabel,
           useApi: persistViaApi,
         });
-        setPersonEdits((prev) => {
-          const next = new Map(prev);
-          next.set(personId, { display_name: displayName, relation_label: relationLabel });
-          return next;
+        applyPersonPatch(personId, {
+          display_name: displayName,
+          relation_label: relationLabel,
         });
-        if (onPeopleChange) {
-          onPeopleChange(
-            people.map((p) =>
-              p.id === personId
-                ? { ...p, display_name: displayName, relation_label: relationLabel }
-                : p,
-            ),
-          );
-        }
       } catch {
-        // ignore
+        toast({ title: "Could not save", variant: "destructive" });
       }
     },
-    [circleId, persistViaApi, onPeopleChange, people],
+    [circleId, persistViaApi, applyPersonPatch, toast],
+  );
+
+  const handleGenderChange = useCallback(
+    async (personId: string, gender: FamilyPersonGender | null) => {
+      if (!circleId) return;
+      try {
+        await savePersonProfile({ circleId, personId, gender, useApi: persistViaApi });
+        applyPersonPatch(personId, { gender });
+      } catch {
+        toast({ title: "Could not save gender", variant: "destructive" });
+      }
+    },
+    [circleId, persistViaApi, applyPersonPatch, toast],
+  );
+
+  const handleCareerSave = useCallback(
+    async (personId: string, careerPath: string | null) => {
+      if (!circleId) return;
+      try {
+        await savePersonProfile({ circleId, personId, careerPath, useApi: persistViaApi });
+        applyPersonPatch(personId, { career_path: careerPath });
+      } catch {
+        toast({ title: "Could not save career", variant: "destructive" });
+      }
+    },
+    [circleId, persistViaApi, applyPersonPatch, toast],
+  );
+
+  const handlePhotoUpload = useCallback(
+    async (personId: string, file: File) => {
+      if (!circleId) return;
+      try {
+        const photoUrl = await savePersonPhoto({
+          circleId,
+          personId,
+          file,
+          useApi: persistViaApi,
+        });
+        applyPersonPatch(personId, { photo_url: photoUrl });
+        toast({ title: "Photo updated" });
+      } catch {
+        toast({ title: "Could not upload photo", variant: "destructive" });
+      }
+    },
+    [circleId, persistViaApi, applyPersonPatch, toast],
+  );
+
+  const handleDuplicatePerson = useCallback(
+    async (personId: string) => {
+      if (!circleId) return;
+      const source = peopleWithPortraits.find((p) => p.id === personId);
+      if (!source) return;
+
+      const center = screenToFlowPosition({
+        x: window.innerWidth / 2,
+        y: (window.innerHeight + TREE_HEADER_HEIGHT) / 2,
+      });
+      const baseX = source.canvas_x ?? center.x;
+      const baseY = source.canvas_y ?? center.y;
+
+      try {
+        const created = await duplicateFamilyPerson({
+          circleId,
+          personId,
+          canvasX: baseX + 48,
+          canvasY: baseY + 48,
+          useApi: persistViaApi,
+        });
+        if (onPeopleChange) {
+          onPeopleChange([...people, created]);
+        }
+        toast({ title: "Person duplicated" });
+      } catch {
+        toast({ title: "Could not duplicate", variant: "destructive" });
+      }
+    },
+    [
+      circleId,
+      people,
+      peopleWithPortraits,
+      persistViaApi,
+      onPeopleChange,
+      screenToFlowPosition,
+      toast,
+    ],
   );
 
   const enrichPersonNodes = useCallback(
@@ -584,6 +688,18 @@ function FamilyTreeCanvasInner({
         <TreeNodeContextMenu
           x={nodeContextMenu.x}
           y={nodeContextMenu.y}
+          displayName={
+            peopleWithPortraits.find((p) => p.id === nodeContextMenu.personId)?.display_name ??
+            "Person"
+          }
+          gender={peopleWithPortraits.find((p) => p.id === nodeContextMenu.personId)?.gender}
+          careerPath={
+            peopleWithPortraits.find((p) => p.id === nodeContextMenu.personId)?.career_path
+          }
+          onGenderChange={(g) => void handleGenderChange(nodeContextMenu.personId, g)}
+          onCareerSave={(c) => void handleCareerSave(nodeContextMenu.personId, c)}
+          onPhotoSelected={(file) => void handlePhotoUpload(nodeContextMenu.personId, file)}
+          onDuplicate={() => void handleDuplicatePerson(nodeContextMenu.personId)}
           onDisconnect={() => void disconnectAllEdgesForPerson(nodeContextMenu.personId)}
           onClose={() => setNodeContextMenu(null)}
         />
