@@ -1,9 +1,16 @@
-import { useMemo } from "react";
+import { useMemo, type CSSProperties } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Hero } from "@/components/Hero";
 import { Footer } from "@/components/Footer";
+import { LegacyCurationPricing } from "@/components/landing/LegacyCurationPricing";
+import { LegacyOutro } from "@/components/landing/LegacyOutro";
+import { WhatWeDoSection } from "@/components/landing/WhatWeDoSection";
+import {
+  LandingLayoutStudioPanel,
+  useLandingLayoutStudio,
+} from "@/components/dev/LandingLayoutStudio";
+import { studioCssVars } from "@/components/dev/landingLayoutStudioState";
 import { SectionHeader } from "@/components/framer/SectionHeader";
-import { FeatureCard } from "@/components/framer/FeatureCard";
 import { TestimonialsCarousel } from "@/components/framer/TestimonialsCarousel";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { FAQItem } from "@/components/framer/FAQItem";
@@ -32,7 +39,14 @@ const iconMap: Record<string, JSX.Element> = {
 
 const resolveIcon = (iconKey?: string | null) => iconMap[iconKey ?? ""] ?? <Sparkles className="h-5 w-5" strokeWidth={1.5} />;
 
+const studioEnabled =
+  import.meta.env.DEV &&
+  (typeof window === "undefined" || new URLSearchParams(window.location.search).get("studio") !== "0");
+
 const Landing = () => {
+  const { enabled: studio, state: studioState, setState: setStudioState } = useLandingLayoutStudio(studioEnabled);
+  const focus = studio ? studioState.focus : null;
+
   const { data: heroSection } = useHeroSection("landing-hero");
   const { data: siteSettings } = useSiteSettings();
   const { data: offerings = [] } = useOfferings();
@@ -127,36 +141,56 @@ const Landing = () => {
     return featuredEvent ?? null;
   }, [featuredEvent]);
 
+  const showHero = !studio || focus === "hero";
+  const showOfferings = !studio || focus === "offerings";
+  const showFaq = !studio || focus === "faq";
+  const showPricing = !studio || focus === "pricing";
+  const showOutro = !studio || focus === "outro";
+  const showRest = !studio;
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div
+      className="min-h-screen bg-background text-foreground"
+      style={studio ? (studioCssVars(studioState) as CSSProperties) : undefined}
+    >
       <Navigation />
-      <Hero
-        headline={hero.heading}
-        paragraph={hero.subheading ?? ""}
-        ctaText={hero.ctaLabel ?? "Start Your Legacy"}
-        ctaLink={hero.ctaHref ?? "/legacy"}
-        reviews={hero.reviews ?? undefined}
-        backgroundImage={hero.backgroundMedia?.src}
-      />
+      {showHero ? (
+        <Hero
+          headline={hero.heading}
+          paragraph={hero.subheading ?? ""}
+          ctaText={hero.ctaLabel ?? "Start Your Legacy"}
+          ctaLink={hero.ctaHref ?? "/legacy"}
+          reviews={hero.reviews ?? undefined}
+          backgroundImage={hero.backgroundMedia?.src}
+          backgroundPosition={
+            studio ? `${studioState.hero.posX}% ${studioState.hero.posY}%` : undefined
+          }
+          backgroundScale={studio ? studioState.hero.scale : undefined}
+        />
+      ) : null}
 
       <main className="flex flex-col pb-24 lg:pb-32">
-        <div className="mx-auto mt-8 w-full max-w-6xl px-6">
-          <AdZone placement="home_hero" />
-        </div>
-        <section className="mx-auto max-w-6xl px-6 py-24 lg:py-32">
-          <SectionHeader
-            eyebrow="What We Do"
-            title="How We Preserve Your Legacy"
-            description="Every story is handcrafted — recorded voices, curated imagery, and cultural keepsakes your family will carry for generations."
-            align="center"
-          />
-          <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {offeringsList.map((feature) => (
-              <FeatureCard key={feature.id} title={feature.title} description={feature.description} icon={feature.icon} />
-            ))}
+        {showRest ? (
+          <div className="mx-auto mt-8 w-full max-w-6xl px-6">
+            <AdZone placement="home_hero" />
           </div>
-        </section>
+        ) : null}
+        {showOfferings ? (
+          <WhatWeDoSection
+            offerings={offeringsList}
+            mockupSrc="/images/legacy-mockup.png"
+            style={
+              studio
+                ? {
+                    transform: `translateY(var(--offerings-offset-y))`,
+                    paddingTop: `var(--offerings-padding-top)`,
+                  }
+                : undefined
+            }
+          />
+        ) : null}
 
+        {showRest ? (
         <section className="bg-white py-24 text-black">
           <div className="mx-auto max-w-6xl px-6">
             <SectionHeader
@@ -169,8 +203,20 @@ const Landing = () => {
             {testimonialList.length > 0 ? <TestimonialsCarousel testimonials={testimonialList} className="mt-10" variant="light" /> : null}
           </div>
         </section>
+        ) : null}
 
-        <section className="bg-white py-24 text-black">
+        {showFaq ? (
+        <section
+          className="studio-faq bg-white py-24 text-black"
+          style={
+            studio
+              ? {
+                  transform: `translateY(var(--faq-offset-y))`,
+                  paddingTop: `var(--faq-padding-top)`,
+                }
+              : undefined
+          }
+        >
           <div className="mx-auto max-w-5xl px-6">
             <SectionHeader
               eyebrow="FAQ"
@@ -187,8 +233,9 @@ const Landing = () => {
             ) : null}
           </div>
         </section>
+        ) : null}
 
-        {event ? (
+        {showRest && event ? (
           <section className="mx-auto max-w-6xl px-6 py-24">
             <div className="glass-panel flex flex-col overflow-hidden rounded-[30px] border border-white/10 md:flex-row">
               <div className="flex-1 space-y-4 px-8 py-10 md:px-12">
@@ -213,6 +260,23 @@ const Landing = () => {
           </section>
         ) : null}
 
+        {showPricing ? (
+        <div
+          style={
+            studio
+              ? {
+                  transform: `translateY(var(--pricing-offset-y))`,
+                  paddingTop: `var(--pricing-padding-top)`,
+                }
+              : undefined
+          }
+        >
+          <LegacyCurationPricing />
+        </div>
+        ) : null}
+
+        {showRest ? (
+        <>
         <section className="bg-black py-24 text-white">
           <div className="mx-auto max-w-6xl space-y-12 px-6">
             <SectionHeader
@@ -224,38 +288,44 @@ const Landing = () => {
             />
 
             {pricingList.length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-3">
+              <div className="grid items-stretch gap-6 md:grid-cols-3">
                 {pricingList.map((tier) => (
                   <div
                     key={tier.id}
-                    className={`rounded-lg border p-8 shadow-glass transition hover:-translate-y-1 hover:shadow-xl ${tier.isRecommended ? "border-white/20 bg-white/10" : "border-white/10 bg-white/5"
+                    className={`flex h-full flex-col rounded-lg border p-8 shadow-glass transition hover:-translate-y-1 hover:shadow-xl ${tier.isRecommended ? "border-white/20 bg-white/10" : "border-white/10 bg-white/5"
                       }`}
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex min-h-9 items-start justify-between gap-2">
                       <h3 className="text-2xl font-semibold text-white">{tier.name}</h3>
                       {tier.isRecommended ? (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs uppercase tracking-[0.25em] text-white">
+                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs uppercase tracking-[0.25em] text-white">
                           <Sparkles className="h-3.5 w-3.5" /> {tier.badgeLabel ?? "Featured"}
                         </span>
-                      ) : null}
+                      ) : (
+                        <span className="invisible inline-flex shrink-0 px-3 py-1 text-xs" aria-hidden>
+                          —
+                        </span>
+                      )}
                     </div>
                     <p className="mt-4 text-sm uppercase tracking-[0.3em] text-subtle">{tier.tagline ?? "Starting at"}</p>
                     <p className="mt-2 text-3xl font-semibold text-white">{tier.priceLabel ?? "Custom"}</p>
-                    <p className="mt-4 text-sm leading-relaxed text-subtle">{tier.description}</p>
-                    <ul className="mt-6 space-y-2 text-sm text-subtle">
+                    <p className="mt-4 min-h-[4.5rem] text-sm leading-relaxed text-subtle">{tier.description}</p>
+                    <ul className="mt-6 flex-1 space-y-2 text-sm text-subtle">
                       {tier.features.map((feature) => (
                         <li key={feature} className="flex items-start gap-2">
-                          <span className="mt-1 inline-block h-1.5 w-1.5 rounded-full bg-white/80" />
+                          <span className="mt-1 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-white/80" />
                           <span>{feature}</span>
                         </li>
                       ))}
                     </ul>
-                    <CTAButton
-                      to="/contact#hero"
-                      label="Plan with us"
-                      className={`mt-8 w-full justify-center ${tier.isRecommended ? "bg-white text-black" : "bg-white/15 text-white"
-                        }`}
-                    />
+                    <div className="mt-auto w-full pt-8">
+                      <CTAButton
+                        to="/contact#hero"
+                        label="Plan with us"
+                        className={`w-full justify-center ${tier.isRecommended ? "bg-white text-black" : "bg-white/15 text-white"
+                          }`}
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -263,11 +333,28 @@ const Landing = () => {
           </div>
         </section>
 
-        {/* Products Panel */}
         <ProductsPanel title="Featured Products" description="Explore our collection of legacy products and services." />
+        </>
+        ) : null}
+
+        {showOutro ? (
+        <div
+          style={
+            studio
+              ? {
+                  transform: `translateY(var(--outro-offset-y))`,
+                  paddingTop: `var(--outro-padding-top)`,
+                }
+              : undefined
+          }
+        >
+          <LegacyOutro />
+        </div>
+        ) : null}
       </main>
 
-      <Footer />
+      {showRest ? <Footer /> : null}
+      {studio ? <LandingLayoutStudioPanel state={studioState} onChange={setStudioState} /> : null}
     </div>
   );
 };

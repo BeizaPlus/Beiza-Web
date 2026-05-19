@@ -13,6 +13,8 @@ interface HeroProps {
   ctaHref?: string;
   reviews?: string;
   backgroundImage?: string;
+  backgroundPosition?: string;
+  backgroundScale?: number;
   showReviews?: boolean;
 }
 
@@ -27,6 +29,8 @@ export const Hero = ({
   ctaHref,
   reviews = FALLBACK_SITE_SETTINGS.heroReviews,
   backgroundImage,
+  backgroundPosition,
+  backgroundScale = 100,
   showReviews = true,
 }: HeroProps) => {
   const heroTitle = title ?? headline ?? FALLBACK_SITE_SETTINGS.heroHeading;
@@ -42,7 +46,7 @@ export const Hero = ({
     >
       {backgroundImage ? (
         <motion.div
-          className="absolute inset-0"
+          className="absolute inset-0 overflow-hidden"
           initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.4, ease: [0.12, 0.23, 0.5, 1] }}
@@ -51,6 +55,11 @@ export const Hero = ({
             src={backgroundImage}
             alt="Hero background"
             className="h-full w-full object-cover"
+            style={{
+              objectPosition: backgroundPosition ?? "50% 50%",
+              transform: backgroundScale !== 100 ? `scale(${backgroundScale / 100})` : undefined,
+              transformOrigin: backgroundPosition ?? "50% 50%",
+            }}
             loading="lazy"
           />
         </motion.div>
@@ -58,7 +67,10 @@ export const Hero = ({
 
       <div className="hero-overlay" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end px-6 py-24 md:px-12">
+      <div
+        className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end px-6 pt-28 md:px-12 md:pt-32"
+        style={{ paddingBottom: "max(7rem, var(--hero-copy-bottom, 38vh))" }}
+      >
         <div className="max-w-xl text-left">
           <motion.h1
             initial={{ opacity: 0, filter: "blur(16px)", scale: 1.12 }}
@@ -73,7 +85,7 @@ export const Hero = ({
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.12, 0.23, 0.5, 1] }}
-            className="mt-6 max-w-2xl text-lg leading-relaxed text-subtle md:text-xl"
+            className="mt-5 max-w-xl text-lg leading-relaxed text-white/90 md:text-xl"
           >
             {heroDescription}
           </motion.p>

@@ -1,0 +1,30 @@
+{
+  "savedAt": "2026-05-19T00:00:00.000Z",
+  "label": "Beiza landing layout studio — baseline (Creative Director PIVOT)",
+  "notes": "Hero copy raised via copyBottomVh. Tune in local dev with Layout studio, then Save JSON.",
+  "layout": {
+    "focus": "hero",
+    "hero": {
+      "posX": 50,
+      "posY": 38,
+      "scale": 108,
+      "copyBottomVh": 38
+    },
+    "offerings": {
+      "offsetY": -32,
+      "paddingTop": 80
+    },
+    "faq": {
+      "offsetY": -48,
+      "paddingTop": 72
+    },
+    "pricing": {
+      "offsetY": 0,
+      "paddingTop": 96
+    },
+    "outro": {
+      "offsetY": 0,
+      "paddingTop": 96
+    }
+  }
+}
