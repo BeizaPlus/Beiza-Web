@@ -1,34 +1,33 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { SectionHeader } from "@/components/framer/SectionHeader";
 import { VOICES_TESTIMONIALS } from "@/lib/legacy/voicesTestimonials";
 import { cn } from "@/lib/utils";
 
 const SCROLL_GAP_PX = 16;
-const DESKTOP_SCROLL_STEP = 356; // 340px card + 16px gap
+const DESKTOP_SCROLL_STEP = 356;
+
+const controlButtonClass =
+  "ring-background flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-black/40 text-white transition hover:bg-white/10 disabled:pointer-events-none disabled:opacity-30";
 
 function ChainMotif() {
   return (
-    <div className="mt-8 flex flex-col items-center px-6">
-      <div className="flex items-center" role="presentation">
+    <div className="flex flex-col items-center">
+      <div className="flex items-center" role="presentation" aria-hidden>
         {[0, 1, 2, 3, 4].map((i) => (
           <div key={i} className="flex items-center">
-            {i > 0 ? <span className="h-px w-8 bg-[#1e1e1e]" aria-hidden /> : null}
+            {i > 0 ? <span className="h-px w-8 bg-border" /> : null}
             <span
               className={cn(
                 "block h-2 w-2 shrink-0 rounded-full",
-                i === 2
-                  ? "border border-[#2a2a2a] bg-[#0d0d0d]"
-                  : "bg-[#E6A817]",
+                i === 2 ? "border border-border bg-background" : "bg-primary",
               )}
-              style={
-                i !== 2 ? { boxShadow: "0 0 6px rgba(230,168,23,0.25)" } : undefined
-              }
-              aria-hidden
+              style={i !== 2 ? { boxShadow: "0 0 6px hsl(var(--primary) / 0.25)" } : undefined}
             />
           </div>
         ))}
       </div>
-      <p className="mt-3 text-center text-[10px] uppercase tracking-[0.3em] text-[#333333]">
+      <p className="text-eyebrow mt-3 text-center text-[0.65rem] tracking-[0.3em] text-muted-foreground">
         The chain doesn&apos;t break. It remembers.
       </p>
     </div>
@@ -48,31 +47,22 @@ function VoiceCard({
   return (
     <article
       className={cn(
-        "w-[calc(85vw)] shrink-0 snap-start border-[0.5px] border-[#1e1e1e] bg-[#111111] px-5 py-6 md:w-[340px]",
-        featured
-          ? "rounded-l-none rounded-r-[12px] border-l-2 border-l-[#E6A817] bg-[#0e0c00] pl-[18px]"
-          : "rounded-[12px]",
+        "glass-panel flex h-full w-[calc(85vw)] shrink-0 snap-start flex-col gap-4 rounded-lg border border-white/10 p-6 md:w-[340px]",
+        featured && "ring-1 ring-primary/35",
       )}
     >
-      <span
-        className="mb-2 block text-[28px] leading-none text-[#E6A817]/50"
-        aria-hidden
-      >
-        &ldquo;
-      </span>
-      <p className="text-[10px] uppercase tracking-[0.2em] text-[#555555]">
+      <Quote className="h-5 w-5 shrink-0 text-primary" aria-hidden />
+      <p className="text-eyebrow text-xs">
         {relation} · {location}
       </p>
-      <p className="my-2.5 mb-[18px] text-sm italic leading-[1.75] text-[#cccccc]">
-        {quote}
-      </p>
-      <div className="flex items-center gap-2.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-[1.5px] border-[#2e2200] bg-[#1e1800] text-[11px] font-medium text-[#E6A817]">
+      <p className="flex-1 text-base leading-relaxed text-white/90">{quote}</p>
+      <div className="flex items-center gap-3 pt-2">
+        <span className="ring-background flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/60 text-xs font-medium text-primary">
           {initials}
         </span>
-        <div>
-          <p className="text-[13px] font-medium text-white">{name}</p>
-          <p className="flex items-center gap-1.5 text-[11px] text-[#555555]">
+        <div className="min-w-0">
+          <p className="font-medium text-white">{name}</p>
+          <p className="mt-0.5 flex items-center gap-1.5 text-xs text-subtle">
             <span
               className="leading-none"
               style={{
@@ -125,73 +115,66 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
   }, [updateScrollState]);
 
   const scrollByCard = (direction: -1 | 1) => {
-    const track = scrollRef.current;
-    if (!track) return;
-    track.scrollBy({ left: direction * getScrollStep(), behavior: "smooth" });
+    scrollRef.current?.scrollBy({ left: direction * getScrollStep(), behavior: "smooth" });
   };
 
   return (
     <section
-      className={cn("bg-[#0a0a0a] py-24 text-white", className)}
-      aria-labelledby="voices-heading"
+      className={cn("bg-background py-24 text-foreground lg:py-32", className)}
+      aria-label="Voices that stayed — family testimonials"
     >
-      <div className="mb-8 px-6">
-        <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-[#888888]">
-          From families who trusted Beiza
-        </p>
-        <h2 id="voices-heading" className="mt-3 text-display-lg text-white">
-          Voices that stayed.
-        </h2>
-        <p className="mt-4 max-w-lg text-base leading-relaxed text-[#888888]">
-          A farewell is just one moment in a longer chain. Their stories travel forward.
-        </p>
-      </div>
+      <div className="mx-auto max-w-6xl px-[5%]">
+        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <SectionHeader
+            eyebrow="From families who trusted Beiza"
+            title="Voices that stayed."
+            description="A farewell is just one moment in a longer chain. Their stories travel forward."
+            align="center"
+            className="md:items-start md:text-left"
+          />
+          <div className="flex shrink-0 justify-center gap-2 md:justify-end">
+            <button
+              type="button"
+              aria-label="Previous testimonial"
+              disabled={!canScrollPrev}
+              onClick={() => scrollByCard(-1)}
+              className={controlButtonClass}
+            >
+              <ChevronLeft className="h-5 w-5" aria-hidden />
+            </button>
+            <button
+              type="button"
+              aria-label="Next testimonial"
+              disabled={!canScrollNext}
+              onClick={() => scrollByCard(1)}
+              className={controlButtonClass}
+            >
+              <ChevronRight className="h-5 w-5" aria-hidden />
+            </button>
+          </div>
+        </div>
 
-      <div className="relative w-full overflow-hidden">
-        <div
-          ref={scrollRef}
-          className={cn(
-            "flex flex-row gap-4 overflow-x-auto overscroll-x-contain px-6 pb-2",
-            "snap-x snap-mandatory scroll-smooth",
-            "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
-          )}
-          style={{ WebkitOverflowScrolling: "touch" }}
-          aria-label="Family testimonials"
-        >
-          {VOICES_TESTIMONIALS.map((item) => (
-            <VoiceCard key={item.name} {...item} />
-          ))}
+        <div className="relative mt-10 w-full overflow-hidden">
+          <div
+            ref={scrollRef}
+            className={cn(
+              "flex gap-4 overflow-x-auto overscroll-x-contain pb-2",
+              "snap-x snap-mandatory scroll-smooth",
+              "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+            )}
+            style={{ WebkitOverflowScrolling: "touch" }}
+            aria-label="Family testimonials"
+          >
+            {VOICES_TESTIMONIALS.map((item) => (
+              <VoiceCard key={item.name} {...item} />
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-12">
+          <ChainMotif />
         </div>
       </div>
-
-      <div className="mt-6 flex gap-3 px-6">
-        <button
-          type="button"
-          aria-label="Previous testimonial"
-          disabled={!canScrollPrev}
-          onClick={() => scrollByCard(-1)}
-          className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-[0.5px] border-[#2a2a2a] bg-[#1a1a1a] text-[#888888] transition-opacity",
-            !canScrollPrev && "pointer-events-none opacity-30",
-          )}
-        >
-          <ArrowLeft className="h-4 w-4" strokeWidth={2} aria-hidden />
-        </button>
-        <button
-          type="button"
-          aria-label="Next testimonial"
-          disabled={!canScrollNext}
-          onClick={() => scrollByCard(1)}
-          className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E6A817] text-[#0a0a0a] transition-opacity",
-            !canScrollNext && "pointer-events-none opacity-30",
-          )}
-        >
-          <ArrowRight className="h-4 w-4" strokeWidth={2} aria-hidden />
-        </button>
-      </div>
-
-      <ChainMotif />
     </section>
   );
 }
