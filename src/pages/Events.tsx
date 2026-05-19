@@ -40,7 +40,34 @@ const Events = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navigation />
-      <main className="space-y-24 pb-24 pt-28 lg:space-y-32 lg:pb-32">
+      <section className="relative -mt-24 min-h-[min(72vh,640px)] overflow-hidden">
+        <img
+          src="/images/beiza-elder-gye-nyame-hero.png"
+          alt="Elder seated at peace with the Gye Nyame symbol behind him"
+          className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(0,0,0,0.9) 35%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.15) 100%)",
+          }}
+          aria-hidden
+        />
+        <div className="relative z-10 mx-auto flex min-h-[min(72vh,640px)] max-w-6xl items-end px-6 pb-16 pt-32 md:px-12 md:pb-20">
+          <div className="max-w-xl">
+            <p className="text-[10px] font-sans uppercase tracking-[0.3em] text-[#E6A817]">Events</p>
+            <h1 className="mt-3 font-display text-3xl leading-tight text-white md:text-4xl">
+              Because their story deserves to be unforgettable.
+            </h1>
+            <p className="mt-4 font-sans text-base leading-relaxed text-[#aaaaaa]">
+              Gravitas without grief. Presence without sentimentality — the visual language of how
+              Beiza gathers families.
+            </p>
+          </div>
+        </div>
+      </section>
+      <main className="space-y-24 pb-24 pt-12 lg:space-y-32 lg:pb-32">
         <section className="mx-auto max-w-6xl px-6">
           <SectionHeader
             eyebrow="Events"

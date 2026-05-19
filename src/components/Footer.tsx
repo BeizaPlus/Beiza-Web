@@ -59,6 +59,14 @@ export const Footer = () => {
               {settings?.footer_tagline ??
                 "We design meaningful legacies — handcrafted records that celebrate life, culture, and family."}
             </p>
+            <p className="text-subtle text-sm">
+              <Link
+                to="/heritage"
+                className="text-[#555555] transition-colors hover:text-[#888888]"
+              >
+                Planning ahead? Heritage →
+              </Link>
+            </p>
             <p className="text-subtle text-xs uppercase tracking-[0.3em]">
               © {copyrightYear} {settings?.businessName ?? "Beiza Plus"} — Crafted with care, made to remember.
             </p>

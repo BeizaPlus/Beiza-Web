@@ -16,6 +16,8 @@ interface HeroProps {
   backgroundPosition?: string;
   backgroundScale?: number;
   showReviews?: boolean;
+  /** When set, replaces default hero-overlay (e.g. Heritage Gye Nyame gradient). */
+  overlayStyle?: React.CSSProperties;
 }
 
 export const Hero = ({
@@ -32,6 +34,7 @@ export const Hero = ({
   backgroundPosition,
   backgroundScale = 100,
   showReviews = true,
+  overlayStyle,
 }: HeroProps) => {
   const heroTitle = title ?? headline ?? FALLBACK_SITE_SETTINGS.heroHeading;
   const heroDescription =
@@ -65,7 +68,11 @@ export const Hero = ({
         </motion.div>
       ) : null}
 
-      <div className="hero-overlay" />
+      {overlayStyle ? (
+        <div className="absolute inset-0" style={overlayStyle} aria-hidden />
+      ) : (
+        <div className="hero-overlay" />
+      )}
 
       <div
         className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end px-6 pt-28 md:px-12 md:pt-32"

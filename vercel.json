@@ -1,4 +1,11 @@
 {
+  "redirects": [
+    {
+      "source": "/white-swan",
+      "destination": "/heritage",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",

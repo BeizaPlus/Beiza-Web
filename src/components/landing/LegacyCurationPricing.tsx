@@ -81,7 +81,7 @@ const TIERS: Tier[] = [
       "Unlimited vault storage",
     ],
     cta: "Plan with us →",
-    href: "/contact#hero",
+    href: "/heritage",
     note: "White Swan also available standalone · $950",
   },
 ];

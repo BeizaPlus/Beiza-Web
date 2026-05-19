@@ -30,8 +30,8 @@ export const FALLBACK_SITE_SETTINGS = {
     "It has never been about loss — it has always been about legacy. Every story, every voice, every design is our way of saying: their story, kept forever.",
   heroCtaLabel: "Start Your Legacy",
   heroCtaHref: "/legacy",
-  heroBackgroundImage: "/images/adinkra-hands-hero.png",
-  heroBackgroundAlt: "Adinkra heritage — hands holding legacy",
+  heroBackgroundImage: "/images/beiza-elder-gye-nyame-hero.png",
+  heroBackgroundAlt: "Elder at peace with the Gye Nyame symbol — except God, nothing is greater",
   heroReviews: "100+ Families Preserved",
   footerTagline:
     "We design meaningful legacies — handcrafted records that celebrate life, culture, and family.",

@@ -1,0 +1,439 @@
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  BookOpen,
+  Building2,
+  Check,
+  Film,
+  Infinity,
+  Users,
+  UserRound,
+} from "lucide-react";
+import { Navigation } from "@/components/Navigation";
+import { Footer } from "@/components/Footer";
+import { cn } from "@/lib/utils";
+import { isWhiteSwanIncludedForUser, HERITAGE_GOLD } from "@/lib/legacy/heritage";
+
+const HERO_IMAGE = "/images/beiza-elder-gye-nyame-hero.png";
+const HERO_GRADIENT =
+  "linear-gradient(to right, rgba(0,0,0,0.88) 45%, rgba(0,0,0,0.15) 100%)";
+
+const FEATURES = [
+  {
+    icon: Film,
+    title: "Cinematic tribute film",
+    body: "A produced short film — voice, image, and music — that captures who they were. Delivered digitally and on archival media.",
+  },
+  {
+    icon: BookOpen,
+    title: "Heirloom book",
+    body: "A printed, bound keepsake of memories, photos, and recorded stories. One copy per immediate family, more available.",
+  },
+  {
+    icon: Users,
+    title: "Cross-border family coordination",
+    body: "We coordinate across time zones, languages, and borders so every branch of the family is present — in person or digitally.",
+  },
+  {
+    icon: UserRound,
+    title: "Dedicated legacy producer",
+    body: "One person. Your family's point of contact from the first call through the final delivery. No handoffs.",
+  },
+  {
+    icon: Infinity,
+    title: "Unlimited vault storage",
+    body: "Every recording, photo, and memory — stored in your family's vault with no cap, forever.",
+  },
+  {
+    icon: Building2,
+    title: "White Swan — the gathering",
+    body: "When a family member passes, we coordinate the memorial experience on the ground. Photography, tribute screening, and family gathering included.",
+    featured: true,
+  },
+] as const;
+
+const WHITE_SWAN_INCLUDES = [
+  "On-the-ground memorial coordination",
+  "Tribute film screening at the gathering",
+  "Family photography (ceremony + portraits)",
+  "Programme design & print",
+  "Cross-border attendance coordination",
+  "Dedicated producer, day-of",
+];
+
+function scrollToConsultation() {
+  document.getElementById("consultation")?.scrollIntoView({ behavior: "smooth" });
+}
+
+export default function HeritagePage() {
+  const whiteSwanIncluded = isWhiteSwanIncludedForUser();
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    country: "",
+    planning_for: "",
+    message: "",
+    referral_source: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  useEffect(() => {
+    document.title = "Beiza Heritage · Memorial & Legacy Coordination";
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) {
+      meta.setAttribute(
+        "content",
+        "Full legacy curation for families — cinematic tribute films, heirloom books, cross-border coordination, and memorial experiences.",
+      );
+    }
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormError(null);
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/heritage-inquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        throw new Error(data.error ?? "Something went wrong.");
+      }
+      setSubmitted(true);
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : "Could not send. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
+      <Navigation />
+
+      {/* 1. Hero */}
+      <header className="relative min-h-[92svh] w-full overflow-hidden md:min-h-[92vh]">
+        <img
+          src={HERO_IMAGE}
+          alt="Elder at peace with the Gye Nyame Adinkra symbol — except God, nothing is greater"
+          className="absolute inset-0 h-full w-full object-cover object-[72%_center]"
+        />
+        <div className="absolute inset-0" style={{ background: HERO_GRADIENT }} aria-hidden />
+        <div className="relative z-10 mx-auto flex min-h-[92svh] max-w-6xl items-center px-8 py-28 md:min-h-[92vh] md:px-20 md:py-0">
+          <div className="max-w-[520px]">
+            <p
+              className="font-sans text-[10px] uppercase tracking-[0.3em]"
+              style={{ color: HERITAGE_GOLD }}
+            >
+              Beiza Legacy · Heritage
+            </p>
+            <h1 className="mt-4 font-display text-[34px] leading-[1.15] text-white md:text-[52px]">
+              Some stories are larger than one life.
+            </h1>
+            <p className="mt-4 font-sans text-base leading-[1.7] text-[#aaaaaa]">
+              The White Swan. For when the time comes — and it always comes.
+            </p>
+            <p className="mt-3 max-w-[420px] font-sans text-sm leading-[1.8] text-[#777777]">
+              The Gye Nyame symbol — &ldquo;except God, nothing is greater&rdquo; — has guided
+              Ghanaian families through loss for centuries. Beiza Heritage carries that spirit into
+              how we preserve, gather, and remember.
+            </p>
+            <button
+              type="button"
+              onClick={scrollToConsultation}
+              className="mt-8 rounded-full bg-white px-6 py-3 font-sans text-[13px] font-medium text-[#0a0a0a] transition hover:bg-white/90"
+            >
+              Plan your Heritage experience →
+            </button>
+            <p className="mt-3 font-sans text-[11px] text-[#555555]">Or call us — we answer.</p>
+          </div>
+        </div>
+      </header>
+
+      {/* 2. What's included */}
+      <section className="bg-[#0a0a0a] px-6 py-16 md:px-0 md:py-24">
+        <div className="mx-auto max-w-5xl text-center">
+          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-[#555555]">
+            What&apos;s included
+          </p>
+          <h2 className="mt-3 font-display text-[36px] text-white">A farewell worth remembering.</h2>
+          <p className="mx-auto mt-4 max-w-[560px] font-sans text-sm leading-relaxed text-[#666666]">
+            Heritage is full-service legacy curation. Everything Beiza does, done for you —
+            coordinated across continents, delivered to your family.
+          </p>
+        </div>
+        <div className="mx-auto mt-12 max-w-5xl overflow-hidden rounded-2xl border border-[#1e1e1e] md:grid md:grid-cols-2 md:gap-px md:bg-[#1e1e1e]">
+          {FEATURES.map((item) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={item.title}
+                className={cn(
+                  "border-[#1e1e1e] bg-[#111111] p-7 md:border-r md:border-b md:p-8",
+                  "featured" in item && item.featured && "bg-[#0e0c00] md:border-[#3a2800]",
+                )}
+              >
+                <Icon
+                  className="h-6 w-6"
+                  style={{ color: HERITAGE_GOLD }}
+                  strokeWidth={1.5}
+                  aria-hidden
+                />
+                <h3
+                  className={cn(
+                    "mt-4 font-sans text-[15px] font-medium",
+                    "featured" in item && item.featured ? "text-[#E6A817]" : "text-white",
+                  )}
+                >
+                  {item.title}
+                </h3>
+                <p className="mt-2 font-sans text-[13px] leading-[1.7] text-[#666666]">
+                  {item.body}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 3. White Swan callout */}
+      <section className="border-y border-[#1a1a1a] bg-[#080808] px-6 py-16 md:py-24">
+        <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-16">
+          <div>
+            <p className="font-sans text-[11px] uppercase tracking-[0.2em] text-[#888888]">
+              🦢 White Swan
+            </p>
+            <h2 className="mt-4 font-display text-[32px] italic leading-[1.3] text-white">
+              When the time comes, we&apos;re already there.
+            </h2>
+            <div className="mt-6 max-w-[480px] space-y-4 font-sans text-sm leading-[1.9] text-[#666666]">
+              <p>
+                The White Swan is Beiza&apos;s on-the-ground memorial experience. When a family
+                member passes, we coordinate everything — so your family can grieve, not manage
+                logistics.
+              </p>
+              <p>
+                Photography of the gathering. A cinematic tribute screening. Coordination of family
+                members across borders. Flowers, programme design, and the quiet details that matter.
+              </p>
+              <p>
+                Named after the Nassim Taleb idea of the rare, transformative event that changes
+                everything — except ours is not a surprise. It is prepared for. It is held.
+              </p>
+            </div>
+            <p className="mt-6 border-t border-[#1a1a1a] pt-4 font-sans text-xs text-[#444444]">
+              White Swan is included for Heritage subscribers after 12 consecutive months. Available
+              standalone at $950.
+            </p>
+          </div>
+
+          <div className="rounded-[20px] border border-[#3a2800] bg-[#0e0c00] p-7 md:p-8">
+            <span className="inline-block rounded-full bg-[#1a1200] px-3 py-1 font-sans text-[11px] tracking-wide text-[#E6A817]">
+              🦢 White Swan
+            </span>
+            <p className="mt-6 font-sans text-[10px] uppercase tracking-[0.2em] text-[#555555]">
+              Standalone
+            </p>
+            {whiteSwanIncluded ? (
+              <p className="mt-1 font-display text-5xl text-[#E6A817]">Included ✓</p>
+            ) : (
+              <p className="mt-1 font-display text-5xl text-white">$950</p>
+            )}
+            <p className="mt-1 font-sans text-xs text-[#555555]">
+              {whiteSwanIncluded ? "Your Heritage subscription" : "with 1 year Heritage subscription"}
+            </p>
+            <div className="my-5 h-px bg-[#1e1e1e]" />
+            <ul className="space-y-2.5 font-sans text-[13px] text-[#bbbbbb]">
+              {WHITE_SWAN_INCLUDES.map((line) => (
+                <li key={line} className="flex gap-2">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#E6A817]" aria-hidden />
+                  {line}
+                </li>
+              ))}
+            </ul>
+            <button
+              type="button"
+              onClick={scrollToConsultation}
+              className="mt-6 w-full rounded-full py-3 font-sans text-[13px] font-medium text-[#0a0a0a] transition hover:opacity-90"
+              style={{ backgroundColor: HERITAGE_GOLD }}
+            >
+              Book a White Swan consultation →
+            </button>
+            <p className="mt-2.5 text-center font-sans text-[11px] text-[#555555]">
+              Or include it free with Heritage —{" "}
+              <Link to="/pricing" className="underline hover:text-[#888888]">
+                $200/yr
+              </Link>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Two ways in */}
+      <section className="bg-[#0a0a0a] px-6 py-16">
+        <div className="mx-auto max-w-4xl text-center">
+          <h2 className="font-display text-[28px] text-white">Two ways in.</h2>
+          <p className="mt-3 font-sans text-sm text-[#666666]">
+            Whether you&apos;re planning ahead or responding to loss — Heritage meets you where you
+            are.
+          </p>
+        </div>
+        <div className="mx-auto mt-10 grid max-w-4xl gap-6 md:grid-cols-2">
+          <div className="rounded-2xl border border-[#3a2800] bg-[#0e0c00] p-7">
+            <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-[#E6A817]">
+              Annual plan
+            </p>
+            <h3 className="mt-2 font-display text-2xl text-white">Heritage</h3>
+            <p className="mt-2 font-sans text-xl font-medium text-white">$200 / yr</p>
+            <p className="mt-4 font-sans text-sm leading-relaxed text-[#888888]">
+              Full legacy curation all year. White Swan included after 12 months. Cinematic films,
+              heirloom books, unlimited vault.
+            </p>
+            <ul className="mt-4 space-y-1.5 font-sans text-xs text-[#666666]">
+              {FEATURES.map((f) => (
+                <li key={f.title}>· {f.title}</li>
+              ))}
+            </ul>
+            <Link
+              to="/pricing#legacy-curation"
+              className="mt-6 flex w-full items-center justify-center rounded-full bg-white py-3 text-center font-sans text-sm font-medium text-[#0a0a0a]"
+            >
+              Start Heritage →
+            </Link>
+          </div>
+          <div className="rounded-2xl border border-[#222222] bg-[#111111] p-7">
+            <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-[#555555]">
+              One-time
+            </p>
+            <h3 className="mt-2 font-display text-2xl text-white">White Swan</h3>
+            <p className="mt-2 font-sans text-xl font-medium text-white">$950</p>
+            <p className="mt-4 font-sans text-sm leading-relaxed text-[#888888]">
+              For families who need it now. On-the-ground memorial coordination, tribute film,
+              photography, and family gathering.
+            </p>
+            <button
+              type="button"
+              onClick={scrollToConsultation}
+              className="mt-6 w-full rounded-full bg-[#1a1a1a] py-3 font-sans text-sm font-medium text-[#888888] transition hover:bg-[#222222]"
+            >
+              Book now →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Consultation */}
+      <section id="consultation" className="border-t border-[#1e1e1e] bg-[#0a0a0a] px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-lg text-center">
+          <h2 className="font-display text-[32px] italic text-white">Tell us about your family.</h2>
+          <p className="mt-3 font-sans text-sm text-[#666666]">
+            No pressure. No sales call. Just a conversation about what your family needs and when.
+          </p>
+        </div>
+
+        {submitted ? (
+          <p className="mx-auto mt-12 max-w-md text-center font-sans text-base" style={{ color: HERITAGE_GOLD }}>
+            Thank you. Someone from Beiza will reach out within 24 hours.
+          </p>
+        ) : (
+          <form
+            onSubmit={handleSubmit}
+            className="mx-auto mt-12 flex max-w-[480px] flex-col gap-4"
+          >
+            <input
+              required
+              name="name"
+              placeholder="Full name"
+              value={form.name}
+              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 font-sans text-sm text-white placeholder:text-[#555555] focus:border-[#3a2800] focus:outline-none"
+            />
+            <input
+              required
+              type="email"
+              name="email"
+              placeholder="Email address"
+              value={form.email}
+              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 font-sans text-sm text-white placeholder:text-[#555555] focus:border-[#3a2800] focus:outline-none"
+            />
+            <select
+              name="country"
+              value={form.country}
+              onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))}
+              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 font-sans text-sm text-white focus:border-[#3a2800] focus:outline-none"
+            >
+              <option value="">Where is your family based?</option>
+              <option value="Ghana">Ghana</option>
+              <option value="Nigeria">Nigeria</option>
+              <option value="United Kingdom">United Kingdom</option>
+              <option value="United States">United States</option>
+              <option value="Canada">Canada</option>
+              <option value="Other">Other</option>
+            </select>
+            <select
+              required
+              name="planning_for"
+              value={form.planning_for}
+              onChange={(e) => setForm((f) => ({ ...f, planning_for: e.target.value }))}
+              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 font-sans text-sm text-white focus:border-[#3a2800] focus:outline-none"
+            >
+              <option value="">What are you planning for?</option>
+              <option value="memorial">A memorial — someone has passed</option>
+              <option value="ahead">Planning ahead for a loved one</option>
+              <option value="own">My own legacy</option>
+              <option value="unsure">Not sure yet</option>
+            </select>
+            <textarea
+              name="message"
+              rows={4}
+              placeholder="Any details that would help us prepare for the conversation."
+              value={form.message}
+              onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 font-sans text-sm text-white placeholder:text-[#555555] focus:border-[#3a2800] focus:outline-none"
+            />
+            <input
+              name="referral_source"
+              placeholder="How did you hear about Heritage? (optional)"
+              value={form.referral_source}
+              onChange={(e) => setForm((f) => ({ ...f, referral_source: e.target.value }))}
+              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 font-sans text-sm text-white placeholder:text-[#555555] focus:border-[#3a2800] focus:outline-none"
+            />
+            {formError ? (
+              <p className="text-center font-sans text-sm text-red-400">{formError}</p>
+            ) : null}
+            <button
+              type="submit"
+              disabled={submitting}
+              className="rounded-full py-4 font-sans text-sm font-medium text-[#0a0a0a] disabled:opacity-60"
+              style={{ backgroundColor: HERITAGE_GOLD }}
+            >
+              {submitting ? "Sending…" : "Send — we'll be in touch within 24 hours →"}
+            </button>
+          </form>
+        )}
+
+        <p className="mt-4 text-center font-sans text-xs text-[#444444]">
+          Or email us directly at{" "}
+          <a href="mailto:heritage@beizalegacy.com" className="underline hover:text-[#666666]">
+            heritage@beizalegacy.com
+          </a>
+        </p>
+      </section>
+
+      {/* 6. Closing */}
+      <section className="bg-[#080808] px-6 py-20 text-center">
+        <blockquote className="mx-auto max-w-[560px] font-display text-[22px] italic leading-relaxed text-[#555555]">
+          Gye Nyame. Except God, nothing is greater — not even forgetting.
+        </blockquote>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}

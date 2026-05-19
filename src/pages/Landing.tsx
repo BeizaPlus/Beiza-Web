@@ -130,11 +130,21 @@ const Landing = () => {
           ctaText={hero.ctaLabel ?? "Start Your Legacy"}
           ctaLink={hero.ctaHref ?? "/legacy"}
           reviews={hero.reviews ?? undefined}
-          backgroundImage={hero.backgroundMedia?.src}
+          backgroundImage={
+            hero.backgroundMedia?.src ?? "/images/beiza-elder-gye-nyame-hero.png"
+          }
           backgroundPosition={
-            studio ? `${studioState.hero.posX}% ${studioState.hero.posY}%` : undefined
+            studio ? `${studioState.hero.posX}% ${studioState.hero.posY}%` : "68% center"
           }
           backgroundScale={studio ? studioState.hero.scale : undefined}
+          overlayStyle={
+            !studio
+              ? {
+                  background:
+                    "linear-gradient(to right, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.2) 100%)",
+                }
+              : undefined
+          }
         />
       ) : null}
 
@@ -204,16 +214,14 @@ const Landing = () => {
                   <CTAButton to="/memoirs" label="Experience" />
                 ) : null}
               </div>
-              {event.heroMedia?.src ? (
-                <div className="relative aspect-[4/5] w-full overflow-hidden md:w-1/3">
-                  <img
-                    src={event.heroMedia.src}
-                    alt={event.heroMedia.alt ?? event.title}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              ) : null}
+              <div className="relative aspect-[4/5] w-full overflow-hidden md:w-1/3">
+                <img
+                  src={event.heroMedia?.src ?? "/images/beiza-ernestina-portrait-bw.png"}
+                  alt={event.heroMedia?.alt ?? event.title}
+                  className="h-full w-full object-cover object-center"
+                  loading="lazy"
+                />
+              </div>
             </div>
           </section>
         ) : null}

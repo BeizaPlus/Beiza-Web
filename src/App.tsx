@@ -22,6 +22,7 @@ import LegacyVaultPage from "./pages/legacy/vault";
 import LegacyFamilyPage from "./pages/legacy/family";
 import VaultExplore from "./pages/VaultExplore";
 import PricingPage from "./pages/Pricing";
+import HeritagePage from "./pages/Heritage";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/download" element={<Download />} />
           <Route path="/vault/explore" element={<VaultExplore />} />
           <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/heritage" element={<HeritagePage />} />
           <Route path="/admin/*" element={<AdminApp />} />
           <Route path="/legacy" element={<LegacyLayout />}>
             <Route index element={<LegacyHomePage />} />
