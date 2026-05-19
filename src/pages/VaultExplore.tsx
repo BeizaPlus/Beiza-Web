@@ -23,13 +23,9 @@ export default function VaultExplore() {
       <Navigation />
       <main className="mx-auto max-w-6xl px-6 py-16">
         <header className="max-w-2xl">
-          <p className="text-[11px] font-medium uppercase tracking-[0.25em] text-[#888]">
-            Beiza Legacy
-          </p>
-          <h1 className="mt-2 font-display text-3xl font-normal md:text-4xl">
-            Legacies being preserved
-          </h1>
-          <p className="mt-4 font-sans text-base leading-relaxed text-[#888]">
+          <p className="text-eyebrow">Beiza Legacy</p>
+          <h1 className="mt-2 text-display-lg text-white">Legacies being preserved</h1>
+          <p className="mt-4 text-base leading-relaxed text-subtle">
             Families who started their circle on Beiza. Their stories are theirs — you can only see
             the cover.
           </p>
@@ -49,8 +45,8 @@ export default function VaultExplore() {
                 >
                   {vault.initials}
                 </span>
-                <p className="mt-4 font-sans text-base font-medium text-white">{vault.name}</p>
-                <p className="mt-1 font-sans text-xs text-[#555]">
+                <p className="mt-4 text-base font-medium text-white">{vault.name}</p>
+                <p className="mt-1 text-xs text-[#555]">
                   {vault.memories} memories · {vault.created}
                 </p>
               </button>
@@ -59,7 +55,7 @@ export default function VaultExplore() {
                   className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/80 px-4 text-center backdrop-blur-sm"
                   role="tooltip"
                 >
-                  <p className="font-sans text-sm text-[#ccc]">
+                  <p className="text-sm text-[#ccc]">
                     This vault is private. Only family members can enter.
                   </p>
                 </div>
@@ -68,7 +64,7 @@ export default function VaultExplore() {
           ))}
         </ul>
 
-        <p className="mt-12 text-center font-sans text-sm text-[#555]">
+        <p className="mt-12 text-center text-sm text-[#555]">
           <Link to="/legacy/family" className="underline decoration-[#333] underline-offset-4 hover:text-[#E6A817]">
             Start your family&apos;s circle — free
           </Link>

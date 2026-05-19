@@ -23,7 +23,7 @@ function ChainMotif() {
           </div>
         ))}
       </div>
-      <p className="mt-3 text-center font-sans text-[10px] uppercase tracking-[0.3em] text-[#333333]">
+      <p className="mt-3 text-center text-[10px] uppercase tracking-[0.3em] text-[#333333]">
         The chain doesn&apos;t break. It remembers.
       </p>
     </div>
@@ -50,24 +50,24 @@ function VoiceCard({
       )}
     >
       <span
-        className="mb-2 block font-display text-[28px] leading-none text-[#E6A817]/50"
+        className="mb-2 block text-[28px] leading-none text-[#E6A817]/50"
         aria-hidden
       >
         &ldquo;
       </span>
-      <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-[#555555]">
+      <p className="text-[10px] uppercase tracking-[0.2em] text-[#555555]">
         {relation} · {location}
       </p>
-      <p className="my-2.5 mb-[18px] font-display text-sm italic leading-[1.75] text-[#cccccc]">
+      <p className="my-2.5 mb-[18px] text-sm italic leading-[1.75] text-[#cccccc]">
         {quote}
       </p>
       <div className="flex items-center gap-2.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-[1.5px] border-[#2e2200] bg-[#1e1800] font-sans text-[11px] font-medium text-[#E6A817]">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-[1.5px] border-[#2e2200] bg-[#1e1800] text-[11px] font-medium text-[#E6A817]">
           {initials}
         </span>
         <div>
-          <p className="font-sans text-[13px] font-medium text-white">{name}</p>
-          <p className="flex items-center gap-1.5 font-sans text-[11px] text-[#555555]">
+          <p className="text-[13px] font-medium text-white">{name}</p>
+          <p className="flex items-center gap-1.5 text-[11px] text-[#555555]">
             <span
               className="leading-none"
               style={{
@@ -93,16 +93,13 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
       aria-labelledby="voices-heading"
     >
       <div className="mx-auto max-w-2xl px-6">
-        <p className="text-center font-sans text-[11px] font-medium uppercase tracking-[0.25em] text-[#888888]">
+        <p className="text-center text-[11px] font-medium uppercase tracking-[0.25em] text-[#888888]">
           From families who trusted Beiza
         </p>
-        <h2
-          id="voices-heading"
-          className="mt-3 text-center font-display text-3xl font-normal text-white md:text-4xl"
-        >
+        <h2 id="voices-heading" className="mt-3 text-center text-display-lg text-white">
           Voices that stayed.
         </h2>
-        <p className="mx-auto mt-4 max-w-lg text-center font-sans text-base leading-relaxed text-[#888888]">
+        <p className="mx-auto mt-4 max-w-lg text-center text-base leading-relaxed text-[#888888]">
           A farewell is just one moment in a longer chain. Their stories travel forward.
         </p>
 

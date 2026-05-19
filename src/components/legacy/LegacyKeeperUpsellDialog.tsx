@@ -19,10 +19,10 @@ export function LegacyKeeperUpsellDialog({ open, onOpenChange }: LegacyKeeperUps
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="border-[#1e1e1e] bg-[#111111] text-white sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-sans text-lg text-white">
+          <DialogTitle className="text-lg text-white">
             Vault control is a Keeper feature
           </DialogTitle>
-          <DialogDescription className="font-sans text-sm leading-relaxed text-[#888]">
+          <DialogDescription className="text-sm leading-relaxed text-[#888]">
             On the free Circle plan, memories are permanent — they&apos;re kept forever. Upgrade to
             Keeper to delete, manage, and download your recordings.
           </DialogDescription>

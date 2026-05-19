@@ -21,7 +21,7 @@ export default function LegacyHomePage() {
     return (
       <div className="space-y-6 text-center">
         <div className="rounded-xl border border-border bg-card p-6">
-          <h2 className="font-heading text-xl font-semibold">Start Your Legacy Circle</h2>
+          <h2 className="text-xl font-semibold">Start Your Legacy Circle</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Preserve voices, stories, and wisdom for the people you love.
           </p>
@@ -37,7 +37,7 @@ export default function LegacyHomePage() {
     <div className="space-y-6 animate-fade-up">
       <section className="rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent p-6">
         <p className="text-sm text-muted-foreground">Your Legacy Circle</p>
-        <h2 className="mt-1 font-heading text-2xl font-semibold">{circle.name}</h2>
+        <h2 className="mt-1 text-2xl font-semibold">{circle.name}</h2>
         <p className="mt-3 text-sm leading-relaxed text-subtle">
           Hello, {firstName}. Your family&apos;s stories live here — warm, specific, and yours
           to keep.

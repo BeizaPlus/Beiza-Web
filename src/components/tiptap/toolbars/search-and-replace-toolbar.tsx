@@ -99,7 +99,7 @@ export function SearchAndReplaceToolbar() {
 					<div className={cn("relative flex gap-1.5 items-center")}>
 						<Input
 							value={searchText}
-							className=" w-48"
+							className="w-48"
 							onChange={(e) => {
 								setSearchText(e.target.value);
 							}}

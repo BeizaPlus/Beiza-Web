@@ -31,7 +31,7 @@ export default function LegacyFamilyPage() {
     return (
       <div className="space-y-6">
         <header>
-          <h2 className="font-heading text-xl font-semibold">Your Legacy Circle</h2>
+          <h2 className="text-xl font-semibold">Your Legacy Circle</h2>
           <p className="mt-1 text-sm text-muted-foreground">{circle.name}</p>
         </header>
 
@@ -62,7 +62,7 @@ export default function LegacyFamilyPage() {
   return (
     <div className="space-y-8">
       <header className="text-center">
-        <h2 className="font-heading text-xl font-semibold">Your Legacy Circle</h2>
+        <h2 className="text-xl font-semibold">Your Legacy Circle</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           Create a private circle for your family or join one with an invite code.
         </p>

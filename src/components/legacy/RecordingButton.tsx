@@ -33,7 +33,7 @@ export function RecordingButton({ isRecording, disabled, onPress }: RecordingBut
           <Mic className="h-10 w-10 pointer-events-none" strokeWidth={1.5} />
         )}
       </button>
-      <p className="text-center font-sans text-sm text-muted-foreground">
+      <p className="text-center text-sm text-muted-foreground">
         {disabled && !isRecording
           ? "Starting microphone…"
           : isRecording

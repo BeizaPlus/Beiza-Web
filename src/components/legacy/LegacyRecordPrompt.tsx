@@ -36,7 +36,7 @@ export function LegacyRecordPrompt({ prompt, className }: LegacyRecordPromptProp
     <p
       ref={ref}
       className={cn(
-        "mx-auto w-full max-w-md border-0 bg-transparent p-0 text-center font-heading font-medium text-foreground",
+        "mx-auto w-full max-w-md border-0 bg-transparent p-0 text-center font-medium text-foreground",
         "text-[clamp(1.125rem,4.5vw,1.625rem)] leading-[1.45]",
         className,
       )}

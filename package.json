@@ -8,6 +8,7 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
+    "font-audit": "node scripts/font-audit.mjs",
     "preview": "vite preview",
     "snapshot:site": "node scripts/capture-fullpage.mjs"
   },

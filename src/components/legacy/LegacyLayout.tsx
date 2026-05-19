@@ -29,7 +29,7 @@ export function LegacyLayout() {
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
                 Beiza Legacy
               </p>
-              <h1 className="font-heading text-lg font-semibold text-primary">
+              <h1 className="text-lg font-semibold text-primary">
                 Your Family&apos;s Legacy Vault
               </h1>
             </div>

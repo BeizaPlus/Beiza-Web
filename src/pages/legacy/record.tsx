@@ -262,7 +262,7 @@ export default function LegacyRecordPage() {
           {phase === "upload" && "Upload"}
           {phase === "seal" && "Sealed"}
         </p>
-        <h2 className="mt-2 font-heading text-xl font-semibold">Record a memory</h2>
+        <h2 className="mt-2 text-xl font-semibold">Record a memory</h2>
       </div>
 
       {phase !== "seal" && <LegacyRecordPrompt prompt={prompt.text} />}
@@ -319,7 +319,7 @@ export default function LegacyRecordPage() {
       {phase === "seal" && (
         <div className="space-y-6 text-center">
           <div className="rounded-xl border border-primary/40 bg-primary/10 p-6">
-            <h3 className="font-heading text-lg font-semibold text-primary">Memory preserved</h3>
+            <h3 className="text-lg font-semibold text-primary">Memory preserved</h3>
             <p className="mt-2 text-sm text-muted-foreground">
               Keep their voice forever. Your family can hear this in the vault.
             </p>

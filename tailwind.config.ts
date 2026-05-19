@@ -54,10 +54,10 @@ export default {
   			subtle: 'hsl(var(--text-subtle))'
   		},
   		fontFamily: {
-  			sans: ['"DM Sans"', 'Manrope', 'system-ui', 'sans-serif'],
-  			display: ['"Playfair Display"', 'Georgia', 'serif'],
-  			heading: ['"Playfair Display"', 'Georgia', 'serif'],
-  			serif: ['"Playfair Display"', 'Georgia', 'serif'],
+  			sans: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
+  			display: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
+  			heading: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
+  			serif: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
   			manrope: ['Manrope', 'system-ui', 'sans-serif'],
   			inter: ['Inter', 'system-ui', 'sans-serif'],
   			satoshi: ['Satoshi', 'Manrope', 'system-ui', 'sans-serif']

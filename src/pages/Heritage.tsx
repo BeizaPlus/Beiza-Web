@@ -160,11 +160,11 @@ export default function HeritagePage() {
       {/* 2. What's included */}
       <section className="bg-[#0a0a0a] px-6 py-16 md:px-0 md:py-24">
         <div className="mx-auto max-w-5xl text-center">
-          <p className="font-sans text-[10px] uppercase tracking-[0.25em] text-[#555555]">
+          <p className="text-[10px] uppercase tracking-[0.25em] text-[#555555]">
             What&apos;s included
           </p>
-          <h2 className="mt-3 font-display text-[36px] text-white">A farewell worth remembering.</h2>
-          <p className="mx-auto mt-4 max-w-[560px] font-sans text-sm leading-relaxed text-[#666666]">
+          <h2 className="mt-3 text-[36px] text-white">A farewell worth remembering.</h2>
+          <p className="mx-auto mt-4 max-w-[560px] text-sm leading-relaxed text-[#666666]">
             Heritage is full-service legacy curation. Everything Beiza does, done for you —
             coordinated across continents, delivered to your family.
           </p>
@@ -192,13 +192,13 @@ export default function HeritagePage() {
                 ) : null}
                 <h3
                   className={cn(
-                    "mt-4 font-sans text-[15px] font-medium",
+                    "mt-4 text-[15px] font-medium",
                     "featured" in item && item.featured ? "text-[#E6A817]" : "text-white",
                   )}
                 >
                   {item.title}
                 </h3>
-                <p className="mt-2 font-sans text-[13px] leading-[1.7] text-[#666666]">
+                <p className="mt-2 text-[13px] leading-[1.7] text-[#666666]">
                   {item.body}
                 </p>
               </div>
@@ -213,14 +213,14 @@ export default function HeritagePage() {
           <div>
             <div className="flex items-center gap-2.5">
               <CasketIcon size={24} color={HERITAGE_GOLD} />
-              <span className="font-sans text-[11px] uppercase tracking-[0.2em] text-[#888888]">
+              <span className="text-[11px] uppercase tracking-[0.2em] text-[#888888]">
                 White Swan
               </span>
             </div>
-            <h2 className="mt-4 font-display text-[32px] italic leading-[1.3] text-white">
+            <h2 className="mt-4 text-[32px] italic leading-[1.3] text-white">
               When the time comes, we&apos;re already there.
             </h2>
-            <div className="mt-6 max-w-[480px] space-y-4 font-sans text-sm leading-[1.9] text-[#666666]">
+            <div className="mt-6 max-w-[480px] space-y-4 text-sm leading-[1.9] text-[#666666]">
               <p>
                 The White Swan is Beiza&apos;s on-the-ground memorial experience. When a family
                 member passes, we coordinate everything — so your family can grieve, not manage
@@ -235,30 +235,30 @@ export default function HeritagePage() {
                 everything — except ours is not a surprise. It is prepared for. It is held.
               </p>
             </div>
-            <p className="mt-6 border-t border-[#1a1a1a] pt-4 font-sans text-xs text-[#444444]">
+            <p className="mt-6 border-t border-[#1a1a1a] pt-4 text-xs text-[#444444]">
               White Swan is included for Heritage subscribers after 12 consecutive months. Available
               standalone at $950.
             </p>
           </div>
 
           <div className="rounded-[20px] border border-[#3a2800] bg-[#0e0c00] p-7 md:p-8">
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#1a1200] px-3 py-1.5 font-sans text-[11px] tracking-wide text-[#E6A817]">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#1a1200] px-3 py-1.5 text-[11px] tracking-wide text-[#E6A817]">
               <CasketIcon size={20} color={HERITAGE_GOLD} />
               White Swan
             </span>
-            <p className="mt-6 font-sans text-[10px] uppercase tracking-[0.2em] text-[#555555]">
+            <p className="mt-6 text-[10px] uppercase tracking-[0.2em] text-[#555555]">
               Standalone
             </p>
             {whiteSwanIncluded ? (
-              <p className="mt-1 font-display text-5xl text-[#E6A817]">Included ✓</p>
+              <p className="mt-1 text-5xl text-[#E6A817]">Included ✓</p>
             ) : (
-              <p className="mt-1 font-display text-5xl text-white">$950</p>
+              <p className="mt-1 text-5xl text-white">$950</p>
             )}
-            <p className="mt-1 font-sans text-xs text-[#555555]">
+            <p className="mt-1 text-xs text-[#555555]">
               {whiteSwanIncluded ? "Your Heritage subscription" : "with 1 year Heritage subscription"}
             </p>
             <div className="my-5 h-px bg-[#1e1e1e]" />
-            <ul className="space-y-2.5 font-sans text-[13px] text-[#bbbbbb]">
+            <ul className="space-y-2.5 text-[13px] text-[#bbbbbb]">
               {WHITE_SWAN_INCLUDES.map((line) => (
                 <li key={line} className="flex gap-2">
                   <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#E6A817]" aria-hidden />
@@ -269,12 +269,12 @@ export default function HeritagePage() {
             <button
               type="button"
               onClick={scrollToConsultation}
-              className="mt-6 w-full rounded-full py-3 font-sans text-[13px] font-medium text-[#0a0a0a] transition hover:opacity-90"
+              className="mt-6 w-full rounded-full py-3 text-[13px] font-medium text-[#0a0a0a] transition hover:opacity-90"
               style={{ backgroundColor: HERITAGE_GOLD }}
             >
               Book a White Swan consultation →
             </button>
-            <p className="mt-2.5 text-center font-sans text-[11px] text-[#555555]">
+            <p className="mt-2.5 text-center text-[11px] text-[#555555]">
               Or include it free with Heritage —{" "}
               <Link to="/pricing" className="underline hover:text-[#888888]">
                 $200/yr
@@ -287,49 +287,49 @@ export default function HeritagePage() {
       {/* 4. Two ways in */}
       <section className="bg-[#0a0a0a] px-6 py-16">
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className="font-display text-[28px] text-white">Two ways in.</h2>
-          <p className="mt-3 font-sans text-sm text-[#666666]">
+          <h2 className="text-[28px] text-white">Two ways in.</h2>
+          <p className="mt-3 text-sm text-[#666666]">
             Whether you&apos;re planning ahead or responding to loss — Heritage meets you where you
             are.
           </p>
         </div>
         <div className="mx-auto mt-10 grid max-w-4xl gap-6 md:grid-cols-2">
           <div className="rounded-2xl border border-[#3a2800] bg-[#0e0c00] p-7">
-            <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-[#E6A817]">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[#E6A817]">
               Annual plan
             </p>
-            <h3 className="mt-2 font-display text-2xl text-white">Heritage</h3>
-            <p className="mt-2 font-sans text-xl font-medium text-white">$200 / yr</p>
-            <p className="mt-4 font-sans text-sm leading-relaxed text-[#888888]">
+            <h3 className="mt-2 text-2xl text-white">Heritage</h3>
+            <p className="mt-2 text-xl font-medium text-white">$200 / yr</p>
+            <p className="mt-4 text-sm leading-relaxed text-[#888888]">
               Full legacy curation all year. White Swan included after 12 months. Cinematic films,
               heirloom books, unlimited vault.
             </p>
-            <ul className="mt-4 space-y-1.5 font-sans text-xs text-[#666666]">
+            <ul className="mt-4 space-y-1.5 text-xs text-[#666666]">
               {FEATURES.map((f) => (
                 <li key={f.title}>· {f.title}</li>
               ))}
             </ul>
             <Link
               to="/pricing#legacy-curation"
-              className="mt-6 flex w-full items-center justify-center rounded-full bg-white py-3 text-center font-sans text-sm font-medium text-[#0a0a0a]"
+              className="mt-6 flex w-full items-center justify-center rounded-full bg-white py-3 text-center text-sm font-medium text-[#0a0a0a]"
             >
               Start Heritage →
             </Link>
           </div>
           <div className="rounded-2xl border border-[#222222] bg-[#111111] p-7">
-            <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-[#555555]">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[#555555]">
               One-time
             </p>
-            <h3 className="mt-2 font-display text-2xl text-white">White Swan</h3>
-            <p className="mt-2 font-sans text-xl font-medium text-white">$950</p>
-            <p className="mt-4 font-sans text-sm leading-relaxed text-[#888888]">
+            <h3 className="mt-2 text-2xl text-white">White Swan</h3>
+            <p className="mt-2 text-xl font-medium text-white">$950</p>
+            <p className="mt-4 text-sm leading-relaxed text-[#888888]">
               For families who need it now. On-the-ground memorial coordination, tribute film,
               photography, and family gathering.
             </p>
             <button
               type="button"
               onClick={scrollToConsultation}
-              className="mt-6 w-full rounded-full bg-[#1a1a1a] py-3 font-sans text-sm font-medium text-[#888888] transition hover:bg-[#222222]"
+              className="mt-6 w-full rounded-full bg-[#1a1a1a] py-3 text-sm font-medium text-[#888888] transition hover:bg-[#222222]"
             >
               Book now →
             </button>
@@ -340,14 +340,14 @@ export default function HeritagePage() {
       {/* 5. Consultation */}
       <section id="consultation" className="border-t border-[#1e1e1e] bg-[#0a0a0a] px-6 py-16 md:py-24">
         <div className="mx-auto max-w-lg text-center">
-          <h2 className="font-display text-[32px] italic text-white">Tell us about your family.</h2>
-          <p className="mt-3 font-sans text-sm text-[#666666]">
+          <h2 className="text-[32px] italic text-white">Tell us about your family.</h2>
+          <p className="mt-3 text-sm text-[#666666]">
             No pressure. No sales call. Just a conversation about what your family needs and when.
           </p>
         </div>
 
         {submitted ? (
-          <p className="mx-auto mt-12 max-w-md text-center font-sans text-base" style={{ color: HERITAGE_GOLD }}>
+          <p className="mx-auto mt-12 max-w-md text-center text-base" style={{ color: HERITAGE_GOLD }}>
             Thank you. Someone from Beiza will reach out within 24 hours.
           </p>
         ) : (
@@ -361,7 +361,7 @@ export default function HeritagePage() {
               placeholder="Full name"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 font-sans text-sm text-white placeholder:text-[#555555] focus:border-[#3a2800] focus:outline-none"
+              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 text-sm text-white placeholder:text-[#555555] focus:border-[#3a2800] focus:outline-none"
             />
             <input
               required
@@ -370,13 +370,13 @@ export default function HeritagePage() {
               placeholder="Email address"
               value={form.email}
               onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 font-sans text-sm text-white placeholder:text-[#555555] focus:border-[#3a2800] focus:outline-none"
+              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 text-sm text-white placeholder:text-[#555555] focus:border-[#3a2800] focus:outline-none"
             />
             <select
               name="country"
               value={form.country}
               onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))}
-              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 font-sans text-sm text-white focus:border-[#3a2800] focus:outline-none"
+              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 text-sm text-white focus:border-[#3a2800] focus:outline-none"
             >
               <option value="">Where is your family based?</option>
               <option value="Ghana">Ghana</option>
@@ -391,7 +391,7 @@ export default function HeritagePage() {
               name="planning_for"
               value={form.planning_for}
               onChange={(e) => setForm((f) => ({ ...f, planning_for: e.target.value }))}
-              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 font-sans text-sm text-white focus:border-[#3a2800] focus:outline-none"
+              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 text-sm text-white focus:border-[#3a2800] focus:outline-none"
             >
               <option value="">What are you planning for?</option>
               <option value="memorial">A memorial — someone has passed</option>
@@ -405,22 +405,22 @@ export default function HeritagePage() {
               placeholder="Any details that would help us prepare for the conversation."
               value={form.message}
               onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 font-sans text-sm text-white placeholder:text-[#555555] focus:border-[#3a2800] focus:outline-none"
+              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 text-sm text-white placeholder:text-[#555555] focus:border-[#3a2800] focus:outline-none"
             />
             <input
               name="referral_source"
               placeholder="How did you hear about Heritage? (optional)"
               value={form.referral_source}
               onChange={(e) => setForm((f) => ({ ...f, referral_source: e.target.value }))}
-              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 font-sans text-sm text-white placeholder:text-[#555555] focus:border-[#3a2800] focus:outline-none"
+              className="rounded-[10px] border border-[#2a2a2a] bg-[#111111] px-4 py-3.5 text-sm text-white placeholder:text-[#555555] focus:border-[#3a2800] focus:outline-none"
             />
             {formError ? (
-              <p className="text-center font-sans text-sm text-red-400">{formError}</p>
+              <p className="text-center text-sm text-red-400">{formError}</p>
             ) : null}
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-full py-4 font-sans text-sm font-medium text-[#0a0a0a] disabled:opacity-60"
+              className="rounded-full py-4 text-sm font-medium text-[#0a0a0a] disabled:opacity-60"
               style={{ backgroundColor: HERITAGE_GOLD }}
             >
               {submitting ? "Sending…" : "Send — we'll be in touch within 24 hours →"}
@@ -428,7 +428,7 @@ export default function HeritagePage() {
           </form>
         )}
 
-        <p className="mt-4 text-center font-sans text-xs text-[#444444]">
+        <p className="mt-4 text-center text-xs text-[#444444]">
           Or email us directly at{" "}
           <a href="mailto:heritage@beizalegacy.com" className="underline hover:text-[#666666]">
             heritage@beizalegacy.com
@@ -438,7 +438,7 @@ export default function HeritagePage() {
 
       {/* 6. Closing */}
       <section className="bg-[#080808] px-6 py-20 text-center">
-        <blockquote className="mx-auto max-w-[560px] font-display text-[22px] italic leading-relaxed text-[#555555]">
+        <blockquote className="mx-auto max-w-[560px] text-[22px] italic leading-relaxed text-[#555555]">
           Gye Nyame. Except God, nothing is greater — not even forgetting.
         </blockquote>
       </section>

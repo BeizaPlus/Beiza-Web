@@ -113,7 +113,7 @@ export function LegacyCurationPricing() {
             >
               <div className="pricing-card-body flex flex-1 flex-col">
                 <div className="flex min-h-9 items-start justify-between gap-2">
-                  <h3 className="font-sans text-2xl font-semibold text-white">{tier.name}</h3>
+                  <h3 className="text-2xl font-semibold text-white">{tier.name}</h3>
                   {tier.badge ? (
                     <span
                       className="shrink-0 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-wider"
@@ -131,10 +131,10 @@ export function LegacyCurationPricing() {
                     </span>
                   )}
                 </div>
-                <p className="mt-4 font-sans text-xs uppercase tracking-[0.3em] text-[#888]">
+                <p className="mt-4 text-xs uppercase tracking-[0.3em] text-[#888]">
                   {tier.tagline}
                 </p>
-                <p className="mt-2 font-sans text-3xl font-semibold text-white">
+                <p className="mt-2 text-3xl font-semibold text-white">
                   {tier.price}
                   {tier.id === "keeper" ? (
                     <span className="text-base font-normal text-[#888]">/mo</span>
@@ -143,7 +143,7 @@ export function LegacyCurationPricing() {
                     <span className="text-base font-normal text-[#888]">/yr</span>
                   ) : null}
                 </p>
-                <p className="mt-4 font-sans text-sm leading-relaxed text-[#888]">
+                <p className="mt-4 text-sm leading-relaxed text-[#888]">
                   {tier.description}
                 </p>
 
@@ -151,17 +151,17 @@ export function LegacyCurationPricing() {
                   <div className="mb-4 mt-4 rounded-[10px] border border-[#1a1a1a] bg-[#0e0e0e] p-4">
                     <div className="mb-2 flex items-center gap-2.5">
                       <CasketIcon size={24} color={GOLD} />
-                      <span className="font-sans text-[13px] font-medium text-white">
+                      <span className="text-[13px] font-medium text-white">
                         {tier.whiteSwan.title}
                       </span>
                     </div>
-                    <p className="font-sans text-xs leading-relaxed text-[#888]">
+                    <p className="text-xs leading-relaxed text-[#888]">
                       {tier.whiteSwan.body}
                     </p>
                   </div>
                 ) : null}
 
-                <ul className="mt-4 space-y-2 font-sans text-sm text-[#ccc]">
+                <ul className="mt-4 space-y-2 text-sm text-[#ccc]">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2">
                       <span
@@ -200,7 +200,7 @@ export function LegacyCurationPricing() {
                   {tier.cta}
                 </Link>
                 {tier.note ? (
-                  <p className="mt-3 min-h-[2.5rem] text-center font-sans text-[11px] leading-snug text-[#555]">
+                  <p className="mt-3 min-h-[2.5rem] text-center text-[11px] leading-snug text-[#555]">
                     {tier.note}
                   </p>
                 ) : (

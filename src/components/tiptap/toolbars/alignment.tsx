@@ -121,7 +121,7 @@ export const AlignmentTooolbar = () => {
           e.preventDefault();
         }}
       >
-        <DropdownMenuGroup className=" w-40">
+        <DropdownMenuGroup className="w-40">
           {alignmentOptions.map((option, index) => (
             <DropdownMenuItem
               onSelect={() => {

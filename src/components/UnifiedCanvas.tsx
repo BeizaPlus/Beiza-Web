@@ -68,7 +68,7 @@ export const UnifiedCanvas = ({ onImageClick, resetViewToken = 0 }: UnifiedCanva
       {location.pathname === "/" && (
         <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 transform z-10 md:block">
           <div className="glass-card rounded-lg border border-white/20 p-6 text-center shadow-xl">
-            <h3 className="mb-2 text-xl font-serif text-white">
+            <h3 className="mb-2 text-xl text-white">
               <em className="italic text-primary">Turbulent Waves</em> Gallery
             </h3>
             <p className="text-sm text-muted-foreground">Drag to explore • Click images to center</p>
