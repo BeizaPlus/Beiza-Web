@@ -197,6 +197,38 @@ export async function uploadLegacyRecording(params: {
   return data as LegacyRecording;
 }
 
+export function useUpdateLegacyRecordingTitle() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, title }: { id: string; title: string }) => {
+      const { data, error } = await supabase!
+        .from("recordings")
+        .update({ title: title.trim() || null })
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return data as LegacyRecording;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["legacy", "recordings"] });
+    },
+  });
+}
+
+export function useDeleteLegacyRecording() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase!.from("recordings").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["legacy", "recordings"] });
+    },
+  });
+}
+
 export async function fetchLegacyPrompts(params: {
   circleId: string;
   mode?: "suggest" | "refine" | "pack";

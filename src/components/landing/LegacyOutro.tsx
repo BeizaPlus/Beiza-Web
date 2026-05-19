@@ -14,7 +14,7 @@ export function LegacyOutro() {
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           <CTAButton to="/legacy/family" label="Start your circle — free" />
-          <CTAButton to="/legacy" label="Explore the vault" className="bg-secondary text-foreground" />
+          <CTAButton to="/vault/explore" label="Explore the vault" className="bg-secondary text-foreground" />
         </div>
       </div>
     </section>

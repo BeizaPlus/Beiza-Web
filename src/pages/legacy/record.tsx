@@ -21,7 +21,7 @@ const FALLBACK_PROMPTS = [
 ];
 
 const RECORD_TIMESLICE_MS = 250;
-const MIN_RECORD_SECONDS = 1;
+const MIN_RECORD_SECONDS = 0;
 
 function pickAudioMimeType() {
   const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"];
@@ -140,7 +140,7 @@ export default function LegacyRecordPage() {
         blobRef.current = blob;
         const seconds = Math.max(
           MIN_RECORD_SECONDS,
-          Math.round((Date.now() - startedAtRef.current) / 1000),
+          Math.ceil((Date.now() - startedAtRef.current) / 1000),
         );
         setDurationSeconds(seconds);
         setElapsedSeconds(seconds);

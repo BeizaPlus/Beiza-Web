@@ -1,23 +1,41 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LegacyVaultMemoryCard } from "@/components/legacy/LegacyVaultMemoryCard";
 import { LegacyVaultPlusUpsell } from "@/components/legacy/LegacyVaultPlusUpsell";
-import { useLegacyRecordings, useMyLegacyCircle } from "@/hooks/useLegacy";
-import { useRef, useState } from "react";
+import { LegacyKeeperUpsellDialog } from "@/components/legacy/LegacyKeeperUpsellDialog";
+import {
+  useDeleteLegacyRecording,
+  useLegacyRecordings,
+  useMyLegacyCircle,
+  useUpdateLegacyRecordingTitle,
+} from "@/hooks/useLegacy";
+import { canDeleteVaultMemories, getLegacyTier } from "@/lib/legacy/tier";
+import { useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
-
-/** When true, vault delete/rename is enabled (Legacy Plus). */
-const LEGACY_PLUS_ENABLED = import.meta.env.VITE_LEGACY_PLUS_ENABLED === "true";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function LegacyVaultPage() {
   const { toast } = useToast();
+  const tier = getLegacyTier();
+  const canDelete = canDeleteVaultMemories(tier);
   const { data: circleCtx } = useMyLegacyCircle();
   const circle = circleCtx?.circle;
   const { data: recordings = [], isLoading } = useLegacyRecordings(circle?.id);
+  const updateTitle = useUpdateLegacyRecordingTitle();
+  const deleteRecording = useDeleteLegacyRecording();
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
-
-  const canManageVault = LEGACY_PLUS_ENABLED;
+  const [keeperUpsellOpen, setKeeperUpsellOpen] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const togglePlay = (id: string, url: string | null) => {
     if (!url) return;
@@ -26,9 +44,7 @@ export default function LegacyVaultPage() {
       setPlayingId(null);
       return;
     }
-    if (audioRef.current) {
-      audioRef.current.pause();
-    }
+    if (audioRef.current) audioRef.current.pause();
     const audio = new Audio(url);
     audioRef.current = audio;
     audio.onended = () => setPlayingId(null);
@@ -36,10 +52,35 @@ export default function LegacyVaultPage() {
     setPlayingId(id);
   };
 
-  const handleDeleteLocked = () => {
-    toast({
-      title: "Legacy Plus required",
-      description: "Upgrade to delete and organize memories in your vault.",
+  const handleRename = (id: string, title: string) => {
+    updateTitle.mutate(
+      { id, title },
+      {
+        onError: () => {
+          toast({
+            title: "Could not rename",
+            description: "Try again in a moment.",
+            variant: "destructive",
+          });
+        },
+      },
+    );
+  };
+
+  const confirmDelete = () => {
+    if (!pendingDeleteId) return;
+    deleteRecording.mutate(pendingDeleteId, {
+      onSuccess: () => {
+        setPendingDeleteId(null);
+        toast({ title: "Memory removed from vault" });
+      },
+      onError: () => {
+        toast({
+          title: "Could not delete",
+          description: "Try again or contact support.",
+          variant: "destructive",
+        });
+      },
     });
   };
 
@@ -82,15 +123,38 @@ export default function LegacyVaultPage() {
                 key={rec.id}
                 recording={rec}
                 isPlaying={playingId === rec.id}
-                canDelete={canManageVault}
+                canDelete={canDelete}
                 onPlay={() => togglePlay(rec.id, rec.audio_url)}
-                onDeleteLocked={handleDeleteLocked}
+                onRename={(title) => handleRename(rec.id, title)}
+                onDelete={() => setPendingDeleteId(rec.id)}
+                onDeleteLocked={() => setKeeperUpsellOpen(true)}
               />
             ))}
           </ul>
-          {!canManageVault ? <LegacyVaultPlusUpsell /> : null}
+          {!canDelete ? <LegacyVaultPlusUpsell /> : null}
         </>
       )}
+
+      <LegacyKeeperUpsellDialog open={keeperUpsellOpen} onOpenChange={setKeeperUpsellOpen} />
+
+      <Dialog open={Boolean(pendingDeleteId)} onOpenChange={(o) => !o && setPendingDeleteId(null)}>
+        <DialogContent className="border-[#1e1e1e] bg-[#111] text-white sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete this memory?</DialogTitle>
+            <DialogDescription className="text-[#888]">
+              This cannot be undone. The recording will be removed from your family vault.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setPendingDeleteId(null)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

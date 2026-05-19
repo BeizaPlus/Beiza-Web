@@ -11,7 +11,7 @@ import {
 } from "@/components/dev/LandingLayoutStudio";
 import { studioCssVars } from "@/components/dev/landingLayoutStudioState";
 import { SectionHeader } from "@/components/framer/SectionHeader";
-import { TestimonialsCarousel } from "@/components/framer/TestimonialsCarousel";
+import { VoicesThatStayedSection } from "@/components/landing/VoicesThatStayedSection";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { FAQItem } from "@/components/framer/FAQItem";
 import { ProductsPanel } from "@/components/shopify/ProductsPanel";
@@ -22,11 +22,8 @@ import {
   useFeaturedEvent,
   useHeroSection,
   useOfferings,
-  usePublishedMemoirTributes,
-  useTestimonials,
   useSiteSettings,
 } from "@/hooks/usePublicContent";
-import type { Testimonial as CarouselTestimonial } from "@/components/framer/TestimonialsCarousel";
 import { FALLBACK_HERO_LANDING } from "@/lib/fallbackContent";
 
 const iconMap: Record<string, JSX.Element> = {
@@ -54,8 +51,6 @@ const Landing = () => {
   const { data: heroSection } = useHeroSection("landing-hero");
   const { data: siteSettings } = useSiteSettings();
   const { data: offerings = [] } = useOfferings();
-  const { data: landingTestimonials = [] } = useTestimonials("landing");
-  const { data: publishedTributes = [] } = usePublishedMemoirTributes();
   const { data: faqs = [] } = useFaqs();
   const { data: featuredEvent } = useFeaturedEvent();
 
@@ -106,47 +101,6 @@ const Landing = () => {
       }));
   }, [offerings]);
 
-  const storiesCarouselItems = useMemo((): CarouselTestimonial[] => {
-    const testimonialList = landingTestimonials.filter((item) => item.surfaces.includes("landing"));
-
-    const tributeItems: CarouselTestimonial[] = publishedTributes
-      .slice()
-      .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
-      .map((item) => ({
-        quote: item.message,
-        author: item.name,
-        role: item.relationship ?? undefined,
-      }));
-
-    const testimonialItems: CarouselTestimonial[] = testimonialList.map((item) => ({
-      quote: item.quote,
-      author: item.author,
-      role: item.role ?? undefined,
-    }));
-
-    const key = (item: CarouselTestimonial) =>
-      `${item.author.toLowerCase()}|${item.quote.trim().toLowerCase()}`;
-    const seen = new Set<string>();
-    const merged: CarouselTestimonial[] = [];
-
-    const pushUnique = (item: CarouselTestimonial) => {
-      const k = key(item);
-      if (seen.has(k)) return;
-      seen.add(k);
-      merged.push(item);
-    };
-
-    const madamRose =
-      testimonialItems.find((item) => item.author.toLowerCase() === "madamrose") ??
-      tributeItems.find((item) => item.author.toLowerCase() === "madamrose");
-
-    if (madamRose) pushUnique(madamRose);
-    tributeItems.forEach(pushUnique);
-    testimonialItems.forEach(pushUnique);
-
-    return merged;
-  }, [landingTestimonials, publishedTributes]);
-
   const faqList = useMemo(
     () => faqs.slice().sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)),
     [faqs],
@@ -193,7 +147,7 @@ const Landing = () => {
         {showOfferings ? (
           <WhatWeDoSection
             offerings={offeringsList}
-            mockupSrc="/images/legacy-mockup.png"
+            mockupSrc="/images/the-leader-mockup.png"
             style={
               studio
                 ? {
@@ -205,22 +159,7 @@ const Landing = () => {
           />
         ) : null}
 
-        {showRest ? (
-        <section className="bg-white py-24 text-black">
-          <div className="mx-auto max-w-6xl px-6">
-            <SectionHeader
-              eyebrow="Stories"
-              title="What Families Say"
-              description="Kind words from families who trusted us to preserve their story, kept forever."
-              align="center"
-              variant="light"
-            />
-            {storiesCarouselItems.length > 0 ? (
-              <TestimonialsCarousel testimonials={storiesCarouselItems} className="mt-10" variant="light" />
-            ) : null}
-          </div>
-        </section>
-        ) : null}
+        {showRest ? <VoicesThatStayedSection /> : null}
 
         {showFaq ? (
         <section

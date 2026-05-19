@@ -30,7 +30,7 @@ export function LegacyVaultPlusUpsell() {
           >
             Legacy Plus
           </p>
-          <p className="text-sm font-semibold text-white">Unlock full vault control</p>
+          <p className="text-sm font-semibold text-white">Unlock vault control with Keeper</p>
         </div>
       </div>
 
@@ -49,11 +49,11 @@ export function LegacyVaultPlusUpsell() {
       </ul>
 
       <Link
-        to="/#legacy-curation"
+        to="/pricing"
         className="block w-full rounded-lg py-2.5 text-center text-[13px] font-bold tracking-wide text-[#111] transition-opacity hover:opacity-90"
         style={{ backgroundColor: GOLD }}
       >
-        Upgrade to Legacy Plus ↗
+        Upgrade to Keeper — $4.99/mo ↗
       </Link>
     </aside>
   );
