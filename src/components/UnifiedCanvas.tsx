@@ -53,9 +53,14 @@ export const UnifiedCanvas = ({ onImageClick, resetViewToken = 0 }: UnifiedCanva
           className="group flex items-center gap-3 rounded-lg p-3 transition-all duration-300 hover:bg-white/10"
         >
           <img
-            src="/Beiza-logo.png"
+            src="/Beiza-head.png"
+            alt="Beiza mascot"
+            className="h-6 w-auto transition-transform duration-300 group-hover:scale-110"
+          />
+          <img
+            src="/Beiza_White.svg"
             alt="Beiza"
-            className="h-10 w-auto transition-transform duration-300 group-hover:scale-110"
+            className="h-4 w-auto transition-transform duration-300 group-hover:scale-110"
           />
         </button>
       </div>
