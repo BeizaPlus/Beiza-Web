@@ -52,15 +52,15 @@ export function HeroLayoutStudioPanel({ page, frame, onChange }: PanelProps) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 right-4 z-[100] rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-lg"
+        className="fixed bottom-4 right-4 z-[200] rounded-full bg-[#E6A817] px-4 py-2 text-xs font-semibold text-[#0a0a0a] shadow-lg"
       >
-        Layout studio
+        Layout studio · zoom
       </button>
     );
   }
 
   return (
-    <aside className="fixed bottom-4 right-4 z-[100] w-[min(100vw-2rem,22rem)] rounded-xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur-md">
+    <aside className="fixed bottom-4 right-4 z-[200] w-[min(100vw-2rem,22rem)] rounded-xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur-md">
       <div className="mb-3 flex items-center justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           {PAGE_LABELS[page]}
@@ -119,14 +119,14 @@ export function HeroLayoutStudioPanel({ page, frame, onChange }: PanelProps) {
   );
 }
 
-export function useHeroLayoutStudio(page: HeroStudioPage, panelEnabled: boolean) {
+export function useHeroLayoutStudio(page: HeroStudioPage) {
   const [frame, setFrame] = useState<HeroFrame>(() => loadHeroStudioFrame(page));
 
   useEffect(() => {
     setFrame(loadHeroStudioFrame(page));
   }, [page]);
 
-  return { panelEnabled, frame, setFrame };
+  return { frame, setFrame };
 }
 
 function ZoomControls({ value, onChange }: { value: number; onChange: (scale: number) => void }) {

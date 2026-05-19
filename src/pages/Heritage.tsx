@@ -71,8 +71,7 @@ function scrollToConsultation() {
 
 export default function HeritagePage() {
   const studioPanel = isLayoutStudioEnabled();
-  const { panelEnabled: studio, frame: heroFrame, setFrame: setHeroFrame } =
-    useHeroLayoutStudio("heritage", studioPanel);
+  const { frame: heroFrame, setFrame: setHeroFrame } = useHeroLayoutStudio("heritage");
   const whiteSwanIncluded = isWhiteSwanIncludedForUser();
   const [form, setForm] = useState({
     name: "",
@@ -122,7 +121,7 @@ export default function HeritagePage() {
   return (
     <div
       className="min-h-screen bg-[#0a0a0a] text-white"
-      style={studio ? (heroStudioCssVars(heroFrame) as CSSProperties) : undefined}
+      style={heroStudioCssVars(heroFrame) as CSSProperties}
     >
       <Navigation />
 
@@ -444,7 +443,7 @@ export default function HeritagePage() {
       </section>
 
       <Footer />
-      {studio ? (
+      {studioPanel ? (
         <HeroLayoutStudioPanel page="heritage" frame={heroFrame} onChange={setHeroFrame} />
       ) : null}
     </div>

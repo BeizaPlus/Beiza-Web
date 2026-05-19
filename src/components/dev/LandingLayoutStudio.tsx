@@ -73,7 +73,7 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 right-4 z-[100] rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-lg"
+        className="fixed bottom-4 right-4 z-[200] rounded-full bg-[#E6A817] px-4 py-2 text-xs font-semibold text-[#0a0a0a] shadow-lg"
       >
         Layout studio
       </button>
@@ -81,7 +81,7 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
   }
 
   return (
-    <aside className="fixed bottom-4 right-4 z-[100] w-[min(100vw-2rem,22rem)] rounded-xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur-md">
+    <aside className="fixed bottom-4 right-4 z-[200] w-[min(100vw-2rem,22rem)] rounded-xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur-md">
       <div className="mb-3 flex items-center justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           Layout studio (local)

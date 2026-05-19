@@ -50,7 +50,7 @@ const SHOW_FEATURED_EVENT_EXPERIENCE_CTA = false;
 const Landing = () => {
   const { panelEnabled: studio, state: studioState, setState: setStudioState } =
     useLandingLayoutStudio(studioPanelEnabled);
-  const { frame: eventsHeroFrame } = useHeroLayoutStudio("events", false);
+  const { frame: eventsHeroFrame } = useHeroLayoutStudio("events");
   const focus = studio ? studioState.focus : null;
 
   const { data: heroSection } = useHeroSection("landing-hero");

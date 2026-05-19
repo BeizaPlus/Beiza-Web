@@ -25,8 +25,7 @@ const EmptyState = ({ title, description }: { title: string; description: ReactN
 const Events = () => {
   const navigate = useNavigate();
   const studioPanel = isLayoutStudioEnabled();
-  const { panelEnabled: studio, frame: heroFrame, setFrame: setHeroFrame } =
-    useHeroLayoutStudio("events", studioPanel);
+  const { frame: heroFrame, setFrame: setHeroFrame } = useHeroLayoutStudio("events");
   const { data: featuredEvent, isLoading: featuredLoading } = useFeaturedEvent();
   const { data: events = [], isLoading: eventsLoading } = usePublishedEvents();
 
@@ -51,7 +50,7 @@ const Events = () => {
   return (
     <div
       className="min-h-screen bg-background text-foreground"
-      style={studio ? (heroStudioCssVars(heroFrame) as CSSProperties) : undefined}
+      style={heroStudioCssVars(heroFrame) as CSSProperties}
     >
       <Navigation />
       <FullBleedHero
@@ -229,7 +228,7 @@ const Events = () => {
         </section>
       </main>
       <Footer />
-      {studio ? (
+      {studioPanel ? (
         <HeroLayoutStudioPanel page="events" frame={heroFrame} onChange={setHeroFrame} />
       ) : null}
     </div>
