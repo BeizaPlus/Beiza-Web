@@ -20,6 +20,14 @@ const FALLBACK_PROMPTS = [
   "Who taught you the most important thing you know?",
 ];
 
+const RECORD_TIMESLICE_MS = 250;
+const MIN_RECORD_SECONDS = 1;
+
+function pickAudioMimeType() {
+  const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"];
+  return candidates.find((type) => MediaRecorder.isTypeSupported(type));
+}
+
 export default function LegacyRecordPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -32,15 +40,38 @@ export default function LegacyRecordPage() {
   const [loadingPrompts, setLoadingPrompts] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [recordedUri, setRecordedUri] = useState<string | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [isRequestingMic, setIsRequestingMic] = useState(false);
 
   const mediaRef = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const mimeTypeRef = useRef<string>("audio/webm");
   const startedAtRef = useRef<number>(0);
+  const stopOnReadyRef = useRef(false);
   const [durationSeconds, setDurationSeconds] = useState(0);
   const blobRef = useRef<Blob | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const clearTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const releaseStream = () => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+  };
 
   useEffect(() => {
     return () => {
+      clearTimer();
+      if (mediaRef.current?.state === "recording") {
+        mediaRef.current.stop();
+      }
+      releaseStream();
       if (recordedUri) URL.revokeObjectURL(recordedUri);
     };
   }, [recordedUri]);
@@ -62,31 +93,82 @@ export default function LegacyRecordPage() {
     void loadPrompts();
   }, [loadPrompts]);
 
+  const finishRecording = () => {
+    clearTimer();
+    const recorder = mediaRef.current;
+    if (!recorder || recorder.state !== "recording") return;
+    recorder.stop();
+  };
+
   const startRecording = async () => {
+    if (isRequestingMic || phase === "recording" || phase === "upload") return;
+    setIsRequestingMic(true);
+    stopOnReadyRef.current = false;
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      streamRef.current = stream;
+
+      const mimeType = pickAudioMimeType();
+      mimeTypeRef.current = mimeType ?? "audio/webm";
+      const recorder = mimeType
+        ? new MediaRecorder(stream, { mimeType })
+        : new MediaRecorder(stream);
+
       chunksRef.current = [];
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunksRef.current.push(e.data);
       };
       recorder.onstop = () => {
-        stream.getTracks().forEach((t) => t.stop());
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        clearTimer();
+        releaseStream();
+        mediaRef.current = null;
+        setIsRequestingMic(false);
+
+        const blob = new Blob(chunksRef.current, { type: mimeTypeRef.current });
+        if (blob.size === 0) {
+          setPhase("prepare");
+          setElapsedSeconds(0);
+          toast({
+            title: "Nothing captured",
+            description: "Hold the button a little longer and try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+
         blobRef.current = blob;
-        const seconds = Math.max(1, Math.round((Date.now() - startedAtRef.current) / 1000));
+        const seconds = Math.max(
+          MIN_RECORD_SECONDS,
+          Math.round((Date.now() - startedAtRef.current) / 1000),
+        );
         setDurationSeconds(seconds);
+        setElapsedSeconds(seconds);
         setRecordedUri((prev) => {
           if (prev) URL.revokeObjectURL(prev);
           return URL.createObjectURL(blob);
         });
         setPhase("upload");
       };
+
       mediaRef.current = recorder;
       startedAtRef.current = Date.now();
-      recorder.start();
+      setElapsedSeconds(0);
+      recorder.start(RECORD_TIMESLICE_MS);
       setPhase("recording");
+      setIsRequestingMic(false);
+
+      timerRef.current = setInterval(() => {
+        setElapsedSeconds(Math.floor((Date.now() - startedAtRef.current) / 1000));
+      }, 200);
+
+      if (stopOnReadyRef.current) {
+        finishRecording();
+      }
     } catch {
+      setIsRequestingMic(false);
+      releaseStream();
+      setPhase("prepare");
       toast({
         title: "Microphone access needed",
         description: "Allow microphone access to record a memory.",
@@ -95,10 +177,12 @@ export default function LegacyRecordPage() {
     }
   };
 
-  const stopRecording = () => {
-    if (mediaRef.current?.state === "recording") {
-      mediaRef.current.stop();
+  const handlePressEnd = () => {
+    if (isRequestingMic || mediaRef.current?.state !== "recording") {
+      stopOnReadyRef.current = true;
+      return;
     }
+    finishRecording();
   };
 
   const resetForAnother = () => {
@@ -106,8 +190,11 @@ export default function LegacyRecordPage() {
     if (recordedUri) URL.revokeObjectURL(recordedUri);
     setRecordedUri(null);
     setDurationSeconds(0);
+    setElapsedSeconds(0);
     setTitle("");
     setPhase("prepare");
+    stopOnReadyRef.current = false;
+    setIsRequestingMic(false);
     void loadPrompts();
   };
 
@@ -133,6 +220,8 @@ export default function LegacyRecordPage() {
       setUploading(false);
     }
   };
+
+  const isHoldPhase = phase === "prepare" || phase === "recording";
 
   if (!circle) {
     return (
@@ -163,31 +252,37 @@ export default function LegacyRecordPage() {
         <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
       ) : null}
 
-      {phase === "prepare" && (
-        <div className="flex flex-col items-center gap-6">
-          <RecordingButton active={false} onPressStart={startRecording} onPressEnd={() => {}} />
-          <p className="text-sm text-muted-foreground">Hold the button to answer</p>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="gap-2"
-            disabled={loadingPrompts}
-            onClick={() => void loadPrompts()}
-          >
-            {loadingPrompts ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Sparkles className="h-4 w-4" />
-            )}
-            New prompt
-          </Button>
-        </div>
-      )}
-
-      {phase === "recording" && (
+      {isHoldPhase && (
         <div className="flex flex-col items-center gap-4">
-          <RecordingButton active onPressStart={() => {}} onPressEnd={stopRecording} />
-          <p className="animate-pulse text-sm text-primary">Listening… release to continue</p>
+          <RecordingButton
+            active={phase === "recording"}
+            disabled={isRequestingMic}
+            onPressStart={() => void startRecording()}
+            onPressEnd={handlePressEnd}
+          />
+          <p className="text-sm text-muted-foreground">
+            {phase === "recording"
+              ? `Listening… ${elapsedSeconds}s — release when finished`
+              : isRequestingMic
+                ? "Starting microphone…"
+                : "Hold the button to answer"}
+          </p>
+          {phase === "prepare" ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2"
+              disabled={loadingPrompts || isRequestingMic}
+              onClick={() => void loadPrompts()}
+            >
+              {loadingPrompts ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Sparkles className="h-4 w-4" />
+              )}
+              New prompt
+            </Button>
+          ) : null}
         </div>
       )}
 
