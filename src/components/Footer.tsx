@@ -55,9 +55,8 @@ export const Footer = () => {
       <div className="mx-auto w-full max-w-7xl px-8 py-24 lg:py-28">
         <div className="grid gap-16 lg:grid-cols-[1.25fr_1fr] lg:items-start">
           <div className="max-w-lg space-y-8">
-            <Link to="/" className="inline-flex items-center gap-3">
-              <img src="/Head.svg" alt="Beiza" className="h-10 w-auto" />
-              <img src="/Beiza_White.svg" alt="Beiza wordmark" className="h-5 w-auto" />
+            <Link to="/" className="inline-flex items-center">
+              <img src="/Beiza-logo.png" alt="Beiza" className="h-12 w-auto" />
             </Link>
             <p className="text-subtle text-sm leading-relaxed">
               We design meaningful legacies — handcrafted records that celebrate life, culture, and family.

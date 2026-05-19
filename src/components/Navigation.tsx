@@ -51,9 +51,8 @@ export const Navigation = () => {
     <nav className="sticky top-0 z-40 w-full bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20 border-b border-white/5">
       <div className="mx-auto max-w-6xl px-6 py-6">
         <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <img src="/Head.svg" alt="Beiza Plus" className="h-10 w-auto" />
-            <img src="/Beiza_White.svg" alt="Beiza Plus" className="h-6 w-auto" />
+          <Link to="/" className="flex items-center">
+            <img src="/Beiza-logo.png" alt="Beiza" className="h-12 w-auto md:h-14" />
           </Link>
 
           <div className="hidden items-center gap-8 md:flex">
