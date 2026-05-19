@@ -25,14 +25,14 @@ import {
 
 export const FALLBACK_LANDING_HERO = {
   slug: "landing-hero",
-  heading: "Crafting Meaningful Farewells",
+  heading: "Build Intentional Legacy",
   subheading:
-    "We believe farewells are not the end — they're the final chapter of love. Every ceremony, every detail, every design is our way of saying: Thank you for a life well lived!",
-  cta_label: "Create a Memoir",
-  cta_href: "/contact#hero",
+    "It has never been about loss — it has always been about legacy. Every story, every voice, every design is our way of saying: their story, kept forever.",
+  cta_label: "Open Legacy Vault",
+  cta_href: "/legacy",
   background_media: {
     src: "https://framerusercontent.com/images/ZwPzi3XEJV1BavrysIhb7QSOE0.jpg?width=4680&height=3120",
-    alt: "Memorial scene with family celebrating a life well lived",
+    alt: "Family gathered — their story, kept forever",
   },
   reviews: "100+ Positive Client Reviews",
 } as const;
@@ -183,7 +183,7 @@ const Landing = () => {
             <SectionHeader
               eyebrow="Stories"
               title="What Families Say"
-              description="Kind words from the people who trusted us to honour a life well lived."
+              description="Kind words from families who trusted us to preserve their story, kept forever."
               align="center"
               variant="light"
             />
@@ -215,7 +215,7 @@ const Landing = () => {
               <div className="flex-1 space-y-4 px-8 py-10 md:px-12">
                 <SectionHeader
                   eyebrow="Events"
-                  title="Because the last goodbye should be unforgettable."
+                  title="Because their story deserves to be unforgettable."
                   description={event.description ?? "Explore our featured celebration to see how we transform memories into immersive experiences."}
                 />
                 <CTAButton to="/memoirs" label="Observe" />
@@ -285,7 +285,7 @@ const Landing = () => {
         </section>
 
         {/* Products Panel */}
-        <ProductsPanel title="Featured Products" description="Explore our collection of memorial products and services." />
+        <ProductsPanel title="Featured Products" description="Explore our collection of legacy products and services." />
       </main>
 
       <Footer />

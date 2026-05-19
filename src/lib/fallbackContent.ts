@@ -4,8 +4,9 @@ export const FALLBACK_NAVIGATION_LINKS: NavigationLink[] = [
   { id: "fallback-nav-live", label: "Live Now", href: "/", location: "primary", displayOrder: 1 },
   { id: "fallback-nav-events", label: "Events", href: "/events", location: "primary", displayOrder: 2 },
   { id: "fallback-nav-gallery", label: "Gallery", href: "/gallery", location: "primary", displayOrder: 3 },
-  // { id: "fallback-nav-memoirs", label: "Memoirs", href: "/memoirs", location: "primary", displayOrder: 4 },
-  { id: "fallback-nav-blog", label: "Blog", href: "/blog", location: "primary", displayOrder: 4 },
+  { id: "fallback-nav-legacy", label: "Legacy", href: "/legacy", location: "primary", displayOrder: 4 },
+  // { id: "fallback-nav-memoirs", label: "Memoirs", href: "/memoirs", location: "primary", displayOrder: 5 },
+  { id: "fallback-nav-blog", label: "Blog", href: "/blog", location: "primary", displayOrder: 5 },
   { id: "fallback-nav-contact", label: "Contact", href: "/contact", location: "primary", displayOrder: 5, isCta: true },
 ];
 
@@ -13,9 +14,10 @@ export const FALLBACK_FOOTER_LINKS: FooterLink[] = [
   { id: "fallback-footer-about", label: "About Us", href: "/#about", groupLabel: "Sections", displayOrder: 1 },
   { id: "fallback-footer-events", label: "Events", href: "/events", groupLabel: "Sections", displayOrder: 2 },
   { id: "fallback-footer-gallery", label: "Gallery", href: "/gallery", groupLabel: "Sections", displayOrder: 3 },
-  { id: "fallback-footer-memoirs", label: "Memoirs", href: "/memoirs", groupLabel: "Sections", displayOrder: 4 },
-  { id: "fallback-footer-blog", label: "Blog", href: "/blog", groupLabel: "Sections", displayOrder: 5 },
-  { id: "fallback-footer-contact", label: "Contact", href: "/contact#hero", groupLabel: "Sections", displayOrder: 6 },
+  { id: "fallback-footer-legacy", label: "Legacy Vault", href: "/legacy", groupLabel: "Sections", displayOrder: 4 },
+  { id: "fallback-footer-memoirs", label: "Memoirs", href: "/memoirs", groupLabel: "Sections", displayOrder: 5 },
+  { id: "fallback-footer-blog", label: "Blog", href: "/blog", groupLabel: "Sections", displayOrder: 6 },
+  { id: "fallback-footer-contact", label: "Contact", href: "/contact#hero", groupLabel: "Sections", displayOrder: 7 },
 ];
 
 export const FALLBACK_SITE_SETTINGS = {
@@ -61,7 +63,7 @@ export const FALLBACK_OFFERINGS = [
   {
     id: "fallback-offering-screens",
     title: "Screens",
-    description: "LED installations and stage visuals that turn farewells into immersive, high-definition experiences.",
+    description: "LED installations and stage visuals that turn family gatherings into immersive, high-definition experiences.",
     icon_key: "monitor",
     display_order: 4,
   },
@@ -75,7 +77,7 @@ export const FALLBACK_OFFERINGS = [
   {
     id: "fallback-offering-legacy",
     title: "Legacy",
-    description: "Online memorials, digital biographies, and preserved archives that keep every story alive forever.",
+    description: "Legacy vaults, digital biographies, and preserved archives that keep every story alive forever.",
     icon_key: "cloud",
     display_order: 6,
   },
@@ -91,7 +93,7 @@ export const FALLBACK_TESTIMONIALS = [
   },
   {
     id: "fallback-testimonial-2",
-    quote: "From the first call to the final farewell, the team handled everything with grace.",
+    quote: "From the first call to the final celebration, the team handled everything with grace.",
     author: "Michael Ofori",
     role: "Brother",
     surfaces: ["landing"],
@@ -150,7 +152,7 @@ export const FALLBACK_TESTIMONIALS = [
 export const FALLBACK_FAQS = [
   {
     id: "fallback-faq-1",
-    question: "What do I need to begin planning a Beiza TV farewell?",
+    question: "What do I need to begin planning with Beiza?",
     answer:
       "Start with your loved one’s story. We’ll guide you through gathering photos, milestones, and the voices of family and friends to build a meaningful narrative.",
     display_order: 1,
@@ -180,7 +182,7 @@ export const FALLBACK_FAQS = [
     id: "fallback-faq-5",
     question: "What kind of events do you curate?",
     answer:
-      "We support memorials, celebration services, homegoings, and legacy unveilings — from intimate gatherings to multi-day productions.",
+      "We support legacy gatherings, celebration services, family archives, and legacy unveilings — from intimate circles to multi-day productions.",
     display_order: 5,
   },
 ] as const;
@@ -192,7 +194,7 @@ export const FALLBACK_PRICING = [
     tagline: "Starting at",
     price_label: "GHS 8,500",
     description:
-      "Story consultation, tribute film up to 5 minutes, on-site media crew, memorial microsite, and 30-day streaming replay.",
+      "Story consultation, tribute film up to 5 minutes, on-site media crew, legacy vault microsite, and 30-day streaming replay.",
     badge_label: null,
     is_recommended: false,
     display_order: 1,

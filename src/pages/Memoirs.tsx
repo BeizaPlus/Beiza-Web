@@ -64,7 +64,7 @@ const MemoirCard = ({ memoir }: { memoir: MemoirSummary }) => {
         )}
         <div className="flex flex-1 flex-col gap-4 p-6">
           <div className="space-y-2">
-            <p className="text-xs uppercase tracking-[0.3em] text-subtle">Tribute Memoir</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-subtle">Legacy Memoir</p>
             <h3 className="text-xl font-semibold leading-tight text-white">{memoir.title}</h3>
             {memoir.subtitle ? (
               <p className="text-sm text-subtle leading-relaxed">{memoir.subtitle}</p>
@@ -326,7 +326,7 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
       <main className="flex flex-col pb-24 pt-4 lg:pb-32">
         <section className="mx-auto w-full max-w-6xl px-6">
           <SectionHeader
-            eyebrow="Tribute Memoir"
+            eyebrow="Legacy Memoir"
             title={summary?.title ?? "Memoir"}
             description={summary?.subtitle ?? summary?.summary ?? undefined}
             align="center"
@@ -515,7 +515,7 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                                 <div className="space-y-2">
                                   <h3 className="text-2xl font-semibold text-white">Content Warning</h3>
                                   <p className="text-sm text-subtle leading-relaxed">
-                                    This gallery may contain sensitive visual or emotional content related to memorial
+                                    This gallery may contain sensitive visual or emotional content related to legacy
                                     celebrations. Please be aware that some images may be emotionally impactful.
                                   </p>
                                 </div>

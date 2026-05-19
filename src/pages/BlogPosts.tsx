@@ -67,7 +67,7 @@ const BlogPosts = () => {
           <SectionHeader
             eyebrow="Blog"
             title="Stories and insights"
-            description="Read our latest blog posts about memorial celebrations, tribute memoirs, and meaningful storytelling."
+            description="Read our latest posts about legacy gatherings, family archives, and meaningful storytelling."
             align="center"
           />
         </section>

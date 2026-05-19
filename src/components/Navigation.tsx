@@ -39,6 +39,10 @@ export const Navigation = () => {
     {
       return location.pathname.startsWith("/blog");
     }
+    if (href.startsWith("/legacy"))
+    {
+      return location.pathname.startsWith("/legacy");
+    }
 
     return href === "/" ? location.pathname === "/" : location.pathname === href;
   };

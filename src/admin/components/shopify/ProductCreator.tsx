@@ -41,7 +41,7 @@ const PRODUCT_CATEGORIES: Array<{ value: ProductCategory; label: string; descrip
   { value: "coffin", label: "Coffin", description: "Custom coffin or casket" },
   { value: "photo_book", label: "Photo Book", description: "Physical photo book from memoir content" },
   { value: "memorabilia", label: "Memorabilia", description: "Physical memorabilia from memoir" },
-  { value: "tribute", label: "Digital Tribute", description: "Digital memorial tribute video/film" },
+  { value: "tribute", label: "Digital Tribute", description: "Digital legacy tribute video/film" },
   { value: "archive", label: "Digital Archive", description: "Digital archive collection" },
   { value: "memory_page", label: "Memory Page", description: "Digital memory page" },
 ];
@@ -77,7 +77,7 @@ export const ProductCreator = ({ trigger }: ProductCreatorProps) => {
       
       let title = "";
       if (category === "tribute") {
-        title = `Memorial Tribute - ${memoir.title}`;
+        title = `Legacy Tribute - ${memoir.title}`;
       } else if (category === "archive") {
         title = `Legacy Archive - ${memoir.title}`;
       } else if (category === "memory_page") {

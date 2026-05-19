@@ -73,7 +73,7 @@ const Download = () => {
 
   const getAssetTypeLabel = (type: string) => {
     const labels: Record<string, string> = {
-      tribute: "Memorial Tribute",
+      tribute: "Legacy Tribute",
       archive: "Legacy Archive",
       memory_page: "Memory Page",
     };

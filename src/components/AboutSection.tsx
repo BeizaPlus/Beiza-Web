@@ -34,12 +34,12 @@ export const AboutSection = () => {
 
           {/* Headline */}
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-manrope font-medium text-black mb-6 leading-tight">
-            We design meaningful farewells — handcrafted tributes that celebrate life, culture, and legacy.
+            We design meaningful legacies — handcrafted records that celebrate life, culture, and family.
           </h2>
 
           {/* Description */}
           <p className="text-lg md:text-xl text-gray-600 mb-8 font-manrope leading-relaxed">
-            Every ceremony, every detail, every design is our way of saying: Thank you for a life well lived!
+            Every detail, every voice, every design is our way of saying: their story, kept forever.
           </p>
 
           {/* CTA Button */}

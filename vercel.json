@@ -5,6 +5,14 @@
       "destination": "/api/$1"
     },
     {
+      "source": "/legacy",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/legacy/:path*",
+      "destination": "/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

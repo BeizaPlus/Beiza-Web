@@ -28,10 +28,13 @@ export const Hero = ({
   backgroundImage,
   showReviews = true,
 }: HeroProps) => {
-  const heroTitle = title ?? headline ?? "Crafting Meaningful Farewells";
-  const heroDescription = description ?? paragraph ?? "We believe farewells are not the end — they're the final chapter of love.";
-  const buttonLabel = ctaLabel ?? ctaText ?? "Create a Memoir";
-  const buttonTarget = ctaLink ?? ctaHref ?? "/contact#hero";
+  const heroTitle = title ?? headline ?? "Build Intentional Legacy";
+  const heroDescription =
+    description ??
+    paragraph ??
+    "Preserve your family's voices, stories, and memory — for every generation that comes after.";
+  const buttonLabel = ctaLabel ?? ctaText ?? "Open Legacy Vault";
+  const buttonTarget = ctaLink ?? ctaHref ?? "/legacy";
 
   return (
     <header

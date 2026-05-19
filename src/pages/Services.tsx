@@ -8,7 +8,7 @@ import { Archive, BookHeart, Box, Calendar, Camera, Monitor, Video } from "lucid
 
 const services = [
   {
-      title: "Memorial Tributes",
+      title: "Legacy Tributes",
     description: "Immersive narrative films, interactive biographies, and live storytelling that honour a life with cinematic detail.",
     icon: <BookHeart className="h-5 w-5" strokeWidth={1.5} />,
     },
@@ -58,7 +58,7 @@ const processSteps = [
   {
     step: "04",
     title: "Celebration",
-    copy: "We stage, stream, archive, and support on the day — ensuring the farewell feels seamless and unforgettable.",
+    copy: "We stage, stream, archive, and support on the day — ensuring the celebration feels seamless and unforgettable.",
   },
 ];
 
@@ -88,7 +88,7 @@ const Services = () => {
         <section className="mx-auto max-w-6xl px-6 text-center">
           <SectionHeader
             eyebrow="Services"
-            title="Concierge production for unforgettable farewells"
+            title="Concierge production for unforgettable legacy"
             description="From intimate vigils to stadium-scale celebrations, we design and deliver experiences that feel worthy of the life being honoured."
             align="center"
           />

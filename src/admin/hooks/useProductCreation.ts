@@ -89,7 +89,7 @@ export function useCreateProductFromMemoir() {
       const productInput: CreateProductInput = {
         title: input.title,
         body_html: input.description || "",
-        product_type: input.productCategory === "coffin" ? "Coffin" : "Memorial Product",
+        product_type: input.productCategory === "coffin" ? "Coffin" : "Legacy Product",
         tags: ["memoir", input.productCategory],
         variants: [
           {

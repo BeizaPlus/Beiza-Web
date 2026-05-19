@@ -65,7 +65,7 @@ export const ProductsPanel = ({
         <SectionHeader
           eyebrow="Shop"
           title={title}
-          description={description || "Explore our collection of memorial products and services."}
+          description={description || "Explore our collection of legacy products and services."}
           align="center"
         />
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">

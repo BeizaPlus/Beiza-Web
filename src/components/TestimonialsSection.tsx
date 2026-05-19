@@ -12,7 +12,7 @@ interface TestimonialsSectionProps {
 
 const defaultTestimonials: Testimonial[] = [
   {
-    text: "Beiza made our farewell feel like art. Every detail — from the biography to the ceremony — felt deeply personal and graceful. It gave us peace.",
+    text: "Beiza made our celebration feel like art. Every detail — from the legacy record to the gathering — felt deeply personal and graceful. It gave us peace.",
     author: "Ama Mensah, Daughter",
     avatar: "https://framerusercontent.com/images/CD3L3PqkdrNUHs06U58RQxOMo.png?scale-down-to=512",
   },

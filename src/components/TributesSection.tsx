@@ -24,18 +24,18 @@ export const TributesSection = () => {
         >
           {/* Heading */}
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-manrope font-medium text-white mb-6 leading-tight">
-            Because the Last Goodbye Should.
+            Because their story should live forever.
           </h2>
 
           {/* Description */}
           <p className="text-lg md:text-xl text-white/80 mb-8 font-manrope leading-relaxed">
-            We curate meaningful experiences for families.
+            Preserve voices, stories, and memory — for every generation that comes after.
           </p>
 
           {/* CTA Button */}
-          <Link to="/contact">
+          <Link to="/legacy">
             <Button className="bg-white text-black hover:bg-white/90 rounded-full px-8 py-4 text-lg font-manrope font-medium h-auto border-0 shadow-lg flex items-center gap-3 mx-auto">
-              <span>Let's Talk</span>
+              <span>Open Legacy Vault</span>
               <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">
                 <ArrowRight className="w-4 h-4 text-white rotate-[-45deg]" />
               </div>

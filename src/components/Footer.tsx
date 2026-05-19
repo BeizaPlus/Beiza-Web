@@ -60,7 +60,7 @@ export const Footer = () => {
               <img src="/Beiza_White.svg" alt="Beiza wordmark" className="h-5 w-auto" />
             </Link>
             <p className="text-subtle text-sm leading-relaxed">
-              We design meaningful farewells — handcrafted tributes that celebrate life, culture, and legacy.
+              We design meaningful legacies — handcrafted records that celebrate life, culture, and family.
             </p>
             <p className="text-subtle text-xs uppercase tracking-[0.3em]">
               © {copyrightYear} {settings?.businessName ?? "Beiza Plus"} — Crafted with care, made to remember.

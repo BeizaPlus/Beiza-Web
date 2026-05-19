@@ -44,7 +44,7 @@ const Events = () => {
         <section className="mx-auto max-w-6xl px-6">
           <SectionHeader
             eyebrow="Events"
-            title="Curated farewells that feel cinematic"
+            title="Curated legacy gatherings that feel cinematic"
             description="Browse upcoming celebrations produced by the studio. Family collaborators can request access to private livestreams, itineraries, and media archives."
             align="center"
           />
