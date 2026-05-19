@@ -69,19 +69,17 @@ export default function FamilyTreeCanvasPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <FamilyTreeCircleView
-        circleId={circleId}
-        circleName={payload.circle.name}
-        people={payload.people}
-        links={payload.links}
-        recordings={payload.recordings}
-        backHref="/circle"
-        showInviteBar
-        accessCode={payload.circle.access_code}
-        onCopyAccessCode={() => void copyCode()}
-      />
-    </div>
+    <FamilyTreeCircleView
+      circleId={circleId}
+      circleName={payload.circle.name}
+      people={payload.people}
+      links={payload.links}
+      recordings={payload.recordings}
+      backHref="/circle"
+      showInviteBar
+      accessCode={payload.circle.access_code}
+      onCopyAccessCode={() => void copyCode()}
+    />
   );
 }
 

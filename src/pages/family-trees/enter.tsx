@@ -44,8 +44,13 @@ export default function FamilyTreeEnterPage() {
       }
       storeCircleToken(circleId, result.token);
       navigate(`/circle/${circleId}/tree`);
-    } catch {
-      setError("That code isn't right. Check with your family admin.");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      if (msg.includes("Server configuration") || msg.includes("Verification failed")) {
+        setError("Sign-in is temporarily unavailable. Try again in a moment or contact support.");
+      } else {
+        setError("That code isn't right. Check with your family admin.");
+      }
     } finally {
       setSubmitting(false);
     }

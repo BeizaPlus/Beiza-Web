@@ -32,7 +32,7 @@ export type PlaceholderNodeData = {
 
 export type FamilyTreeNodeData = PersonNodeData | MemoryNodeData | PlaceholderNodeData;
 
-const PERSON_W = 200;
+const PERSON_W = 180;
 const MEMORY_OFFSET_X = 260;
 const ROW_GAP = 300;
 const COL_GAP = 240;

@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { VOICES_TESTIMONIALS } from "@/lib/legacy/voicesTestimonials";
+import { useVoicesTestimonials, type VoiceCardData } from "@/hooks/useVoicesTestimonials";
 import { carouselControlButton } from "@/lib/brandUi";
 import { useDraggableScroll } from "@/hooks/useDraggableScroll";
 import { cn } from "@/lib/utils";
 
 const SCROLL_GAP_PX = 16;
-const DESKTOP_SCROLL_STEP = 356;
+const DESKTOP_SCROLL_STEP = 520;
 
 function ChainMotif() {
   return (
@@ -33,35 +33,57 @@ function ChainMotif() {
 }
 
 function VoiceCard({
-  initials,
   name,
   relation,
   location,
   country,
   featured,
   quote,
-}: (typeof VOICES_TESTIMONIALS)[number]) {
+  imageUrl,
+  tilt,
+}: VoiceCardData & { tilt: number }) {
   return (
     <article
       className={cn(
-        "glass-panel flex h-auto min-h-[280px] w-[calc(85vw)] shrink-0 snap-start flex-col gap-4 rounded-lg border border-white/10 p-6 md:w-[340px]",
-        featured && "border-l-[3px] border-l-primary",
+        "flex h-[200px] w-[min(88vw,520px)] shrink-0 snap-start overflow-hidden rounded-xl border border-[#2a2a2a] bg-[#111111] shadow-[0_16px_48px_rgba(0,0,0,0.35)] transition-transform",
+        featured && "border-l-[3px] border-l-[#E6A817]",
       )}
+      style={{ transform: `rotate(${tilt}deg)` }}
     >
-      <Quote className="h-5 w-5 shrink-0 text-primary" aria-hidden />
-      <p className="text-eyebrow text-xs">
-        {relation} · {location}
-      </p>
-      <p className="card-quote flex-1 text-base leading-relaxed text-white/90">{quote}</p>
-      <div className="card-footer mt-auto flex items-center gap-3 pt-2">
-        <span className="ring-background flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/60 text-xs font-medium text-primary">
-          {initials}
-        </span>
-        <div className="min-w-0">
-          <p className="font-medium text-white">{name}</p>
-          <p className="mt-0.5 font-manrope text-[11px] font-normal leading-snug text-[#555555]">
-            {country}
+      <div className="relative h-full w-[42%] min-w-[140px] shrink-0 overflow-hidden bg-[#0a0a0a]">
+        {imageUrl ? (
+          <img src={imageUrl} alt="" className="h-full w-full object-cover object-center" loading="lazy" />
+        ) : (
+          <div
+            className="flex h-full w-full items-center justify-center"
+            style={{ background: "linear-gradient(145deg, #1a1200 0%, #0a0a0a 100%)" }}
+          >
+            <Quote className="h-8 w-8 text-[#E6A817]/30" aria-hidden />
+          </div>
+        )}
+        <div
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent to-[#111111]/90"
+          aria-hidden
+        />
+      </div>
+
+      <div className="flex min-w-0 flex-1 flex-col justify-between p-5">
+        <div>
+          <Quote className="mb-2 h-4 w-4 text-[#E6A817]" aria-hidden />
+          <p className="text-eyebrow text-[10px]">
+            {relation}
+            {location ? ` · ${location}` : ""}
           </p>
+          <p className="mt-2 line-clamp-4 font-manrope text-sm leading-relaxed text-white/90">{quote}</p>
+        </div>
+        <div className="mt-3 flex items-center gap-2.5">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1e1800] text-[10px] font-semibold text-[#E6A817]">
+            {name.slice(0, 2).toUpperCase()}
+          </span>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-medium text-white">{name}</p>
+            <p className="truncate font-manrope text-[11px] text-[#555555]">{country}</p>
+          </div>
         </div>
       </div>
     </article>
@@ -69,6 +91,7 @@ function VoiceCard({
 }
 
 export function VoicesThatStayedSection({ className }: { className?: string }) {
+  const items = useVoicesTestimonials();
   const scrollRef = useDraggableScroll();
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(true);
@@ -79,7 +102,7 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
     const card = track.querySelector<HTMLElement>("article");
     if (!card) return DESKTOP_SCROLL_STEP;
     return card.offsetWidth + SCROLL_GAP_PX;
-  }, []);
+  }, [scrollRef]);
 
   const updateScrollState = useCallback(() => {
     const track = scrollRef.current;
@@ -87,7 +110,7 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
     const maxScroll = track.scrollWidth - track.clientWidth;
     setCanScrollPrev(track.scrollLeft > 2);
     setCanScrollNext(track.scrollLeft < maxScroll - 2);
-  }, []);
+  }, [scrollRef]);
 
   useEffect(() => {
     const track = scrollRef.current;
@@ -99,7 +122,7 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
       track.removeEventListener("scroll", updateScrollState);
       window.removeEventListener("resize", updateScrollState);
     };
-  }, [updateScrollState]);
+  }, [updateScrollState, items.length]);
 
   const scrollByCard = (direction: -1 | 1) => {
     scrollRef.current?.scrollBy({ left: direction * getScrollStep(), behavior: "smooth" });
@@ -112,9 +135,9 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
     >
       <div className="mx-auto max-w-[1200px] px-6 pt-16 pb-16 md:px-12 md:pt-24 md:pb-20">
         <header className="mx-auto mb-12 max-w-[640px] text-center">
-          <p className="voices-testimonials-eyebrow">Families preserving their legacy</p>
-          <h2 className="voices-testimonials-heading mt-4">Their story didn&apos;t end there.</h2>
-          <p className="voices-testimonials-subheading mt-4">
+          <p className="text-eyebrow">Families preserving their legacy</p>
+          <h2 className="text-display-lg mt-4 text-white">Their story didn&apos;t end there.</h2>
+          <p className="mt-4 font-manrope text-base leading-relaxed text-[#666666]">
             Beiza is where families record, gather, and keep what matters — before and long after
             any goodbye.
           </p>
@@ -141,20 +164,20 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
           </button>
         </div>
 
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-hidden py-2">
           <div
             ref={scrollRef}
             data-draggable
             className={cn(
-              "flex items-stretch gap-4 overflow-x-auto overscroll-x-contain pb-2 pr-6 md:pr-12",
+              "flex items-center gap-5 overflow-x-auto overscroll-x-contain pb-4 pr-6 md:pr-12",
               "snap-x snap-mandatory scroll-smooth",
               "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
             )}
             style={{ WebkitOverflowScrolling: "touch" }}
             aria-label="Family testimonial cards"
           >
-            {VOICES_TESTIMONIALS.map((item) => (
-              <VoiceCard key={item.name} {...item} />
+            {items.map((item, index) => (
+              <VoiceCard key={`${item.name}-${index}`} {...item} tilt={index % 2 === 0 ? -0.6 : 0.6} />
             ))}
           </div>
         </div>

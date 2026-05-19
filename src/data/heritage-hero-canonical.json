@@ -1,0 +1,13 @@
+{
+  "savedAt": "2026-05-19T16:20:53.045Z",
+  "label": "Beiza hero layout · heritage",
+  "page": "heritage",
+  "hero": {
+    "posX": 80,
+    "posY": 100,
+    "scale": 111,
+    "textSide": "right",
+    "overlayStrength": 71,
+    "copyRaiseVh": 0
+  }
+}

@@ -15,13 +15,13 @@ export function HeritageHeroStudioControls({ frame, onPatch }: Props) {
   return (
     <div className="space-y-3">
       <p className="text-[11px] text-muted-foreground">
-        Move text left/right to reveal the subject. Pan X/Y to frame the Gye Nyame symbol.
+        Text align left/right; pan X/Y to frame the Gye Nyame symbol.
       </p>
       <SliderRow label="Background X" value={frame.posX} min={0} max={100} onChange={(posX) => onPatch({ posX })} />
       <SliderRow label="Background Y" value={frame.posY} min={0} max={100} onChange={(posY) => onPatch({ posY })} />
       <ZoomControls value={frame.scale} onChange={(scale) => onPatch({ scale })} />
       <div className="space-y-1">
-        <Label className="text-[11px]">Text side</Label>
+        <Label className="text-[11px]">Text align</Label>
         <div className="flex gap-1">
           {(["left", "right"] as const).map((side) => (
             <Button

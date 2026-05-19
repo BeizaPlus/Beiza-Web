@@ -25,7 +25,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const supabaseUrl = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const serviceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ??
+    process.env.VITE_SUPABASE_PRIVILEGED_KEY ??
+    process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !serviceKey) {
     return res.status(500).json({ error: "Server configuration missing." });
@@ -87,11 +90,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   };
 
   if (userId) {
-    await supabase.from("circle_members").upsert(memberRow, {
+    const { error: memberError } = await supabase.from("circle_members").upsert(memberRow, {
       onConflict: "circle_id,user_id",
     });
-  } else {
-    await supabase.from("circle_members").insert(memberRow);
+    if (memberError) {
+      console.error("[verify-code] circle_members upsert:", memberError);
+    }
   }
 
   if (userId) {

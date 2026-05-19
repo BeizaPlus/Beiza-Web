@@ -19,6 +19,15 @@ const nav: {
 
 export function LegacyLayout() {
   const location = useLocation();
+  const treeFullscreen = location.pathname === "/legacy/circle";
+
+  if (treeFullscreen) {
+    return (
+      <LegacyAuthGate>
+        <Outlet />
+      </LegacyAuthGate>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">

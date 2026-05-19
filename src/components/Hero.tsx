@@ -72,8 +72,11 @@ export const Hero = ({
         <div className="hero-overlay" />
       )}
 
-      <div className={HERO_CONTENT_CLASS} style={HERO_CONTENT_BOTTOM_STYLE}>
-        <div className="max-w-xl text-left">
+      <div
+        className="relative z-10 flex w-full flex-1 items-end px-6 pt-28 md:px-12 md:pt-32"
+        style={HERO_CONTENT_BOTTOM_STYLE}
+      >
+        <div className="max-w-[680px] text-left md:pl-20">
           <motion.h1
             initial={{ opacity: 0, filter: "blur(16px)", scale: 1.12 }}
             animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
@@ -87,7 +90,7 @@ export const Hero = ({
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.12, 0.23, 0.5, 1] }}
-            className="mt-5 max-w-xl text-lg leading-relaxed text-white/90 md:text-xl"
+            className="mt-5 max-w-[680px] text-lg leading-relaxed text-white/90 md:text-xl"
           >
             {heroDescription}
           </motion.p>

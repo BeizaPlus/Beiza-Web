@@ -77,9 +77,13 @@ export async function verifyCircleAccessCode(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ circle_id: circleId, code, email }),
   });
-  const body = (await res.json()) as { valid: boolean; token?: string; error?: string };
-  if (!res.ok && !body.valid) {
-    throw new Error(body.error ?? "Verification failed.");
+  const body = (await res.json().catch(() => ({}))) as {
+    valid: boolean;
+    token?: string;
+    error?: string;
+  };
+  if (!res.ok) {
+    throw new Error(body.error ?? `Verification failed (${res.status}).`);
   }
   return body;
 }

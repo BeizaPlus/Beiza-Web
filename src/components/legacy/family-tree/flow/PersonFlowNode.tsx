@@ -11,18 +11,23 @@ function PersonFlowNodeComponent({ data }: NodeProps & { data: PersonNodeData })
   return (
     <div
       className={cn(
-        "w-[200px] min-h-[240px] overflow-hidden rounded-xl bg-[#111111] text-left shadow-none",
+        "w-[180px] cursor-pointer overflow-hidden rounded-[10px] bg-[#111111] text-left",
         isLiving && "family-tree-person-living border border-[#E6A817]",
-        isGone && "border border-[#2a2a2a] grayscale-[0.4]",
+        isGone && "border border-[#2a2a2a]",
         data.status === "invited" && "border border-dashed border-[#2a2a2a]",
         data.selected && "ring-2 ring-primary/50",
       )}
     >
-      <Handle type="target" position={Position.Top} className="!border-none !bg-transparent !w-2 !h-2" />
-      <Handle type="source" position={Position.Bottom} className="!border-none !bg-transparent !w-2 !h-2" />
-      <Handle type="source" position={Position.Right} id="memories" className="!border-none !bg-transparent !w-2 !h-2" />
+      <Handle type="target" position={Position.Top} className="!h-2 !w-2 !border-none !bg-transparent" />
+      <Handle type="source" position={Position.Bottom} className="!h-2 !w-2 !border-none !bg-transparent" />
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="memories"
+        className="!h-2 !w-2 !border-none !bg-transparent"
+      />
 
-      <div className="relative h-[140px] w-full overflow-hidden">
+      <div className="relative h-[100px] w-full overflow-hidden">
         {data.photoUrl ? (
           <img
             src={data.photoUrl}
@@ -34,23 +39,25 @@ function PersonFlowNodeComponent({ data }: NodeProps & { data: PersonNodeData })
             className="flex h-full w-full items-center justify-center"
             style={{ background: "linear-gradient(160deg, #1a1200, #0a0a0a)" }}
           >
-            <span className="text-[36px] font-medium text-[#E6A817] opacity-40">{data.initials}</span>
+            <span className="text-[32px] font-medium text-[#E6A817] opacity-50">{data.initials}</span>
           </div>
         )}
       </div>
 
-      <div className="space-y-1 p-3">
-        <p className="text-sm font-medium text-white">{data.name}</p>
+      <div className="space-y-0.5 px-3 py-2.5">
+        <p className="truncate font-manrope text-[13px] font-medium text-white">{data.name}</p>
         {data.relation ? (
-          <p className="text-[10px] uppercase tracking-[0.1em] text-[#555555]">{data.relation}</p>
+          <p className="font-manrope text-[10px] font-normal uppercase tracking-[0.08em] text-[#555555]">
+            {data.relation}
+          </p>
         ) : null}
         {data.memoryCount > 0 ? (
-          <p className="text-[10px] text-[#E6A817]">
+          <p className="font-manrope text-[10px] text-[#E6A817]">
             {data.memoryCount} {data.memoryCount === 1 ? "memory" : "memories"}
           </p>
         ) : null}
         {isGone && data.memoryCount > 0 ? (
-          <p className="flex items-center gap-1 text-[10px] text-[#E6A817]">
+          <p className="flex items-center gap-1 font-manrope text-[10px] text-[#E6A817]">
             <AudioLines className="h-3 w-3" aria-hidden />
             Voice preserved
           </p>

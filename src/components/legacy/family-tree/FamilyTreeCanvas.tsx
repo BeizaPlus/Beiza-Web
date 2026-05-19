@@ -2,8 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 import {
   Background,
   BackgroundVariant,
-  Controls,
-  MiniMap,
   ReactFlow,
   ReactFlowProvider,
   useReactFlow,
@@ -17,11 +15,15 @@ import {
   type FamilyTreeNodeData,
   type PlaceholderNodeData,
 } from "@/lib/legacy/familyTreeFlow";
+import { filterValidTreeEdges, filterValidTreeNodes } from "@/lib/legacy/filterTreeNodes";
 import { PersonFlowNode } from "@/components/legacy/family-tree/flow/PersonFlowNode";
 import { MemoryFlowNode } from "@/components/legacy/family-tree/flow/MemoryFlowNode";
 import { PlaceholderFlowNode } from "@/components/legacy/family-tree/flow/PlaceholderFlowNode";
 import { AddPersonSheet } from "@/components/legacy/family-tree/AddPersonSheet";
+import { TreeFlowControls } from "@/components/legacy/family-tree/TreeFlowControls";
 import { resolveTreeAnchor } from "@/lib/legacy/familyTree";
+import { usePortraitPool, portraitForPerson } from "@/hooks/usePortraitPool";
+import { TREE_HEADER_HEIGHT } from "@/components/family-trees/TreeAppShell";
 
 const nodeTypes = {
   person: PersonFlowNode,
@@ -36,9 +38,10 @@ type FamilyTreeCanvasProps = {
   circleId?: string;
   selectedPersonId: string | null;
   onSelectPerson: (personId: string) => void;
-  /** Full viewport height (public /circle tree). Legacy layout uses `embedded`. */
   layout?: "fullViewport" | "embedded";
   className?: string;
+  fullscreen?: boolean;
+  onFullscreenChange?: (active: boolean) => void;
 };
 
 function FamilyTreeCanvasInner({
@@ -48,7 +51,9 @@ function FamilyTreeCanvasInner({
   circleId,
   selectedPersonId,
   onSelectPerson,
-  layout = "embedded",
+  layout = "fullViewport",
+  fullscreen = false,
+  onFullscreenChange,
 }: FamilyTreeCanvasProps) {
   const { fitView } = useReactFlow();
   const [addOpen, setAddOpen] = useState(false);
@@ -59,16 +64,30 @@ function FamilyTreeCanvasInner({
     return resolveTreeAnchor(people, counts);
   }, [people, links]);
 
-  const { nodes, edges } = useMemo(
+  const { data: portraitPool = [] } = usePortraitPool();
+
+  const peopleWithPortraits = useMemo(
     () =>
-      buildFamilyTreeFlow({
-        people,
-        links,
-        recordings,
-        selectedPersonId,
-      }),
-    [people, links, recordings, selectedPersonId],
+      people.map((p) => ({
+        ...p,
+        photo_url: portraitForPerson(p.id, p.photo_url, portraitPool) ?? p.photo_url,
+      })),
+    [people, portraitPool],
   );
+
+  const { nodes, edges } = useMemo(() => {
+    const built = buildFamilyTreeFlow({
+      people: peopleWithPortraits,
+      links,
+      recordings,
+      selectedPersonId,
+    });
+    const validNodes = filterValidTreeNodes(built.nodes);
+    return {
+      nodes: validNodes,
+      edges: filterValidTreeEdges(built.edges, validNodes),
+    };
+  }, [peopleWithPortraits, links, recordings, selectedPersonId]);
 
   const onNodeClick: NodeMouseHandler<Node<FamilyTreeNodeData>> = useCallback(
     (_, node) => {
@@ -80,16 +99,16 @@ function FamilyTreeCanvasInner({
       if (data.kind === "placeholder" && circleId) {
         setAddSlot(data.slot);
         setAddOpen(true);
-        return;
       }
     },
     [circleId, onSelectPerson],
   );
 
-  const heightStyle =
-    layout === "fullViewport"
-      ? { width: "100%", height: "calc(100vh - 80px)" }
-      : { width: "100%", height: "calc(100vh - 220px)", minHeight: 520 };
+  const canvasHeight = fullscreen
+    ? "100vh"
+    : layout === "fullViewport"
+      ? `calc(100vh - ${TREE_HEADER_HEIGHT}px)`
+      : "calc(100vh - 220px)";
 
   return (
     <>
@@ -104,34 +123,16 @@ function FamilyTreeCanvasInner({
           });
         }}
         proOptions={{ hideAttribution: true }}
-        minZoom={0.2}
-        maxZoom={1.5}
-        style={heightStyle}
+        minZoom={0.1}
+        maxZoom={2.5}
+        style={{
+          width: "100vw",
+          height: canvasHeight,
+        }}
         className="family-tree-flow"
       >
         <Background variant={BackgroundVariant.Dots} gap={40} size={1} color="#1a1a1a" />
-        <Controls
-          showInteractive={false}
-          style={{
-            background: "#111111",
-            border: "0.5px solid #1e1e1e",
-            borderRadius: 8,
-            padding: 4,
-          }}
-        />
-        <MiniMap
-          nodeColor={(node) => {
-            const d = node.data as FamilyTreeNodeData;
-            if (d.kind === "person") return d.status === "gone" ? "#2a2a2a" : "#E6A817";
-            return "#3a2800";
-          }}
-          maskColor="rgba(0,0,0,0.7)"
-          style={{
-            background: "#111111",
-            border: "0.5px solid #1e1e1e",
-            borderRadius: 8,
-          }}
-        />
+        <TreeFlowControls onFullscreenChange={onFullscreenChange} />
       </ReactFlow>
 
       {circleId ? (

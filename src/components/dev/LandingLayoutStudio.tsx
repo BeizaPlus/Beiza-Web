@@ -16,6 +16,7 @@ import {
   type HeritageHeroFrame,
 } from "./heroLayoutStudioState";
 import { HeritageHeroStudioControls } from "./HeritageHeroStudioControls";
+import { FloatingStudioShell } from "./FloatingStudioShell";
 
 const FOCUS_LABELS: { id: StudioFocus; label: string }[] = [
   { id: "hero", label: "1. Hero" },
@@ -78,33 +79,13 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
     window.setTimeout(() => setSaveStatus(null), 2000);
   };
 
-  if (!open) {
-    return (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="fixed bottom-4 right-4 z-[200] rounded-full bg-[#E6A817] px-4 py-2 text-xs font-semibold text-[#0a0a0a] shadow-lg"
-      >
-        Layout studio
-      </button>
-    );
-  }
-
   return (
-    <aside className="fixed bottom-4 right-4 z-[200] w-[min(100vw-2rem,22rem)] rounded-xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur-md">
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Layout studio (local)
-        </p>
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="text-xs text-muted-foreground hover:text-foreground"
-        >
-          Hide
-        </button>
-      </div>
-
+    <FloatingStudioShell
+      panelId="landing"
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
+    >
       <div className="mb-4 flex flex-wrap gap-1">
         {FOCUS_LABELS.map(({ id, label }) => (
           <Button
@@ -262,7 +243,7 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
         </Button>
       </div>
       {saveStatus ? <p className="mt-2 text-[10px] text-primary">{saveStatus}</p> : null}
-    </aside>
+    </FloatingStudioShell>
   );
 }
 

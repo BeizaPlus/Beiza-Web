@@ -78,7 +78,7 @@ export const Navigation = () => {
   return (
     <>
       <nav className="sticky top-0 z-40 w-full border-b border-white/5 bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20">
-        <div className="mx-auto max-w-6xl px-6 py-6">
+        <div className="w-full px-12 py-6">
           <div className="flex items-center justify-between">
             <BeizaLogoLink />
 
@@ -134,7 +134,7 @@ export const Navigation = () => {
                   key={link.id}
                   link={link}
                   onNavigate={closeDrawer}
-                  className="font-['Playfair_Display'] text-4xl font-medium leading-tight"
+                  className="font-manrope text-4xl font-medium leading-tight tracking-tight"
                 />
               ))}
             </nav>

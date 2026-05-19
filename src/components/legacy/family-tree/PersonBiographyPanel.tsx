@@ -52,9 +52,7 @@ function BiographyContent({
   return (
     <div className="space-y-6 pb-8">
       <div>
-        <p className="text-xl text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-          {person.display_name}
-        </p>
+        <p className="font-manrope text-xl font-medium text-white">{person.display_name}</p>
         {person.relation_label ? (
           <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-[#555555]">
             {person.relation_label}
@@ -64,10 +62,7 @@ function BiographyContent({
 
       {person.status === "gone" && goneQuote ? (
         <blockquote className="border-l-2 border-primary/40 pl-4">
-          <p
-            className="text-base italic leading-relaxed text-[#cccccc]"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-          >
+          <p className="font-manrope text-base italic leading-relaxed text-[#cccccc]">
             &ldquo;{goneQuote.prompt_text}&rdquo;
           </p>
           <p className="mt-2 text-xs text-[#555555]">— {goneQuote.recorded_by.name}</p>

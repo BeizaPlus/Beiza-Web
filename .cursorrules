@@ -3,10 +3,22 @@
 ## PROTECTED COMPONENTS
 
 ### Heritage page hero
-Current state after the right-align fix is CORRECT. Protect:
+Canonical frame (`HERITAGE_HERO_DEFAULTS` / `src/data/heritage-hero-canonical.json`): posX 80, posY 100, scale 111, textSide right, overlayStrength 71, copyRaiseVh 0. Protect:
 - Text block RIGHT aligned (default)
 - Gradient flows left (dark on the right, light on the left)
 - `beiza-elder-gye-nyame-hero.png` — do not swap, do not crop
 - Subject's face and Gye Nyame panel must always be visible
 - "Plan your Heritage experience →" scrolls to `#consultation`
 - "Already lost someone? Recover a voice →" links to `/recover`
+
+### Tree canvas page (/circle/[id]/tree, /legacy/circle)
+- Full screen layout (100vw × 100vh) — never revert to page layout
+- Header: 52px, fixed, minimal app bar
+- Canvas: fills everything below header; no border, no rounded container
+- No max-width containers anywhere on this route
+- Fullscreen toggle must always be present on canvas controls
+
+### Homepage hero (layout only)
+- Full bleed (100vw) — no max-width on the outer hero shell
+- Nav: 100% width, padding 0 48px (`px-12`), no max-width wrapper
+- Hero copy block: max-width 680px, left-aligned, `md:pl-20` — do not change hero image asset or studio frame values

@@ -17,12 +17,13 @@ export const HERO_STUDIO_DEFAULTS: Record<"events", HeroFrame> = {
   events: { posX: 50, posY: 22, scale: 100, copyBottomVh: 38 },
 };
 
+/** Canonical Heritage hero — exported from Layout Studio 2026-05-19. */
 export const HERITAGE_HERO_DEFAULTS: HeritageHeroFrame = {
-  posX: 50,
-  posY: 30,
-  scale: 100,
+  posX: 80,
+  posY: 100,
+  scale: 111,
   textSide: "right",
-  overlayStrength: 88,
+  overlayStrength: 71,
   copyRaiseVh: 0,
 };
 

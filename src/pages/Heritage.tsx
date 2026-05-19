@@ -15,7 +15,10 @@ import {
   HeroLayoutStudioPanel,
   useHeroLayoutStudio,
 } from "@/components/dev/HeroLayoutStudio";
-import { heritageHeroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
+import {
+  HERITAGE_HERO_DEFAULTS,
+  heritageHeroStudioCssVars,
+} from "@/components/dev/heroLayoutStudioState";
 import { BRAND_IMAGES } from "@/lib/brandImages";
 import { CasketIcon } from "@/components/icons/CasketIcon";
 import { cn } from "@/lib/utils";
@@ -72,7 +75,9 @@ function scrollToConsultation() {
 
 export default function HeritagePage() {
   const studioPanel = isLayoutStudioEnabled();
-  const { frame: heroFrame, setFrame: setHeroFrame } = useHeroLayoutStudio("heritage");
+  const studio = useHeroLayoutStudio("heritage");
+  const heroFrame = studioPanel ? studio.frame : HERITAGE_HERO_DEFAULTS;
+  const setHeroFrame = studio.setFrame;
   const whiteSwanIncluded = isWhiteSwanIncludedForUser();
   const [form, setForm] = useState({
     name: "",
@@ -150,7 +155,8 @@ export default function HeritagePage() {
       >
           <div
             className={cn(
-              "w-full max-w-[520px] text-left",
+              "w-full max-w-[520px]",
+              heroFrame.textSide === "right" ? "text-right" : "text-left",
               heroFrame.textSide === "right"
                 ? "md:ml-auto md:py-20 md:pr-16 md:pl-10"
                 : "md:mr-auto md:py-20 md:pl-16 md:pr-10",
@@ -164,7 +170,12 @@ export default function HeritagePage() {
             <p className="mt-4 text-lg leading-relaxed text-white/90 md:text-xl">
               The White Swan. For when the time comes — and it always comes.
             </p>
-            <p className="mt-3 max-w-[420px] text-sm leading-relaxed text-subtle">
+            <p
+              className={cn(
+                "mt-3 max-w-[420px] text-sm leading-relaxed text-subtle",
+                heroFrame.textSide === "right" ? "ml-auto" : "",
+              )}
+            >
               The Gye Nyame symbol — &ldquo;except God, nothing is greater&rdquo; — has guided
               Ghanaian families through loss for centuries. Beiza Heritage carries that spirit into
               how we preserve, gather, and remember.
