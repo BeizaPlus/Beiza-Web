@@ -1,13 +1,19 @@
-import { type ReactNode, useMemo } from "react";
+import { type CSSProperties, type ReactNode, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { CTAButton } from "@/components/framer/CTAButton";
+import {
+  HeroLayoutStudioPanel,
+  useHeroLayoutStudio,
+} from "@/components/dev/HeroLayoutStudio";
+import { heroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
 import { useFeaturedEvent, usePublishedEvents } from "@/hooks/usePublicContent";
 import { FullBleedHero } from "@/components/FullBleedHero";
 import { BRAND_IMAGES } from "@/lib/brandImages";
+import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 
 const EmptyState = ({ title, description }: { title: string; description: ReactNode }) => (
   <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-[32px] border border-white/10 p-16 text-center text-white/70">
@@ -18,6 +24,9 @@ const EmptyState = ({ title, description }: { title: string; description: ReactN
 
 const Events = () => {
   const navigate = useNavigate();
+  const studioPanel = isLayoutStudioEnabled();
+  const { panelEnabled: studio, frame: heroFrame, setFrame: setHeroFrame } =
+    useHeroLayoutStudio("events", studioPanel);
   const { data: featuredEvent, isLoading: featuredLoading } = useFeaturedEvent();
   const { data: events = [], isLoading: eventsLoading } = usePublishedEvents();
 
@@ -40,21 +49,23 @@ const Events = () => {
   const loading = featuredLoading || eventsLoading;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div
+      className="min-h-screen bg-background text-foreground"
+      style={studio ? (heroStudioCssVars(heroFrame) as CSSProperties) : undefined}
+    >
       <Navigation />
       <FullBleedHero
         imageSrc={BRAND_IMAGES.eventsStoriesHero}
         imageAlt="Madam Ernestina — portrait in black and white"
-        objectPosition="center top"
+        frame={heroFrame}
       >
         <div className="max-w-xl text-left">
-          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#E6A817]">Events</p>
-          <h1 className="mt-3 font-display text-3xl leading-tight text-white md:text-4xl">
-            Because their story deserves to be unforgettable.
-          </h1>
-          <p className="mt-4 font-sans text-base leading-relaxed text-[#aaaaaa]">
-            Personal loss, family memory, and gatherings that honor who they were.
-          </p>
+          <SectionHeader
+            eyebrow="Events"
+            title="Because their story deserves to be unforgettable."
+            description="Personal loss, family memory, and gatherings that honor who they were."
+            variant="dark"
+          />
         </div>
       </FullBleedHero>
       <main className="space-y-24 pb-24 pt-12 lg:space-y-32 lg:pb-32">
@@ -218,6 +229,9 @@ const Events = () => {
         </section>
       </main>
       <Footer />
+      {studio ? (
+        <HeroLayoutStudioPanel page="events" frame={heroFrame} onChange={setHeroFrame} />
+      ) : null}
     </div>
   );
 };

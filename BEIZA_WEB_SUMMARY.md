@@ -78,7 +78,8 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 - **Dev:** panel bottom-right by default  
 - **Any env:** add `?studio=1` (hide with `?studio=0`)
 - **Zoom:** 70%–160% with **− / +** and slider; pan with Background X/Y
-- Applies to homepage, `/heritage`, and `/events` heroes (saved in `localStorage`)
+- **Homepage:** full panel (hero + sections) — `beiza-landing-layout-studio`
+- **`/events` & `/heritage`:** hero-only panel — per-page keys `beiza-hero-studio:events` / `beiza-hero-studio:heritage` (landing featured event shares the Events key)
 
 ---
 

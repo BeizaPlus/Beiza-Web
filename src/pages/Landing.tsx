@@ -9,6 +9,8 @@ import {
   LandingLayoutStudioPanel,
   useLandingLayoutStudio,
 } from "@/components/dev/LandingLayoutStudio";
+import { useHeroLayoutStudio } from "@/components/dev/HeroLayoutStudio";
+import { heroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { studioCssVars } from "@/components/dev/landingLayoutStudioState";
 import { SectionHeader } from "@/components/framer/SectionHeader";
@@ -48,6 +50,7 @@ const SHOW_FEATURED_EVENT_EXPERIENCE_CTA = false;
 const Landing = () => {
   const { panelEnabled: studio, state: studioState, setState: setStudioState } =
     useLandingLayoutStudio(studioPanelEnabled);
+  const { frame: eventsHeroFrame } = useHeroLayoutStudio("events", false);
   const focus = studio ? studioState.focus : null;
 
   const { data: heroSection } = useHeroSection("landing-hero");
@@ -193,10 +196,11 @@ const Landing = () => {
         ) : null}
 
         {showRest && event ? (
+          <div style={heroStudioCssVars(eventsHeroFrame) as CSSProperties}>
           <FullBleedHero
             imageSrc={event.heroMedia?.src ?? BRAND_IMAGES.eventsStoriesHero}
             imageAlt={event.heroMedia?.alt ?? event.title ?? "Featured celebration"}
-            objectPosition="center top"
+            frame={eventsHeroFrame}
           >
             <div className="max-w-xl text-left">
               <SectionHeader
@@ -215,6 +219,7 @@ const Landing = () => {
               ) : null}
             </div>
           </FullBleedHero>
+          </div>
         ) : null}
 
         {showPricing ? (

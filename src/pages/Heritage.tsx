@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { Link } from "react-router-dom";
 import {
   BookOpen,
@@ -12,9 +12,10 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { FullBleedHero } from "@/components/FullBleedHero";
 import {
-  LandingLayoutStudioPanel,
-  useLandingLayoutStudio,
-} from "@/components/dev/LandingLayoutStudio";
+  HeroLayoutStudioPanel,
+  useHeroLayoutStudio,
+} from "@/components/dev/HeroLayoutStudio";
+import { heroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
 import { BRAND_IMAGES } from "@/lib/brandImages";
 import { CasketIcon } from "@/components/icons/CasketIcon";
 import { cn } from "@/lib/utils";
@@ -70,8 +71,8 @@ function scrollToConsultation() {
 
 export default function HeritagePage() {
   const studioPanel = isLayoutStudioEnabled();
-  const { panelEnabled: studio, state: studioState, setState: setStudioState } =
-    useLandingLayoutStudio(studioPanel);
+  const { panelEnabled: studio, frame: heroFrame, setFrame: setHeroFrame } =
+    useHeroLayoutStudio("heritage", studioPanel);
   const whiteSwanIncluded = isWhiteSwanIncludedForUser();
   const [form, setForm] = useState({
     name: "",
@@ -119,30 +120,28 @@ export default function HeritagePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div
+      className="min-h-screen bg-[#0a0a0a] text-white"
+      style={studio ? (heroStudioCssVars(heroFrame) as CSSProperties) : undefined}
+    >
       <Navigation />
 
       {/* 1. Hero */}
       <FullBleedHero
         imageSrc={BRAND_IMAGES.heritageHero}
         imageAlt="Elder at peace with the Gye Nyame Adinkra symbol — except God, nothing is greater"
-        frame={studioState.hero}
+        frame={heroFrame}
         contentClassName="!items-center md:!items-end"
       >
           <div className="max-w-[520px]">
-            <p
-              className="font-sans text-[10px] uppercase tracking-[0.3em]"
-              style={{ color: HERITAGE_GOLD }}
-            >
-              Beiza Legacy · Heritage
-            </p>
-            <h1 className="mt-4 font-display text-[34px] leading-[1.15] text-white md:text-[52px]">
+            <p className="text-eyebrow text-primary">Beiza Legacy · Heritage</p>
+            <h1 className="mt-4 text-display-xl text-white">
               Some stories are larger than one life.
             </h1>
-            <p className="mt-4 font-sans text-base leading-[1.7] text-[#aaaaaa]">
+            <p className="mt-4 text-lg leading-relaxed text-white/90 md:text-xl">
               The White Swan. For when the time comes — and it always comes.
             </p>
-            <p className="mt-3 max-w-[420px] font-sans text-sm leading-[1.8] text-[#777777]">
+            <p className="mt-3 max-w-[420px] text-sm leading-relaxed text-subtle">
               The Gye Nyame symbol — &ldquo;except God, nothing is greater&rdquo; — has guided
               Ghanaian families through loss for centuries. Beiza Heritage carries that spirit into
               how we preserve, gather, and remember.
@@ -150,11 +149,11 @@ export default function HeritagePage() {
             <button
               type="button"
               onClick={scrollToConsultation}
-              className="mt-8 rounded-full bg-white px-6 py-3 font-sans text-[13px] font-medium text-[#0a0a0a] transition hover:bg-white/90"
+              className="mt-8 rounded-full bg-white px-6 py-3 text-[13px] font-medium text-[#0a0a0a] transition hover:bg-white/90"
             >
               Plan your Heritage experience →
             </button>
-            <p className="mt-3 font-sans text-[11px] text-[#555555]">Or call us — we answer.</p>
+            <p className="mt-3 text-[11px] text-subtle">Or call us — we answer.</p>
           </div>
       </FullBleedHero>
 
@@ -446,7 +445,7 @@ export default function HeritagePage() {
 
       <Footer />
       {studio ? (
-        <LandingLayoutStudioPanel state={studioState} onChange={setStudioState} />
+        <HeroLayoutStudioPanel page="heritage" frame={heroFrame} onChange={setHeroFrame} />
       ) : null}
     </div>
   );
