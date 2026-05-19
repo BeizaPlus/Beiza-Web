@@ -95,13 +95,30 @@ Fields: deceased name/contact, requester relation/email, optional document, mess
 ## Family tree (data & UI)
 
 **Tree nodes:** `family_people` (self-referential `parent_id`) — not a separate `tree_nodes` table.  
+**Person fields (gender, career, etc.):** Added on `family_people`; read via `GET /api/circle/tree-data` which does `select("*")` on people — no extra read API work; consume from `people[]` in the JSON payload.  
+**Tree edges:** `tree_edges` table — persists person-to-person connections with `relationship_type`.  
 **Links:** `recording_person_links` (`about` | `by`).  
-**Biography:** `get_person_biography()` RPC (fragments from recordings).
+**Biography:** `get_person_biography()` RPC (fragments from recordings).  
+**Canvas positions:** `family_people.canvas_x / canvas_y` — saved on drag-stop.
 
-**UI:** `FamilyTreeCanvas` (react-d3-tree), `FamilyTreeNodeCard`, `PersonBiographyPanel`, `FamilyTreeMobileFocus`, `MemoryAboutPicker`.  
+**UI:** `FamilyTreeCanvas` (`@xyflow/react` v12), `PersonFlowNode` (8 handles, 4 sides), `PersonBiographyPanel`, `RelationshipPickerModal`, `TreeEdgeContextMenu`.  
 **Record flow:** “Who is this memory about?” on seal links person to recording.
 
-**Future:** React Flow + dagre canvas (not installed; step after gate is stable).
+**Edge connection flow:**
+1. Drag from any gold handle → blue connection line appears
+2. Release on target node handle → `onConnect` fires (uses `getNodes()` for live state — stale-closure fix)
+3. `RelationshipPickerModal` opens → user picks type → `confirmConnection` calls `saveTreeEdge`
+4. API path (`persistViaApi=true`): `POST /api/circle/tree-edge` → inserts to `tree_edges` via service role key
+5. Right-click an edge → `TreeEdgeContextMenu` → `DELETE /api/circle/tree-edge`
+6. Edges reload on mount via `fetchTreeEdges` (called in `useEffect` on `circleId` change)
+
+**Key files:**
+- `src/components/legacy/family-tree/FamilyTreeCanvas.tsx` — main canvas, connection logic
+- `src/components/legacy/family-tree/flow/PersonFlowNode.tsx` — handles outside content div (no overflow clipping)
+- `src/lib/legacy/treeCanvasPersistence.ts` — Supabase + API I/O for edges and positions
+- `src/lib/legacy/treeEdgeHandles.ts` — picks source/target handle IDs based on relative node position
+- `api/circle/tree-edge.ts` — POST (create) + DELETE (remove) edge via bearer token
+- `supabase/migrations/20260519T180000_tree_edges_canvas_positions.sql` — `tree_edges` table + RLS
 
 ---
 

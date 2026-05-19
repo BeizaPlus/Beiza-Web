@@ -13,6 +13,8 @@ export type PersonNodeData = {
   memoryCount: number;
   photoUrl?: string | null;
   selected?: boolean;
+  canEdit?: boolean;
+  onEditPerson?: (personId: string, displayName: string, relationLabel: string) => void;
 };
 
 export type MemoryNodeData = {

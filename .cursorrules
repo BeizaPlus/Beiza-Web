@@ -18,6 +18,15 @@ Canonical frame (`HERITAGE_HERO_DEFAULTS` / `src/data/heritage-hero-canonical.js
 - No max-width containers anywhere on this route
 - Fullscreen toggle must always be present on canvas controls
 
+### Tree canvas nodes
+- **`family_people` gender/career:** `GET /api/circle/tree-data` uses `select("*")` on `family_people` — new columns arrive in the payload automatically; no read-path API changes needed. Wire UI/types from `people[]` in the response.
+- steven.oppong node with photo: DO NOT change the photo or layout
+- Edge color: rgba(68,102,255,0.5) — never white or gray
+- Handle color: #E6A817
+- Disconnect: right-click edge → Remove connection, OR select edge + Backspace; right-click person node → Disconnect node (removes all edges for that person)
+- **Group nodes:** `layoutGroupNodes` normalises child coords to `(0,0)` inside the group bbox before setting `parentId`; children use `extent: "parent"`. Parent group nodes must appear before children in the nodes array. Keyboard `G` groups selection — guard `isTypingInInput()` so typing in the edit popover does not trigger it. Save `canvas_x`/`canvas_y` as absolute positions (parent offset + child relative).
+- **`onNodeDragStop`:** Read the current handler before editing. Preserve: `setPositionOverrides`, `setEdges` person-edge refresh via `treeEdgesToFlowEdges`, and `savePersonCanvasPosition`. Use `buildPersonAbsolutePositionMap` for edge refresh (not raw `node.position` when grouped). `useRef` must be imported from React for `groupStateRef`.
+
 ### Homepage hero (layout only)
 - Full bleed (100vw) — no max-width on the outer hero shell
 - Nav: 100% width, padding 0 48px (`px-12`), no max-width wrapper

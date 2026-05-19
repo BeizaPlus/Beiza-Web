@@ -382,6 +382,80 @@
     background: #222222;
   }
 
+  .family-tree-flow .family-tree-zoom-controls {
+    width: 52px;
+  }
+
+  .family-tree-flow .family-tree-zoom-controls .react-flow__controls-button {
+    width: 100%;
+    border-radius: 6px;
+  }
+
+  .family-tree-flow .family-tree-zoom-controls .react-flow__controls-button svg {
+    max-width: 24px;
+    max-height: 24px;
+  }
+
+  .family-tree-flow .family-tree-handle {
+    opacity: 1 !important;
+    z-index: 20;
+    pointer-events: all;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .family-tree-flow .react-flow__node-person {
+    overflow: visible !important;
+  }
+
+  .family-tree-flow .family-tree-person-node {
+    overflow: visible;
+  }
+
+  .family-tree-flow .react-flow__node-group {
+    background: rgba(230, 168, 23, 0.06);
+    border: 1px dashed rgba(230, 168, 23, 0.35);
+    border-radius: 12px;
+  }
+
+  .family-tree-flow .react-flow__node-person:hover .family-tree-handle,
+  .family-tree-flow .react-flow__node-person.selected .family-tree-handle {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 2px rgba(230, 168, 23, 0.35);
+  }
+
+  .family-tree-flow .react-flow__edges {
+    z-index: 2;
+  }
+
+  .family-tree-flow .react-flow__nodes {
+    z-index: 3;
+  }
+
+  /* Radix popovers/dialogs default to z-50; tree shell is z-60 */
+  body:has(.tree-shell) [data-radix-popper-content-wrapper] {
+    z-index: 100 !important;
+  }
+
+  body:has(.tree-shell) [role="dialog"][data-state="open"],
+  body:has(.tree-shell) [data-radix-dialog-overlay] {
+    z-index: 100;
+  }
+
+  .family-tree-flow .react-flow__edge-path {
+    stroke: rgba(68, 102, 255, 0.75);
+    stroke-width: 2;
+  }
+
+  .family-tree-flow .react-flow__edge.selected .react-flow__edge-path {
+    stroke: #ce1126;
+    stroke-width: 2;
+  }
+
+  .family-tree-flow .react-flow__connection-path {
+    stroke: rgba(68, 102, 255, 0.5);
+    stroke-width: 1.5;
+  }
+
   .glass-panel {
     background: var(--glass-overlay);
     border: 1px solid hsla(var(--glass-border) / 0.35);

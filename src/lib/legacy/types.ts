@@ -53,6 +53,8 @@ export interface FamilyPerson {
   member_id: string | null;
   parent_id: string | null;
   is_tree_anchor: boolean;
+  canvas_x?: number | null;
+  canvas_y?: number | null;
   created_by: string | null;
   created_at: string;
 }

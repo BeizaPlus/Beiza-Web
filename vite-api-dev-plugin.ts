@@ -7,6 +7,9 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 const API_ROUTES: Record<string, string> = {
   "/api/circle/verify-code": "/api/circle/verify-code.ts",
   "/api/circle/tree-data": "/api/circle/tree-data.ts",
+  "/api/circle/tree-edge": "/api/circle/tree-edge.ts",
+  "/api/circle/tree-position": "/api/circle/tree-position.ts",
+  "/api/circle/tree-person": "/api/circle/tree-person.ts",
   "/api/recovery-request": "/api/recovery-request.ts",
   "/api/heritage-inquiry": "/api/heritage-inquiry.ts",
 };

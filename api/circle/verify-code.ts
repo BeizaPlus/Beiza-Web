@@ -56,7 +56,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(404).json({ valid: false, error: "Circle not found." });
   }
 
-  if ((circle.access_code as string)?.toUpperCase() !== code) {
+  const overrideCode = (
+    process.env.CIRCLE_ADMIN_OVERRIDE_CODE ?? process.env.VITE_CIRCLE_ADMIN_OVERRIDE_CODE ?? ""
+  )
+    .trim()
+    .toUpperCase();
+  const usedAdminOverride = Boolean(overrideCode && code === overrideCode);
+
+  if (!usedAdminOverride && (circle.access_code as string)?.toUpperCase() !== code) {
     return res.status(200).json({ valid: false });
   }
 

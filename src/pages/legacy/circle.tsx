@@ -8,6 +8,7 @@ import {
   useFamilyPeople,
   useRecordingPersonLinks,
   useSyncCirclePeople,
+  useTreeEdges,
 } from "@/hooks/useFamilyTree";
 
 export default function LegacyCirclePage() {
@@ -18,6 +19,7 @@ export default function LegacyCirclePage() {
   );
   const { data: links = [] } = useRecordingPersonLinks(circle?.id);
   const { data: recordings = [] } = useLegacyRecordings(circle?.id);
+  const { data: treeEdges = [] } = useTreeEdges(circle?.id);
   const syncPeople = useSyncCirclePeople();
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export default function LegacyCirclePage() {
       people={people}
       links={links}
       recordings={recordings}
+      treeEdges={treeEdges}
       backHref="/legacy"
     />
   );

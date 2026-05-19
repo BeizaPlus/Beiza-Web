@@ -75,6 +75,8 @@ export default function FamilyTreeCanvasPage() {
       people={payload.people}
       links={payload.links}
       recordings={payload.recordings}
+      treeEdges={payload.treeEdges ?? []}
+      persistViaApi
       backHref="/circle"
       showInviteBar
       accessCode={payload.circle.access_code}

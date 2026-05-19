@@ -36,28 +36,40 @@ export function TreeFlowControls({ onFullscreenChange }: Props) {
     <Controls
       showInteractive={false}
       position="bottom-left"
+      className="family-tree-zoom-controls"
       style={{
         background: "#111111",
         border: "0.5px solid #1e1e1e",
-        borderRadius: 8,
-        padding: 4,
+        borderRadius: 10,
+        padding: 6,
         margin: 16,
+        height: "30vh",
+        minHeight: 200,
+        maxHeight: 360,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
-      <ControlButton onClick={() => zoomIn()} aria-label="Zoom in">
-        <ZoomIn className="h-4 w-4" />
+      <ControlButton onClick={() => zoomIn()} aria-label="Zoom in" className="!min-h-[44px] !flex-1">
+        <ZoomIn className="h-6 w-6" />
       </ControlButton>
-      <ControlButton onClick={() => zoomOut()} aria-label="Zoom out">
-        <ZoomOut className="h-4 w-4" />
+      <ControlButton onClick={() => zoomOut()} aria-label="Zoom out" className="!min-h-[44px] !flex-1">
+        <ZoomOut className="h-6 w-6" />
       </ControlButton>
       <ControlButton
         onClick={() => void fitView({ padding: 0.2, duration: 200 })}
         aria-label="Fit view"
+        className="!min-h-[44px] !flex-1"
       >
-        <span className="text-[10px] font-medium">Fit</span>
+        <span className="text-sm font-medium">Fit</span>
       </ControlButton>
-      <ControlButton onClick={() => void toggleFullscreen()} aria-label="Toggle fullscreen">
-        {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+      <ControlButton
+        onClick={() => void toggleFullscreen()}
+        aria-label="Toggle fullscreen"
+        className="!min-h-[44px] !flex-1"
+      >
+        {isFullscreen ? <Minimize2 className="h-6 w-6" /> : <Maximize2 className="h-6 w-6" />}
       </ControlButton>
     </Controls>
   );

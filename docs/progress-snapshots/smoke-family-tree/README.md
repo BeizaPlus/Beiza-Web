@@ -1,6 +1,6 @@
 # Smoke — family tree screenshots
 
-Captured: 2026-05-19T16:41:53.590Z
+Captured: 2026-05-19T17:06:57.897Z
 
 - **Circle:** Oppong
 - **Code:** `B7AB0E`

@@ -7,6 +7,8 @@ import type {
   RecordingPersonLink,
 } from "@/lib/legacy/types";
 import { sortBiographyFragments } from "@/lib/legacy/familyTree";
+import { fetchTreeEdges } from "@/lib/legacy/treeCanvasPersistence";
+import type { TreeEdgeRow } from "@/lib/legacy/treeRelationships";
 
 export function useFamilyPeople(circleId?: string) {
   return useQuery({
@@ -209,4 +211,15 @@ export async function linkRecordingToPeople(params: {
     aboutPerson,
     createdPlaceholder: params.choice.type === "new",
   };
+}
+
+export function useTreeEdges(circleId?: string) {
+  return useQuery({
+    queryKey: ["legacy", "tree-edges", circleId],
+    queryFn: async () => {
+      if (!circleId) return [];
+      return fetchTreeEdges(circleId, false);
+    },
+    enabled: Boolean(supabase && circleId),
+  });
 }

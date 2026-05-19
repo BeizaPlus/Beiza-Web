@@ -39,7 +39,12 @@ export default function FamilyTreeEnterPage() {
     try {
       const result = await verifyCircleAccessCode(circleId, code.trim().toUpperCase());
       if (!result.valid || !result.token) {
-        setError("That code isn't right. Check with your family admin.");
+        const badId = circleId.includes("<") || circleId.length < 32;
+        setError(
+          badId
+            ? "Invalid circle link — open this circle from /circle and use the real URL, not a placeholder."
+            : "That code isn't right. Check with your family admin.",
+        );
         return;
       }
       storeCircleToken(circleId, result.token);

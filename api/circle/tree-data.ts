@@ -61,6 +61,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const { data: people } = await supabase.from("family_people").select("*").eq("circle_id", circleId);
 
+  const { data: treeEdges, error: edgesError } = await supabase
+    .from("tree_edges")
+    .select("*")
+    .eq("circle_id", circleId);
+  if (edgesError && !edgesError.message.includes("tree_edges")) {
+    return res.status(500).json({ error: edgesError.message });
+  }
+
   const { data: recordings } = await supabase
     .from("recordings")
     .select("id, circle_id, prompt, audio_url, duration_seconds, title, created_at, recorded_by")
@@ -84,6 +92,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     people: people ?? [],
     recordings: recordings ?? [],
     links,
+    treeEdges: treeEdges ?? [],
     memberCount: people?.length ?? 0,
     memoryCount: recordings?.length ?? 0,
   });

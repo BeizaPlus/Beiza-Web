@@ -49,6 +49,7 @@ export type CircleTreePayload = {
   people: import("@/lib/legacy/types").FamilyPerson[];
   recordings: import("@/lib/legacy/types").LegacyRecording[];
   links: import("@/lib/legacy/types").RecordingPersonLink[];
+  treeEdges?: import("@/lib/legacy/treeRelationships").TreeEdgeRow[];
   memberCount: number;
   memoryCount: number;
 };
