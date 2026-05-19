@@ -1,99 +1,34 @@
-# Beiza Web — Legacy Product Summary
+# Beiza Web — Product Summary
 
 **Repo:** [BeizaPlus/Beiza-Web](https://github.com/BeizaPlus/Beiza-Web)  
 **Live:** https://beizaplus.com  
-**Stack:** Vite + React + Tailwind + Supabase (Vercel serverless API)
+**Stack:** Vite + React + Tailwind + Supabase · Vercel serverless API
 
-Last updated: May 2026 · branch `main`
-
-### Asset map (heroes)
-| Image | Where |
-|-------|--------|
-| `beiza-elder-gye-nyame-hero.png` | `/heritage` only |
-| `beiza-ernestina-portrait-bw.png` | Homepage Events hero, `/events` |
-| `adinkra-hands-hero.png` | Homepage top hero (CMS fallback) |
-
-Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15) 100%)` via `FullBleedHero`.
-
-### Latest fixes
-- **Recording:** No duration cap for Circle; full blob capture (`recorder.start()` without timeslice); duration from audio metadata; **Done** button while recording; 5 GB storage gate on upload only.
-- **Testimonials:** Aligned to vault/pricing tokens (12px radius, plain relation text, flag + country line, 8px chain dots).
+Last updated: May 2026 · branch `main` · commit `771fb94`
 
 ---
 
-## What shipped (recent)
+## Product navigation (marketing site)
 
-### Landing & brand
+Primary nav — three core items only:
 
-| Area | Details |
-|------|---------|
-| **Voices that stayed** | Replaced testimonial carousel with vertical cards, chain motif, MadamRose featured card |
-| **Hero image** | `beiza-elder-gye-nyame-hero.png` — cinematic portrait; Gye Nyame framing on `/heritage` |
-| **Events portrait** | `beiza-ernestina-portrait-bw.png` — landing Events card fallback |
-| **Homepage hero** | Full-bleed elder image + left gradient overlay; framing via Layout Studio |
-| **Closing CTA** | Two-line subheading; “Explore the vault” → `/vault/explore` |
+| Label | Route | Purpose |
+|-------|--------|---------|
+| **Vault** | `/vault` → `/legacy/vault` | Recordings, preserved memories (the past) |
+| **Circle** | `/circle` | Family circle directory → access gate → private tree |
+| **Heritage** | `/heritage` | White Swan, premium tier, recovery entry |
 
-### `/heritage` — White Swan experience
+- **Contact** — white pill CTA (right), `/contact`
+- **Pricing** — footer only: *Plans & pricing →* `/pricing`
+- **Stories** — footer only: `/events`
+- **Recover a voice** — `/recover` (linked from Heritage hero, footer, Circle directory, legacy home)
 
-- Route: **`/heritage`** · redirect **`/white-swan` → `/heritage`**
-- Full page: hero, feature grid, White Swan callout, pricing comparison, consultation form, closing quote
-- SEO title: *Beiza Heritage · Memorial & Legacy Coordination* (not “White Swan” in tab)
-- Linked from Heritage pricing CTA, footer *Planning ahead? Heritage →*
+**Active nav:** `#ffffff` + centered `1.5px #E6A817` dot below  
+**Inactive:** `#666666` · Vault/Circle hover white · Heritage hover gold (`#E6A817`)
 
-### Legacy app (`/legacy`)
+**Mobile:** drawer with Playfair Display links; **+ Start recording →** (`/record`); **Pricing →** below.
 
-| Tier | Recording | Rename | Delete | Share | Storage |
-|------|-----------|--------|--------|-------|---------|
-| **Circle** (free) | Unlimited length | Yes | Locked (upsell) | No | 5 GB |
-| **Keeper** ($4.99/mo) | Yes | Yes | Yes | Yes (fragment-protected) | 500 MB |
-| **Heritage** ($200/yr) | Yes | Yes | Yes | Yes | Unlimited |
-
-- Delete upsell → Keeper dialog → `/pricing`
-- Tier override for dev: `VITE_LEGACY_TIER=keeper|heritage`
-
-### Pricing & UI polish
-
-- USD tiers on homepage + **`/pricing`**
-- **CasketIcon** — gold stroke SVG replaces swan emoji in White Swan callouts
-- Pricing cards: flex body + `mt-auto` CTA so all three buttons share one baseline
-
-### Public explore
-
-- **`/vault/explore`** — public vault covers only; click shows “private” message
-
-### APIs & database
-
-| Item | Path / table |
-|------|----------------|
-| Heritage inquiries | `POST /api/heritage-inquiry` → `heritage_inquiries` |
-| Recording rename/delete RLS | `20260520T100000_legacy_recordings_update_delete.sql` |
-| Heritage table | `20260520T120000_heritage_inquiries.sql` |
-
-**Vercel env required for forms:** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
-
----
-
-## Hero image controls (Layout Studio)
-
-- **Dev:** panel bottom-right by default  
-- **Any env:** add `?studio=1` (hide with `?studio=0`)
-- **Zoom:** 70%–160% with **− / +** and slider; pan with Background X/Y
-- **Homepage:** full panel (hero + sections) — `beiza-landing-layout-studio`
-- **`/events` & `/heritage`:** hero-only panel — per-page keys `beiza-hero-studio:events` / `beiza-hero-studio:heritage` (landing featured event shares the Events key)
-
----
-
-## Asset naming convention
-
-`[product]-[subject/content]-[usage]-[variant].[ext]`
-
-See `public/images/ASSETS.md` for the current file list.
-
-| File | Usage |
-|------|--------|
-| `beiza-elder-gye-nyame-hero.png` | Homepage, Heritage, Events heroes |
-| `beiza-ernestina-portrait-bw.png` | Events / landing featured card |
-| `the-leader-mockup.png` | What We Do product mockup |
+Recording is **not** in the main nav — it is contextual on the Circle tree header: **+ Add memory →** → `/record`.
 
 ---
 
@@ -102,36 +37,206 @@ See `public/images/ASSETS.md` for the current file list.
 | URL | Purpose |
 |-----|---------|
 | `/` | Landing |
-| `/legacy` | Family circle app |
-| `/legacy/record` | Voice recording |
-| `/legacy/vault` | Memory vault |
+| `/vault` | Redirect → `/legacy/vault` (authenticated memory vault) |
+| `/record` | Redirect → `/legacy/record` |
+| `/circle` | Public directory of family circle covers |
+| `/circle/:id/enter` | Access code gate (6-char, no auth required) |
+| `/circle/:id/tree` | Private family tree canvas (token required) |
+| `/family-trees` | Redirect → `/circle` (legacy URLs still work for enter/tree) |
+| `/recover` | Voice recovery intake — no login (White Swan / Heritage) |
+| `/heritage` | Heritage / White Swan experience |
+| `/white-swan` | Redirect → `/heritage` |
 | `/pricing` | Legacy curation pricing |
-| `/heritage` | White Swan / Heritage experience |
-| `/vault/explore` | Public vault covers |
-| `/white-swan` | Redirects to `/heritage` |
+| `/vault/explore` | Public vault covers (browse only) |
+| `/legacy` | Legacy app shell (home, record, vault, family, tree) |
+| `/legacy/circle` | Family tree (member auth via Supabase) |
+| `/legacy/record` | Voice recording flow |
+| `/legacy/vault` | Memory vault playback |
+| `/legacy/family` | Create/join circle · access code + invite code |
+| `/events` | Live events + trending stories carousel |
+| `/gallery` | Redirect → `/circle` |
+
+---
+
+## Circle & access code
+
+**Model:** Public cover · private tree. You earn entry by belonging to the family.
+
+1. **`/circle`** — grid of circle covers (name, member/memory counts, since year, Active / In memoriam badge, mini SVG tree preview).
+2. Click cover → **`/circle/:id/enter`** — full-screen gate (`#0a0a0a`), 6-character code, gold **Enter circle →**.
+3. **`POST /api/circle/verify-code`** — validates code, issues signed session token, creates `circle_members` row (`joined_via: 'code'`).
+4. Token stored: `localStorage` key `beiza_circle_{id}_token`.
+5. **`/circle/:id/tree`** — react-d3-tree canvas; biography panel; **+ Add memory →** → `/record?circle=…`.
+
+**Admin:** On circle creation, DB trigger sets `family_circles.access_code` (6-char). Keeper copies from `/legacy/family` (separate app **invite code** for Legacy sign-in).
+
+**APIs**
+
+| Endpoint | Role |
+|----------|------|
+| `POST /api/circle/verify-code` | Validate code, return `{ valid, token }` |
+| `GET /api/circle/tree-data?circle_id=` | Bearer token → people, recordings, links |
+
+---
+
+## Voice recovery (`/recover`)
+
+Highest-priority Heritage flow — families retrieving recordings after a loss.
+
+- Standalone page, no Beiza account required
+- Form → **`POST /api/recovery-request`** → table `recovery_requests`
+- Optional document upload → `recovery-documents` storage bucket
+- Success: gold confirmation copy, no redirect
+
+Fields: deceased name/contact, requester relation/email, optional document, message. Status: `pending` | `reviewing` | `resolved`.
+
+---
+
+## Family tree (data & UI)
+
+**Tree nodes:** `family_people` (self-referential `parent_id`) — not a separate `tree_nodes` table.  
+**Links:** `recording_person_links` (`about` | `by`).  
+**Biography:** `get_person_biography()` RPC (fragments from recordings).
+
+**UI:** `FamilyTreeCanvas` (react-d3-tree), `FamilyTreeNodeCard`, `PersonBiographyPanel`, `FamilyTreeMobileFocus`, `MemoryAboutPicker`.  
+**Record flow:** “Who is this memory about?” on seal links person to recording.
+
+**Future:** React Flow + dagre canvas (not installed; step after gate is stable).
+
+---
+
+## Events & stories
+
+**`/events`**
+
+- Hero (Ernestina portrait)
+- **Live events** row — featured productions (`is_live`, `useLiveEvents`)
+- **Trending** carousel — MasterClass-style vertical cards (`event_stories` table + fallbacks)
+
+**Carousel UX:** `useDraggableScroll()` hook + `[data-draggable]` CSS — mouse drag on desktop; touch scroll native; snap + arrow buttons unchanged.
+
+---
+
+## Landing & brand
+
+| Area | Details |
+|------|---------|
+| **Voices that stayed** | Horizontal scroll; equal-height cards (`min-h-[280px]`, `items-stretch`, quote `flex-1`, footer `mt-auto`); country line = name only (`11px #555`, no flag/code) |
+| **What We Do** | Locale toggle: Global · Ghana · Twi · Spanish · French — inline SVG flags (`FlagIcon.tsx`), no CDN/emoji |
+| **Hero images** | See asset map below |
+| **Design tokens** | `src/lib/brandUi.ts` — `marketingSection`, `segmentToggleShell`, `carouselControlButton`, `legacySurface`, etc. |
+
+### Asset map (heroes)
+
+| Image | Where |
+|-------|--------|
+| `beiza-elder-gye-nyame-hero.png` | `/heritage` only |
+| `beiza-ernestina-portrait-bw.png` | Homepage Events hero, `/events` |
+| `adinkra-hands-hero.png` | Homepage top hero (CMS fallback) |
+
+Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15) 100%)` via `FullBleedHero`.
+
+---
+
+## `/heritage` — White Swan experience
+
+- Route: **`/heritage`** · **`/white-swan` → `/heritage`**
+- Hero, features, White Swan callout, pricing comparison, consultation form
+- SEO: *Beiza Heritage · Memorial & Legacy Coordination*
+- Links: pricing, footer, **Recover a voice →** `/recover`
+
+---
+
+## Legacy app (`/legacy`)
+
+| Tier | Recording | Rename | Delete | Share | Storage |
+|------|-----------|--------|--------|-------|---------|
+| **Circle** (free) | Unlimited length | Yes | Locked (upsell) | No | 5 GB |
+| **Keeper** ($4.99/mo) | Yes | Yes | Yes | Yes | 500 MB |
+| **Heritage** ($200/yr) | Yes | Yes | Yes | Yes | Unlimited |
+
+- No duration cap for Circle; blob capture; **Done** while recording; 5 GB gate on upload
+- Delete upsell → Keeper → `/pricing`
+- Dev tier: `VITE_LEGACY_TIER=keeper|heritage`
+- Bottom nav: Home · Tree · Record · Vault · Invite (legacy shell; marketing nav is separate)
+
+---
+
+## APIs & database
+
+### Vercel API routes
+
+| Route | Table / action |
+|-------|----------------|
+| `POST /api/heritage-inquiry` | `heritage_inquiries` |
+| `POST /api/recovery-request` | `recovery_requests` + optional storage upload |
+| `POST /api/circle/verify-code` | `circle_access_tokens`, `circle_members` |
+| `GET /api/circle/tree-data` | Service-role read of tree data (token validated) |
+
+**Env (Vercel):** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` · optional `CIRCLE_ACCESS_SECRET`
+
+### Supabase migrations (apply in order)
+
+| Migration | Contents |
+|-----------|----------|
+| `20260519T120000_legacy_family_vault.sql` | `family_circles`, `family_members`, `recordings` |
+| `20260522T100000_family_tree.sql` | `family_people`, `recording_person_links`, biography RPC |
+| `20260523T100000_event_stories_trending.sql` | `event_stories`, live event fields |
+| `20260524T100000_recovery_access_family_trees.sql` | `access_code`, `circle_members`, `circle_access_tokens`, `recovery_requests`, public directory RPCs |
+
+**RPCs:** `list_public_family_circles()`, `get_public_circle_cover(uuid)`
+
+---
+
+## Shared hooks & components
+
+| Path | Role |
+|------|------|
+| `src/hooks/useDraggableScroll.ts` | Mouse drag-to-scroll for all horizontal carousels |
+| `src/hooks/useFamilyTreesDirectory.ts` | Public circles, cover, verify code, tree fetch |
+| `src/hooks/useFamilyTree.ts` | `family_people` CRUD, recording links |
+| `src/config/productNav.ts` | Vault · Circle · Heritage + footer links |
+| `src/components/ui/FlagIcon.tsx` | Inline SVG flags (GH, ES, FR, GLOBAL) |
+
+---
+
+## Hero image controls (Layout Studio)
+
+- **Dev:** panel bottom-right · **Any env:** `?studio=1`
+- **Zoom:** 70%–160%; pan X/Y
+- **Keys:** `beiza-landing-layout-studio`, `beiza-hero-studio:events`, `beiza-hero-studio:heritage`
 
 ---
 
 ## Deploy checklist
 
 1. Push to `main` — Vercel auto-deploys  
-2. Run Supabase migrations (recordings RLS + `heritage_inquiries`)  
-3. Set `SUPABASE_SERVICE_ROLE_KEY` on Vercel for heritage form  
-4. Hard-refresh after deploy to bust CDN cache on hero images  
+2. Run Supabase migrations (see table above — especially `20260522`, `20260523`, `20260524`)  
+3. Set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` on Vercel  
+4. Optional: `CIRCLE_ACCESS_SECRET` for circle session tokens  
+5. Hard-refresh after deploy for hero CDN cache  
 
 ---
 
 ## Recent commits (reference)
 
-- `c06e61e` — Pricing CTA alignment, CasketIcon, outro two-line copy  
-- `54f4f82` — Cinematic hero image, zoom controls (Layout Studio)  
-- `1b29eec` — Heritage page, Gye Nyame hero, USD pricing, vault explore  
-- `8b8fd24` — Voices section, free-tier recording/rename, Keeper upsell  
+- `771fb94` — Circle flows, recovery, access gate, events trending, nav (Vault/Circle/Heritage), draggable carousels, FlagIcon, migrations  
+- `c7ce7b4` — Voices section design alignment  
+- `a739aba` — Hero zoom on Events & Heritage  
+- `3c2ee8d` — What We Do four-locale toggle  
 
 ---
 
 ## Docs elsewhere
 
-- `LEGACY.md` — `/legacy` routes and deploy  
-- `docs/HERITAGE_PAGE.md` — Heritage hero + SEO notes  
+- `LEGACY.md` — `/legacy` deploy (update: includes `/legacy/circle`)  
+- `docs/HERITAGE_PAGE.md` — Heritage hero + SEO  
 - `public/images/ASSETS.md` — image naming  
+
+---
+
+## Code comments (product intent)
+
+Recovery is the most important feature — the reason Heritage exists.  
+The access code is the moat; the tree is private, the cover is public.  
+The recordings are the inheritance; recovery ensures they are not lost.
