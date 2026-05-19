@@ -12,7 +12,9 @@ import {
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { studioCssVars } from "@/components/dev/landingLayoutStudioState";
 import { SectionHeader } from "@/components/framer/SectionHeader";
+import { FullBleedHero } from "@/components/FullBleedHero";
 import { VoicesThatStayedSection } from "@/components/landing/VoicesThatStayedSection";
+import { BRAND_IMAGES, HERO_OVERLAY_GRADIENT } from "@/lib/brandImages";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { FAQItem } from "@/components/framer/FAQItem";
 import { ProductsPanel } from "@/components/shopify/ProductsPanel";
@@ -130,15 +132,10 @@ const Landing = () => {
           ctaText={hero.ctaLabel ?? "Start Your Legacy"}
           ctaLink={hero.ctaHref ?? "/legacy"}
           reviews={hero.reviews ?? undefined}
-          backgroundImage={
-            hero.backgroundMedia?.src ?? "/images/beiza-elder-gye-nyame-hero.png"
-          }
+          backgroundImage={hero.backgroundMedia?.src ?? BRAND_IMAGES.homepageHero}
           backgroundPosition={`${studioState.hero.posX}% ${studioState.hero.posY}%`}
           backgroundScale={studioState.hero.scale}
-          overlayStyle={{
-            background:
-              "linear-gradient(to right, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.2) 100%)",
-          }}
+          overlayStyle={{ background: HERO_OVERLAY_GRADIENT }}
         />
       ) : null}
 
@@ -196,28 +193,28 @@ const Landing = () => {
         ) : null}
 
         {showRest && event ? (
-          <section className="mx-auto max-w-6xl px-6 py-24">
-            <div className="glass-panel flex flex-col overflow-hidden rounded-[30px] border border-white/10 md:flex-row">
-              <div className="flex-1 space-y-4 px-8 py-10 md:px-12">
-                <SectionHeader
-                  eyebrow="Events"
-                  title="Because their story deserves to be unforgettable."
-                  description={event.description ?? "Explore our featured celebration to see how we transform memories into immersive experiences."}
-                />
-                {SHOW_FEATURED_EVENT_EXPERIENCE_CTA ? (
+          <FullBleedHero
+            imageSrc={event.heroMedia?.src ?? BRAND_IMAGES.eventsStoriesHero}
+            imageAlt={event.heroMedia?.alt ?? event.title ?? "Featured celebration"}
+            objectPosition="center top"
+          >
+            <div className="max-w-xl text-left">
+              <SectionHeader
+                eyebrow="Events"
+                title="Because their story deserves to be unforgettable."
+                description={
+                  event.description ??
+                  "Explore our featured celebration to see how we transform memories into immersive experiences."
+                }
+                variant="dark"
+              />
+              {SHOW_FEATURED_EVENT_EXPERIENCE_CTA ? (
+                <div className="mt-8">
                   <CTAButton to="/memoirs" label="Experience" />
-                ) : null}
-              </div>
-              <div className="relative aspect-[4/5] w-full overflow-hidden md:w-1/3">
-                <img
-                  src={event.heroMedia?.src ?? "/images/beiza-ernestina-portrait-bw.png"}
-                  alt={event.heroMedia?.alt ?? event.title}
-                  className="h-full w-full object-cover object-center"
-                  loading="lazy"
-                />
-              </div>
+                </div>
+              ) : null}
             </div>
-          </section>
+          </FullBleedHero>
         ) : null}
 
         {showPricing ? (

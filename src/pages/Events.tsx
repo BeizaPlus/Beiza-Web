@@ -6,12 +6,8 @@ import { Footer } from "@/components/Footer";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { useFeaturedEvent, usePublishedEvents } from "@/hooks/usePublicContent";
-import { FramedHeroImage } from "@/components/FramedHeroImage";
-import {
-  LandingLayoutStudioPanel,
-  useLandingLayoutStudio,
-} from "@/components/dev/LandingLayoutStudio";
-import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
+import { FullBleedHero } from "@/components/FullBleedHero";
+import { BRAND_IMAGES } from "@/lib/brandImages";
 
 const EmptyState = ({ title, description }: { title: string; description: ReactNode }) => (
   <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-[32px] border border-white/10 p-16 text-center text-white/70">
@@ -20,13 +16,8 @@ const EmptyState = ({ title, description }: { title: string; description: ReactN
   </div>
 );
 
-const EVENTS_HERO_IMAGE = "/images/beiza-elder-gye-nyame-hero.png";
-
 const Events = () => {
   const navigate = useNavigate();
-  const studioPanel = isLayoutStudioEnabled();
-  const { panelEnabled: studio, state: studioState, setState: setStudioState } =
-    useLandingLayoutStudio(studioPanel);
   const { data: featuredEvent, isLoading: featuredLoading } = useFeaturedEvent();
   const { data: events = [], isLoading: eventsLoading } = usePublishedEvents();
 
@@ -51,33 +42,21 @@ const Events = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navigation />
-      <section className="relative -mt-24 min-h-[min(72vh,640px)] overflow-hidden">
-        <FramedHeroImage
-          src={EVENTS_HERO_IMAGE}
-          alt="Elder seated at peace with the Gye Nyame symbol behind him"
-          frame={studioState.hero}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to right, rgba(0,0,0,0.9) 35%, rgba(0,0,0,0.35) 70%, rgba(0,0,0,0.15) 100%)",
-          }}
-          aria-hidden
-        />
-        <div className="relative z-10 mx-auto flex min-h-[min(72vh,640px)] max-w-6xl items-end px-6 pb-16 pt-32 md:px-12 md:pb-20">
-          <div className="max-w-xl">
-            <p className="text-[10px] font-sans uppercase tracking-[0.3em] text-[#E6A817]">Events</p>
-            <h1 className="mt-3 font-display text-3xl leading-tight text-white md:text-4xl">
-              Because their story deserves to be unforgettable.
-            </h1>
-            <p className="mt-4 font-sans text-base leading-relaxed text-[#aaaaaa]">
-              Gravitas without grief. Presence without sentimentality — the visual language of how
-              Beiza gathers families.
-            </p>
-          </div>
+      <FullBleedHero
+        imageSrc={BRAND_IMAGES.eventsStoriesHero}
+        imageAlt="Madam Ernestina — portrait in black and white"
+        objectPosition="center top"
+      >
+        <div className="max-w-xl text-left">
+          <p className="font-sans text-[10px] uppercase tracking-[0.3em] text-[#E6A817]">Events</p>
+          <h1 className="mt-3 font-display text-3xl leading-tight text-white md:text-4xl">
+            Because their story deserves to be unforgettable.
+          </h1>
+          <p className="mt-4 font-sans text-base leading-relaxed text-[#aaaaaa]">
+            Personal loss, family memory, and gatherings that honor who they were.
+          </p>
         </div>
-      </section>
+      </FullBleedHero>
       <main className="space-y-24 pb-24 pt-12 lg:space-y-32 lg:pb-32">
         <section className="mx-auto max-w-6xl px-6">
           <SectionHeader
@@ -239,9 +218,6 @@ const Events = () => {
         </section>
       </main>
       <Footer />
-      {studio ? (
-        <LandingLayoutStudioPanel state={studioState} onChange={setStudioState} />
-      ) : null}
     </div>
   );
 };

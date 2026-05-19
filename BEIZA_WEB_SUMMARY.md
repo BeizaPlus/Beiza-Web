@@ -6,6 +6,15 @@
 
 Last updated: May 2026 · branch `main`
 
+### Asset map (heroes)
+| Image | Where |
+|-------|--------|
+| `beiza-elder-gye-nyame-hero.png` | `/heritage` only |
+| `beiza-ernestina-portrait-bw.png` | Homepage Events hero, `/events` |
+| `adinkra-hands-hero.png` | Homepage top hero (CMS fallback) |
+
+Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15) 100%)` via `FullBleedHero`.
+
 ### Latest fixes
 - **Recording:** No duration cap for Circle; full blob capture (`recorder.start()` without timeslice); duration from audio metadata; **Done** button while recording; 5 GB storage gate on upload only.
 - **Testimonials:** Aligned to vault/pricing tokens (12px radius, plain relation text, flag + country line, 8px chain dots).

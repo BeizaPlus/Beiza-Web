@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { CTAButton } from "./framer/CTAButton";
+import { HERO_OVERLAY_GRADIENT, HERO_SHELL_CLASS, HERO_CONTENT_CLASS, HERO_CONTENT_BOTTOM_STYLE } from "@/lib/brandImages";
 import { FALLBACK_SITE_SETTINGS } from "@/lib/fallbackContent";
 
 interface HeroProps {
@@ -43,10 +44,7 @@ export const Hero = ({
   const buttonTarget = ctaLink ?? ctaHref ?? FALLBACK_SITE_SETTINGS.heroCtaHref;
 
   return (
-    <header
-      className="relative -mt-24 flex min-h-[calc(100vh+6rem)] items-stretch justify-center overflow-hidden"
-      id="hero"
-    >
+    <header className={HERO_SHELL_CLASS} id="hero">
       {backgroundImage ? (
         <motion.div
           className="absolute inset-0 overflow-hidden"
@@ -74,10 +72,7 @@ export const Hero = ({
         <div className="hero-overlay" />
       )}
 
-      <div
-        className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-end px-6 pt-28 md:px-12 md:pt-32"
-        style={{ paddingBottom: "max(7rem, var(--hero-copy-bottom, 38vh))" }}
-      >
+      <div className={HERO_CONTENT_CLASS} style={HERO_CONTENT_BOTTOM_STYLE}>
         <div className="max-w-xl text-left">
           <motion.h1
             initial={{ opacity: 0, filter: "blur(16px)", scale: 1.12 }}

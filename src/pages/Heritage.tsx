@@ -10,19 +10,16 @@ import {
 } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { FramedHeroImage } from "@/components/FramedHeroImage";
+import { FullBleedHero } from "@/components/FullBleedHero";
 import {
   LandingLayoutStudioPanel,
   useLandingLayoutStudio,
 } from "@/components/dev/LandingLayoutStudio";
+import { BRAND_IMAGES } from "@/lib/brandImages";
 import { CasketIcon } from "@/components/icons/CasketIcon";
 import { cn } from "@/lib/utils";
 import { isWhiteSwanIncludedForUser, HERITAGE_GOLD } from "@/lib/legacy/heritage";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
-
-const HERO_IMAGE = "/images/beiza-elder-gye-nyame-hero.png";
-const HERO_GRADIENT =
-  "linear-gradient(to right, rgba(0,0,0,0.88) 45%, rgba(0,0,0,0.15) 100%)";
 
 const FEATURES = [
   {
@@ -126,14 +123,12 @@ export default function HeritagePage() {
       <Navigation />
 
       {/* 1. Hero */}
-      <header className="relative min-h-[92svh] w-full overflow-hidden md:min-h-[92vh]">
-        <FramedHeroImage
-          src={HERO_IMAGE}
-          alt="Elder at peace with the Gye Nyame Adinkra symbol — except God, nothing is greater"
-          frame={studioState.hero}
-        />
-        <div className="absolute inset-0" style={{ background: HERO_GRADIENT }} aria-hidden />
-        <div className="relative z-10 mx-auto flex min-h-[92svh] max-w-6xl items-center px-8 py-28 md:min-h-[92vh] md:px-20 md:py-0">
+      <FullBleedHero
+        imageSrc={BRAND_IMAGES.heritageHero}
+        imageAlt="Elder at peace with the Gye Nyame Adinkra symbol — except God, nothing is greater"
+        frame={studioState.hero}
+        contentClassName="!items-center md:!items-end"
+      >
           <div className="max-w-[520px]">
             <p
               className="font-sans text-[10px] uppercase tracking-[0.3em]"
@@ -161,8 +156,7 @@ export default function HeritagePage() {
             </button>
             <p className="mt-3 font-sans text-[11px] text-[#555555]">Or call us — we answer.</p>
           </div>
-        </div>
-      </header>
+      </FullBleedHero>
 
       {/* 2. What's included */}
       <section className="bg-[#0a0a0a] px-6 py-16 md:px-0 md:py-24">
