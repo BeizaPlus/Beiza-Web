@@ -12,14 +12,13 @@ import {
 } from "@/hooks/useLegacy";
 import type { RecordPhase } from "@/lib/legacy/types";
 import { FREE_VAULT_STORAGE_BYTES, getAudioDurationFromBlob } from "@/lib/legacy/audioRecording";
+import {
+  pickRandomStoryPrompt,
+  resolveStoryPrompt,
+  type StoryPrompt,
+} from "@/lib/prompts";
 import { Loader2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-const FALLBACK_PROMPTS = [
-  "What is your earliest memory of your mother's cooking?",
-  "Describe the house you grew up in — what did it smell like?",
-  "Who taught you the most important thing you know?",
-];
 
 /** No max duration for Circle (free) — storage quota is the only gate on save. */
 const MIN_RECORD_SECONDS = 0;
@@ -36,7 +35,7 @@ export default function LegacyRecordPage() {
   const circle = circleCtx?.circle;
 
   const [phase, setPhase] = useState<RecordPhase>("prepare");
-  const [prompt, setPrompt] = useState(FALLBACK_PROMPTS[0]);
+  const [prompt, setPrompt] = useState<StoryPrompt>(() => pickRandomStoryPrompt());
   const [title, setTitle] = useState("");
   const [loadingPrompts, setLoadingPrompts] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -81,9 +80,10 @@ export default function LegacyRecordPage() {
     setLoadingPrompts(true);
     try {
       const prompts = await fetchLegacyPrompts({ circleId: circle.id });
-      if (prompts[0]) setPrompt(prompts[0]);
+      if (prompts[0]) setPrompt(resolveStoryPrompt(prompts[0]));
+      else setPrompt(pickRandomStoryPrompt());
     } catch {
-      setPrompt(FALLBACK_PROMPTS[Math.floor(Math.random() * FALLBACK_PROMPTS.length)]);
+      setPrompt(pickRandomStoryPrompt());
     } finally {
       setLoadingPrompts(false);
     }
@@ -265,7 +265,7 @@ export default function LegacyRecordPage() {
         <h2 className="mt-2 font-heading text-xl font-semibold">Record a memory</h2>
       </div>
 
-      {phase !== "seal" && <LegacyRecordPrompt prompt={prompt} />}
+      {phase !== "seal" && <LegacyRecordPrompt prompt={prompt.text} />}
 
       {phase === "upload" && recordedUri ? (
         <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
@@ -287,7 +287,7 @@ export default function LegacyRecordPage() {
               size="sm"
               className="gap-2"
               disabled={loadingPrompts || isRequestingMic}
-              onClick={() => void loadPrompts()}
+              onClick={() => setPrompt(pickRandomStoryPrompt(prompt.id))}
             >
               {loadingPrompts ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

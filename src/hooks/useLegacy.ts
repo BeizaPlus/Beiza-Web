@@ -6,6 +6,7 @@ import type {
   LegacyRecording,
 } from "@/lib/legacy/types";
 import { extensionForMime, FREE_VAULT_STORAGE_BYTES } from "@/lib/legacy/audioRecording";
+import type { StoryPrompt } from "@/lib/prompts";
 
 const LEGACY_BUCKET = "legacy-recordings";
 
@@ -158,7 +159,7 @@ export function useJoinLegacyCircle() {
 
 export async function uploadLegacyRecording(params: {
   circleId: string;
-  prompt: string;
+  prompt: StoryPrompt;
   blob: Blob;
   durationSeconds: number;
   title?: string;
@@ -195,7 +196,11 @@ export async function uploadLegacyRecording(params: {
       id: recordingId,
       circle_id: params.circleId,
       recorded_by: userId,
-      prompt: params.prompt,
+      prompt: params.prompt.text,
+      prompt_id: params.prompt.id,
+      prompt_category: params.prompt.category,
+      prompt_arc_position: params.prompt.arc_position,
+      prompt_tags: params.prompt.tags,
       audio_url: publicUrl.publicUrl,
       duration_seconds: params.durationSeconds,
       title: params.title?.trim() || null,

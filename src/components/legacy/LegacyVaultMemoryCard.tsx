@@ -55,16 +55,16 @@ export function LegacyVaultMemoryCard({
     <li className="relative flex items-start gap-3.5 overflow-hidden rounded-xl border border-[#2a2a2a] bg-[#1a1a1a] px-4 py-3.5">
       <button
         type="button"
-        className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-0"
-        style={{ backgroundColor: "#2e2200" }}
+        className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-0 disabled:opacity-50"
+        style={{ backgroundColor: GOLD }}
         onClick={onPlay}
         disabled={!recording.audio_url}
         aria-label={isPlaying ? "Pause memory" : "Play memory"}
       >
         {isPlaying ? (
-          <Pause className="h-4 w-4" style={{ color: GOLD }} aria-hidden />
+          <Pause className="h-4 w-4 fill-[#111] text-[#111]" aria-hidden />
         ) : (
-          <Play className="h-4 w-4 pl-0.5" style={{ color: GOLD }} aria-hidden />
+          <Play className="h-4 w-4 fill-[#111] pl-0.5 text-[#111]" aria-hidden />
         )}
       </button>
 
@@ -94,6 +94,7 @@ export function LegacyVaultMemoryCard({
               setEditing(true);
             }}
           >
+            {/* Onboarding TODO: nudge users to tap the pencil and name memories */}
             <p className="truncate text-sm font-semibold text-white">
               {recording.title || "Untitled memory"}
             </p>

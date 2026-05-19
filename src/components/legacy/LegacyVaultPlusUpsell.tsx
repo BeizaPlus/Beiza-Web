@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import { Crown, Infinity, Pencil, Trash2 } from "lucide-react";
+import { Crown, Download, Sparkles, Trash2 } from "lucide-react";
 
 const GOLD = "#E6A817";
 
 const FEATURES = [
   { icon: Trash2, label: "Delete any memory at any time" },
-  { icon: Pencil, label: "Rename and organize recordings" },
-  { icon: Infinity, label: "Unlimited vault storage" },
+  { icon: Download, label: "Download & share recordings" },
+  { icon: Sparkles, label: "Story cards from your photos" },
 ] as const;
 
 export function LegacyVaultPlusUpsell() {
@@ -28,7 +28,7 @@ export function LegacyVaultPlusUpsell() {
             className="text-[11px] font-semibold uppercase tracking-wide"
             style={{ color: GOLD }}
           >
-            Legacy Plus
+            Keeper
           </p>
           <p className="text-sm font-semibold text-white">Unlock vault control with Keeper</p>
         </div>

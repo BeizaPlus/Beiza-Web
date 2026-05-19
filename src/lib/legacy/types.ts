@@ -26,6 +26,10 @@ export interface LegacyRecording {
   duration_seconds: number;
   title: string | null;
   created_at: string;
+  prompt_id?: string | null;
+  prompt_category?: string | null;
+  prompt_arc_position?: string | null;
+  prompt_tags?: string[] | null;
 }
 
 export type RecordPhase = "prepare" | "recording" | "upload" | "seal";
