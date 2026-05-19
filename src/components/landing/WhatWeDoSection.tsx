@@ -11,9 +11,9 @@ export type OfferingCard = {
   icon?: ReactNode;
 };
 
-type Region = "ghana" | "global";
+export type LegacyLocale = "global" | "ghana" | "spanish" | "french";
 
-const REGION_KEY = "beiza-legacy-region-v2";
+const LOCALE_KEY = "beiza-legacy-locale-v3";
 
 const GLOBAL_OFFERINGS: OfferingCard[] = [
   {
@@ -38,29 +38,42 @@ const GLOBAL_OFFERINGS: OfferingCard[] = [
   },
 ];
 
-/** Ghana mode — Twi-forward, culturally native craft (not generic DB funeral offerings). */
-const GHANA_OFFERINGS: OfferingCard[] = [
-  {
-    id: "ghana-nsɛm",
-    title: "Nsɛm a Wɔde Sie — Voice Vault",
-    description: "Record stories in Twi, Ga, or English. Every voice kept for grandchildren here and abroad.",
-  },
-  {
-    id: "ghana-adwuma",
-    title: "Adwuma — Legacy Production",
-    description: "Handcrafted celebrations rooted in Ghanaian ritual — imagery, stage, and keepsakes your family will honour.",
-  },
-  {
-    id: "ghana-abusua",
-    title: "Abusua Koro — Family Circles",
-    description: "Invite relatives with secure codes. Elders, children, and diaspora kin in one private circle.",
-  },
-  {
-    id: "ghana-soro",
-    title: "Soro Ne Akyiri — Live & Replay",
-    description: "Stream homegoing and naming gatherings; HD replays for family who cannot travel to Accra or Kumasi.",
-  },
+const LOCALE_OPTIONS: { id: LegacyLocale; label: string }[] = [
+  { id: "global", label: "Global" },
+  { id: "ghana", label: "Ghana · Twi" },
+  { id: "spanish", label: "Spanish" },
+  { id: "french", label: "French" },
 ];
+
+const LOCALE_COPY: Record<
+  LegacyLocale,
+  { description: string; secondary?: string }
+> = {
+  global: {
+    description:
+      "Open to families everywhere — recorded voices, curated imagery, and cultural keepsakes your people can access from any country.",
+  },
+  ghana: {
+    description:
+      "Mmienu ne mmienu — wo fifo asem wɔ hɔ. Fa wo ni ase ho asem sie wɔ Beiza mu ná wo mma nso nna ho.",
+    secondary:
+      "Your family's story belongs here. Record it in Twi — your children will hear it forever.",
+  },
+  spanish: {
+    description:
+      "Para familias de todo el mundo — guarda las voces, las historias y el legado de los tuyos, desde cualquier país.",
+    secondary: "Your family's story, preserved in Spanish.",
+  },
+  french: {
+    description:
+      "Pour les familles partout dans le monde — préservez les voix, les histoires et l'héritage des vôtres, depuis n'importe quel pays.",
+    secondary: "Your family's story, preserved in French.",
+  },
+};
+
+function isLegacyLocale(value: string | null): value is LegacyLocale {
+  return value === "global" || value === "ghana" || value === "spanish" || value === "french";
+}
 
 type WhatWeDoSectionProps = {
   offerings: OfferingCard[];
@@ -70,25 +83,21 @@ type WhatWeDoSectionProps = {
 };
 
 export function WhatWeDoSection({ offerings, mockupSrc, className, style }: WhatWeDoSectionProps) {
-  const [region, setRegion] = useState<Region>("global");
+  const [locale, setLocale] = useState<LegacyLocale>("global");
   const [mockupFailed, setMockupFailed] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem(REGION_KEY);
-    if (saved === "ghana" || saved === "global") setRegion(saved);
+    const saved = localStorage.getItem(LOCALE_KEY);
+    if (isLegacyLocale(saved)) setLocale(saved);
   }, []);
 
-  const setRegionAndSave = (next: Region) => {
-    setRegion(next);
-    localStorage.setItem(REGION_KEY, next);
+  const setLocaleAndSave = (next: LegacyLocale) => {
+    setLocale(next);
+    localStorage.setItem(LOCALE_KEY, next);
   };
 
-  const isGlobal = region === "global";
-  const visibleOfferings = isGlobal
-    ? offerings.length <= 1
-      ? GLOBAL_OFFERINGS
-      : offerings
-    : GHANA_OFFERINGS;
+  const visibleOfferings = offerings.length <= 1 ? GLOBAL_OFFERINGS : offerings;
+  const copy = LOCALE_COPY[locale];
 
   return (
     <section
@@ -98,16 +107,18 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
       <SectionHeader
         eyebrow="What We Do"
         title="How We Preserve Your Legacy"
-        description={
-          isGlobal
-            ? "Open to families everywhere — recorded voices, curated imagery, and cultural keepsakes your people can access from any country."
-            : "Ɛyɛ abusua adwuma — Twi, Ga, and English voices, curated imagery, and keepsakes crafted for generations in Ghana and the diaspora."
-        }
         align="center"
       />
 
-      <div className="mt-8 flex justify-center">
-        <RegionToggle region={region} onChange={setRegionAndSave} />
+      <div className="mt-8 flex justify-center overflow-x-auto px-1 pb-1">
+        <LocaleToggle locale={locale} onChange={setLocaleAndSave} />
+      </div>
+
+      <div className="mx-auto mt-6 max-w-2xl px-2 text-center">
+        <p className="text-base leading-relaxed text-subtle">{copy.description}</p>
+        {copy.secondary ? (
+          <p className="mt-3 text-sm leading-relaxed text-[#666666]">{copy.secondary}</p>
+        ) : null}
       </div>
 
       <div className="mt-12 grid w-full grid-cols-1 gap-6 lg:grid-cols-[58%_38%] lg:items-stretch lg:gap-[4%]">
@@ -150,46 +161,38 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
   );
 }
 
-function RegionToggle({
-  region,
+function LocaleToggle({
+  locale,
   onChange,
 }: {
-  region: Region;
-  onChange: (r: Region) => void;
+  locale: LegacyLocale;
+  onChange: (next: LegacyLocale) => void;
 }) {
   return (
     <div
-      className="inline-flex rounded-full border border-white/15 bg-black/40 p-1"
+      className="mx-auto flex w-fit max-w-full shrink-0 gap-1 rounded-[40px] border-[0.5px] border-[#1e1e1e] bg-[#111111] p-1 sm:flex-wrap sm:justify-center"
       role="group"
-      aria-label="Service region"
+      aria-label="Language and region"
     >
-      <button
-        type="button"
-        onClick={() => onChange("ghana")}
-        className={cn(
-          "rounded-full px-5 py-2 text-sm font-medium transition-colors",
-          region === "ghana"
-            ? "bg-primary text-primary-foreground"
-            : "text-subtle hover:text-white",
-        )}
-        aria-pressed={region === "ghana"}
-      >
-        Ghana
-        <span className="ml-1.5 hidden text-xs font-normal opacity-80 sm:inline">· Twi native</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => onChange("global")}
-        className={cn(
-          "rounded-full px-5 py-2 text-sm font-medium transition-colors",
-          region === "global"
-            ? "bg-primary text-primary-foreground"
-            : "text-subtle hover:text-white",
-        )}
-        aria-pressed={region === "global"}
-      >
-        Global
-      </button>
+      {LOCALE_OPTIONS.map(({ id, label }) => {
+        const active = locale === id;
+        return (
+          <button
+            key={id}
+            type="button"
+            onClick={() => onChange(id)}
+            className={cn(
+              "shrink-0 cursor-pointer rounded-[40px] px-[18px] py-2 text-xs transition-all duration-150",
+              active
+                ? "bg-[#E6A817] font-medium text-[#0a0a0a]"
+                : "bg-transparent font-normal text-[#666666] hover:text-[#888888]",
+            )}
+            aria-pressed={active}
+          >
+            {label}
+          </button>
+        );
+      })}
     </div>
   );
 }
