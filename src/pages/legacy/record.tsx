@@ -11,6 +11,7 @@ import {
   useMyLegacyCircle,
 } from "@/hooks/useLegacy";
 import type { RecordPhase } from "@/lib/legacy/types";
+import { FREE_VAULT_STORAGE_BYTES, getAudioDurationFromBlob } from "@/lib/legacy/audioRecording";
 import { Loader2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -20,7 +21,7 @@ const FALLBACK_PROMPTS = [
   "Who taught you the most important thing you know?",
 ];
 
-const RECORD_TIMESLICE_MS = 250;
+/** No max duration for Circle (free) — storage quota is the only gate on save. */
 const MIN_RECORD_SECONDS = 0;
 
 function pickAudioMimeType() {
@@ -97,6 +98,11 @@ export default function LegacyRecordPage() {
     clearTimer();
     const recorder = mediaRef.current;
     if (!recorder || recorder.state !== "recording") return;
+    try {
+      recorder.requestData();
+    } catch {
+      /* optional before stop — not all browsers need it */
+    }
     recorder.stop();
   };
 
@@ -120,41 +126,49 @@ export default function LegacyRecordPage() {
         if (e.data.size > 0) chunksRef.current.push(e.data);
       };
       recorder.onstop = () => {
-        clearTimer();
-        releaseStream();
-        mediaRef.current = null;
-        setIsRequestingMic(false);
+        void (async () => {
+          clearTimer();
+          releaseStream();
+          mediaRef.current = null;
+          setIsRequestingMic(false);
 
-        const blob = new Blob(chunksRef.current, { type: mimeTypeRef.current });
-        if (blob.size === 0) {
-          setPhase("prepare");
-          setElapsedSeconds(0);
-          toast({
-            title: "Nothing captured",
-            description: "Hold the button a little longer and try again.",
-            variant: "destructive",
+          const blob = new Blob(chunksRef.current, { type: mimeTypeRef.current });
+          if (blob.size === 0) {
+            setPhase("prepare");
+            setElapsedSeconds(0);
+            toast({
+              title: "Nothing captured",
+              description: "Hold the button a little longer and try again.",
+              variant: "destructive",
+            });
+            return;
+          }
+
+          let seconds: number;
+          try {
+            seconds = await getAudioDurationFromBlob(blob);
+          } catch {
+            seconds = Math.max(
+              MIN_RECORD_SECONDS,
+              Math.ceil((Date.now() - startedAtRef.current) / 1000),
+            );
+          }
+
+          blobRef.current = blob;
+          setDurationSeconds(seconds);
+          setElapsedSeconds(seconds);
+          setRecordedUri((prev) => {
+            if (prev) URL.revokeObjectURL(prev);
+            return URL.createObjectURL(blob);
           });
-          return;
-        }
-
-        blobRef.current = blob;
-        const seconds = Math.max(
-          MIN_RECORD_SECONDS,
-          Math.ceil((Date.now() - startedAtRef.current) / 1000),
-        );
-        setDurationSeconds(seconds);
-        setElapsedSeconds(seconds);
-        setRecordedUri((prev) => {
-          if (prev) URL.revokeObjectURL(prev);
-          return URL.createObjectURL(blob);
-        });
-        setPhase("upload");
+          setPhase("upload");
+        })();
       };
 
       mediaRef.current = recorder;
       startedAtRef.current = Date.now();
       setElapsedSeconds(0);
-      recorder.start(RECORD_TIMESLICE_MS);
+      recorder.start();
       setPhase("recording");
       setIsRequestingMic(false);
 
@@ -200,6 +214,17 @@ export default function LegacyRecordPage() {
 
   const handleUpload = async () => {
     if (!circle?.id || !blobRef.current) return;
+
+    if (blobRef.current.size > FREE_VAULT_STORAGE_BYTES) {
+      toast({
+        title: "Vault storage full",
+        description:
+          "This recording exceeds your Circle vault limit (5 GB). Free space or upgrade to Keeper.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setUploading(true);
     try {
       await uploadLegacyRecording({
@@ -262,11 +287,16 @@ export default function LegacyRecordPage() {
           />
           <p className="text-sm text-muted-foreground">
             {phase === "recording"
-              ? `Listening… ${elapsedSeconds}s — release when finished`
+              ? `Listening… ${elapsedSeconds}s — release or tap Done when finished`
               : isRequestingMic
                 ? "Starting microphone…"
                 : "Hold the button to answer"}
           </p>
+          {phase === "recording" ? (
+            <Button type="button" variant="secondary" size="sm" onClick={finishRecording}>
+              Done
+            </Button>
+          ) : null}
           {phase === "prepare" ? (
             <Button
               variant="ghost"

@@ -6,6 +6,10 @@
 
 Last updated: May 2026 · branch `main`
 
+### Latest fixes
+- **Recording:** No duration cap for Circle; full blob capture (`recorder.start()` without timeslice); duration from audio metadata; **Done** button while recording; 5 GB storage gate on upload only.
+- **Testimonials:** Aligned to vault/pricing tokens (12px radius, plain relation text, flag + country line, 8px chain dots).
+
 ---
 
 ## What shipped (recent)

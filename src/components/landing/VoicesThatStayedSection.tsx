@@ -1,33 +1,29 @@
 import { VOICES_TESTIMONIALS } from "@/lib/legacy/voicesTestimonials";
 import { cn } from "@/lib/utils";
 
-const GOLD = "#E6A817";
-
 function ChainMotif() {
   return (
-    <div className="mt-10 flex flex-col items-center gap-3">
-      <div className="flex items-center">
+    <div className="mt-10 flex flex-col items-center">
+      <div className="flex items-center" role="presentation">
         {[0, 1, 2, 3, 4].map((i) => (
           <div key={i} className="flex items-center">
-            {i > 0 ? <span className="h-px w-6 bg-[#222] sm:w-8" aria-hidden /> : null}
+            {i > 0 ? <span className="h-px w-8 bg-[#1e1e1e]" aria-hidden /> : null}
             <span
               className={cn(
-                "block h-2.5 w-2.5 shrink-0 rounded-full border",
+                "block h-2 w-2 shrink-0 rounded-full",
                 i === 2
-                  ? "border-[#2a2a2a] bg-[#0d0d0d]"
-                  : "border-[#E6A817] bg-[#E6A817]",
+                  ? "border border-[#2a2a2a] bg-[#0d0d0d]"
+                  : "bg-[#E6A817]",
               )}
               style={
-                i !== 2
-                  ? { boxShadow: "0 0 8px rgba(230,168,23,0.3)" }
-                  : undefined
+                i !== 2 ? { boxShadow: "0 0 6px rgba(230,168,23,0.25)" } : undefined
               }
               aria-hidden
             />
           </div>
         ))}
       </div>
-      <p className="text-[11px] uppercase tracking-[0.25em] text-[#444]">
+      <p className="mt-3 text-center font-sans text-[10px] uppercase tracking-[0.3em] text-[#333333]">
         The chain doesn&apos;t break. It remembers.
       </p>
     </div>
@@ -39,6 +35,7 @@ function VoiceCard({
   name,
   relation,
   location,
+  flag,
   country,
   featured,
   quote,
@@ -46,32 +43,43 @@ function VoiceCard({
   return (
     <article
       className={cn(
-        "rounded-2xl border border-[#1e1e1e] bg-[#111111] px-6 py-7",
-        featured &&
-          "border-[#3a2800] bg-[#0e0c00] border-l-2 border-l-[#E6A817] rounded-l-none pl-7",
+        "mb-px border border-[#1e1e1e] bg-[#111111] px-5 py-6",
+        featured
+          ? "rounded-none border-l-2 border-l-[#E6A817] bg-[#0e0c00] pl-[18px]"
+          : "rounded-xl",
       )}
     >
       <span
-        className="font-display text-5xl leading-none text-[#E6A817]/60"
+        className="mb-2 block font-display text-[28px] leading-none text-[#E6A817]/50"
         aria-hidden
       >
         &ldquo;
       </span>
-      <span className="mt-3 inline-block rounded-full border border-[#222] bg-[#1a1a1a] px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#555]">
+      <p className="font-sans text-[10px] uppercase tracking-[0.2em] text-[#555555]">
         {relation} · {location}
-      </span>
-      <p className="mt-4 font-display text-[15px] italic leading-[1.7] text-[#cccccc]">
+      </p>
+      <p className="my-2.5 mb-[18px] font-display text-sm italic leading-[1.75] text-[#cccccc]">
         {quote}
       </p>
-      <div className="mt-5 flex items-center gap-3">
-        <span
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-[1.5px] border-[#2e2200] bg-[#1e1800] text-[11px] font-medium text-[#E6A817]"
-        >
+      <div className="flex items-center gap-2.5">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-[1.5px] border-[#2e2200] bg-[#1e1800] font-sans text-[11px] font-medium text-[#E6A817]">
           {initials}
         </span>
         <div>
           <p className="font-sans text-[13px] font-medium text-white">{name}</p>
-          <p className="font-sans text-[11px] text-[#555555]">{country}</p>
+          <p className="flex items-center gap-1.5 font-sans text-[11px] text-[#555555]">
+            <span
+              className="leading-none"
+              style={{
+                fontFamily:
+                  '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif',
+              }}
+              aria-hidden
+            >
+              {flag}
+            </span>
+            <span>{country}</span>
+          </p>
         </div>
       </div>
     </article>
@@ -85,7 +93,7 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
       aria-labelledby="voices-heading"
     >
       <div className="mx-auto max-w-2xl px-6">
-        <p className="text-center text-[11px] font-medium uppercase tracking-[0.25em] text-[#888]">
+        <p className="text-center font-sans text-[11px] font-medium uppercase tracking-[0.25em] text-[#888888]">
           From families who trusted Beiza
         </p>
         <h2
@@ -94,11 +102,11 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
         >
           Voices that stayed.
         </h2>
-        <p className="mx-auto mt-4 max-w-lg text-center font-sans text-base leading-relaxed text-[#888]">
+        <p className="mx-auto mt-4 max-w-lg text-center font-sans text-base leading-relaxed text-[#888888]">
           A farewell is just one moment in a longer chain. Their stories travel forward.
         </p>
 
-        <div className="mt-12 flex flex-col gap-4">
+        <div className="mt-12 flex flex-col">
           {VOICES_TESTIMONIALS.map((item) => (
             <VoiceCard key={item.name} {...item} />
           ))}

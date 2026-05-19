@@ -5,6 +5,7 @@ import type {
   FamilyMember,
   LegacyRecording,
 } from "@/lib/legacy/types";
+import { extensionForMime, FREE_VAULT_STORAGE_BYTES } from "@/lib/legacy/audioRecording";
 
 const LEGACY_BUCKET = "legacy-recordings";
 
@@ -167,13 +168,21 @@ export async function uploadLegacyRecording(params: {
   const userId = userData.user?.id;
   if (!userId) throw new Error("Sign in to record a memory.");
 
+  if (params.blob.size > FREE_VAULT_STORAGE_BYTES) {
+    throw new Error(
+      "This recording exceeds your vault storage limit (5 GB on Circle). Free space or upgrade to Keeper.",
+    );
+  }
+
   const recordingId = crypto.randomUUID();
-  const path = `${params.circleId}/${recordingId}.webm`;
+  const mime = params.blob.type || "audio/webm";
+  const ext = extensionForMime(mime);
+  const path = `${params.circleId}/${recordingId}.${ext}`;
 
   const { error: uploadError } = await supabase!.storage
     .from(LEGACY_BUCKET)
     .upload(path, params.blob, {
-      contentType: "audio/webm",
+      contentType: mime,
       upsert: false,
     });
   if (uploadError) throw uploadError;
