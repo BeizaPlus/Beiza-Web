@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
-import { MiniTreePreview } from "@/components/family-trees/MiniTreePreview";
+import { CircleCardVisual } from "@/components/family-trees/CircleCardVisual";
 import { usePublicFamilyCircles } from "@/hooks/useFamilyTreesDirectory";
 import { useMyLegacyCircle } from "@/hooks/useLegacy";
 import { marketingContainer, marketingSection } from "@/lib/brandUi";
@@ -61,13 +61,11 @@ export default function FamilyTreesDirectoryPage() {
                   <li key={circle.id}>
                     <Link
                       to={`/circle/${circle.id}/enter`}
-                      className="group block rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] p-5 transition-colors hover:border-[#2a2a2a]"
+                      className="group block overflow-hidden rounded-xl border border-[#1a1a1a] bg-[#0a0a0a] transition-colors hover:border-[#2a2a2a]"
                     >
-                      <MiniTreePreview
-                        memberCount={Number(circle.member_count)}
-                        className="mx-auto h-20 w-full max-w-[140px] opacity-90"
-                      />
-                      <div className="mt-4 flex items-start justify-between gap-2">
+                      <CircleCardVisual adinkraId={circle.adinkra_id} />
+                      <div className="p-5">
+                      <div className="flex items-start justify-between gap-2">
                         <h2 className="font-manrope text-lg font-semibold text-white group-hover:text-primary">
                           {circle.name}
                         </h2>
@@ -90,6 +88,7 @@ export default function FamilyTreesDirectoryPage() {
                       >
                         {circle.is_in_memoriam ? "In memoriam" : "Active"}
                       </span>
+                      </div>
                     </Link>
                   </li>
                 );

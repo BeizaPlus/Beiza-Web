@@ -8,6 +8,7 @@ export interface FamilyCircle {
   access_code_hint?: string | null;
   since_year?: number | null;
   is_in_memoriam?: boolean;
+  adinkra_id?: string | null;
   created_by: string | null;
   created_at: string;
 }

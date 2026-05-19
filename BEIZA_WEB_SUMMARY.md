@@ -99,7 +99,8 @@ Fields: deceased name/contact, requester relation/email, optional document, mess
 **Tree edges:** `tree_edges` table — persists person-to-person connections with `relationship_type`.  
 **Links:** `recording_person_links` (`about` | `by`).  
 **Biography:** `get_person_biography()` RPC (fragments from recordings).  
-**Canvas positions:** `family_people.canvas_x / canvas_y` — saved on drag-stop.
+**Canvas positions:** `family_people.canvas_x / canvas_y` — saved on drag-stop. New nodes: `getViewport()` + `screenToFlowPosition()` at viewport centre (not `(0,0)`).  
+**Person photos:** Photo API persists `photo_url` on `family_people` in one request — no follow-up `tree-person` PATCH for the URL.
 
 **UI:** `FamilyTreeCanvas` (`@xyflow/react` v12), `PersonFlowNode` (8 handles, 4 sides), `PersonBiographyPanel`, `RelationshipPickerModal`, `TreeEdgeContextMenu`.  
 **Record flow:** “Who is this memory about?” on seal links person to recording.

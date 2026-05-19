@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { pickRandomAdinkra } from "@/lib/adinkra";
 import { supabase } from "@/lib/supabaseClient";
 import type {
   FamilyCircle,
@@ -94,11 +95,13 @@ export function useCreateLegacyCircle() {
       if (!userId) throw new Error("Sign in to start your Legacy Circle.");
 
       const inviteCode = generateInviteCode();
+      const adinkra = pickRandomAdinkra();
       const { data: circle, error: circleError } = await supabase!
         .from("family_circles")
         .insert({
           name: name.trim(),
           invite_code: inviteCode,
+          adinkra_id: adinkra.id,
           created_by: userId,
         })
         .select()

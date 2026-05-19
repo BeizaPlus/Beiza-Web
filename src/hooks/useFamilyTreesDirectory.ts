@@ -8,6 +8,7 @@ export type PublicCircleCover = {
   memory_count: number;
   since_year: number | null;
   is_in_memoriam: boolean;
+  adinkra_id?: string | null;
 };
 
 export function usePublicFamilyCircles() {

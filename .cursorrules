@@ -11,6 +11,13 @@ Canonical frame (`HERITAGE_HERO_DEFAULTS` / `src/data/heritage-hero-canonical.js
 - "Plan your Heritage experience →" scrolls to `#consultation`
 - "Already lost someone? Recover a voice →" links to `/recover`
 
+### Circle card visual (/circle directory)
+- Card top area: `/images/beiza-adinkra-stamp-hand.png` (or assigned Adinkra per `adinkra_id` when symbol assets exist)
+- **DO NOT** use the stick-figure `MiniTreePreview` SVG tree on directory cards
+- Warm tones — **no** grayscale filter on the card image
+- Gradient overlay only: `linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(10,10,10,1) 100%)`
+- `object-fit: cover`, `object-position: center`, height `160px`, width `100%`
+
 ### Tree canvas page (/circle/[id]/tree, /legacy/circle)
 - Full screen layout (100vw × 100vh) — never revert to page layout
 - Header: 52px, fixed, minimal app bar
@@ -27,6 +34,8 @@ Canonical frame (`HERITAGE_HERO_DEFAULTS` / `src/data/heritage-hero-canonical.js
 - Disconnect: right-click edge → Remove connection, OR select edge + Backspace; right-click person node → Disconnect node (removes all edges for that person)
 - **Group nodes:** `layoutGroupNodes` normalises child coords to `(0,0)` inside the group bbox before setting `parentId`; children use `extent: "parent"`. Parent group nodes must appear before children in the nodes array. Keyboard `G` groups selection — guard `isTypingInInput()` so typing in the edit popover does not trigger it. Save `canvas_x`/`canvas_y` as absolute positions (parent offset + child relative).
 - **`onNodeDragStop`:** Read the current handler before editing. Preserve: `setPositionOverrides`, `setEdges` person-edge refresh via `treeEdgesToFlowEdges`, and `savePersonCanvasPosition`. Use `buildPersonAbsolutePositionMap` for edge refresh (not raw `node.position` when grouped). `useRef` must be imported from React for `groupStateRef`.
+- **Person photo upload API:** The photo endpoint writes `photo_url` back to `family_people` in the **same request** (upload + DB update). Do **not** add a second client `PATCH` to `tree-person` after upload — use the URL returned in the photo API response and update local state / `people[]` from that.
+- **New person placement:** Use `getViewport()` from `useReactFlow` for current pan/zoom, then `screenToFlowPosition()` on the viewport centre so new people land at the **visible centre** of the canvas — not at `(0, 0)`.
 
 ### Homepage hero (layout only)
 - Full bleed (100vw) — no max-width on the outer hero shell

@@ -12,6 +12,7 @@ import {
   usePublicCircleCover,
   verifyCircleAccessCode,
 } from "@/hooks/useFamilyTreesDirectory";
+import { AdinkraCircleIdentity } from "@/components/family-trees/AdinkraCircleIdentity";
 import { hasStoredCircleToken, storeCircleToken } from "@/lib/circleAccess";
 
 export default function FamilyTreeEnterPage() {
@@ -90,6 +91,7 @@ export default function FamilyTreeEnterPage() {
             <h1 className="mt-4 font-manrope text-[28px] font-bold leading-tight text-white">
               {cover?.name ?? "Family Circle"}
             </h1>
+            <AdinkraCircleIdentity adinkraId={cover?.adinkra_id} />
             <p className="mt-4 text-sm leading-[1.7] text-[#666666]">
               This circle is private. Enter your access code to continue.
             </p>
