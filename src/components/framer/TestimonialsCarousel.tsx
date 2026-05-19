@@ -44,8 +44,8 @@ export const TestimonialsCarousel = ({ testimonials, className, variant = "dark"
     : "ring-background flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-white/20";
 
   const cardClasses = variant === "light"
-    ? "min-w-0 shrink-0 grow-0 basis-[88%] space-y-4 rounded-lg border border-black/10 bg-black/5 p-6 sm:basis-[72%] md:basis-[48%] lg:basis-[38%]"
-    : "min-w-0 shrink-0 grow-0 basis-[88%] space-y-4 rounded-lg border border-white/10 bg-black/40 p-6 sm:basis-[72%] md:basis-[48%] lg:basis-[38%]";
+    ? "flex h-auto min-h-0 shrink-0 grow-0 basis-[88%] flex-col gap-2 self-start rounded-lg border border-black/10 bg-black/5 p-4 sm:basis-[72%] md:basis-[48%] lg:basis-[38%]"
+    : "flex h-auto min-h-0 shrink-0 grow-0 basis-[88%] flex-col gap-2 self-start rounded-lg border border-white/10 bg-black/40 p-4 sm:basis-[72%] md:basis-[48%] lg:basis-[38%]";
 
   const quoteClasses = variant === "light" ? "text-base leading-relaxed text-neutral-800" : "text-base leading-relaxed text-white";
   const authorClasses = variant === "light" ? "font-medium text-neutral-900" : "font-medium text-white";
@@ -71,11 +71,11 @@ export const TestimonialsCarousel = ({ testimonials, className, variant = "dark"
         </div>
 
         <div className="mt-6 overflow-hidden" ref={emblaRef}>
-          <ul className="flex gap-6 pb-2">
+          <ul className="flex items-start gap-4 pb-2">
             {testimonials.map((testimonial, index) => (
               <li key={`${testimonial.author}-${index}`} className={cardClasses}>
-                <Quote className={clsx("h-6 w-6", variant === "light" ? "text-primary" : "text-primary")} />
-                <p className={quoteClasses}>{testimonial.quote}</p>
+                <Quote className={clsx("h-5 w-5 shrink-0", variant === "light" ? "text-primary" : "text-primary")} />
+                <p className={clsx(quoteClasses, "line-clamp-4")}>{testimonial.quote}</p>
                 <div>
                   <p className={authorClasses}>{testimonial.author}</p>
                   {testimonial.role ? <p className={roleClasses}>{testimonial.role}</p> : null}
