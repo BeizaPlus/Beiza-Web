@@ -13,6 +13,7 @@ import {
   FALLBACK_OFFERINGS,
   FALLBACK_PRICING,
   FALLBACK_SITE_SETTINGS,
+  FALLBACK_MEMOIR_TRIBUTES,
   FALLBACK_TESTIMONIALS,
 } from "@/lib/fallbackContent";
 
@@ -728,6 +729,49 @@ export const useContactChannels = () =>
         label: item.label,
         value: item.value,
         displayOrder: item.display_order ?? 0,
+      }));
+    },
+  });
+
+const mapFallbackPublishedTributes = (): MemoirTribute[] =>
+  FALLBACK_MEMOIR_TRIBUTES.map((item) => ({
+    id: item.id,
+    name: item.name,
+    relationship: item.relationship,
+    message: item.message,
+    displayOrder: item.display_order,
+  }));
+
+/** All tributes on published memoirs — for landing Stories carousel. */
+export const usePublishedMemoirTributes = (limit = 32) =>
+  useQuery({
+    queryKey: ["public-memoir-tributes-published", limit],
+    staleTime: STALE_TIME,
+    queryFn: async (): Promise<MemoirTribute[]> => {
+      if (!isSupabaseReady)
+      {
+        return mapFallbackPublishedTributes();
+      }
+
+      const { data, error } = await supabase
+        .from("memoir_tributes")
+        .select("id, name, relationship, message, display_order, memoirs!inner(status)")
+        .eq("memoirs.status", "published")
+        .order("display_order", { ascending: true })
+        .limit(limit);
+
+      if (error || !data || data.length === 0)
+      {
+        handleError("memoir_tributes", error);
+        return mapFallbackPublishedTributes();
+      }
+
+      return data.map((row) => ({
+        id: row.id,
+        name: row.name,
+        relationship: row.relationship,
+        message: row.message,
+        displayOrder: row.display_order ?? 0,
       }));
     },
   });

@@ -22,10 +22,11 @@ import {
   useFeaturedEvent,
   useHeroSection,
   useOfferings,
-  usePricingTiers,
+  usePublishedMemoirTributes,
   useTestimonials,
   useSiteSettings,
 } from "@/hooks/usePublicContent";
+import type { Testimonial as CarouselTestimonial } from "@/components/framer/TestimonialsCarousel";
 import { FALLBACK_HERO_LANDING } from "@/lib/fallbackContent";
 
 const iconMap: Record<string, JSX.Element> = {
@@ -43,6 +44,9 @@ const studioEnabled =
   import.meta.env.DEV &&
   (typeof window === "undefined" || new URLSearchParams(window.location.search).get("studio") !== "0");
 
+/** Re-enable when featured-event Experience flow is ready. */
+const SHOW_FEATURED_EVENT_EXPERIENCE_CTA = false;
+
 const Landing = () => {
   const { enabled: studio, state: studioState, setState: setStudioState } = useLandingLayoutStudio(studioEnabled);
   const focus = studio ? studioState.focus : null;
@@ -51,8 +55,8 @@ const Landing = () => {
   const { data: siteSettings } = useSiteSettings();
   const { data: offerings = [] } = useOfferings();
   const { data: landingTestimonials = [] } = useTestimonials("landing");
+  const { data: publishedTributes = [] } = usePublishedMemoirTributes();
   const { data: faqs = [] } = useFaqs();
-  const { data: pricingTiers = [] } = usePricingTiers();
   const { data: featuredEvent } = useFeaturedEvent();
 
   const hero = useMemo(() => {
@@ -102,39 +106,50 @@ const Landing = () => {
       }));
   }, [offerings]);
 
-  // const tributeList = useMemo(() => {
-  //   // Always use static tributes as fallback for "Loved by Families" section
-  //   const list = tributes ?? FALLBACK_MEMOIR_TRIBUTES.map((item) => ({
-  //     id: item.id,
-  //     name: item.name,
-  //     relationship: item.relationship,
-  //     message: item.message,
-  //     displayOrder: item.display_order,
-  //   }));
+  const storiesCarouselItems = useMemo((): CarouselTestimonial[] => {
+    const testimonialList = landingTestimonials.filter((item) => item.surfaces.includes("landing"));
 
-  //   return list
-  //     .slice()
-  //     .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
-  //     .map((item) => ({
-  //       name: item.name,
-  //       relationship: item.relationship ?? "",
-  //       message: item.message,
-  //     }));
-  // }, [tributes]);
+    const tributeItems: CarouselTestimonial[] = publishedTributes
+      .slice()
+      .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
+      .map((item) => ({
+        quote: item.message,
+        author: item.name,
+        role: item.relationship ?? undefined,
+      }));
 
-  const testimonialList = useMemo(
-    () => landingTestimonials.filter((item) => item.surfaces.includes("landing")),
-    [landingTestimonials],
-  );
+    const testimonialItems: CarouselTestimonial[] = testimonialList.map((item) => ({
+      quote: item.quote,
+      author: item.author,
+      role: item.role ?? undefined,
+    }));
+
+    const key = (item: CarouselTestimonial) =>
+      `${item.author.toLowerCase()}|${item.quote.trim().toLowerCase()}`;
+    const seen = new Set<string>();
+    const merged: CarouselTestimonial[] = [];
+
+    const pushUnique = (item: CarouselTestimonial) => {
+      const k = key(item);
+      if (seen.has(k)) return;
+      seen.add(k);
+      merged.push(item);
+    };
+
+    const madamRose =
+      testimonialItems.find((item) => item.author.toLowerCase() === "madamrose") ??
+      tributeItems.find((item) => item.author.toLowerCase() === "madamrose");
+
+    if (madamRose) pushUnique(madamRose);
+    tributeItems.forEach(pushUnique);
+    testimonialItems.forEach(pushUnique);
+
+    return merged;
+  }, [landingTestimonials, publishedTributes]);
 
   const faqList = useMemo(
     () => faqs.slice().sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)),
     [faqs],
-  );
-
-  const pricingList = useMemo(
-    () => pricingTiers.slice().sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)),
-    [pricingTiers],
   );
 
   const event = useMemo(() => {
@@ -200,7 +215,9 @@ const Landing = () => {
               align="center"
               variant="light"
             />
-            {testimonialList.length > 0 ? <TestimonialsCarousel testimonials={testimonialList} className="mt-10" variant="light" /> : null}
+            {storiesCarouselItems.length > 0 ? (
+              <TestimonialsCarousel testimonials={storiesCarouselItems} className="mt-10" variant="light" />
+            ) : null}
           </div>
         </section>
         ) : null}
@@ -244,7 +261,9 @@ const Landing = () => {
                   title="Because their story deserves to be unforgettable."
                   description={event.description ?? "Explore our featured celebration to see how we transform memories into immersive experiences."}
                 />
-                <CTAButton to="/memoirs" label="Experience" />
+                {SHOW_FEATURED_EVENT_EXPERIENCE_CTA ? (
+                  <CTAButton to="/memoirs" label="Experience" />
+                ) : null}
               </div>
               {event.heroMedia?.src ? (
                 <div className="relative aspect-[4/5] w-full overflow-hidden md:w-1/3">
@@ -276,65 +295,7 @@ const Landing = () => {
         ) : null}
 
         {showRest ? (
-        <>
-        <section className="bg-black py-24 text-white">
-          <div className="mx-auto max-w-6xl space-y-12 px-6">
-            <SectionHeader
-              eyebrow="Pricing"
-              title="Choose the experience that fits your family"
-              description="Transparent offerings with the production support families rely on. Every package can be tailored with add-ons and cultural rituals."
-              align="center"
-              variant="dark"
-            />
-
-            {pricingList.length > 0 ? (
-              <div className="grid items-stretch gap-6 md:grid-cols-3">
-                {pricingList.map((tier) => (
-                  <div
-                    key={tier.id}
-                    className={`flex h-full flex-col rounded-lg border p-8 shadow-glass transition hover:-translate-y-1 hover:shadow-xl ${tier.isRecommended ? "border-white/20 bg-white/10" : "border-white/10 bg-white/5"
-                      }`}
-                  >
-                    <div className="flex min-h-9 items-start justify-between gap-2">
-                      <h3 className="text-2xl font-semibold text-white">{tier.name}</h3>
-                      {tier.isRecommended ? (
-                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-white/15 px-3 py-1 text-xs uppercase tracking-[0.25em] text-white">
-                          <Sparkles className="h-3.5 w-3.5" /> {tier.badgeLabel ?? "Featured"}
-                        </span>
-                      ) : (
-                        <span className="invisible inline-flex shrink-0 px-3 py-1 text-xs" aria-hidden>
-                          —
-                        </span>
-                      )}
-                    </div>
-                    <p className="mt-4 text-sm uppercase tracking-[0.3em] text-subtle">{tier.tagline ?? "Starting at"}</p>
-                    <p className="mt-2 text-3xl font-semibold text-white">{tier.priceLabel ?? "Custom"}</p>
-                    <p className="mt-4 min-h-[4.5rem] text-sm leading-relaxed text-subtle">{tier.description}</p>
-                    <ul className="mt-6 flex-1 space-y-2 text-sm text-subtle">
-                      {tier.features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-2">
-                          <span className="mt-1 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-white/80" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <div className="mt-auto w-full pt-8">
-                      <CTAButton
-                        to="/contact#hero"
-                        label="Plan with us"
-                        className={`w-full justify-center ${tier.isRecommended ? "bg-white text-black" : "bg-white/15 text-white"
-                          }`}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : null}
-          </div>
-        </section>
-
-        <ProductsPanel title="Featured Products" description="Explore our collection of legacy products and services." />
-        </>
+          <ProductsPanel title="Featured Products" description="Explore our collection of legacy products and services." />
         ) : null}
 
         {showOutro ? (

@@ -1,5 +1,4 @@
 import { useEffect, useState, type CSSProperties } from "react";
-import { Globe, MapPin } from "lucide-react";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FeatureCard } from "@/components/framer/FeatureCard";
 import { cn } from "@/lib/utils";
@@ -14,7 +13,7 @@ export type OfferingCard = {
 
 type Region = "ghana" | "global";
 
-const REGION_KEY = "beiza-legacy-region";
+const REGION_KEY = "beiza-legacy-region-v2";
 
 const GLOBAL_OFFERINGS: OfferingCard[] = [
   {
@@ -39,6 +38,30 @@ const GLOBAL_OFFERINGS: OfferingCard[] = [
   },
 ];
 
+/** Ghana mode — Twi-forward, culturally native craft (not generic DB funeral offerings). */
+const GHANA_OFFERINGS: OfferingCard[] = [
+  {
+    id: "ghana-nsɛm",
+    title: "Nsɛm a Wɔde Sie — Voice Vault",
+    description: "Record stories in Twi, Ga, or English. Every voice kept for grandchildren here and abroad.",
+  },
+  {
+    id: "ghana-adwuma",
+    title: "Adwuma — Legacy Production",
+    description: "Handcrafted celebrations rooted in Ghanaian ritual — imagery, stage, and keepsakes your family will honour.",
+  },
+  {
+    id: "ghana-abusua",
+    title: "Abusua Koro — Family Circles",
+    description: "Invite relatives with secure codes. Elders, children, and diaspora kin in one private circle.",
+  },
+  {
+    id: "ghana-soro",
+    title: "Soro Ne Akyiri — Live & Replay",
+    description: "Stream homegoing and naming gatherings; HD replays for family who cannot travel to Accra or Kumasi.",
+  },
+];
+
 type WhatWeDoSectionProps = {
   offerings: OfferingCard[];
   mockupSrc?: string | null;
@@ -47,7 +70,7 @@ type WhatWeDoSectionProps = {
 };
 
 export function WhatWeDoSection({ offerings, mockupSrc, className, style }: WhatWeDoSectionProps) {
-  const [region, setRegion] = useState<Region>("ghana");
+  const [region, setRegion] = useState<Region>("global");
   const [mockupFailed, setMockupFailed] = useState(false);
 
   useEffect(() => {
@@ -61,11 +84,15 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
   };
 
   const isGlobal = region === "global";
-  const visibleOfferings = isGlobal && offerings.length <= 1 ? GLOBAL_OFFERINGS : offerings;
+  const visibleOfferings = isGlobal
+    ? offerings.length <= 1
+      ? GLOBAL_OFFERINGS
+      : offerings
+    : GHANA_OFFERINGS;
 
   return (
     <section
-      className={cn("studio-offerings mx-auto max-w-6xl px-6 py-24 lg:py-32", className)}
+      className={cn("studio-offerings mx-auto w-full max-w-6xl px-[5%] py-24 lg:py-32", className)}
       style={style}
     >
       <SectionHeader
@@ -74,7 +101,7 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
         description={
           isGlobal
             ? "Open to families everywhere — recorded voices, curated imagery, and cultural keepsakes your people can access from any country."
-            : "Every story is handcrafted — recorded voices, curated imagery, and cultural keepsakes your family will carry for generations."
+            : "Ɛyɛ abusua adwuma — Twi, Ga, and English voices, curated imagery, and keepsakes crafted for generations in Ghana and the diaspora."
         }
         align="center"
       />
@@ -83,24 +110,8 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
         <RegionToggle region={region} onChange={setRegionAndSave} />
       </div>
 
-      <p className="mx-auto mt-4 max-w-2xl text-center text-sm text-subtle">
-        {isGlobal ? (
-          <>
-            <Globe className="mr-1.5 inline h-4 w-4 align-text-bottom text-primary" aria-hidden />
-            Global mode — Beiza Legacy is open to the entire world. Families outside Ghana can create
-            circles, record, and vault without limits on location.
-          </>
-        ) : (
-          <>
-            <MapPin className="mr-1.5 inline h-4 w-4 align-text-bottom text-primary" aria-hidden />
-            Ghana — our production home. Deep cultural craft for families here; switch to Global when
-            your circle spans continents.
-          </>
-        )}
-      </p>
-
-      <div className="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(280px,420px)] lg:gap-10">
-        <div className="grid gap-6 sm:grid-cols-2">
+      <div className="mt-12 grid w-full grid-cols-1 items-start gap-[4%] lg:grid-cols-[58%_38%]">
+        <div className="grid w-full grid-cols-1 gap-[4%] sm:grid-cols-2">
           {visibleOfferings.map((feature) => (
             <FeatureCard
               key={feature.id}
@@ -112,7 +123,7 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
         </div>
 
         <div
-          className="relative flex min-h-[320px] items-center justify-center overflow-hidden rounded-2xl border border-dashed border-white/25 bg-white/[0.03] lg:min-h-[420px] lg:sticky lg:top-28"
+          className="relative flex w-full items-center justify-center overflow-hidden rounded-2xl border border-dashed border-white/25 bg-white/[0.03] aspect-[4/5] max-h-[min(70vh,36rem)] lg:sticky lg:top-28 lg:max-h-none lg:min-h-[100%] lg:aspect-auto lg:h-full"
           aria-label="Product mockup placeholder"
         >
           {mockupSrc && !mockupFailed ? (
@@ -123,7 +134,7 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
               onError={() => setMockupFailed(true)}
             />
           ) : (
-            <div className="px-6 text-center">
+            <div className="px-[6%] text-center">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
                 Mockup
               </p>
@@ -164,6 +175,7 @@ function RegionToggle({
         aria-pressed={region === "ghana"}
       >
         Ghana
+        <span className="ml-1.5 hidden text-xs font-normal opacity-80 sm:inline">· Twi native</span>
       </button>
       <button
         type="button"
