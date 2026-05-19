@@ -1,0 +1,29 @@
+{
+  "savedAt": "2026-05-19T13:12:08.227Z",
+  "label": "Beiza landing layout studio",
+  "layout": {
+    "focus": "hero",
+    "hero": {
+      "posX": 18,
+      "posY": 84,
+      "scale": 106,
+      "copyBottomVh": 18
+    },
+    "offerings": {
+      "offsetY": -32,
+      "paddingTop": 80
+    },
+    "faq": {
+      "offsetY": -48,
+      "paddingTop": 72
+    },
+    "pricing": {
+      "offsetY": 0,
+      "paddingTop": 96
+    },
+    "outro": {
+      "offsetY": 0,
+      "paddingTop": 96
+    }
+  }
+}

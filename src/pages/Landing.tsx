@@ -125,7 +125,7 @@ const Landing = () => {
   return (
     <div
       className="min-h-screen bg-background text-foreground"
-      style={studio ? (studioCssVars(studioState) as CSSProperties) : undefined}
+      style={studioCssVars(studioState) as CSSProperties}
     >
       <Navigation />
       {showHero ? (

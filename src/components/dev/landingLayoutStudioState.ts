@@ -9,16 +9,17 @@ export type LandingLayoutStudioState = {
   outro: { offsetY: number; paddingTop: number };
 };
 
+/** Canonical homepage layout — exported from Layout Studio 2026-05-19. */
 export const DEFAULT_STUDIO_STATE: LandingLayoutStudioState = {
   focus: "hero",
-  hero: { posX: 72, posY: 50, scale: 100, copyBottomVh: 38 },
+  hero: { posX: 18, posY: 84, scale: 106, copyBottomVh: 18 },
   offerings: { offsetY: -32, paddingTop: 80 },
   faq: { offsetY: -48, paddingTop: 72 },
   pricing: { offsetY: 0, paddingTop: 96 },
   outro: { offsetY: 0, paddingTop: 96 },
 };
 
-const STORAGE_KEY = "beiza-landing-layout-studio";
+const STORAGE_KEY = "beiza-landing-layout-studio-v2";
 
 export function mergeStudioState(partial: Partial<LandingLayoutStudioState>): LandingLayoutStudioState {
   return {
