@@ -358,6 +358,20 @@
     animation: family-tree-breathe 3s ease-in-out infinite;
   }
 
+  .family-tree-person-living {
+    animation: nodePulse 3s ease-in-out infinite;
+  }
+
+  @keyframes nodePulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 2px rgba(230, 168, 23, 0.1);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgba(230, 168, 23, 0.2);
+    }
+  }
+
   @keyframes family-tree-breathe {
     0%,
     100% {
@@ -366,6 +380,20 @@
     50% {
       box-shadow: 0 0 12px 2px hsl(43 91.8% 52% / 0.35);
     }
+  }
+
+  .family-tree-flow .react-flow__background {
+    background-color: #080808;
+  }
+
+  .family-tree-flow .react-flow__controls-button {
+    background: #1a1a1a;
+    border-bottom: 0.5px solid #1e1e1e;
+    fill: #888888;
+  }
+
+  .family-tree-flow .react-flow__controls-button:hover {
+    background: #222222;
   }
 
   .voices-testimonials-subheading {

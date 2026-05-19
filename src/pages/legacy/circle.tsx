@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useMyLegacyCircle } from "@/hooks/useLegacy";
+import { useLegacyRecordings, useMyLegacyCircle } from "@/hooks/useLegacy";
 import {
   useFamilyPeople,
   useRecordingPersonLinks,
@@ -11,6 +11,7 @@ import {
 import { FamilyTreeCanvas } from "@/components/legacy/family-tree/FamilyTreeCanvas";
 import { FamilyTreeMobileFocus } from "@/components/legacy/family-tree/FamilyTreeMobileFocus";
 import { PersonBiographyPanel } from "@/components/legacy/family-tree/PersonBiographyPanel";
+import { displayCircleName } from "@/lib/legacy/displayCircleName";
 import { supabase } from "@/lib/supabaseClient";
 
 export default function LegacyCirclePage() {
@@ -20,6 +21,7 @@ export default function LegacyCirclePage() {
     circle?.id,
   );
   const { data: links = [] } = useRecordingPersonLinks(circle?.id);
+  const { data: recordings = [] } = useLegacyRecordings(circle?.id);
   const syncPeople = useSyncCirclePeople();
 
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
@@ -66,12 +68,13 @@ export default function LegacyCirclePage() {
   }
 
   const treeUnavailable = peopleError?.message?.includes("family_people");
+  const circleTitle = displayCircleName(circle.name);
 
   return (
-    <div className="space-y-6">
-      <header>
+    <div className="flex flex-col">
+      <header className="shrink-0">
         <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Living document</p>
-        <h2 className="mt-1 text-2xl font-semibold">{circle.name}</h2>
+        <h2 className="mt-1 text-2xl font-semibold">{circleTitle}</h2>
         <p className="mt-2 text-sm leading-relaxed text-subtle">
           The tree builds itself from recordings — retrospective for those gone, active for those
           here.
@@ -79,19 +82,19 @@ export default function LegacyCirclePage() {
       </header>
 
       {treeUnavailable ? (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-100/90">
+        <div className="mt-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-100/90">
           Apply the family tree migration in Supabase (
           <code className="text-xs">20260522T100000_family_tree.sql</code>) to enable nodes and
           biographies.
         </div>
       ) : peopleLoading || syncPeople.isPending ? (
-        <p className="flex items-center gap-2 text-sm text-muted-foreground">
+        <p className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" />
           Growing your tree from circle members…
         </p>
       ) : (
         <>
-          <div className="md:hidden">
+          <div className="mt-6 md:hidden">
             <FamilyTreeMobileFocus
               people={people}
               links={links}
@@ -102,29 +105,35 @@ export default function LegacyCirclePage() {
               onViewFullTree={() => setMobileFullTree((v) => !v)}
             />
             {mobileFullTree ? (
-              <div className="mt-4 -mx-4 overflow-hidden rounded-lg border border-border">
+              <div className="mt-4 -mx-4">
                 <FamilyTreeCanvas
                   people={people}
                   links={links}
+                  recordings={recordings}
+                  circleId={circle.id}
                   selectedPersonId={selectedPersonId}
                   onSelectPerson={openPerson}
+                  layout="embedded"
                 />
               </div>
             ) : null}
           </div>
 
-          <div className="hidden overflow-hidden rounded-lg border border-border md:block">
+          <div className="relative mt-6 hidden min-h-0 md:-mx-6 md:block md:flex-1">
             <FamilyTreeCanvas
               people={people}
               links={links}
+              recordings={recordings}
+              circleId={circle.id}
               selectedPersonId={selectedPersonId}
               onSelectPerson={openPerson}
+              layout="embedded"
             />
           </div>
         </>
       )}
 
-      <p className="text-center text-xs text-muted-foreground">
+      <p className="mt-6 shrink-0 text-center text-xs text-muted-foreground">
         Tap a node to read their biography in fragments ·{" "}
         <Link to="/legacy/record" className="text-primary underline-offset-2 hover:underline">
           Record a memory

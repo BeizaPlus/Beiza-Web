@@ -13,7 +13,7 @@ export function loadHeroFrame(): HeroFrame {
   return loadStudioState().hero;
 }
 
-export function heroFrameToImageStyle(frame: HeroFrame): CSSProperties {
+export function heroFrameToImageStyle(frame: Pick<HeroFrame, "posX" | "posY" | "scale">): CSSProperties {
   return {
     objectPosition: `${frame.posX}% ${frame.posY}%`,
     transform: frame.scale !== 100 ? `scale(${frame.scale / 100})` : undefined,

@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
+import type { HeritageHeroFrame } from "@/components/dev/heroLayoutStudioState";
 import { FramedHeroImage } from "@/components/FramedHeroImage";
 import {
   HERO_CONTENT_BOTTOM_STYLE,
@@ -16,10 +17,13 @@ type FullBleedHeroProps = {
   className?: string;
   contentClassName?: string;
   overlayGradient?: string;
+  /** When set, overlay uses this class (e.g. heritage responsive gradients via CSS vars). */
+  overlayClassName?: string;
   /** Fixed object-position when not using layout studio frame */
   objectPosition?: string;
   backgroundScale?: number;
-  frame?: HeroFrame;
+  frame?: HeroFrame | Pick<HeritageHeroFrame, "posX" | "posY" | "scale">;
+  contentStyle?: CSSProperties;
   id?: string;
 };
 
@@ -34,9 +38,11 @@ export function FullBleedHero({
   className,
   contentClassName,
   overlayGradient = HERO_OVERLAY_GRADIENT,
+  overlayClassName,
   objectPosition = "center top",
   backgroundScale = 100,
   frame,
+  contentStyle,
   id,
 }: FullBleedHeroProps) {
   const imageStyle: CSSProperties = frame
@@ -60,10 +66,14 @@ export function FullBleedHero({
           loading="eager"
         />
       )}
-      <div className="absolute inset-0" style={{ background: overlayGradient }} aria-hidden />
+      <div
+        className={cn("absolute inset-0", overlayClassName)}
+        style={overlayClassName ? undefined : { background: overlayGradient }}
+        aria-hidden
+      />
       <div
         className={cn(HERO_CONTENT_CLASS, contentClassName)}
-        style={HERO_CONTENT_BOTTOM_STYLE}
+        style={contentStyle ?? HERO_CONTENT_BOTTOM_STYLE}
       >
         {children}
       </div>

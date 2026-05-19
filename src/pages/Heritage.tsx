@@ -15,7 +15,7 @@ import {
   HeroLayoutStudioPanel,
   useHeroLayoutStudio,
 } from "@/components/dev/HeroLayoutStudio";
-import { heroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
+import { heritageHeroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
 import { BRAND_IMAGES } from "@/lib/brandImages";
 import { CasketIcon } from "@/components/icons/CasketIcon";
 import { cn } from "@/lib/utils";
@@ -122,8 +122,18 @@ export default function HeritagePage() {
   return (
     <div
       className="min-h-screen bg-background text-foreground"
-      style={heroStudioCssVars(heroFrame) as CSSProperties}
+      style={heritageHeroStudioCssVars(heroFrame) as CSSProperties}
     >
+      <style>{`
+        .heritage-hero-overlay {
+          background: var(--heritage-overlay-mobile);
+        }
+        @media (min-width: 768px) {
+          .heritage-hero-overlay {
+            background: var(--heritage-overlay-md);
+          }
+        }
+      `}</style>
       <Navigation />
 
       {/* 1. Hero */}
@@ -131,9 +141,22 @@ export default function HeritagePage() {
         imageSrc={BRAND_IMAGES.heritageHero}
         imageAlt="Elder at peace with the Gye Nyame Adinkra symbol — except God, nothing is greater"
         frame={heroFrame}
-        contentClassName="!items-center md:!items-end"
+        overlayClassName="heritage-hero-overlay"
+        contentStyle={{ paddingBottom: 0 }}
+        contentClassName={cn(
+          "!flex !items-end px-8 pb-8 pt-28 md:!items-center md:px-0 md:pb-0 md:pt-32",
+          heroFrame.textSide === "right" ? "md:!justify-end" : "md:!justify-start",
+        )}
       >
-          <div className="max-w-[520px]">
+          <div
+            className={cn(
+              "w-full max-w-[520px] text-left",
+              heroFrame.textSide === "right"
+                ? "md:ml-auto md:py-20 md:pr-16 md:pl-10"
+                : "md:mr-auto md:py-20 md:pl-16 md:pr-10",
+            )}
+            style={{ paddingTop: `calc(${heroFrame.copyRaiseVh} * 1vh)` }}
+          >
             <p className="text-eyebrow text-primary">Beiza Legacy · Heritage</p>
             <h1 className="mt-4 text-display-xl text-white">
               Some stories are larger than one life.

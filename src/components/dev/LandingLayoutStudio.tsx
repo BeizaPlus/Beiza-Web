@@ -10,9 +10,16 @@ import {
   type LandingLayoutStudioState,
   type StudioFocus,
 } from "./landingLayoutStudioState";
+import {
+  loadHeroStudioFrame,
+  saveHeroStudioFrame,
+  type HeritageHeroFrame,
+} from "./heroLayoutStudioState";
+import { HeritageHeroStudioControls } from "./HeritageHeroStudioControls";
 
 const FOCUS_LABELS: { id: StudioFocus; label: string }[] = [
   { id: "hero", label: "1. Hero" },
+  { id: "heritageHero", label: "Heritage Hero" },
   { id: "offerings", label: "2. What we do" },
   { id: "faq", label: "3. FAQ" },
   { id: "pricing", label: "4. Billing" },
@@ -26,6 +33,9 @@ type Props = {
 
 export function LandingLayoutStudioPanel({ state, onChange }: Props) {
   const [open, setOpen] = useState(true);
+  const [heritageFrame, setHeritageFrame] = useState<HeritageHeroFrame>(() =>
+    loadHeroStudioFrame("heritage"),
+  );
 
   const patch = (partial: Partial<LandingLayoutStudioState>) => {
     const next = { ...state, ...partial };
@@ -110,11 +120,22 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
         ))}
       </div>
 
+      {state.focus === "heritageHero" ? (
+        <HeritageHeroStudioControls
+          frame={heritageFrame}
+          onPatch={(partial) => {
+            const next = { ...heritageFrame, ...partial };
+            setHeritageFrame(next);
+            saveHeroStudioFrame("heritage", next);
+          }}
+        />
+      ) : null}
+
       {state.focus === "hero" ? (
         <div className="space-y-3">
           <p className="text-[11px] text-muted-foreground">
             Pan the portrait (X/Y). Zoom out to see more of the frame; zoom in to tighten on the
-            subject and Gye Nyame.
+            subject.
           </p>
           <SliderRow
             label="Background X"

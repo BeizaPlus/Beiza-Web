@@ -3,37 +3,55 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
   downloadHeroStudioJson,
+  HERITAGE_HERO_DEFAULTS,
   HERO_STUDIO_DEFAULTS,
   heroStudioToJson,
   loadHeroStudioFrame,
   saveHeroStudioFrame,
+  type HeritageHeroFrame,
   type HeroFrame,
   type HeroStudioPage,
 } from "./heroLayoutStudioState";
+import { HeritageHeroStudioControls } from "./HeritageHeroStudioControls";
 
-const HERO_ZOOM_MIN = 70;
-const HERO_ZOOM_MAX = 160;
-const HERO_ZOOM_STEP = 2;
+const EVENTS_ZOOM_MIN = 70;
+const EVENTS_ZOOM_MAX = 160;
+const ZOOM_STEP = 2;
 
-const PAGE_LABELS: Record<HeroStudioPage, string> = {
-  events: "Events hero (also landing featured)",
-  heritage: "Heritage hero",
-};
-
-type PanelProps = {
-  page: HeroStudioPage;
+type EventsPanelProps = {
+  page: "events";
   frame: HeroFrame;
   onChange: (frame: HeroFrame) => void;
 };
 
-export function HeroLayoutStudioPanel({ page, frame, onChange }: PanelProps) {
+type HeritagePanelProps = {
+  page: "heritage";
+  frame: HeritageHeroFrame;
+  onChange: (frame: HeritageHeroFrame) => void;
+};
+
+type PanelProps = EventsPanelProps | HeritagePanelProps;
+
+export function HeroLayoutStudioPanel(props: PanelProps) {
+  const { page, frame, onChange } = props;
   const [open, setOpen] = useState(true);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"heritage" | "events">(
+    page === "heritage" ? "heritage" : "events",
+  );
 
-  const patch = (partial: Partial<HeroFrame>) => {
+  const patchEvents = (partial: Partial<HeroFrame>) => {
+    if (page !== "events") return;
     const next = { ...frame, ...partial };
     onChange(next);
-    saveHeroStudioFrame(page, next);
+    saveHeroStudioFrame("events", next);
+  };
+
+  const patchHeritage = (partial: Partial<HeritageHeroFrame>) => {
+    if (page !== "heritage") return;
+    const next = { ...frame, ...partial };
+    onChange(next);
+    saveHeroStudioFrame("heritage", next);
   };
 
   const exportJson = async () => {
@@ -54,7 +72,7 @@ export function HeroLayoutStudioPanel({ page, frame, onChange }: PanelProps) {
         onClick={() => setOpen(true)}
         className="fixed bottom-4 right-4 z-[200] rounded-full bg-[#E6A817] px-4 py-2 text-xs font-semibold text-[#0a0a0a] shadow-lg"
       >
-        Layout studio · zoom
+        Layout studio
       </button>
     );
   }
@@ -63,7 +81,7 @@ export function HeroLayoutStudioPanel({ page, frame, onChange }: PanelProps) {
     <aside className="fixed bottom-4 right-4 z-[200] w-[min(100vw-2rem,22rem)] rounded-xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur-md">
       <div className="mb-3 flex items-center justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {PAGE_LABELS[page]}
+          Layout studio (local)
         </p>
         <button
           type="button"
@@ -74,22 +92,35 @@ export function HeroLayoutStudioPanel({ page, frame, onChange }: PanelProps) {
         </button>
       </div>
 
-      <p className="mb-3 text-[11px] text-muted-foreground">
-        Pan the portrait (X/Y). Zoom 70–160% to frame the subject.
-      </p>
-
-      <div className="space-y-3">
-        <SliderRow label="Background X" value={frame.posX} min={0} max={100} onChange={(posX) => patch({ posX })} />
-        <SliderRow label="Background Y" value={frame.posY} min={0} max={100} onChange={(posY) => patch({ posY })} />
-        <ZoomControls value={frame.scale} onChange={(scale) => patch({ scale })} />
-        <SliderRow
-          label="Copy raise (% viewport height)"
-          value={frame.copyBottomVh}
-          min={8}
-          max={52}
-          onChange={(copyBottomVh) => patch({ copyBottomVh })}
-        />
+      <div className="mb-3 flex flex-wrap gap-1">
+        {page === "heritage" ? (
+          <Button
+            type="button"
+            size="sm"
+            variant={activeTab === "heritage" ? "default" : "outline"}
+            className="h-7 px-2 text-[10px]"
+            onClick={() => setActiveTab("heritage")}
+          >
+            Heritage Hero
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            size="sm"
+            variant={activeTab === "events" ? "default" : "outline"}
+            className="h-7 px-2 text-[10px]"
+            onClick={() => setActiveTab("events")}
+          >
+            Events hero
+          </Button>
+        )}
       </div>
+
+      {page === "heritage" && activeTab === "heritage" ? (
+        <HeritageHeroStudioControls frame={frame} onPatch={patchHeritage} />
+      ) : page === "events" ? (
+        <EventsControls frame={frame} onPatch={patchEvents} />
+      ) : null}
 
       <div className="mt-4 flex flex-wrap gap-2">
         <Button type="button" size="sm" variant="outline" className="h-8 text-xs" onClick={() => exportJson()}>
@@ -109,7 +140,11 @@ export function HeroLayoutStudioPanel({ page, frame, onChange }: PanelProps) {
           size="sm"
           variant="ghost"
           className="h-8 text-xs"
-          onClick={() => patch({ ...HERO_STUDIO_DEFAULTS[page] })}
+          onClick={() =>
+            page === "heritage"
+              ? patchHeritage({ ...HERITAGE_HERO_DEFAULTS })
+              : patchEvents({ ...HERO_STUDIO_DEFAULTS.events })
+          }
         >
           Reset
         </Button>
@@ -119,8 +154,47 @@ export function HeroLayoutStudioPanel({ page, frame, onChange }: PanelProps) {
   );
 }
 
+function EventsControls({
+  frame,
+  onPatch,
+}: {
+  frame: HeroFrame;
+  onPatch: (partial: Partial<HeroFrame>) => void;
+}) {
+  return (
+    <div className="space-y-3">
+      <p className="text-[11px] text-muted-foreground">
+        Pan the portrait (X/Y). Zoom 70–160% to frame the subject.
+      </p>
+      <SliderRow label="Background X" value={frame.posX} min={0} max={100} onChange={(posX) => onPatch({ posX })} />
+      <SliderRow label="Background Y" value={frame.posY} min={0} max={100} onChange={(posY) => onPatch({ posY })} />
+      <ZoomControls
+        value={frame.scale}
+        min={EVENTS_ZOOM_MIN}
+        max={EVENTS_ZOOM_MAX}
+        onChange={(scale) => onPatch({ scale })}
+      />
+      <SliderRow
+        label="Copy raise (% viewport height)"
+        value={frame.copyBottomVh}
+        min={8}
+        max={52}
+        onChange={(copyBottomVh) => onPatch({ copyBottomVh })}
+      />
+    </div>
+  );
+}
+
+export function useHeroLayoutStudio(page: "events"): {
+  frame: HeroFrame;
+  setFrame: (frame: HeroFrame) => void;
+};
+export function useHeroLayoutStudio(page: "heritage"): {
+  frame: HeritageHeroFrame;
+  setFrame: (frame: HeritageHeroFrame) => void;
+};
 export function useHeroLayoutStudio(page: HeroStudioPage) {
-  const [frame, setFrame] = useState<HeroFrame>(() => loadHeroStudioFrame(page));
+  const [frame, setFrame] = useState(() => loadHeroStudioFrame(page));
 
   useEffect(() => {
     setFrame(loadHeroStudioFrame(page));
@@ -129,9 +203,18 @@ export function useHeroLayoutStudio(page: HeroStudioPage) {
   return { frame, setFrame };
 }
 
-function ZoomControls({ value, onChange }: { value: number; onChange: (scale: number) => void }) {
-  const clamp = (n: number) =>
-    Math.min(HERO_ZOOM_MAX, Math.max(HERO_ZOOM_MIN, Math.round(n)));
+function ZoomControls({
+  value,
+  min,
+  max,
+  onChange,
+}: {
+  value: number;
+  min: number;
+  max: number;
+  onChange: (scale: number) => void;
+}) {
+  const clamp = (n: number) => Math.min(max, Math.max(min, Math.round(n)));
 
   return (
     <div className="space-y-1">
@@ -144,7 +227,7 @@ function ZoomControls({ value, onChange }: { value: number; onChange: (scale: nu
             variant="outline"
             className="h-7 w-7 px-0 text-base"
             aria-label="Zoom out"
-            onClick={() => onChange(clamp(value - HERO_ZOOM_STEP))}
+            onClick={() => onChange(clamp(value - ZOOM_STEP))}
           >
             −
           </Button>
@@ -157,7 +240,7 @@ function ZoomControls({ value, onChange }: { value: number; onChange: (scale: nu
             variant="outline"
             className="h-7 w-7 px-0 text-base"
             aria-label="Zoom in"
-            onClick={() => onChange(clamp(value + HERO_ZOOM_STEP))}
+            onClick={() => onChange(clamp(value + ZOOM_STEP))}
           >
             +
           </Button>
@@ -167,8 +250,8 @@ function ZoomControls({ value, onChange }: { value: number; onChange: (scale: nu
         type="range"
         className="w-full accent-primary"
         value={value}
-        min={HERO_ZOOM_MIN}
-        max={HERO_ZOOM_MAX}
+        min={min}
+        max={max}
         step={1}
         onChange={(e) => onChange(clamp(Number(e.target.value)))}
       />
@@ -181,19 +264,23 @@ function SliderRow({
   value,
   min,
   max,
+  displayValue,
   onChange,
 }: {
   label: string;
   value: number;
   min: number;
   max: number;
+  displayValue?: string;
   onChange: (v: number) => void;
 }) {
   return (
     <div className="space-y-1">
       <div className="flex justify-between text-[11px]">
         <Label>{label}</Label>
-        <span className="tabular-nums text-muted-foreground">{Math.round(value)}</span>
+        <span className="tabular-nums text-muted-foreground">
+          {displayValue ?? Math.round(value)}
+        </span>
       </div>
       <input
         type="range"

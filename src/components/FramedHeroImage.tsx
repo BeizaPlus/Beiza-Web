@@ -1,11 +1,13 @@
 import { cn } from "@/lib/utils";
 import type { HeroFrame } from "@/lib/heroFrame";
+
+type HeroImageFrame = Pick<HeroFrame, "posX" | "posY" | "scale">;
 import { heroFrameToImageStyle } from "@/lib/heroFrame";
 
 type FramedHeroImageProps = {
   src: string;
   alt: string;
-  frame: HeroFrame;
+  frame: HeroImageFrame;
   className?: string;
 };
 

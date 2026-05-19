@@ -1,0 +1,12 @@
+# Beiza-Web — Cursor rules
+
+## PROTECTED COMPONENTS
+
+### Heritage page hero
+Current state after the right-align fix is CORRECT. Protect:
+- Text block RIGHT aligned (default)
+- Gradient flows left (dark on the right, light on the left)
+- `beiza-elder-gye-nyame-hero.png` — do not swap, do not crop
+- Subject's face and Gye Nyame panel must always be visible
+- "Plan your Heritage experience →" scrolls to `#consultation`
+- "Already lost someone? Recover a voice →" links to `/recover`

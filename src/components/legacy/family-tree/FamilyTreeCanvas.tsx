@@ -1,109 +1,156 @@
-import { useMemo, useState } from "react";
-import Tree from "react-d3-tree";
-import type { FamilyPerson } from "@/lib/legacy/types";
+import { useCallback, useMemo, useState } from "react";
 import {
-  buildTreeData,
-  countMemoriesForPerson,
-  resolveTreeAnchor,
-  type TreeNodeAttributes,
-} from "@/lib/legacy/familyTree";
-import { FamilyTreeNodeCard } from "@/components/legacy/family-tree/FamilyTreeNodeCard";
-import type { RecordingPersonLink } from "@/lib/legacy/types";
+  Background,
+  BackgroundVariant,
+  Controls,
+  MiniMap,
+  ReactFlow,
+  ReactFlowProvider,
+  useReactFlow,
+  type Node,
+  type NodeMouseHandler,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
+import type { FamilyPerson, LegacyRecording, RecordingPersonLink } from "@/lib/legacy/types";
+import {
+  buildFamilyTreeFlow,
+  type FamilyTreeNodeData,
+  type PlaceholderNodeData,
+} from "@/lib/legacy/familyTreeFlow";
+import { PersonFlowNode } from "@/components/legacy/family-tree/flow/PersonFlowNode";
+import { MemoryFlowNode } from "@/components/legacy/family-tree/flow/MemoryFlowNode";
+import { PlaceholderFlowNode } from "@/components/legacy/family-tree/flow/PlaceholderFlowNode";
+import { AddPersonSheet } from "@/components/legacy/family-tree/AddPersonSheet";
+import { resolveTreeAnchor } from "@/lib/legacy/familyTree";
+
+const nodeTypes = {
+  person: PersonFlowNode,
+  memory: MemoryFlowNode,
+  placeholder: PlaceholderFlowNode,
+};
 
 type FamilyTreeCanvasProps = {
   people: FamilyPerson[];
   links: RecordingPersonLink[];
+  recordings?: LegacyRecording[];
+  circleId?: string;
   selectedPersonId: string | null;
   onSelectPerson: (personId: string) => void;
+  /** Full viewport height (public /circle tree). Legacy layout uses `embedded`. */
+  layout?: "fullViewport" | "embedded";
   className?: string;
 };
 
-export function FamilyTreeCanvas({
+function FamilyTreeCanvasInner({
   people,
   links,
+  recordings = [],
+  circleId,
   selectedPersonId,
   onSelectPerson,
-  className,
+  layout = "embedded",
 }: FamilyTreeCanvasProps) {
-  const [translate, setTranslate] = useState({ x: 0, y: 80 });
+  const { fitView } = useReactFlow();
+  const [addOpen, setAddOpen] = useState(false);
+  const [addSlot, setAddSlot] = useState<PlaceholderNodeData["slot"]>("child");
 
-  const aboutCounts = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const link of links) {
-      if (link.link_type === "about") {
-        map.set(link.person_id, (map.get(link.person_id) ?? 0) + 1);
-      }
-    }
-    return map;
-  }, [links]);
-
-  const memoryCounts = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const person of people) {
-      map.set(person.id, countMemoriesForPerson(person.id, links));
-    }
-    return map;
+  const anchorId = useMemo(() => {
+    const counts = new Map(people.map((p) => [p.id, links.filter((l) => l.person_id === p.id).length]));
+    return resolveTreeAnchor(people, counts);
   }, [people, links]);
 
-  const treeData = useMemo(() => {
-    const anchorId = resolveTreeAnchor(people, aboutCounts);
-    return buildTreeData(people, anchorId, memoryCounts);
-  }, [people, aboutCounts, memoryCounts]);
+  const { nodes, edges } = useMemo(
+    () =>
+      buildFamilyTreeFlow({
+        people,
+        links,
+        recordings,
+        selectedPersonId,
+      }),
+    [people, links, recordings, selectedPersonId],
+  );
+
+  const onNodeClick: NodeMouseHandler<Node<FamilyTreeNodeData>> = useCallback(
+    (_, node) => {
+      const data = node.data;
+      if (data.kind === "person") {
+        onSelectPerson(data.personId);
+        return;
+      }
+      if (data.kind === "placeholder" && circleId) {
+        setAddSlot(data.slot);
+        setAddOpen(true);
+        return;
+      }
+    },
+    [circleId, onSelectPerson],
+  );
+
+  const heightStyle =
+    layout === "fullViewport"
+      ? { width: "100%", height: "calc(100vh - 80px)" }
+      : { width: "100%", height: "calc(100vh - 220px)", minHeight: 520 };
 
   return (
-    <div
-      className={className}
-      style={{ width: "100%", height: "min(520px, 70vh)", background: "#0a0a0a" }}
-      ref={(node) => {
-        if (node) {
-          const { width } = node.getBoundingClientRect();
-          setTranslate({ x: width / 2, y: 80 });
-        }
-      }}
-    >
-      <Tree
-        data={treeData}
-        orientation="vertical"
-        translate={translate}
-        pathFunc="curved"
-        separation={{ siblings: 1.1, nonSiblings: 1.4 }}
-        nodeSize={{ x: 180, y: 120 }}
-        zoomable
-        draggable
-        renderCustomNodeElement={({ nodeDatum, toggleNode }) => {
-          const attrs = nodeDatum.attributes as unknown as TreeNodeAttributes | undefined;
-          const personId = attrs?.personId;
-          if (!personId) {
-            return (
-              <g>
-                <foreignObject width={120} height={80} x={-60} y={-40}>
-                  <div className="flex h-full items-center justify-center text-xs text-[#555555]">
-                    {nodeDatum.name}
-                  </div>
-                </foreignObject>
-              </g>
-            );
-          }
+    <>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeTypes}
+        onNodeClick={onNodeClick}
+        onInit={() => {
+          window.requestAnimationFrame(() => {
+            void fitView({ padding: 0.2, duration: 200 });
+          });
+        }}
+        proOptions={{ hideAttribution: true }}
+        minZoom={0.2}
+        maxZoom={1.5}
+        style={heightStyle}
+        className="family-tree-flow"
+      >
+        <Background variant={BackgroundVariant.Dots} gap={40} size={1} color="#1a1a1a" />
+        <Controls
+          showInteractive={false}
+          style={{
+            background: "#111111",
+            border: "0.5px solid #1e1e1e",
+            borderRadius: 8,
+            padding: 4,
+          }}
+        />
+        <MiniMap
+          nodeColor={(node) => {
+            const d = node.data as FamilyTreeNodeData;
+            if (d.kind === "person") return d.status === "gone" ? "#2a2a2a" : "#E6A817";
+            return "#3a2800";
+          }}
+          maskColor="rgba(0,0,0,0.7)"
+          style={{
+            background: "#111111",
+            border: "0.5px solid #1e1e1e",
+            borderRadius: 8,
+          }}
+        />
+      </ReactFlow>
 
-          return (
-            <g onClick={toggleNode}>
-              <foreignObject width={120} height={80} x={-60} y={-40}>
-                <FamilyTreeNodeCard
-                  name={nodeDatum.name}
-                  initials={attrs.initials}
-                  status={attrs.status}
-                  memoryCount={Number(attrs.memoryCount) || 0}
-                  selected={selectedPersonId === personId}
-                  onClick={() => onSelectPerson(personId)}
-                />
-              </foreignObject>
-            </g>
-          );
-        }}
-        styles={{
-          links: { stroke: "#1e1e1e", strokeWidth: 1 },
-        }}
-      />
-    </div>
+      {circleId ? (
+        <AddPersonSheet
+          open={addOpen}
+          onOpenChange={setAddOpen}
+          circleId={circleId}
+          slot={addSlot}
+          parentId={addSlot === "child" ? anchorId : undefined}
+        />
+      ) : null}
+    </>
+  );
+}
+
+export function FamilyTreeCanvas(props: FamilyTreeCanvasProps) {
+  return (
+    <ReactFlowProvider>
+      <FamilyTreeCanvasInner {...props} />
+    </ReactFlowProvider>
   );
 }

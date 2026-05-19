@@ -1,4 +1,4 @@
-export type StudioFocus = "hero" | "offerings" | "faq" | "pricing" | "outro";
+export type StudioFocus = "hero" | "heritageHero" | "offerings" | "faq" | "pricing" | "outro";
 
 export type LandingLayoutStudioState = {
   focus: StudioFocus;

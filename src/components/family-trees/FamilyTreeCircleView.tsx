@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FamilyTreeCanvas } from "@/components/legacy/family-tree/FamilyTreeCanvas";
 import { FamilyTreeMobileFocus } from "@/components/legacy/family-tree/FamilyTreeMobileFocus";
 import { PersonBiographyPanel } from "@/components/legacy/family-tree/PersonBiographyPanel";
+import { displayCircleName } from "@/lib/legacy/displayCircleName";
 import type { FamilyPerson, LegacyRecording, RecordingPersonLink } from "@/lib/legacy/types";
 
 type FamilyTreeCircleViewProps = {
@@ -33,6 +34,7 @@ export function FamilyTreeCircleView({
   const [mobileFullTree, setMobileFullTree] = useState(false);
 
   const selectedPerson = people.find((p) => p.id === selectedPersonId) ?? null;
+  const title = displayCircleName(circleName);
 
   const openPerson = (personId: string) => {
     setSelectedPersonId(personId);
@@ -40,14 +42,14 @@ export function FamilyTreeCircleView({
   };
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col gap-4 border-b border-[#1a1a1a] pb-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex min-h-screen flex-col bg-[#0a0a0a] text-white">
+      <header className="z-10 flex shrink-0 flex-col gap-4 border-b border-[#1a1a1a] px-4 py-4 sm:flex-row sm:items-center sm:justify-between md:px-8">
         <div>
           <Link
             to={backHref}
             className="text-sm text-[#666666] transition-colors hover:text-white"
           >
-            ← {circleName}
+            ← {title}
           </Link>
           <p className="mt-2 text-xs text-[#555555]">
             {people.length} members · {recordings.length} memories
@@ -73,38 +75,42 @@ export function FamilyTreeCircleView({
       </header>
 
       {people.length === 0 ? (
-        <p className="text-sm text-[#666666]">
+        <p className="px-8 py-12 text-sm text-[#666666]">
           This circle is growing. Record a memory to add the first branch.
         </p>
       ) : (
         <>
           <div className="md:hidden">
-            <FamilyTreeMobileFocus
-              people={people}
-              links={links}
-              selectedPersonId={selectedPersonId}
-              onSelectPerson={openPerson}
-              fullTreeMode={mobileFullTree}
-              onViewFullTree={() => setMobileFullTree((v) => !v)}
-            />
+            <div className="px-4 py-4">
+              <FamilyTreeMobileFocus
+                people={people}
+                links={links}
+                selectedPersonId={selectedPersonId}
+                onSelectPerson={openPerson}
+                fullTreeMode={mobileFullTree}
+                onViewFullTree={() => setMobileFullTree((v) => !v)}
+              />
+            </div>
             {mobileFullTree ? (
-              <div className="mt-4 overflow-hidden rounded-lg border border-[#1a1a1a]">
-                <FamilyTreeCanvas
-                  people={people}
-                  links={links}
-                  selectedPersonId={selectedPersonId}
-                  onSelectPerson={openPerson}
-                />
-              </div>
+              <FamilyTreeCanvas
+                people={people}
+                links={links}
+                recordings={recordings}
+                selectedPersonId={selectedPersonId}
+                onSelectPerson={openPerson}
+                layout="embedded"
+              />
             ) : null}
           </div>
 
-          <div className="hidden overflow-hidden rounded-lg border border-[#1a1a1a] md:block">
+          <div className="hidden min-h-0 flex-1 md:block">
             <FamilyTreeCanvas
               people={people}
               links={links}
+              recordings={recordings}
               selectedPersonId={selectedPersonId}
               onSelectPerson={openPerson}
+              layout="fullViewport"
             />
           </div>
         </>

@@ -46,6 +46,7 @@ export interface FamilyPerson {
   id: string;
   circle_id: string;
   display_name: string;
+  photo_url?: string | null;
   relation_label: string | null;
   status: FamilyPersonStatus;
   user_id: string | null;

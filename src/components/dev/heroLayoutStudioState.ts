@@ -2,29 +2,53 @@ import type { LandingLayoutStudioState } from "./landingLayoutStudioState";
 
 export type HeroFrame = LandingLayoutStudioState["hero"];
 
+export type HeritageHeroFrame = {
+  posX: number;
+  posY: number;
+  scale: number;
+  textSide: "left" | "right";
+  overlayStrength: number;
+  copyRaiseVh: number;
+};
+
 export type HeroStudioPage = "events" | "heritage";
 
-export const HERO_STUDIO_DEFAULTS: Record<HeroStudioPage, HeroFrame> = {
+export const HERO_STUDIO_DEFAULTS: Record<"events", HeroFrame> = {
   events: { posX: 50, posY: 22, scale: 100, copyBottomVh: 38 },
-  heritage: { posX: 72, posY: 50, scale: 100, copyBottomVh: 38 },
+};
+
+export const HERITAGE_HERO_DEFAULTS: HeritageHeroFrame = {
+  posX: 50,
+  posY: 30,
+  scale: 100,
+  textSide: "right",
+  overlayStrength: 88,
+  copyRaiseVh: 0,
 };
 
 function storageKey(page: HeroStudioPage) {
   return `beiza-hero-studio:${page}`;
 }
 
-export function loadHeroStudioFrame(page: HeroStudioPage): HeroFrame {
-  if (typeof window === "undefined") return HERO_STUDIO_DEFAULTS[page];
+export function loadHeroStudioFrame(page: "events"): HeroFrame;
+export function loadHeroStudioFrame(page: "heritage"): HeritageHeroFrame;
+export function loadHeroStudioFrame(page: HeroStudioPage): HeroFrame | HeritageHeroFrame {
+  if (typeof window === "undefined") {
+    return page === "heritage" ? HERITAGE_HERO_DEFAULTS : HERO_STUDIO_DEFAULTS.events;
+  }
   try {
     const raw = localStorage.getItem(storageKey(page));
-    if (!raw) return HERO_STUDIO_DEFAULTS[page];
-    return { ...HERO_STUDIO_DEFAULTS[page], ...(JSON.parse(raw) as Partial<HeroFrame>) };
+    const defaults = page === "heritage" ? HERITAGE_HERO_DEFAULTS : HERO_STUDIO_DEFAULTS.events;
+    if (!raw) return defaults;
+    return { ...defaults, ...(JSON.parse(raw) as Partial<HeroFrame & HeritageHeroFrame>) };
   } catch {
-    return HERO_STUDIO_DEFAULTS[page];
+    return page === "heritage" ? HERITAGE_HERO_DEFAULTS : HERO_STUDIO_DEFAULTS.events;
   }
 }
 
-export function saveHeroStudioFrame(page: HeroStudioPage, frame: HeroFrame) {
+export function saveHeroStudioFrame(page: "events", frame: HeroFrame): void;
+export function saveHeroStudioFrame(page: "heritage", frame: HeritageHeroFrame): void;
+export function saveHeroStudioFrame(page: HeroStudioPage, frame: HeroFrame | HeritageHeroFrame) {
   localStorage.setItem(storageKey(page), JSON.stringify(frame));
 }
 
@@ -37,7 +61,32 @@ export function heroStudioCssVars(frame: HeroFrame): Record<string, string> {
   };
 }
 
-export function heroStudioToJson(page: HeroStudioPage, frame: HeroFrame) {
+export function heritageHeroStudioCssVars(frame: HeritageHeroFrame): Record<string, string> {
+  const opacity = frame.overlayStrength / 100;
+  const desktop =
+    frame.textSide === "right"
+      ? `linear-gradient(to left, rgba(0,0,0,${opacity}) 45%, rgba(0,0,0,0.1) 100%)`
+      : `linear-gradient(to right, rgba(0,0,0,${opacity}) 45%, rgba(0,0,0,0.1) 100%)`;
+
+  return {
+    "--hero-bg-pos-x": `${frame.posX}%`,
+    "--hero-bg-pos-y": `${frame.posY}%`,
+    "--hero-bg-scale": `${frame.scale}%`,
+    "--heritage-overlay-md": desktop,
+    "--heritage-overlay-mobile":
+      "linear-gradient(to top, rgba(0,0,0,0.9) 50%, rgba(0,0,0,0.1) 100%)",
+  };
+}
+
+export function heritageHeroFrameToImageStyle(frame: HeritageHeroFrame) {
+  return {
+    objectPosition: `${frame.posX}% ${frame.posY}%`,
+    transform: frame.scale !== 100 ? `scale(${frame.scale / 100})` : undefined,
+    transformOrigin: `${frame.posX}% ${frame.posY}%`,
+  };
+}
+
+export function heroStudioToJson(page: HeroStudioPage, frame: HeroFrame | HeritageHeroFrame) {
   return JSON.stringify(
     {
       savedAt: new Date().toISOString(),
@@ -50,7 +99,7 @@ export function heroStudioToJson(page: HeroStudioPage, frame: HeroFrame) {
   );
 }
 
-export function downloadHeroStudioJson(page: HeroStudioPage, frame: HeroFrame) {
+export function downloadHeroStudioJson(page: HeroStudioPage, frame: HeroFrame | HeritageHeroFrame) {
   const blob = new Blob([heroStudioToJson(page, frame)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
