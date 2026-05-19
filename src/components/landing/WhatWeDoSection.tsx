@@ -1,6 +1,8 @@
 import { useEffect, useState, type CSSProperties } from "react";
+import { FlagIcon } from "@/components/ui/FlagIcon";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FeatureCard } from "@/components/framer/FeatureCard";
+import { marketingContainer, marketingSection, segmentToggleOption, segmentToggleShell } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
@@ -38,11 +40,11 @@ const GLOBAL_OFFERINGS: OfferingCard[] = [
   },
 ];
 
-const LOCALE_OPTIONS: { id: LegacyLocale; label: string }[] = [
-  { id: "global", label: "Global" },
-  { id: "ghana", label: "Ghana · Twi" },
-  { id: "spanish", label: "Spanish" },
-  { id: "french", label: "French" },
+const LOCALE_OPTIONS: { id: LegacyLocale; flagKey: string; label: string }[] = [
+  { id: "global", flagKey: "GLOBAL", label: "Global" },
+  { id: "ghana", flagKey: "GH", label: "Ghana · Twi" },
+  { id: "spanish", flagKey: "ES", label: "Spanish" },
+  { id: "french", flagKey: "FR", label: "French" },
 ];
 
 const LOCALE_COPY: Record<
@@ -101,7 +103,7 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
 
   return (
     <section
-      className={cn("studio-offerings mx-auto w-full max-w-6xl px-[5%] py-24 lg:py-32", className)}
+      className={cn("studio-offerings", marketingSection, marketingContainer, className)}
       style={style}
     >
       <SectionHeader
@@ -117,7 +119,7 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
       <div className="mx-auto mt-6 max-w-2xl px-2 text-center">
         <p className="text-base leading-relaxed text-subtle">{copy.description}</p>
         {copy.secondary ? (
-          <p className="mt-3 text-sm leading-relaxed text-[#666666]">{copy.secondary}</p>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{copy.secondary}</p>
         ) : null}
       </div>
 
@@ -170,25 +172,21 @@ function LocaleToggle({
 }) {
   return (
     <div
-      className="mx-auto flex w-fit max-w-full shrink-0 gap-1 rounded-[40px] border-[0.5px] border-[#1e1e1e] bg-[#111111] p-1 sm:flex-wrap sm:justify-center"
+      className={cn(segmentToggleShell, "sm:flex-wrap sm:justify-center")}
       role="group"
       aria-label="Language and region"
     >
-      {LOCALE_OPTIONS.map(({ id, label }) => {
+      {LOCALE_OPTIONS.map(({ id, flagKey, label }) => {
         const active = locale === id;
         return (
           <button
             key={id}
             type="button"
             onClick={() => onChange(id)}
-            className={cn(
-              "shrink-0 cursor-pointer rounded-[40px] px-[18px] py-2 text-xs transition-all duration-150",
-              active
-                ? "bg-[#E6A817] font-medium text-[#0a0a0a]"
-                : "bg-transparent font-normal text-[#666666] hover:text-[#888888]",
-            )}
+            className={cn(segmentToggleOption(active), "inline-flex items-center gap-2")}
             aria-pressed={active}
           >
+            <FlagIcon country={flagKey} size={18} className="shrink-0" />
             {label}
           </button>
         );

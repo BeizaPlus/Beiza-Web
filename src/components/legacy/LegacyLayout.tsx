@@ -11,9 +11,10 @@ const nav: {
   end?: boolean;
 }[] = [
   { href: "/legacy", label: "Home", icon: "home", end: true },
+  { href: "/legacy/circle", label: "Tree", icon: "family" },
   { href: "/legacy/record", label: "Record", icon: "record" },
   { href: "/legacy/vault", label: "Vault", icon: "vault" },
-  { href: "/legacy/family", label: "Circle", icon: "family" },
+  { href: "/legacy/family", label: "Invite", icon: "well" },
 ];
 
 export function LegacyLayout() {

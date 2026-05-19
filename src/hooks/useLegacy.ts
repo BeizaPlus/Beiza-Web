@@ -4,7 +4,9 @@ import type {
   FamilyCircle,
   FamilyMember,
   LegacyRecording,
+  MemoryAboutChoice,
 } from "@/lib/legacy/types";
+import { linkRecordingToPeople } from "@/hooks/useFamilyTree";
 import { extensionForMime, FREE_VAULT_STORAGE_BYTES } from "@/lib/legacy/audioRecording";
 import type { StoryPrompt } from "@/lib/prompts";
 
@@ -113,7 +115,7 @@ export function useCreateLegacyCircle() {
 
       return circle as FamilyCircle;
     },
-    onSuccess: () => {
+      onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["legacy"] });
     },
   });
@@ -163,6 +165,7 @@ export async function uploadLegacyRecording(params: {
   blob: Blob;
   durationSeconds: number;
   title?: string;
+  memoryAbout?: MemoryAboutChoice;
 }) {
   const { data: userData, error: userError } = await supabase!.auth.getUser();
   if (userError) throw userError;
@@ -208,7 +211,18 @@ export async function uploadLegacyRecording(params: {
     .select()
     .single();
   if (error) throw error;
-  return data as LegacyRecording;
+  const recording = data as LegacyRecording;
+
+  if (params.memoryAbout) {
+    await linkRecordingToPeople({
+      recordingId: recording.id,
+      circleId: params.circleId,
+      choice: params.memoryAbout,
+      recorderUserId: userId,
+    });
+  }
+
+  return recording;
 }
 
 export function useUpdateLegacyRecordingTitle() {

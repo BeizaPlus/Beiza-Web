@@ -138,10 +138,10 @@ export default function LegacyVaultPage() {
       <LegacyKeeperUpsellDialog open={keeperUpsellOpen} onOpenChange={setKeeperUpsellOpen} />
 
       <Dialog open={Boolean(pendingDeleteId)} onOpenChange={(o) => !o && setPendingDeleteId(null)}>
-        <DialogContent className="border-[#1e1e1e] bg-[#111] text-white sm:max-w-md">
+        <DialogContent className="border-border bg-card text-foreground sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Delete this memory?</DialogTitle>
-            <DialogDescription className="text-[#888]">
+            <DialogDescription className="text-muted-foreground">
               This cannot be undone. The recording will be removed from your family vault.
             </DialogDescription>
           </DialogHeader>

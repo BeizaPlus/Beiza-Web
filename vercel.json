@@ -4,6 +4,11 @@
       "source": "/white-swan",
       "destination": "/heritage",
       "permanent": false
+    },
+    {
+      "source": "/gallery",
+      "destination": "/circle",
+      "permanent": false
     }
   ],
   "rewrites": [

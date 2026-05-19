@@ -1,8 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Mic, Square } from "lucide-react";
 
-const GOLD = "#E6A817";
-
 type RecordingButtonProps = {
   isRecording: boolean;
   disabled?: boolean;
@@ -23,9 +21,8 @@ export function RecordingButton({ isRecording, disabled, onPress }: RecordingBut
           disabled && "cursor-not-allowed opacity-50",
           isRecording
             ? "border-red-500/60 bg-[#1a0000] text-red-400 ring-4 ring-red-500/40 animate-pulse"
-            : "border-[#E6A817]/40 text-[#0a0a0a] shadow-focus-ring",
+            : "border-primary/40 bg-primary text-primary-foreground shadow-focus-ring",
         )}
-        style={!isRecording ? { backgroundColor: GOLD } : undefined}
       >
         {isRecording ? (
           <Square className="h-9 w-9 fill-current pointer-events-none" strokeWidth={0} />

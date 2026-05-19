@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 @import url('https://fonts.cdnfonts.com/css/satoshi');
 
 @tailwind base;
@@ -330,6 +331,51 @@
     color: hsl(var(--text-subtle));
   }
 
+  .voices-testimonials-eyebrow {
+    font-family: 'DM Sans', 'Inter', system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #555555;
+  }
+
+  .voices-testimonials-heading {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.15;
+    color: #ffffff;
+  }
+
+  @media (min-width: 768px) {
+    .voices-testimonials-heading {
+      font-size: 48px;
+    }
+  }
+
+  .family-tree-node-living {
+    animation: family-tree-breathe 3s ease-in-out infinite;
+  }
+
+  @keyframes family-tree-breathe {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 hsl(43 91.8% 52% / 0.15);
+    }
+    50% {
+      box-shadow: 0 0 12px 2px hsl(43 91.8% 52% / 0.35);
+    }
+  }
+
+  .voices-testimonials-subheading {
+    font-family: 'DM Sans', 'Inter', system-ui, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.7;
+    color: #666666;
+  }
+
   .glass-panel {
     background: var(--glass-overlay);
     border: 1px solid hsla(var(--glass-border) / 0.35);
@@ -444,5 +490,21 @@
 
   .accent-ring {
     box-shadow: 0 0 0 1px hsla(var(--glass-border) / 0.4), 0 0 0 4px hsla(var(--accent-gold) / 0.12);
+  }
+
+  /* Draggable scroll tracks */
+  [data-draggable] {
+    cursor: grab;
+    scroll-behavior: auto;
+  }
+
+  [data-draggable].is-dragging {
+    cursor: grabbing;
+    user-select: none;
+    scroll-behavior: auto;
+  }
+
+  [data-draggable].is-dragging * {
+    pointer-events: none;
   }
 }

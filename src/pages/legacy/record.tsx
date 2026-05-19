@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { RecordingButton } from "@/components/legacy/RecordingButton";
 import { LegacyPlaybackRow } from "@/components/legacy/LegacyPlaybackRow";
 import { LegacyRecordPrompt } from "@/components/legacy/LegacyRecordPrompt";
@@ -10,6 +11,9 @@ import {
   uploadLegacyRecording,
   useMyLegacyCircle,
 } from "@/hooks/useLegacy";
+import { useFamilyPeople } from "@/hooks/useFamilyTree";
+import { MemoryAboutPicker } from "@/components/legacy/family-tree/MemoryAboutPicker";
+import type { MemoryAboutChoice } from "@/lib/legacy/types";
 import type { RecordPhase } from "@/lib/legacy/types";
 import { FREE_VAULT_STORAGE_BYTES, getAudioDurationFromBlob } from "@/lib/legacy/audioRecording";
 import {
@@ -30,9 +34,13 @@ function pickAudioMimeType() {
 
 export default function LegacyRecordPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const { data: circleCtx } = useMyLegacyCircle();
   const circle = circleCtx?.circle;
+  const { data: people = [] } = useFamilyPeople(circle?.id);
+  const [memoryAbout, setMemoryAbout] = useState<MemoryAboutChoice | null>(null);
+  const [createdPlaceholderName, setCreatedPlaceholderName] = useState<string | null>(null);
 
   const [phase, setPhase] = useState<RecordPhase>("prepare");
   const [prompt, setPrompt] = useState<StoryPrompt>(() => pickRandomStoryPrompt());
@@ -201,6 +209,8 @@ export default function LegacyRecordPage() {
     setDurationSeconds(0);
     setElapsedSeconds(0);
     setTitle("");
+    setMemoryAbout(null);
+    setCreatedPlaceholderName(null);
     setPhase("prepare");
     setIsRequestingMic(false);
     void loadPrompts();
@@ -208,6 +218,14 @@ export default function LegacyRecordPage() {
 
   const handleUpload = async () => {
     if (!circle?.id || !blobRef.current) return;
+    if (!memoryAbout) {
+      toast({
+        title: "Who is this memory about?",
+        description: "Choose a person so this fragment can join their biography on the tree.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (blobRef.current.size > FREE_VAULT_STORAGE_BYTES) {
       toast({
@@ -227,7 +245,12 @@ export default function LegacyRecordPage() {
         blob: blobRef.current,
         durationSeconds,
         title: title || undefined,
+        memoryAbout,
       });
+      if (memoryAbout.type === "new") {
+        setCreatedPlaceholderName(memoryAbout.name);
+      }
+      void queryClient.invalidateQueries({ queryKey: ["legacy"] });
       setPhase("seal");
     } catch (err) {
       toast({
@@ -310,7 +333,12 @@ export default function LegacyRecordPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
-          <Button className="w-full" disabled={uploading} onClick={() => void handleUpload()}>
+          <MemoryAboutPicker people={people} value={memoryAbout} onChange={setMemoryAbout} />
+          <Button
+            className="w-full"
+            disabled={uploading || !memoryAbout}
+            onClick={() => void handleUpload()}
+          >
             {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Seal this memory"}
           </Button>
         </div>
@@ -321,13 +349,22 @@ export default function LegacyRecordPage() {
           <div className="rounded-xl border border-primary/40 bg-primary/10 p-6">
             <h3 className="text-lg font-semibold text-primary">Memory preserved</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              Keep their voice forever. Your family can hear this in the vault.
+              Keep their voice forever. This fragment is now part of their tree biography.
             </p>
+            {createdPlaceholderName ? (
+              <p className="mt-3 text-xs text-primary">
+                {createdPlaceholderName} was added to your family tree — invite them when you are
+                ready.
+              </p>
+            ) : null}
           </div>
-          <Button className="w-full" onClick={() => navigate("/legacy/vault")}>
+          <Button className="w-full" onClick={() => navigate("/legacy/circle")}>
+            View family tree
+          </Button>
+          <Button variant="secondary" className="w-full" onClick={() => navigate("/legacy/vault")}>
             Open the vault
           </Button>
-          <Button variant="secondary" className="w-full" onClick={resetForAnother}>
+          <Button variant="ghost" className="w-full" onClick={resetForAnother}>
             Record another memory
           </Button>
         </div>

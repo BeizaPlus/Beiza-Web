@@ -7,6 +7,8 @@ import {
   FALLBACK_CONTACT_CHANNELS,
   FALLBACK_FAQS,
   FALLBACK_FEATURED_EVENT,
+  FALLBACK_EVENT_STORIES,
+  FALLBACK_LIVE_EVENTS,
   FALLBACK_FOOTER_LINKS,
   FALLBACK_HERO_LANDING,
   FALLBACK_NAVIGATION_LINKS,
@@ -110,23 +112,41 @@ export type PricingTier = {
   features: string[];
 };
 
+export type HeroMedia = {
+  src: string;
+  alt?: string | null;
+};
+
 export type FeaturedEvent = {
   id: string;
   slug: string;
   memoirSlug?: string | null;
   title: string;
   description?: string | null;
+  subtitle?: string | null;
+  durationLabel?: string | null;
   location?: string | null;
   occursOn?: string | null;
-  heroMedia?: {
-    src: string;
-    alt?: string | null;
-  } | null;
+  heroMedia?: HeroMedia | null;
 };
 
 export type PublicEvent = FeaturedEvent & {
   isFeatured: boolean;
   isPublished: boolean;
+  isLive?: boolean;
+  displayOrder?: number;
+};
+
+export type EventStory = {
+  id: string;
+  slug: string;
+  title: string;
+  subtitle?: string | null;
+  durationLabel?: string | null;
+  memoirSlug?: string | null;
+  heroMedia?: HeroMedia | null;
+  isNew: boolean;
+  displayOrder: number;
 };
 
 export type ContactChannel = {
@@ -168,6 +188,76 @@ const handleError = (scope: string, error: Error | null | undefined) => {
   if (!error) return;
   console.warn(`[supabase:${scope}] falling back to static content:`, error.message);
 };
+
+function parseHeroMediaJson(
+  heroMediaRaw: unknown,
+  scope: string,
+  id: string,
+): HeroMedia | null {
+  if (!heroMediaRaw) return null;
+  try {
+    let media: Record<string, unknown> | null = null;
+    if (typeof heroMediaRaw === "string") {
+      media = JSON.parse(heroMediaRaw) as Record<string, unknown>;
+    } else if (typeof heroMediaRaw === "object" && heroMediaRaw !== null) {
+      media = heroMediaRaw as Record<string, unknown>;
+    }
+    if (!media) return null;
+    const srcValue = media.src || media.url || media.image || media.path || media.image_url;
+    if (typeof srcValue !== "string" || !srcValue.trim()) return null;
+    let finalSrc = srcValue.trim();
+    if (!finalSrc.startsWith("http://") && !finalSrc.startsWith("https://") && !finalSrc.startsWith("/")) {
+      const { data: publicUrlData } = supabase!.storage.from("public-assets").getPublicUrl(finalSrc);
+      finalSrc = publicUrlData.publicUrl;
+    }
+    return {
+      src: finalSrc,
+      alt:
+        typeof media.alt === "string"
+          ? media.alt
+          : typeof media.title === "string"
+            ? media.title
+            : null,
+    };
+  } catch (error) {
+    console.warn(`[usePublicContent] Failed to parse hero_media (${scope}):`, id, error);
+    return null;
+  }
+}
+
+function mapEventRow(event: {
+  id: string;
+  slug: string;
+  memoir_slug?: string | null;
+  title: string;
+  description?: string | null;
+  subtitle?: string | null;
+  duration_label?: string | null;
+  location?: string | null;
+  occurs_on?: string | null;
+  hero_media?: unknown;
+  is_featured?: boolean | null;
+  is_published?: boolean | null;
+  is_live?: boolean | null;
+  display_order?: number | null;
+}): PublicEvent {
+  return {
+    id: event.id,
+    slug: event.slug,
+    memoirSlug: event.memoir_slug ?? event.slug,
+    title: event.title,
+    description: event.description,
+    subtitle: event.subtitle,
+    durationLabel: event.duration_label,
+    location: event.location,
+    occursOn: event.occurs_on,
+    heroMedia: parseHeroMediaJson(event.hero_media, "event", event.id),
+    isFeatured: event.is_featured ?? false,
+    isPublished: event.is_published ?? false,
+    isLive: event.is_live ?? false,
+    displayOrder: event.display_order ?? 0,
+  };
+}
 
 const pickSetting = (map: Record<string, string>, key: string, fallback: string) => {
   const value = map[key]?.trim();
@@ -247,6 +337,8 @@ const mapFallbackFeaturedEvent = (): FeaturedEvent => ({
   memoirSlug: FALLBACK_FEATURED_EVENT.memoir_slug,
   title: FALLBACK_FEATURED_EVENT.title,
   description: FALLBACK_FEATURED_EVENT.description,
+  subtitle: FALLBACK_FEATURED_EVENT.subtitle,
+  durationLabel: FALLBACK_FEATURED_EVENT.duration_label,
   location: FALLBACK_FEATURED_EVENT.location,
   occursOn: FALLBACK_FEATURED_EVENT.occurs_on,
   heroMedia: {
@@ -254,6 +346,37 @@ const mapFallbackFeaturedEvent = (): FeaturedEvent => ({
     alt: FALLBACK_FEATURED_EVENT.hero_media.alt,
   },
 });
+
+const mapFallbackLiveEvents = (): PublicEvent[] =>
+  FALLBACK_LIVE_EVENTS.map((event) => ({
+    id: event.id,
+    slug: event.slug,
+    memoirSlug: event.memoir_slug,
+    title: event.title,
+    description: event.description,
+    subtitle: event.subtitle,
+    durationLabel: event.duration_label,
+    location: event.location,
+    occursOn: event.occurs_on,
+    heroMedia: { src: event.hero_media.src, alt: event.hero_media.alt },
+    isFeatured: event.slug === FALLBACK_FEATURED_EVENT.slug,
+    isPublished: true,
+    isLive: true,
+    displayOrder: event.slug === FALLBACK_FEATURED_EVENT.slug ? 0 : 1,
+  }));
+
+const mapFallbackEventStories = (): EventStory[] =>
+  FALLBACK_EVENT_STORIES.map((story) => ({
+    id: story.id,
+    slug: story.slug,
+    title: story.title,
+    subtitle: story.subtitle,
+    durationLabel: story.duration_label,
+    memoirSlug: story.memoir_slug,
+    heroMedia: { src: story.hero_media.src, alt: story.hero_media.alt },
+    isNew: story.is_new,
+    displayOrder: story.display_order,
+  }));
 
 const mapFallbackContactChannels = (): ContactChannel[] =>
   FALLBACK_CONTACT_CHANNELS.map((item) => ({
@@ -525,6 +648,9 @@ export const usePricingTiers = () =>
     },
   });
 
+const EVENT_SELECT =
+  "id, slug, memoir_slug, memoir_id, title, description, subtitle, duration_label, location, occurs_on, hero_media, is_featured, is_published, is_live, display_order";
+
 export const useFeaturedEvent = () =>
   useQuery({
     queryKey: ["public-featured-event"],
@@ -537,9 +663,7 @@ export const useFeaturedEvent = () =>
 
       const { data, error } = await supabase
         .from("events")
-        .select(
-          "id, slug, memoir_slug, memoir_id, title, description, location, occurs_on, hero_media, is_featured, is_published"
-        )
+        .select(EVENT_SELECT)
         .eq("is_featured", true)
         .eq("is_published", true)
         .order("updated_at", { ascending: false })
@@ -551,65 +675,68 @@ export const useFeaturedEvent = () =>
         return mapFallbackFeaturedEvent();
       }
 
-      const event = data[0];
+      return mapEventRow(data[0]);
+    },
+  });
 
-      // Parse hero_media - it's stored as JSONB in Supabase
-      let heroMedia: { src: string; alt?: string | null } | null = null;
-      if (event.hero_media)
-      {
-        try
-        {
-          // Handle different possible structures
-          let media: Record<string, unknown> | null = null;
-
-          if (typeof event.hero_media === "string")
-          {
-            // If it's a string, try to parse it
-            media = JSON.parse(event.hero_media) as Record<string, unknown>;
-          } else if (typeof event.hero_media === "object" && event.hero_media !== null)
-          {
-            media = event.hero_media as Record<string, unknown>;
-          }
-
-          if (media)
-          {
-            // Check for src in various possible locations
-            const srcValue = media.src || media.url || media.image || media.path || media.image_url;
-            if (typeof srcValue === "string" && srcValue.trim())
-            {
-              const src = srcValue.trim();
-
-              // Convert storage path to public URL if needed
-              let finalSrc = src;
-              if (!src.startsWith("http://") && !src.startsWith("https://"))
-              {
-                // It's a storage path - convert to public URL
-                const { data: publicUrlData } = supabase.storage.from("public-assets").getPublicUrl(src);
-                finalSrc = publicUrlData.publicUrl;
-              }
-
-              heroMedia = {
-                src: finalSrc,
-                alt: typeof media.alt === "string" ? media.alt : (typeof media.title === "string" ? media.title : null),
-              };
-            }
-          }
-        } catch (error)
-        {
-          console.warn("[usePublicContent] Failed to parse hero_media:", error);
-        }
+export const useLiveEvents = () =>
+  useQuery({
+    queryKey: ["public-live-events"],
+    staleTime: STALE_TIME,
+    queryFn: async (): Promise<PublicEvent[]> => {
+      if (!isSupabaseReady) {
+        return mapFallbackLiveEvents();
       }
 
-      return {
-        id: event.id,
-        slug: event.slug,
-        memoirSlug: event.memoir_slug ?? event.slug,
-        title: event.title,
-        description: event.description,
-        location: event.location,
-        occursOn: event.occurs_on,
-        heroMedia,
-      };
+      const { data, error } = await supabase
+        .from("events")
+        .select(EVENT_SELECT)
+        .eq("is_published", true)
+        .eq("is_live", true)
+        .order("display_order", { ascending: true });
+
+      if (error || !data?.length) {
+        handleError("live-events", error);
+        return mapFallbackLiveEvents();
+      }
+
+      return data.map(mapEventRow);
+    },
+  });
+
+export const usePublishedEventStories = () =>
+  useQuery({
+    queryKey: ["public-event-stories"],
+    staleTime: STALE_TIME,
+    queryFn: async (): Promise<EventStory[]> => {
+      if (!isSupabaseReady) {
+        return mapFallbackEventStories();
+      }
+
+      const { data, error } = await supabase
+        .from("event_stories")
+        .select(
+          "id, slug, title, subtitle, duration_label, hero_media, memoir_slug, is_new, display_order, is_published",
+        )
+        .eq("is_published", true)
+        .order("display_order", { ascending: true });
+
+      if (error || !data) {
+        handleError("event-stories", error);
+        return mapFallbackEventStories();
+      }
+
+      return data.map((story) => ({
+        id: story.id,
+        slug: story.slug,
+        title: story.title,
+        subtitle: story.subtitle,
+        durationLabel: story.duration_label,
+        memoirSlug: story.memoir_slug,
+        heroMedia: parseHeroMediaJson(story.hero_media, "event-story", story.id),
+        isNew: story.is_new ?? false,
+        displayOrder: story.display_order ?? 0,
+      }));
     },
   });
 
@@ -625,9 +752,7 @@ export const usePublishedEvents = () =>
 
       const { data, error } = await supabase
         .from("events")
-        .select(
-          "id, slug, memoir_slug, memoir_id, title, description, location, occurs_on, hero_media, is_featured, is_published"
-        )
+        .select(EVENT_SELECT)
         .eq("is_published", true)
         .order("occurs_on", { ascending: true, nullsFirst: false });
 
@@ -637,67 +762,7 @@ export const usePublishedEvents = () =>
         return [];
       }
 
-      return data.map((event) => {
-        // Parse hero_media - it's stored as JSONB in Supabase
-        let heroMedia: { src: string; alt?: string | null } | null = null;
-        if (event.hero_media)
-        {
-          try
-          {
-            // Handle different possible structures
-            let media: Record<string, unknown> | null = null;
-
-            if (typeof event.hero_media === "string")
-            {
-              // If it's a string, try to parse it
-              media = JSON.parse(event.hero_media) as Record<string, unknown>;
-            } else if (typeof event.hero_media === "object" && event.hero_media !== null)
-            {
-              media = event.hero_media as Record<string, unknown>;
-            }
-
-            if (media)
-            {
-              // Check for src in various possible locations
-              const srcValue = media.src || media.url || media.image || media.path || media.image_url;
-              if (typeof srcValue === "string" && srcValue.trim())
-              {
-                const src = srcValue.trim();
-
-                // Convert storage path to public URL if needed
-                let finalSrc = src;
-                if (!src.startsWith("http://") && !src.startsWith("https://"))
-                {
-                  // It's a storage path - convert to public URL
-                  const { data: publicUrlData } = supabase.storage.from("public-assets").getPublicUrl(src);
-                  finalSrc = publicUrlData.publicUrl;
-                }
-
-                heroMedia = {
-                  src: finalSrc,
-                  alt: typeof media.alt === "string" ? media.alt : (typeof media.title === "string" ? media.title : null),
-                };
-              }
-            }
-          } catch (error)
-          {
-            console.warn("[usePublicContent] Failed to parse hero_media for event:", event.id, error);
-          }
-        }
-
-        return {
-          id: event.id,
-          slug: event.slug,
-          memoirSlug: event.memoir_slug ?? event.slug,
-          title: event.title,
-          description: event.description,
-          location: event.location,
-          occursOn: event.occurs_on,
-          heroMedia,
-          isFeatured: event.is_featured ?? false,
-          isPublished: event.is_published ?? false,
-        };
-      });
+      return data.map(mapEventRow);
     },
   });
 

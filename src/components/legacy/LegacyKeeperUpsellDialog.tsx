@@ -7,8 +7,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-const GOLD = "#E6A817";
-
 type LegacyKeeperUpsellDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -17,12 +15,12 @@ type LegacyKeeperUpsellDialogProps = {
 export function LegacyKeeperUpsellDialog({ open, onOpenChange }: LegacyKeeperUpsellDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="border-[#1e1e1e] bg-[#111111] text-white sm:max-w-md">
+      <DialogContent className="border-border bg-card text-foreground sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-lg text-white">
             Vault control is a Keeper feature
           </DialogTitle>
-          <DialogDescription className="text-sm leading-relaxed text-[#888]">
+          <DialogDescription className="text-sm leading-relaxed text-muted-foreground">
             On the free Circle plan, memories are permanent — they&apos;re kept forever. Upgrade to
             Keeper to delete, manage, and download your recordings.
           </DialogDescription>
@@ -30,8 +28,7 @@ export function LegacyKeeperUpsellDialog({ open, onOpenChange }: LegacyKeeperUps
         <Link
           to="/pricing"
           onClick={() => onOpenChange(false)}
-          className="mt-4 block w-full rounded-full py-3 text-center text-sm font-semibold text-[#111]"
-          style={{ backgroundColor: GOLD }}
+          className="mt-4 block w-full rounded-full bg-primary py-3 text-center text-sm font-semibold text-primary-foreground hover:opacity-90"
         >
           Upgrade to Keeper — $4.99/mo
         </Link>

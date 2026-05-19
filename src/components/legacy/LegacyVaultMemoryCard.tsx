@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Lock, Pause, Pencil, Play, Trash2 } from "lucide-react";
 import type { LegacyRecording } from "@/lib/legacy/types";
+import { legacySurface } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-
-const GOLD = "#E6A817";
 
 type LegacyVaultMemoryCardProps = {
   recording: LegacyRecording;
@@ -52,19 +51,18 @@ export function LegacyVaultMemoryCard({
   };
 
   return (
-    <li className="relative flex items-start gap-3.5 overflow-hidden rounded-xl border border-[#2a2a2a] bg-[#1a1a1a] px-4 py-3.5">
+    <li className={cn(legacySurface, "relative flex items-start gap-3.5 overflow-hidden px-4 py-3.5")}>
       <button
         type="button"
-        className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-0 disabled:opacity-50"
-        style={{ backgroundColor: GOLD }}
+        className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-0 bg-primary disabled:opacity-50"
         onClick={onPlay}
         disabled={!recording.audio_url}
         aria-label={isPlaying ? "Pause memory" : "Play memory"}
       >
         {isPlaying ? (
-          <Pause className="h-4 w-4 fill-[#111] text-[#111]" aria-hidden />
+          <Pause className="h-4 w-4 fill-primary-foreground text-primary-foreground" aria-hidden />
         ) : (
-          <Play className="h-4 w-4 fill-[#111] pl-0.5 text-[#111]" aria-hidden />
+          <Play className="h-4 w-4 fill-primary-foreground pl-0.5 text-primary-foreground" aria-hidden />
         )}
       </button>
 
@@ -83,7 +81,7 @@ export function LegacyVaultMemoryCard({
               }
             }}
             placeholder="Memory title"
-            className="h-8 border-[#333] bg-[#0a0a0a] text-sm text-white"
+            className="h-8 border-border bg-background text-sm text-foreground"
           />
         ) : (
           <button
@@ -94,16 +92,18 @@ export function LegacyVaultMemoryCard({
               setEditing(true);
             }}
           >
-            {/* Onboarding TODO: nudge users to tap the pencil and name memories */}
             <p className="truncate text-sm font-semibold text-white">
               {recording.title || "Untitled memory"}
             </p>
-            <Pencil className="h-3 w-3 shrink-0 text-[#555] group-hover:text-[#888]" aria-hidden />
+            <Pencil
+              className="h-3 w-3 shrink-0 text-muted-foreground group-hover:text-subtle"
+              aria-hidden
+            />
             <span className="sr-only">Rename memory</span>
           </button>
         )}
-        <p className="mt-0.5 truncate text-xs text-[#888]">{recording.prompt}</p>
-        <p className="mt-1 text-[11px] text-[#555]">
+        <p className="mt-0.5 truncate text-xs text-muted-foreground">{recording.prompt}</p>
+        <p className="mt-1 text-[11px] text-muted-foreground">
           {formatDuration(recording.duration_seconds ?? 0)} · {formatDate(recording.created_at)}
         </p>
       </div>
@@ -111,8 +111,8 @@ export function LegacyVaultMemoryCard({
       <button
         type="button"
         className={cn(
-          "relative mt-0.5 flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg border border-[#333] bg-transparent transition-colors",
-          !locked && "hover:border-[#E6A817]",
+          "relative mt-0.5 flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg border border-border bg-transparent transition-colors",
+          !locked && "hover:border-primary",
         )}
         onClick={() => {
           if (locked) onDeleteLocked?.();
@@ -121,16 +121,15 @@ export function LegacyVaultMemoryCard({
         aria-label={locked ? "Delete locked — upgrade to remove" : "Delete memory"}
       >
         <Trash2
-          className="h-4 w-4 transition-colors"
-          style={{ color: locked ? "#444" : "#888" }}
+          className={cn(
+            "h-4 w-4 transition-colors",
+            locked ? "text-muted-foreground/60" : "text-muted-foreground",
+          )}
           aria-hidden
         />
         {locked ? (
-          <span
-            className="absolute -right-1 -top-1 flex h-2.5 w-2.5 items-center justify-center rounded-full"
-            style={{ backgroundColor: GOLD }}
-          >
-            <Lock className="h-1.5 w-1.5 text-[#111]" aria-hidden />
+          <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-primary">
+            <Lock className="h-1.5 w-1.5 text-primary-foreground" aria-hidden />
           </span>
         ) : null}
       </button>

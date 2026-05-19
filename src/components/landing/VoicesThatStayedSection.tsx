@@ -1,14 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
-import { SectionHeader } from "@/components/framer/SectionHeader";
 import { VOICES_TESTIMONIALS } from "@/lib/legacy/voicesTestimonials";
+import { carouselControlButton } from "@/lib/brandUi";
+import { useDraggableScroll } from "@/hooks/useDraggableScroll";
 import { cn } from "@/lib/utils";
 
 const SCROLL_GAP_PX = 16;
 const DESKTOP_SCROLL_STEP = 356;
-
-const controlButtonClass =
-  "ring-background flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/10 bg-black/40 text-white transition hover:bg-white/10 disabled:pointer-events-none disabled:opacity-30";
 
 function ChainMotif() {
   return (
@@ -39,7 +37,6 @@ function VoiceCard({
   name,
   relation,
   location,
-  flag,
   country,
   featured,
   quote,
@@ -47,33 +44,23 @@ function VoiceCard({
   return (
     <article
       className={cn(
-        "glass-panel flex h-full w-[calc(85vw)] shrink-0 snap-start flex-col gap-4 rounded-lg border border-white/10 p-6 md:w-[340px]",
-        featured && "ring-1 ring-primary/35",
+        "glass-panel flex h-auto min-h-[280px] w-[calc(85vw)] shrink-0 snap-start flex-col gap-4 rounded-lg border border-white/10 p-6 md:w-[340px]",
+        featured && "border-l-[3px] border-l-primary",
       )}
     >
       <Quote className="h-5 w-5 shrink-0 text-primary" aria-hidden />
       <p className="text-eyebrow text-xs">
         {relation} · {location}
       </p>
-      <p className="flex-1 text-base leading-relaxed text-white/90">{quote}</p>
-      <div className="flex items-center gap-3 pt-2">
+      <p className="card-quote flex-1 text-base leading-relaxed text-white/90">{quote}</p>
+      <div className="card-footer mt-auto flex items-center gap-3 pt-2">
         <span className="ring-background flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/60 text-xs font-medium text-primary">
           {initials}
         </span>
         <div className="min-w-0">
           <p className="font-medium text-white">{name}</p>
-          <p className="mt-0.5 flex items-center gap-1.5 text-xs text-subtle">
-            <span
-              className="leading-none"
-              style={{
-                fontFamily:
-                  '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif',
-              }}
-              aria-hidden
-            >
-              {flag}
-            </span>
-            <span>{country}</span>
+          <p className="mt-0.5 font-manrope text-[11px] font-normal leading-snug text-[#555555]">
+            {country}
           </p>
         </div>
       </div>
@@ -82,7 +69,7 @@ function VoiceCard({
 }
 
 export function VoicesThatStayedSection({ className }: { className?: string }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useDraggableScroll();
   const [canScrollPrev, setCanScrollPrev] = useState(false);
   const [canScrollNext, setCanScrollNext] = useState(true);
 
@@ -120,50 +107,51 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
 
   return (
     <section
-      className={cn("bg-background py-24 text-foreground lg:py-32", className)}
-      aria-label="Voices that stayed — family testimonials"
+      className={cn("border-t border-[#1a1a1a] bg-background text-foreground", className)}
+      aria-label="Family testimonials"
     >
-      <div className="mx-auto max-w-6xl px-[5%]">
-        <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-          <SectionHeader
-            eyebrow="From families who trusted Beiza"
-            title="Voices that stayed."
-            description="A farewell is just one moment in a longer chain. Their stories travel forward."
-            align="center"
-            className="md:items-start md:text-left"
-          />
-          <div className="flex shrink-0 justify-center gap-2 md:justify-end">
-            <button
-              type="button"
-              aria-label="Previous testimonial"
-              disabled={!canScrollPrev}
-              onClick={() => scrollByCard(-1)}
-              className={controlButtonClass}
-            >
-              <ChevronLeft className="h-5 w-5" aria-hidden />
-            </button>
-            <button
-              type="button"
-              aria-label="Next testimonial"
-              disabled={!canScrollNext}
-              onClick={() => scrollByCard(1)}
-              className={controlButtonClass}
-            >
-              <ChevronRight className="h-5 w-5" aria-hidden />
-            </button>
-          </div>
+      <div className="mx-auto max-w-[1200px] px-6 pt-16 pb-16 md:px-12 md:pt-24 md:pb-20">
+        <header className="mx-auto mb-12 max-w-[640px] text-center">
+          <p className="voices-testimonials-eyebrow">Families preserving their legacy</p>
+          <h2 className="voices-testimonials-heading mt-4">Their story didn&apos;t end there.</h2>
+          <p className="voices-testimonials-subheading mt-4">
+            Beiza is where families record, gather, and keep what matters — before and long after
+            any goodbye.
+          </p>
+        </header>
+
+        <div className="mb-6 flex gap-2">
+          <button
+            type="button"
+            aria-label="Previous testimonial"
+            disabled={!canScrollPrev}
+            onClick={() => scrollByCard(-1)}
+            className={carouselControlButton}
+          >
+            <ChevronLeft className="h-5 w-5" aria-hidden />
+          </button>
+          <button
+            type="button"
+            aria-label="Next testimonial"
+            disabled={!canScrollNext}
+            onClick={() => scrollByCard(1)}
+            className={carouselControlButton}
+          >
+            <ChevronRight className="h-5 w-5" aria-hidden />
+          </button>
         </div>
 
-        <div className="relative mt-10 w-full overflow-hidden">
+        <div className="relative overflow-hidden">
           <div
             ref={scrollRef}
+            data-draggable
             className={cn(
-              "flex gap-4 overflow-x-auto overscroll-x-contain pb-2",
+              "flex items-stretch gap-4 overflow-x-auto overscroll-x-contain pb-2 pr-6 md:pr-12",
               "snap-x snap-mandatory scroll-smooth",
               "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
             )}
             style={{ WebkitOverflowScrolling: "touch" }}
-            aria-label="Family testimonials"
+            aria-label="Family testimonial cards"
           >
             {VOICES_TESTIMONIALS.map((item) => (
               <VoiceCard key={item.name} {...item} />

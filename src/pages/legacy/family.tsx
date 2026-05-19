@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -27,12 +28,24 @@ export default function LegacyFamilyPage() {
     toast({ title: "Invite code copied" });
   };
 
+  const copyAccessCode = async () => {
+    if (!circle?.access_code) return;
+    await navigator.clipboard.writeText(circle.access_code);
+    toast({ title: "Access code copied" });
+  };
+
   if (circle) {
     return (
       <div className="space-y-6">
         <header>
           <h2 className="text-xl font-semibold">Your Legacy Circle</h2>
           <p className="mt-1 text-sm text-muted-foreground">{circle.name}</p>
+          <Link
+            to="/legacy/circle"
+            className="mt-3 inline-block text-sm text-primary hover:underline"
+          >
+            View family tree →
+          </Link>
         </header>
 
         {member?.role === "keeper" && (
@@ -43,12 +56,37 @@ export default function LegacyFamilyPage() {
         )}
 
         <div className="rounded-lg border border-border bg-card p-4">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Invite code</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">
+            Family tree access code
+          </p>
+          <p className="mt-2 font-mono text-2xl tracking-[0.35em] text-primary">
+            {circle.access_code ?? "······"}
+          </p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Share this 6-character code so family can enter your private tree at{" "}
+            <Link to={`/circle/${circle.id}/enter`} className="text-primary hover:underline">
+              /circle
+            </Link>
+            .
+          </p>
+          <Button
+            variant="secondary"
+            className="mt-4 gap-2"
+            disabled={!circle.access_code}
+            onClick={() => void copyAccessCode()}
+          >
+            <Copy className="h-4 w-4" />
+            Copy access code
+          </Button>
+        </div>
+
+        <div className="rounded-lg border border-border bg-card p-4">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">App invite code</p>
           <p className="mt-2 font-mono text-2xl tracking-widest text-primary">
             {circle.invite_code}
           </p>
           <p className="mt-2 text-sm text-muted-foreground">
-            Share this code so loved ones can join your circle and add their voices.
+            For signing into the Legacy app and adding voices.
           </p>
           <Button variant="secondary" className="mt-4 gap-2" onClick={() => void copyInvite()}>
             <Copy className="h-4 w-4" />
@@ -80,8 +118,13 @@ export default function LegacyFamilyPage() {
           disabled={!circleName.trim() || createCircle.isPending}
           onClick={() =>
             createCircle.mutate(circleName, {
-              onSuccess: () => {
-                toast({ title: "Legacy Circle created" });
+              onSuccess: (created) => {
+                toast({
+                  title: "Legacy Circle created",
+                  description: created.access_code
+                    ? `Family tree access code: ${created.access_code} — copy it from Invite.`
+                    : undefined,
+                });
                 void refetch();
               },
               onError: (e) =>

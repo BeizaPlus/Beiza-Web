@@ -3,7 +3,8 @@ export type VoiceTestimonial = {
   name: string;
   relation: string;
   location: string;
-  flag: string;
+  /** ISO 3166-1 alpha-2 */
+  countryCode: string;
   country: string;
   featured: boolean;
   quote: string;
@@ -15,7 +16,7 @@ export const VOICES_TESTIMONIALS: VoiceTestimonial[] = [
     name: "MadamRose",
     relation: "Daughter",
     location: "Accra",
-    flag: "🇬🇭",
+    countryCode: "GH",
     country: "Ghana",
     featured: true,
     quote:
@@ -26,7 +27,7 @@ export const VOICES_TESTIMONIALS: VoiceTestimonial[] = [
     name: "Kwakos",
     relation: "Friend",
     location: "Kumasi",
-    flag: "🇬🇭",
+    countryCode: "GH",
     country: "Ghana",
     featured: false,
     quote: "She was always there for us. Now I press play and she still is.",
@@ -36,7 +37,7 @@ export const VOICES_TESTIMONIALS: VoiceTestimonial[] = [
     name: "Yaa Mante",
     relation: "Friend",
     location: "Lagos",
-    flag: "🇳🇬",
+    countryCode: "NG",
     country: "Nigeria",
     featured: false,
     quote:
@@ -47,7 +48,7 @@ export const VOICES_TESTIMONIALS: VoiceTestimonial[] = [
     name: "James O.",
     relation: "Son",
     location: "London",
-    flag: "🇬🇧",
+    countryCode: "GB",
     country: "United Kingdom",
     featured: false,
     quote:

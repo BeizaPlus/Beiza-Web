@@ -2,9 +2,8 @@ import { Link } from "react-router-dom";
 import { Lock } from "lucide-react";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { CasketIcon } from "@/components/icons/CasketIcon";
+import { marketingCardClassName, marketingContainer, marketingSection } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
-
-const GOLD = "#E6A817";
 
 type Tier = {
   id: string;
@@ -89,8 +88,8 @@ const TIERS: Tier[] = [
 
 export function LegacyCurationPricing() {
   return (
-    <section id="legacy-curation" className="studio-pricing bg-[#0a0a0a] py-24 text-white">
-      <div className="mx-auto max-w-6xl space-y-12 px-6">
+    <section id="legacy-curation" className={cn("studio-pricing", marketingSection)}>
+      <div className={cn(marketingContainer, "space-y-12")}>
         <SectionHeader
           eyebrow="Legacy Curation"
           title="Start free. Grow your family's archive."
@@ -103,22 +102,18 @@ export function LegacyCurationPricing() {
             <div
               key={tier.id}
               className={cn(
-                "pricing-card flex h-full flex-col rounded-2xl border p-8",
-                tier.popular
-                  ? "border-[#3a2800] bg-[#0e0c00]"
-                  : tier.featured
-                    ? "border-[#E6A817]/30 bg-[#111]"
-                    : "border-[#1e1e1e] bg-[#111]",
+                marketingCardClassName({
+                  featured: tier.featured,
+                  highlight: tier.popular,
+                }),
+                "pricing-card h-full p-8",
               )}
             >
               <div className="pricing-card-body flex flex-1 flex-col">
                 <div className="flex min-h-9 items-start justify-between gap-2">
-                  <h3 className="text-2xl font-semibold text-white">{tier.name}</h3>
+                  <h3 className="text-2xl font-semibold tracking-tight text-white">{tier.name}</h3>
                   {tier.badge ? (
-                    <span
-                      className="shrink-0 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                      style={{ backgroundColor: `${GOLD}33`, color: GOLD }}
-                    >
+                    <span className="shrink-0 rounded-full bg-primary/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-primary">
                       {tier.badge}
                     </span>
                   ) : tier.featured ? (
@@ -131,48 +126,44 @@ export function LegacyCurationPricing() {
                     </span>
                   )}
                 </div>
-                <p className="mt-4 text-xs uppercase tracking-[0.3em] text-[#888]">
-                  {tier.tagline}
-                </p>
+                <p className="text-eyebrow mt-4 text-xs">{tier.tagline}</p>
                 <p className="mt-2 text-3xl font-semibold text-white">
                   {tier.price}
                   {tier.id === "keeper" ? (
-                    <span className="text-base font-normal text-[#888]">/mo</span>
+                    <span className="text-base font-normal text-muted-foreground">/mo</span>
                   ) : null}
                   {tier.id === "heritage" ? (
-                    <span className="text-base font-normal text-[#888]">/yr</span>
+                    <span className="text-base font-normal text-muted-foreground">/yr</span>
                   ) : null}
                 </p>
-                <p className="mt-4 text-sm leading-relaxed text-[#888]">
-                  {tier.description}
-                </p>
+                <p className="mt-4 text-sm leading-relaxed text-subtle">{tier.description}</p>
 
                 {tier.whiteSwan ? (
-                  <div className="mb-4 mt-4 rounded-[10px] border border-[#1a1a1a] bg-[#0e0e0e] p-4">
+                  <div className="mb-4 mt-4 rounded-lg border border-border bg-secondary/40 p-4">
                     <div className="mb-2 flex items-center gap-2.5">
-                      <CasketIcon size={24} color={GOLD} />
+                      <CasketIcon size={24} className="text-primary" />
                       <span className="text-[13px] font-medium text-white">
                         {tier.whiteSwan.title}
                       </span>
                     </div>
-                    <p className="text-xs leading-relaxed text-[#888]">
+                    <p className="text-xs leading-relaxed text-muted-foreground">
                       {tier.whiteSwan.body}
                     </p>
                   </div>
                 ) : null}
 
-                <ul className="mt-4 space-y-2 text-sm text-[#ccc]">
+                <ul className="mt-4 space-y-2 text-sm text-white/90">
                   {tier.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2">
-                      <span
-                        className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full"
-                        style={{ backgroundColor: GOLD }}
-                      />
+                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                       <span>{feature}</span>
                     </li>
                   ))}
                   {tier.lockedFeatures?.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2 text-[#555]">
+                    <li
+                      key={feature}
+                      className="flex items-start gap-2 text-muted-foreground"
+                    >
                       <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
                       <span>{feature}</span>
                     </li>
@@ -186,21 +177,16 @@ export function LegacyCurationPricing() {
                   className={cn(
                     "flex w-full items-center justify-center rounded-full py-3 text-center text-sm font-semibold transition",
                     tier.popular || tier.id === "keeper"
-                      ? "text-[#111]"
+                      ? "bg-primary text-primary-foreground hover:opacity-90"
                       : tier.featured
-                        ? "bg-white text-black"
-                        : "border border-[#333] bg-transparent text-white hover:border-[#555]",
+                        ? "bg-white text-black hover:bg-white/90"
+                        : "border border-white/20 bg-transparent text-white hover:border-white/40",
                   )}
-                  style={
-                    tier.popular || tier.id === "keeper"
-                      ? { backgroundColor: GOLD }
-                      : undefined
-                  }
                 >
                   {tier.cta}
                 </Link>
                 {tier.note ? (
-                  <p className="mt-3 min-h-[2.5rem] text-center text-[11px] leading-snug text-[#555]">
+                  <p className="mt-3 min-h-[2.5rem] text-center text-[11px] leading-snug text-muted-foreground">
                     {tier.note}
                   </p>
                 ) : (

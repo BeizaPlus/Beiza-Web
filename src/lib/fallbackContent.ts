@@ -264,11 +264,176 @@ export const FALLBACK_FEATURED_EVENT = {
   location: "Accra, Ghana",
   occurs_on: "2025-06-18",
   description: "A full-scale celebration blending live performances, immersive visuals, and digital archives.",
+  subtitle: "A cinematic homegoing celebration",
+  duration_label: "Live archive · Full memoir",
   hero_media: {
     src: "https://framerusercontent.com/images/hOxvbbCIefKg5M5GXOo8yBqATo.png?width=799&height=823",
     alt: "Joyful woman with smartphone",
   },
 } as const;
+
+export const FALLBACK_LIVE_EVENTS = [
+  FALLBACK_FEATURED_EVENT,
+  {
+    id: "fallback-event-ernestina",
+    slug: "madam-ernestina",
+    memoir_slug: "madam-ernestina",
+    title: "The Life of Madam Ernestina",
+    location: "Kumasi, Ghana",
+    occurs_on: "2026-03-15",
+    description:
+      "An intimate legacy gathering — voices, archive, and family presence preserved for generations.",
+    subtitle: "Live production in progress",
+    duration_label: "Streaming soon",
+    hero_media: {
+      src: "/images/beiza-ernestina-portrait-bw.png",
+      alt: "Madam Ernestina — portrait in black and white",
+    },
+  },
+] as const;
+
+export const FALLBACK_EVENT_STORIES = [
+  {
+    id: "fallback-story-monica",
+    slug: "monica-manu-story",
+    title: "Madam Monica Manu",
+    subtitle: "A matriarch whose faith and generosity shaped a community",
+    duration_label: "2 hours 18 minutes",
+    memoir_slug: "monica-manu",
+    is_new: true,
+    display_order: 1,
+    hero_media: {
+      src: "https://framerusercontent.com/images/YRsXM0Ss8CIUK02VdEkSJYDNdHU.png?width=1658&height=1151",
+      alt: "Celebration of Madam Monica Manu",
+    },
+  },
+  {
+    id: "fallback-story-kwame",
+    slug: "kwame-osei-legacy",
+    title: "Kwame Osei",
+    subtitle: "Teaches preserving family trade stories across generations",
+    duration_label: "1 hour 42 minutes",
+    memoir_slug: null,
+    is_new: true,
+    display_order: 2,
+    hero_media: {
+      src: "https://framerusercontent.com/images/hOuECFey8F4ua6LAYVX7DHPnQ.png?width=1684&height=1140",
+      alt: "Family gathered in celebration",
+    },
+  },
+  {
+    id: "fallback-story-ama",
+    slug: "ama-darko-voices",
+    title: "Ama Darko",
+    subtitle: "Teaches recording elders before the stories fade",
+    duration_label: "58 minutes",
+    memoir_slug: null,
+    is_new: false,
+    display_order: 3,
+    hero_media: {
+      src: "https://framerusercontent.com/images/xsBNx9mI9Ew3pAqs1HZ9ywLrp0.png?width=1741&height=1153",
+      alt: "Moments of song and remembrance",
+    },
+  },
+  {
+    id: "fallback-story-homegoing",
+    slug: "homegoing-series",
+    title: "Homegoing",
+    subtitle: "Original series · Three families, one archive",
+    duration_label: "3 episodes",
+    memoir_slug: null,
+    is_new: true,
+    display_order: 4,
+    hero_media: {
+      src: "https://framerusercontent.com/images/hOxvbbCIefKg5M5GXOo8yBqATo.png?width=799&height=823",
+      alt: "Joyful family remembrance",
+    },
+  },
+  {
+    id: "fallback-story-efua",
+    slug: "efua-mensah-tribute",
+    title: "Efua Mensah",
+    subtitle: "Teaches designing a tribute that feels like them",
+    duration_label: "1 hour 21 minutes",
+    memoir_slug: null,
+    is_new: false,
+    display_order: 5,
+    hero_media: {
+      src: "https://framerusercontent.com/images/YRsXM0Ss8CIUK02VdEkSJYDNdHU.png?width=1658&height=1151",
+      alt: "Tribute film still",
+    },
+  },
+  {
+    id: "fallback-story-annan",
+    slug: "kofi-annan-circle",
+    title: "The Annan Circle",
+    subtitle: "How a diaspora family rebuilt their vault from Accra to London",
+    duration_label: "2 hours 4 minutes",
+    memoir_slug: null,
+    is_new: false,
+    display_order: 6,
+    hero_media: {
+      src: "https://framerusercontent.com/images/hOuECFey8F4ua6LAYVX7DHPnQ.png?width=1684&height=1140",
+      alt: "Family circle archive",
+    },
+  },
+  {
+    id: "fallback-story-yaa",
+    slug: "yaa-asantewaa-wisdom",
+    title: "Yaa Asantewaa",
+    subtitle: "Teaches passing wisdom to grandchildren in Twi and English",
+    duration_label: "47 minutes",
+    memoir_slug: null,
+    is_new: true,
+    display_order: 7,
+    hero_media: {
+      src: "https://framerusercontent.com/images/xsBNx9mI9Ew3pAqs1HZ9ywLrp0.png?width=1741&height=1153",
+      alt: "Elder sharing wisdom",
+    },
+  },
+  {
+    id: "fallback-story-white-swan",
+    slug: "beiza-white-swan",
+    title: "White Swan",
+    subtitle: "On-the-ground memorial coordination — a Beiza Heritage film",
+    duration_label: "1 hour 12 minutes",
+    memoir_slug: null,
+    is_new: false,
+    display_order: 8,
+    hero_media: {
+      src: "https://framerusercontent.com/images/hOxvbbCIefKg5M5GXOo8yBqATo.png?width=799&height=823",
+      alt: "Memorial gathering",
+    },
+  },
+  {
+    id: "fallback-story-nana",
+    slug: "nana-yaw-archive",
+    title: "Nana Yaw",
+    subtitle: "Building a vault when the family is spread across four countries",
+    duration_label: "1 hour 35 minutes",
+    memoir_slug: null,
+    is_new: false,
+    display_order: 9,
+    hero_media: {
+      src: "https://framerusercontent.com/images/YRsXM0Ss8CIUK02VdEkSJYDNdHU.png?width=1658&height=1151",
+      alt: "Archive production",
+    },
+  },
+  {
+    id: "fallback-story-voices",
+    slug: "voices-that-stayed",
+    title: "Voices That Stayed",
+    subtitle: "Families on Beiza share what preservation changed for them",
+    duration_label: "6 stories",
+    memoir_slug: null,
+    is_new: false,
+    display_order: 10,
+    hero_media: {
+      src: "/images/beiza-ernestina-portrait-bw.png",
+      alt: "Portrait — legacy preserved",
+    },
+  },
+] as const;
 
 export const FALLBACK_CONTACT_CHANNELS = [
   {

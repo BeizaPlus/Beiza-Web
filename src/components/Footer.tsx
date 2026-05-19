@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useMemo } from "react";
+import { FOOTER_PRICING_LINK } from "@/config/productNav";
 import { useFooterLinks, useSiteSettings } from "@/hooks/usePublicContent";
 
 export const Footer = () => {
@@ -61,10 +62,34 @@ export const Footer = () => {
             </p>
             <p className="text-subtle text-sm">
               <Link
+                to={FOOTER_PRICING_LINK.href}
+                className="text-muted-foreground transition-colors hover:text-subtle"
+              >
+                {FOOTER_PRICING_LINK.label} →
+              </Link>
+            </p>
+            <p className="text-subtle text-sm">
+              <Link
                 to="/heritage"
-                className="text-[#555555] transition-colors hover:text-[#888888]"
+                className="text-muted-foreground transition-colors hover:text-subtle"
               >
                 Planning ahead? Heritage →
+              </Link>
+            </p>
+            <p className="text-subtle text-sm">
+              <Link
+                to="/recover"
+                className="text-muted-foreground transition-colors hover:text-subtle"
+              >
+                Recover a voice →
+              </Link>
+            </p>
+            <p className="text-subtle text-sm">
+              <Link
+                to="/events"
+                className="text-muted-foreground transition-colors hover:text-subtle"
+              >
+                Stories →
               </Link>
             </p>
             <p className="text-subtle text-xs uppercase tracking-[0.3em]">

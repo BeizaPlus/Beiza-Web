@@ -2,9 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { legacySurface, marketingContainer } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
-
-const GOLD = "#E6A817";
 
 const SEED_VAULTS = [
   { id: "1", name: "The Oppong Family", initials: "OF", memories: 24, created: "Mar 2026" },
@@ -19,9 +18,9 @@ export default function VaultExplore() {
   const [activeId, setActiveId] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
+    <div className="min-h-screen bg-background text-foreground">
       <Navigation />
-      <main className="mx-auto max-w-6xl px-6 py-16">
+      <main className={cn(marketingContainer, "py-16")}>
         <header className="max-w-2xl">
           <p className="text-eyebrow">Beiza Legacy</p>
           <h1 className="mt-2 text-display-lg text-white">Legacies being preserved</h1>
@@ -36,17 +35,17 @@ export default function VaultExplore() {
             <li key={vault.id} className="relative">
               <button
                 type="button"
-                className="w-full rounded-2xl border border-[#1e1e1e] bg-[#111111] p-5 text-left transition hover:border-[#2a2a2a]"
+                className={cn(
+                  legacySurface,
+                  "glass-panel w-full rounded-2xl border-white/10 p-5 text-left transition hover:border-white/20",
+                )}
                 onClick={() => setActiveId(vault.id)}
               >
-                <span
-                  className="flex h-14 w-14 items-center justify-center rounded-xl border border-[#2e2200] bg-[#1e1800] text-sm font-semibold"
-                  style={{ color: GOLD }}
-                >
+                <span className="flex h-14 w-14 items-center justify-center rounded-xl border border-primary/30 bg-primary/10 text-sm font-semibold text-primary">
                   {vault.initials}
                 </span>
                 <p className="mt-4 text-base font-medium text-white">{vault.name}</p>
-                <p className="mt-1 text-xs text-[#555]">
+                <p className="mt-1 text-xs text-muted-foreground">
                   {vault.memories} memories · {vault.created}
                 </p>
               </button>
@@ -55,7 +54,7 @@ export default function VaultExplore() {
                   className="absolute inset-0 flex items-center justify-center rounded-2xl bg-black/80 px-4 text-center backdrop-blur-sm"
                   role="tooltip"
                 >
-                  <p className="text-sm text-[#ccc]">
+                  <p className="text-sm text-subtle">
                     This vault is private. Only family members can enter.
                   </p>
                 </div>
@@ -64,8 +63,11 @@ export default function VaultExplore() {
           ))}
         </ul>
 
-        <p className="mt-12 text-center text-sm text-[#555]">
-          <Link to="/legacy/family" className="underline decoration-[#333] underline-offset-4 hover:text-[#E6A817]">
+        <p className="mt-12 text-center text-sm text-muted-foreground">
+          <Link
+            to="/legacy/family"
+            className="underline decoration-border underline-offset-4 hover:text-primary"
+          >
             Start your family&apos;s circle — free
           </Link>
         </p>

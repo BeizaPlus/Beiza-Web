@@ -1,14 +1,26 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { StorageMeter } from "@/components/legacy/StorageMeter";
 import { Button } from "@/components/ui/button";
 import { useLegacyRecordings, useMyLegacyCircle } from "@/hooks/useLegacy";
-import { Users, Mic } from "lucide-react";
+import { useFamilyPeople, useRecordingPersonLinks } from "@/hooks/useFamilyTree";
+import { FamilyTreeMobileFocus } from "@/components/legacy/family-tree/FamilyTreeMobileFocus";
+import { Mic, Users } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function LegacyHomePage() {
+  const navigate = useNavigate();
   const { data: circleCtx, isLoading } = useMyLegacyCircle();
   const circle = circleCtx?.circle;
   const member = circleCtx?.member;
   const { data: recordings = [] } = useLegacyRecordings(circle?.id);
+  const { data: people = [] } = useFamilyPeople(circle?.id);
+  const { data: links = [] } = useRecordingPersonLinks(circle?.id);
+  const [userId, setUserId] = useState<string | undefined>();
+
+  useEffect(() => {
+    void supabase?.auth.getUser().then(({ data }) => setUserId(data.user?.id));
+  }, []);
 
   const usedSeconds = recordings.reduce((sum, r) => sum + (r.duration_seconds ?? 0), 0);
   const firstName = member?.display_name?.split(" ")[0] ?? "friend";
@@ -51,6 +63,26 @@ export default function LegacyHomePage() {
 
       <StorageMeter usedSeconds={usedSeconds} />
 
+      {people.length > 0 ? (
+        <section className="rounded-xl border border-border bg-[#0a0a0a] p-4">
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <p className="text-sm font-medium text-white">Your family tree</p>
+            <Link to="/legacy/circle" className="text-xs text-primary hover:underline">
+              Open full tree
+            </Link>
+          </div>
+          <FamilyTreeMobileFocus
+            people={people}
+            links={links}
+            currentUserId={userId}
+            selectedPersonId={null}
+            onSelectPerson={() => navigate("/legacy/circle")}
+            fullTreeMode={false}
+            onViewFullTree={() => navigate("/legacy/circle")}
+          />
+        </section>
+      ) : null}
+
       <div className="grid gap-3">
         <Button asChild size="lg" className="h-14 w-full gap-2 text-base">
           <Link to="/legacy/record">
@@ -59,15 +91,22 @@ export default function LegacyHomePage() {
           </Link>
         </Button>
         <Button asChild variant="secondary" size="lg" className="h-12 w-full gap-2">
-          <Link to="/legacy/family">
+          <Link to="/legacy/circle">
             <Users className="h-5 w-5" />
-            Add a Loved One
+            Family tree
           </Link>
         </Button>
       </div>
 
       <p className="text-center text-xs text-muted-foreground">
         {recordings.length} {recordings.length === 1 ? "memory" : "memories"} in your vault
+      </p>
+
+      <p className="text-center text-[13px] text-[#555555]">
+        Lost someone and need to recover their recordings?{" "}
+        <Link to="/recover" className="text-primary hover:underline">
+          Recover a voice →
+        </Link>
       </p>
     </div>
   );

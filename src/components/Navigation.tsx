@@ -1,123 +1,168 @@
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import { useNavigationLinks } from "@/hooks/usePublicContent";
+import { PRODUCT_NAV_LINKS } from "@/config/productNav";
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
-export const Navigation = () => {
+const CTA = { label: "Contact", href: "/contact" };
+
+function isActiveNavPath(pathname: string, href: string): boolean {
+  if (href === "/vault") {
+    return pathname === "/vault" || pathname.startsWith("/legacy/vault");
+  }
+  if (href === "/circle") {
+    return (
+      pathname === "/circle" ||
+      pathname.startsWith("/circle/") ||
+      pathname.startsWith("/family-trees") ||
+      pathname.startsWith("/legacy/circle")
+    );
+  }
+  if (href === "/heritage") {
+    return pathname === "/heritage" || pathname.startsWith("/white-swan");
+  }
+  return pathname === href;
+}
+
+function navLinkClassName(linkId: string, active: boolean): string {
+  if (active) return "text-white";
+  if (linkId === "heritage") return "text-[#666666] transition-colors hover:text-[#E6A817]";
+  return "text-[#666666] transition-colors hover:text-white";
+}
+
+type NavItemProps = {
+  link: (typeof PRODUCT_NAV_LINKS)[number];
+  onNavigate?: () => void;
+  className?: string;
+};
+
+function NavItem({ link, onNavigate, className }: NavItemProps) {
   const location = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { data: navigationLinks } = useNavigationLinks("primary");
-
-  const { primaryLinks, ctaLink } = useMemo(() => {
-    const links = navigationLinks ?? [];
-    const potentialCta = links.find((link) => link.label.toLowerCase() === "contact" || link.isCta);
-    const filtered = potentialCta ? links.filter((link) => link.id !== potentialCta.id) : links;
-
-    return {
-      primaryLinks: filtered,
-      ctaLink: potentialCta ?? {
-        id: "default-contact-cta",
-        label: "Contact",
-        href: "/contact",
-        location: "primary",
-        displayOrder: filtered.length + 1,
-      },
-    };
-  }, [navigationLinks]);
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen((prev) => !prev);
-  };
-
-  const isActiveLink = (href: string) => {
-    if (href.startsWith("/memoirs"))
-    {
-      return location.pathname.startsWith("/memoirs");
-    }
-    if (href.startsWith("/blog"))
-    {
-      return location.pathname.startsWith("/blog");
-    }
-    if (href.startsWith("/legacy"))
-    {
-      return location.pathname.startsWith("/legacy");
-    }
-
-    return href === "/" ? location.pathname === "/" : location.pathname === href;
-  };
+  const active = isActiveNavPath(location.pathname, link.href);
 
   return (
-    <nav className="sticky top-0 z-40 w-full bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20 border-b border-white/5">
-      <div className="mx-auto max-w-6xl px-6 py-6">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
-            <img src="/Beiza-head.png" alt="Beiza mascot" className="h-10 w-auto" />
-            <img src="/Beiza_White.svg" alt="Beiza" className="h-6 w-auto" />
-          </Link>
+    <Link
+      to={link.href}
+      onClick={onNavigate}
+      className={cn(
+        "relative inline-block pb-3 font-manrope text-lg font-medium",
+        navLinkClassName(link.id, active),
+        className,
+      )}
+    >
+      {link.label}
+      {active ? (
+        <span
+          className="absolute bottom-0 left-1/2 h-[1.5px] w-[1.5px] -translate-x-1/2 rounded-full bg-[#E6A817]"
+          aria-hidden
+        />
+      ) : null}
+    </Link>
+  );
+}
 
-          <div className="hidden items-center gap-8 md:flex">
-            {primaryLinks.map((link) => {
-              const isActive = isActiveLink(link.href);
-              return (
-                <Link
-                  key={link.id}
-                  to={link.href}
-                  className={`font-manrope text-lg font-medium transition-colors ${isActive ? "text-white" : "text-white/80 hover:text-white"
-                    }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
+export const Navigation = () => {
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-          <div className="hidden md:block">
-            <Link to={ctaLink.href}>
-              <Button className="rounded-full bg-white px-6 py-3 text-sm font-manrope font-medium text-black hover:bg-white/90">
-                {ctaLink.label ?? "Get Started"}
-              </Button>
+  useEffect(() => {
+    document.body.style.overflow = drawerOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [drawerOpen]);
+
+  const closeDrawer = () => setDrawerOpen(false);
+
+  return (
+    <>
+      <nav className="sticky top-0 z-40 w-full border-b border-white/5 bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20">
+        <div className="mx-auto max-w-6xl px-6 py-6">
+          <div className="flex items-center justify-between">
+            <Link to="/" className="flex items-center gap-3">
+              <img src="/Beiza-head.png" alt="Beiza mascot" className="h-10 w-auto" />
+              <img src="/Beiza_White.svg" alt="Beiza" className="h-6 w-auto" />
             </Link>
-          </div>
 
-          <div className="flex items-center gap-4 md:hidden">
-            <button onClick={toggleMobileMenu} className="text-white transition-colors hover:text-white/80">
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <div className="hidden items-center gap-10 md:flex">
+              {PRODUCT_NAV_LINKS.map((link) => (
+                <NavItem key={link.id} link={link} />
+              ))}
+            </div>
+
+            <div className="hidden md:block">
+              <Link to={CTA.href}>
+                <Button className="rounded-full bg-white px-6 py-3 font-manrope text-sm font-medium text-black hover:bg-white/90">
+                  {CTA.label}
+                </Button>
+              </Link>
+            </div>
+
+            <button
+              type="button"
+              className="text-white md:hidden"
+              aria-label={drawerOpen ? "Close menu" : "Open menu"}
+              onClick={() => setDrawerOpen((o) => !o)}
+            >
+              {drawerOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
-            <Link to={ctaLink.href} className="hidden sm:block">
-              <Button className="rounded-full bg-red-500 px-6 py-3 text-sm font-manrope font-medium text-white hover:bg-red-600">
-                {ctaLink.label ?? "Get Started"}
-              </Button>
-            </Link>
           </div>
         </div>
+      </nav>
 
-        {isMobileMenuOpen ? (
-          <div className="mt-4 space-y-3 border-t border-white/20 pt-4 md:hidden">
-            {primaryLinks.map((link) => {
-              const isActive = isActiveLink(link.href);
-              return (
-                <Link
+      {drawerOpen ? (
+        <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true">
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/80"
+            aria-label="Close menu"
+            onClick={closeDrawer}
+          />
+          <div className="absolute inset-y-0 right-0 flex w-full max-w-sm flex-col bg-[#0a0a0a] px-8 py-10 shadow-2xl">
+            <div className="flex justify-end">
+              <button type="button" onClick={closeDrawer} className="text-white" aria-label="Close">
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <nav className="mt-8 flex flex-1 flex-col gap-8">
+              {PRODUCT_NAV_LINKS.map((link) => (
+                <NavItem
                   key={link.id}
-                  to={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block rounded-lg px-3 py-3 text-lg font-manrope font-medium transition-colors ${isActive ? "text-white" : "text-white/80 hover:text-white"
-                    }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-            <Link
-              to={ctaLink.href}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block rounded-lg px-3 py-3 text-lg font-manrope font-medium text-white/80 transition-colors hover:text-white"
-            >
-              {ctaLink.label ?? "Contact"}
-            </Link>
+                  link={link}
+                  onNavigate={closeDrawer}
+                  className="font-['Playfair_Display'] text-4xl font-medium leading-tight"
+                />
+              ))}
+            </nav>
+
+            <div className="mt-auto space-y-4 border-t border-[#1a1a1a] pt-8">
+              <Link
+                to="/record"
+                onClick={closeDrawer}
+                className="flex w-full items-center justify-center rounded-full bg-[#E6A817] py-4 text-sm font-medium text-[#0a0a0a] transition hover:bg-[#E6A817]/90"
+              >
+                + Start recording →
+              </Link>
+              <Link
+                to="/pricing"
+                onClick={closeDrawer}
+                className="block text-center text-sm text-[#555555] hover:text-[#888888]"
+              >
+                Pricing →
+              </Link>
+              <Link
+                to={CTA.href}
+                onClick={closeDrawer}
+                className="block text-center text-sm text-[#666666] hover:text-white"
+              >
+                {CTA.label}
+              </Link>
+            </div>
           </div>
-        ) : null}
-      </div>
-    </nav>
+        </div>
+      ) : null}
+    </>
   );
 };
+
