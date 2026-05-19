@@ -4,11 +4,7 @@ import { useFooterLinks, useSiteSettings } from "@/hooks/usePublicContent";
 
 export const Footer = () => {
   const { data: footerLinks } = useFooterLinks();
-  const { data: siteSettings } = useSiteSettings();
-
-  const settings = useMemo(() => {
-    return siteSettings ?? null;
-  }, [siteSettings]);
+  const { data: settings } = useSiteSettings();
 
   const groupedFooterLinks = useMemo(() => {
     if (!footerLinks) return [];
@@ -60,7 +56,8 @@ export const Footer = () => {
               <img src="/Beiza_White.svg" alt="Beiza wordmark" className="h-5 w-auto" />
             </Link>
             <p className="text-subtle text-sm leading-relaxed">
-              We design meaningful legacies — handcrafted records that celebrate life, culture, and family.
+              {settings?.footer_tagline ??
+                "We design meaningful legacies — handcrafted records that celebrate life, culture, and family."}
             </p>
             <p className="text-subtle text-xs uppercase tracking-[0.3em]">
               © {copyrightYear} {settings?.businessName ?? "Beiza Plus"} — Crafted with care, made to remember.

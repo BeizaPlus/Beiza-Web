@@ -3,7 +3,18 @@ import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import type { InfiniteData } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabaseClient";
-import { FALLBACK_NAVIGATION_LINKS, FALLBACK_FOOTER_LINKS } from "@/lib/fallbackContent";
+import {
+  FALLBACK_CONTACT_CHANNELS,
+  FALLBACK_FAQS,
+  FALLBACK_FEATURED_EVENT,
+  FALLBACK_FOOTER_LINKS,
+  FALLBACK_HERO_LANDING,
+  FALLBACK_NAVIGATION_LINKS,
+  FALLBACK_OFFERINGS,
+  FALLBACK_PRICING,
+  FALLBACK_SITE_SETTINGS,
+  FALLBACK_TESTIMONIALS,
+} from "@/lib/fallbackContent";
 
 const STALE_TIME = 1000 * 60 * 5; // 5 minutes
 const GALLERY_PAGE_SIZE = 24;
@@ -38,6 +49,9 @@ export type SiteSettings = {
   heroBackgroundImage?: string;
   heroBackgroundAlt?: string;
   heroReviews?: string;
+  footerTagline?: string;
+  footer_tagline?: string;
+  footerCopyrightSuffix?: string;
   social: {
     instagram?: string | null;
     facebook?: string | null;
@@ -154,6 +168,101 @@ const handleError = (scope: string, error: Error | null | undefined) => {
   console.warn(`[supabase:${scope}] falling back to static content:`, error.message);
 };
 
+const pickSetting = (map: Record<string, string>, key: string, fallback: string) => {
+  const value = map[key]?.trim();
+  return value ? value : fallback;
+};
+
+const buildSiteSettings = (settingsMap: Record<string, string>): SiteSettings => ({
+  businessName: pickSetting(settingsMap, "business_name", FALLBACK_SITE_SETTINGS.businessName),
+  phonePrimary: pickSetting(settingsMap, "phone_primary", FALLBACK_SITE_SETTINGS.phonePrimary),
+  emailPrimary: pickSetting(settingsMap, "email_primary", FALLBACK_SITE_SETTINGS.emailPrimary),
+  calendlyUrl: pickSetting(settingsMap, "calendly_url", FALLBACK_SITE_SETTINGS.calendlyUrl),
+  heroHeading: pickSetting(settingsMap, "hero_heading", FALLBACK_SITE_SETTINGS.heroHeading),
+  heroSubheading: pickSetting(settingsMap, "hero_subheading", FALLBACK_SITE_SETTINGS.heroSubheading),
+  heroCtaLabel: pickSetting(settingsMap, "hero_cta_label", FALLBACK_SITE_SETTINGS.heroCtaLabel),
+  heroCtaHref: pickSetting(settingsMap, "hero_cta_href", FALLBACK_SITE_SETTINGS.heroCtaHref),
+  heroBackgroundImage: pickSetting(settingsMap, "hero_background_image", FALLBACK_SITE_SETTINGS.heroBackgroundImage),
+  heroBackgroundAlt: pickSetting(settingsMap, "hero_background_alt", FALLBACK_SITE_SETTINGS.heroBackgroundAlt),
+  heroReviews: pickSetting(settingsMap, "hero_reviews", FALLBACK_SITE_SETTINGS.heroReviews),
+  footerTagline: pickSetting(settingsMap, "footer_tagline", FALLBACK_SITE_SETTINGS.footerTagline),
+  footer_tagline: pickSetting(settingsMap, "footer_tagline", FALLBACK_SITE_SETTINGS.footerTagline),
+  footerCopyrightSuffix: pickSetting(
+    settingsMap,
+    "footer_copyright_suffix",
+    FALLBACK_SITE_SETTINGS.footerCopyrightSuffix,
+  ),
+  social: {
+    instagram: pickSetting(settingsMap, "instagram_url", FALLBACK_SITE_SETTINGS.social.instagram ?? ""),
+    facebook: pickSetting(settingsMap, "facebook_url", FALLBACK_SITE_SETTINGS.social.facebook ?? ""),
+    tiktok: pickSetting(settingsMap, "tiktok_url", FALLBACK_SITE_SETTINGS.social.tiktok ?? ""),
+    youtube: pickSetting(settingsMap, "youtube_url", FALLBACK_SITE_SETTINGS.social.youtube ?? ""),
+  },
+});
+
+const mapFallbackTestimonials = (): Testimonial[] =>
+  FALLBACK_TESTIMONIALS.map((item) => ({
+    id: item.id,
+    quote: item.quote,
+    author: item.author,
+    role: item.role,
+    surfaces: [...item.surfaces],
+  }));
+
+const mapFallbackFaqs = (): Faq[] =>
+  FALLBACK_FAQS.map((item) => ({
+    id: item.id,
+    question: item.question,
+    answer: item.answer,
+    displayOrder: item.display_order,
+  }));
+
+const mapFallbackPricingTiers = (): PricingTier[] =>
+  FALLBACK_PRICING.map((tier) => ({
+    id: tier.id,
+    name: tier.name,
+    tagline: tier.tagline,
+    priceLabel: tier.price_label,
+    description: tier.description,
+    badgeLabel: tier.badge_label,
+    isRecommended: tier.is_recommended,
+    displayOrder: tier.display_order,
+    features: [...tier.features],
+  }));
+
+const mapFallbackOfferings = (): Offering[] =>
+  FALLBACK_OFFERINGS.map((item) => ({
+    id: item.id,
+    title: item.title,
+    description: item.description,
+    iconKey: item.icon_key,
+    displayOrder: item.display_order,
+    isPublished: true,
+  }));
+
+const mapFallbackFeaturedEvent = (): FeaturedEvent => ({
+  id: FALLBACK_FEATURED_EVENT.id,
+  slug: FALLBACK_FEATURED_EVENT.slug,
+  memoirSlug: FALLBACK_FEATURED_EVENT.memoir_slug,
+  title: FALLBACK_FEATURED_EVENT.title,
+  description: FALLBACK_FEATURED_EVENT.description,
+  location: FALLBACK_FEATURED_EVENT.location,
+  occursOn: FALLBACK_FEATURED_EVENT.occurs_on,
+  heroMedia: {
+    src: FALLBACK_FEATURED_EVENT.hero_media.src,
+    alt: FALLBACK_FEATURED_EVENT.hero_media.alt,
+  },
+});
+
+const mapFallbackContactChannels = (): ContactChannel[] =>
+  FALLBACK_CONTACT_CHANNELS.map((item) => ({
+    id: item.id,
+    channelType: item.channel_type,
+    label: item.label,
+    value: item.value,
+    displayOrder: item.display_order,
+  }));
+
 export const useNavigationLinks = (location = "primary") =>
   useQuery({
     queryKey: ["public-navigation-links", location],
@@ -178,10 +287,10 @@ export const useSiteSettings = () =>
   useQuery({
     queryKey: ["public-site-settings"],
     staleTime: STALE_TIME,
-    queryFn: async (): Promise<SiteSettings | null> => {
+    queryFn: async (): Promise<SiteSettings> => {
       if (!isSupabaseReady)
       {
-        return null;
+        return buildSiteSettings({});
       }
 
       const { data, error } = await supabase
@@ -192,7 +301,7 @@ export const useSiteSettings = () =>
       if (error || !data)
       {
         handleError("site_settings", error);
-        return null;
+        return buildSiteSettings({});
       }
 
       const settingsMap = data.reduce<Record<string, string>>((acc, setting) => {
@@ -200,25 +309,7 @@ export const useSiteSettings = () =>
         return acc;
       }, {});
 
-      return {
-        businessName: settingsMap.business_name ?? "",
-        phonePrimary: settingsMap.phone_primary ?? "",
-        emailPrimary: settingsMap.email_primary ?? "",
-        calendlyUrl: settingsMap.calendly_url ?? "",
-        heroHeading: settingsMap.hero_heading ?? "",
-        heroSubheading: settingsMap.hero_subheading ?? "",
-        heroCtaLabel: settingsMap.hero_cta_label ?? "",
-        heroCtaHref: settingsMap.hero_cta_href ?? "",
-        heroBackgroundImage: settingsMap.hero_background_image ?? "",
-        heroBackgroundAlt: settingsMap.hero_background_alt ?? "",
-        heroReviews: settingsMap.hero_reviews ?? "",
-        social: {
-          instagram: settingsMap.instagram_url ?? "",
-          facebook: settingsMap.facebook_url ?? "",
-          tiktok: settingsMap.tiktok_url ?? "",
-          youtube: settingsMap.youtube_url ?? "",
-        },
-      };
+      return buildSiteSettings(settingsMap);
     },
   });
 
@@ -264,7 +355,7 @@ export const useOfferings = () =>
     queryFn: async (): Promise<Offering[]> => {
       if (!isSupabaseReady)
       {
-        return [];
+        return mapFallbackOfferings();
       }
 
       const { data, error } = await supabase
@@ -273,10 +364,10 @@ export const useOfferings = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (error || !data)
+      if (error || !data || data.length === 0)
       {
         handleError("offerings", error);
-        return [];
+        return mapFallbackOfferings();
       }
 
       return data.map((item) => ({
@@ -308,7 +399,7 @@ export const useTestimonials = (surfaces?: string | string[]) =>
 
       if (!isSupabaseReady)
       {
-        return [];
+        return applySurfaceFilter(mapFallbackTestimonials());
       }
 
       let query = supabase
@@ -324,13 +415,13 @@ export const useTestimonials = (surfaces?: string | string[]) =>
 
       const { data, error } = await query;
 
-      if (error || !data)
+      if (error || !data || data.length === 0)
       {
         handleError("testimonials", error);
-        return [];
+        return applySurfaceFilter(mapFallbackTestimonials());
       }
 
-      return applySurfaceFilter(
+      const mapped = applySurfaceFilter(
         data.map((item) => ({
           id: item.id,
           quote: item.quote,
@@ -339,6 +430,8 @@ export const useTestimonials = (surfaces?: string | string[]) =>
           surfaces: item.surfaces ?? [],
         })),
       );
+
+      return mapped.length > 0 ? mapped : applySurfaceFilter(mapFallbackTestimonials());
     },
   });
 
@@ -349,7 +442,7 @@ export const useFaqs = () =>
     queryFn: async (): Promise<Faq[]> => {
       if (!isSupabaseReady)
       {
-        return [];
+        return mapFallbackFaqs();
       }
 
       const { data, error } = await supabase
@@ -358,10 +451,10 @@ export const useFaqs = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (error || !data)
+      if (error || !data || data.length === 0)
       {
         handleError("faqs", error);
-        return [];
+        return mapFallbackFaqs();
       }
 
       return data.map((item) => ({
@@ -380,7 +473,7 @@ export const usePricingTiers = () =>
     queryFn: async (): Promise<PricingTier[]> => {
       if (!isSupabaseReady)
       {
-        return [];
+        return mapFallbackPricingTiers();
       }
 
       const { data: tiers, error: tiersError } = await supabase
@@ -389,10 +482,10 @@ export const usePricingTiers = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (tiersError || !tiers)
+      if (tiersError || !tiers || tiers.length === 0)
       {
         handleError("pricing_tiers", tiersError);
-        return [];
+        return mapFallbackPricingTiers();
       }
 
       const tierIds = tiers.map((tier) => tier.id);
@@ -438,7 +531,7 @@ export const useFeaturedEvent = () =>
     queryFn: async (): Promise<FeaturedEvent | null> => {
       if (!isSupabaseReady)
       {
-        return null;
+        return mapFallbackFeaturedEvent();
       }
 
       const { data, error } = await supabase
@@ -454,7 +547,7 @@ export const useFeaturedEvent = () =>
       if (error || !data || data.length === 0)
       {
         handleError("events", error);
-        return null;
+        return mapFallbackFeaturedEvent();
       }
 
       const event = data[0];
@@ -614,7 +707,7 @@ export const useContactChannels = () =>
     queryFn: async (): Promise<ContactChannel[]> => {
       if (!isSupabaseReady)
       {
-        return [];
+        return mapFallbackContactChannels();
       }
 
       const { data, error } = await supabase
@@ -623,10 +716,10 @@ export const useContactChannels = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (error || !data)
+      if (error || !data || data.length === 0)
       {
         handleError("contact_channels", error);
-        return [];
+        return mapFallbackContactChannels();
       }
 
       return data.map((item) => ({

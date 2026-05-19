@@ -25,6 +25,17 @@ export const FALLBACK_SITE_SETTINGS = {
   phonePrimary: "+233 55 900 0111",
   emailPrimary: "hello@beiza.tv",
   calendlyUrl: "https://calendly.com",
+  heroHeading: "Build Intentional Legacy",
+  heroSubheading:
+    "It has never been about loss — it has always been about legacy. Every story, every voice, every design is our way of saying: their story, kept forever.",
+  heroCtaLabel: "Start Your Legacy",
+  heroCtaHref: "/legacy",
+  heroBackgroundImage: "/images/adinkra-hands-hero.png",
+  heroBackgroundAlt: "Adinkra heritage — hands holding legacy",
+  heroReviews: "100+ Families Preserved",
+  footerTagline:
+    "We design meaningful legacies — handcrafted records that celebrate life, culture, and family.",
+  footerCopyrightSuffix: "Crafted with care, made to remember.",
   social: {
     instagram: "https://instagram.com/beizaplus",
     facebook: "https://facebook.com/beizaplus",
@@ -33,15 +44,27 @@ export const FALLBACK_SITE_SETTINGS = {
   },
 } as const;
 
+export const FALLBACK_HERO_LANDING = {
+  slug: "landing-hero",
+  heading: FALLBACK_SITE_SETTINGS.heroHeading,
+  subheading: FALLBACK_SITE_SETTINGS.heroSubheading,
+  ctaLabel: FALLBACK_SITE_SETTINGS.heroCtaLabel,
+  ctaHref: FALLBACK_SITE_SETTINGS.heroCtaHref,
+  backgroundMedia: {
+    src: FALLBACK_SITE_SETTINGS.heroBackgroundImage,
+    alt: FALLBACK_SITE_SETTINGS.heroBackgroundAlt,
+  },
+  reviews: FALLBACK_SITE_SETTINGS.heroReviews,
+} as const;
+
 
 
 export const FALLBACK_OFFERINGS = [
   {
-    id: "fallback-offering-branding",
-    title: "Branding",
-    description:
-      "Visual identity, themes, and full coordination — from color palette to ceremony flow, designed for distinction.",
-    icon_key: "palette",
+    id: "fallback-offering-galleries",
+    title: "Legacy Galleries",
+    description: "Curated imagery of the people you love",
+    icon_key: "image",
     display_order: 1,
   },
   {
@@ -84,6 +107,13 @@ export const FALLBACK_OFFERINGS = [
 ] as const;
 
 export const FALLBACK_TESTIMONIALS = [
+  {
+    id: "fallback-testimonial-madamrose",
+    quote: "She was a good lady. how else can we describe her?",
+    author: "MadamRose",
+    role: "Daughter",
+    surfaces: ["landing"],
+  },
   {
     id: "fallback-testimonial-1",
     quote: "Beiza captured every detail with empathy. Our celebration felt true to my mother’s spirit.",
@@ -152,35 +182,35 @@ export const FALLBACK_TESTIMONIALS = [
 export const FALLBACK_FAQS = [
   {
     id: "fallback-faq-1",
-    question: "What do I need to begin planning with Beiza?",
+    question: "What do I need to start preserving my family's legacy?",
     answer:
       "Start with your loved one’s story. We’ll guide you through gathering photos, milestones, and the voices of family and friends to build a meaningful narrative.",
     display_order: 1,
   },
   {
     id: "fallback-faq-2",
-    question: "How do I know if I’m ready to plan with Beiza TV?",
+    question: "When is the right time to start?",
     answer:
       "If you’re seeking a celebration that feels personal and thoughtfully produced, we’ll meet you where you are, even if all you have is a desire to honor their legacy.",
     display_order: 2,
   },
   {
     id: "fallback-faq-3",
-    question: "Can I plan with Beiza TV if I’m not in Ghana?",
+    question: "Can I use Beiza Legacy from outside Ghana?",
     answer:
       "Yes. Our team works across time zones with remote production, live streaming, and digital Keepsakes so every relative can participate.",
     display_order: 3,
   },
   {
     id: "fallback-faq-4",
-    question: "How long does the planning process take?",
+    question: "How long does the process take?",
     answer:
       "Most tributes take 10 to 21 days depending on the scope. We adjust timelines to align with the family’s schedule and rites.",
     display_order: 4,
   },
   {
     id: "fallback-faq-5",
-    question: "What kind of events do you curate?",
+    question: "What kind of experiences do you create?",
     answer:
       "We support legacy gatherings, celebration services, family archives, and legacy unveilings — from intimate circles to multi-day productions.",
     display_order: 5,

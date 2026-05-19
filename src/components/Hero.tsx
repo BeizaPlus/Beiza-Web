@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { CTAButton } from "./framer/CTAButton";
+import { FALLBACK_SITE_SETTINGS } from "@/lib/fallbackContent";
 
 interface HeroProps {
   headline?: string;
@@ -24,17 +25,15 @@ export const Hero = ({
   ctaLabel,
   ctaLink,
   ctaHref,
-  reviews = "100+ Positive Client Reviews",
+  reviews = FALLBACK_SITE_SETTINGS.heroReviews,
   backgroundImage,
   showReviews = true,
 }: HeroProps) => {
-  const heroTitle = title ?? headline ?? "Build Intentional Legacy";
+  const heroTitle = title ?? headline ?? FALLBACK_SITE_SETTINGS.heroHeading;
   const heroDescription =
-    description ??
-    paragraph ??
-    "Preserve your family's voices, stories, and memory — for every generation that comes after.";
-  const buttonLabel = ctaLabel ?? ctaText ?? "Open Legacy Vault";
-  const buttonTarget = ctaLink ?? ctaHref ?? "/legacy";
+    description ?? paragraph ?? FALLBACK_SITE_SETTINGS.heroSubheading;
+  const buttonLabel = ctaLabel ?? ctaText ?? FALLBACK_SITE_SETTINGS.heroCtaLabel;
+  const buttonTarget = ctaLink ?? ctaHref ?? FALLBACK_SITE_SETTINGS.heroCtaHref;
 
   return (
     <header

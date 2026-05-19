@@ -14,28 +14,12 @@ import {
   useFaqs,
   useFeaturedEvent,
   useHeroSection,
-  useMemoirTributes,
   useOfferings,
   usePricingTiers,
   useTestimonials,
   useSiteSettings,
-  type PricingTier,
-  type Testimonial,
 } from "@/hooks/usePublicContent";
-
-export const FALLBACK_LANDING_HERO = {
-  slug: "landing-hero",
-  heading: "Build Intentional Legacy",
-  subheading:
-    "It has never been about loss — it has always been about legacy. Every story, every voice, every design is our way of saying: their story, kept forever.",
-  cta_label: "Open Legacy Vault",
-  cta_href: "/legacy",
-  background_media: {
-    src: "https://framerusercontent.com/images/ZwPzi3XEJV1BavrysIhb7QSOE0.jpg?width=4680&height=3120",
-    alt: "Family gathered — their story, kept forever",
-  },
-  reviews: "100+ Positive Client Reviews",
-} as const;
+import { FALLBACK_HERO_LANDING } from "@/lib/fallbackContent";
 
 const iconMap: Record<string, JSX.Element> = {
   palette: <Palette className="h-5 w-5" strokeWidth={1.5} />,
@@ -51,11 +35,10 @@ const resolveIcon = (iconKey?: string | null) => iconMap[iconKey ?? ""] ?? <Spar
 const Landing = () => {
   const { data: heroSection } = useHeroSection("landing-hero");
   const { data: siteSettings } = useSiteSettings();
-  const { data: offerings } = useOfferings();
-  const { data: landingTestimonials } = useTestimonials("landing");
-  const { data: tributes } = useMemoirTributes("monica-manu");
-  const { data: faqs } = useFaqs();
-  const { data: pricingTiers } = usePricingTiers();
+  const { data: offerings = [] } = useOfferings();
+  const { data: landingTestimonials = [] } = useTestimonials("landing");
+  const { data: faqs = [] } = useFaqs();
+  const { data: pricingTiers = [] } = usePricingTiers();
   const { data: featuredEvent } = useFeaturedEvent();
 
   const hero = useMemo(() => {
@@ -82,21 +65,18 @@ const Landing = () => {
       };
     }
 
-    // Static fallback (eternal)
     return {
-      slug: FALLBACK_LANDING_HERO.slug,
-      heading: FALLBACK_LANDING_HERO.heading,
-      subheading: FALLBACK_LANDING_HERO.subheading,
-      ctaLabel: FALLBACK_LANDING_HERO.cta_label,
-      ctaHref: FALLBACK_LANDING_HERO.cta_href,
-      backgroundMedia: FALLBACK_LANDING_HERO.background_media,
-      reviews: FALLBACK_LANDING_HERO.reviews,
+      slug: FALLBACK_HERO_LANDING.slug,
+      heading: FALLBACK_HERO_LANDING.heading,
+      subheading: FALLBACK_HERO_LANDING.subheading,
+      ctaLabel: FALLBACK_HERO_LANDING.ctaLabel,
+      ctaHref: FALLBACK_HERO_LANDING.ctaHref,
+      backgroundMedia: FALLBACK_HERO_LANDING.backgroundMedia,
+      reviews: FALLBACK_HERO_LANDING.reviews,
     };
   }, [heroSection, siteSettings]);
 
   const offeringsList = useMemo(() => {
-    if (!offerings) return [];
-
     return offerings
       .slice()
       .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
@@ -128,21 +108,20 @@ const Landing = () => {
   //     }));
   // }, [tributes]);
 
-  const testimonialList = useMemo(() => {
-    return landingTestimonials?.filter((item) => item.surfaces.includes("landing")) ?? [];
-  }, [landingTestimonials]);
+  const testimonialList = useMemo(
+    () => landingTestimonials.filter((item) => item.surfaces.includes("landing")),
+    [landingTestimonials],
+  );
 
-  const faqList = useMemo(() => {
-    if (!faqs) return [];
+  const faqList = useMemo(
+    () => faqs.slice().sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)),
+    [faqs],
+  );
 
-    return faqs.slice().sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
-  }, [faqs]);
-
-  const pricingList = useMemo(() => {
-    if (!pricingTiers) return [];
-
-    return pricingTiers.slice().sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
-  }, [pricingTiers]);
+  const pricingList = useMemo(
+    () => pricingTiers.slice().sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0)),
+    [pricingTiers],
+  );
 
   const event = useMemo(() => {
     return featuredEvent ?? null;
@@ -154,9 +133,9 @@ const Landing = () => {
       <Hero
         headline={hero.heading}
         paragraph={hero.subheading ?? ""}
-        ctaText={hero.ctaLabel ?? "Create a Memoir"}
-        ctaLink={hero.ctaHref ?? "/contact"}
-        reviews={hero.reviews ?? "100+ Positive Client Reviews"}
+        ctaText={hero.ctaLabel ?? "Start Your Legacy"}
+        ctaLink={hero.ctaHref ?? "/legacy"}
+        reviews={hero.reviews ?? undefined}
         backgroundImage={hero.backgroundMedia?.src}
       />
 
@@ -166,9 +145,9 @@ const Landing = () => {
         </div>
         <section className="mx-auto max-w-6xl px-6 py-24 lg:py-32">
           <SectionHeader
-            eyebrow="Offerings"
-            title="Our Signature Concierge Services"
-            description="Every detail is handcrafted — from storytelling and staging to the keepsakes families will hold for generations."
+            eyebrow="What We Do"
+            title="How We Preserve Your Legacy"
+            description="Every story is handcrafted — recorded voices, curated imagery, and cultural keepsakes your family will carry for generations."
             align="center"
           />
           <div className="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
@@ -218,7 +197,7 @@ const Landing = () => {
                   title="Because their story deserves to be unforgettable."
                   description={event.description ?? "Explore our featured celebration to see how we transform memories into immersive experiences."}
                 />
-                <CTAButton to="/memoirs" label="Observe" />
+                <CTAButton to="/memoirs" label="Experience" />
               </div>
               {event.heroMedia?.src ? (
                 <div className="relative aspect-[4/5] w-full overflow-hidden md:w-1/3">
@@ -238,7 +217,7 @@ const Landing = () => {
           <div className="mx-auto max-w-6xl space-y-12 px-6">
             <SectionHeader
               eyebrow="Pricing"
-              title="Choose the experience that fits your celebration"
+              title="Choose the experience that fits your family"
               description="Transparent offerings with the production support families rely on. Every package can be tailored with add-ons and cultural rituals."
               align="center"
               variant="dark"

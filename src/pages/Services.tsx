@@ -1,9 +1,11 @@
+import { useMemo } from "react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FeatureCard } from "@/components/framer/FeatureCard";
-import { TestimonialsCarousel, type Testimonial } from "@/components/framer/TestimonialsCarousel";
+import { TestimonialsCarousel } from "@/components/framer/TestimonialsCarousel";
 import { CTAButton } from "@/components/framer/CTAButton";
+import { useTestimonials } from "@/hooks/usePublicContent";
 import { Archive, BookHeart, Box, Calendar, Camera, Monitor, Video } from "lucide-react";
 
 const services = [
@@ -62,25 +64,13 @@ const processSteps = [
   },
 ];
 
-const servicesTestimonials: Testimonial[] = [
-  {
-    quote: "The Beiza team orchestrated every moment — from the prelude visuals to the final blessing — with stunning precision.",
-    author: "Pastor Samuel Owusu",
-    role: "Officiant",
-  },
-  {
-    quote: "Their stage design and live screen direction made a 400-seat cathedral feel intimate for our family.",
-    author: "Harriet Twum",
-    role: "Head of Protocol",
-  },
-  {
-    quote: "Relatives overseas watched live, signed the digital tribute wall, and felt present thanks to Beiza's streaming team.",
-    author: "Daniel Osei",
-    role: "Cousin",
-  },
-];
-
 const Services = () => {
+  const { data: servicesTestimonials = [] } = useTestimonials("services");
+  const testimonialList = useMemo(
+    () => servicesTestimonials.filter((item) => item.surfaces.includes("services")),
+    [servicesTestimonials],
+  );
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navigation />
@@ -128,7 +118,7 @@ const Services = () => {
             description="We combine empathy, technology, and artistry. Here’s how that feels from the front row."
             align="center"
           />
-          <TestimonialsCarousel testimonials={servicesTestimonials} className="mt-12" />
+          <TestimonialsCarousel testimonials={testimonialList} className="mt-12" />
         </section>
       </main>
       <Footer />

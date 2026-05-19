@@ -7,7 +7,7 @@ import { CTAButton } from "@/components/framer/CTAButton";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight, Mail, Phone } from "lucide-react";
-import { useContactChannels, useTestimonials, useSiteSettings } from "@/hooks/usePublicContent";
+import { useContactChannels, usePricingTiers, useTestimonials, useSiteSettings } from "@/hooks/usePublicContent";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -18,8 +18,9 @@ const ContactPage = () => {
     message: "",
   });
   const { data: contactChannels } = useContactChannels();
-  const { data: contactTestimonials } = useTestimonials("contact");
+  const { data: contactTestimonials = [] } = useTestimonials("contact");
   const { data: siteSettings } = useSiteSettings();
+  const { data: pricingTiers = [] } = usePricingTiers();
 
   const channels = useMemo(() => {
     // First try to get from contact_channels table
@@ -171,9 +172,11 @@ const ContactPage = () => {
                       className="mt-2 w-full rounded-lg border border-white/10 bg-white px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="">Select…</option>
-                      <option value="Lite">Lite</option>
-                      <option value="Standard">Standard</option>
-                      <option value="Signature">Signature</option>
+                      {pricingTiers.map((tier) => (
+                        <option key={tier.id} value={tier.name}>
+                          {tier.name}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
