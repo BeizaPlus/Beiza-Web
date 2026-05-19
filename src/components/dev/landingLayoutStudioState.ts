@@ -11,7 +11,7 @@ export type LandingLayoutStudioState = {
 
 export const DEFAULT_STUDIO_STATE: LandingLayoutStudioState = {
   focus: "hero",
-  hero: { posX: 50, posY: 38, scale: 108, copyBottomVh: 38 },
+  hero: { posX: 72, posY: 50, scale: 100, copyBottomVh: 38 },
   offerings: { offsetY: -32, paddingTop: 80 },
   faq: { offsetY: -48, paddingTop: 72 },
   pricing: { offsetY: 0, paddingTop: 96 },

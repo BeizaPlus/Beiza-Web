@@ -11,8 +11,14 @@ import {
 } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
+import { FramedHeroImage } from "@/components/FramedHeroImage";
+import {
+  LandingLayoutStudioPanel,
+  useLandingLayoutStudio,
+} from "@/components/dev/LandingLayoutStudio";
 import { cn } from "@/lib/utils";
 import { isWhiteSwanIncludedForUser, HERITAGE_GOLD } from "@/lib/legacy/heritage";
+import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 
 const HERO_IMAGE = "/images/beiza-elder-gye-nyame-hero.png";
 const HERO_GRADIENT =
@@ -66,6 +72,9 @@ function scrollToConsultation() {
 }
 
 export default function HeritagePage() {
+  const studioPanel = isLayoutStudioEnabled();
+  const { panelEnabled: studio, state: studioState, setState: setStudioState } =
+    useLandingLayoutStudio(studioPanel);
   const whiteSwanIncluded = isWhiteSwanIncludedForUser();
   const [form, setForm] = useState({
     name: "",
@@ -118,10 +127,10 @@ export default function HeritagePage() {
 
       {/* 1. Hero */}
       <header className="relative min-h-[92svh] w-full overflow-hidden md:min-h-[92vh]">
-        <img
+        <FramedHeroImage
           src={HERO_IMAGE}
           alt="Elder at peace with the Gye Nyame Adinkra symbol — except God, nothing is greater"
-          className="absolute inset-0 h-full w-full object-cover object-[72%_center]"
+          frame={studioState.hero}
         />
         <div className="absolute inset-0" style={{ background: HERO_GRADIENT }} aria-hidden />
         <div className="relative z-10 mx-auto flex min-h-[92svh] max-w-6xl items-center px-8 py-28 md:min-h-[92vh] md:px-20 md:py-0">
@@ -434,6 +443,9 @@ export default function HeritagePage() {
       </section>
 
       <Footer />
+      {studio ? (
+        <LandingLayoutStudioPanel state={studioState} onChange={setStudioState} />
+      ) : null}
     </div>
   );
 }

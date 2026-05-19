@@ -9,6 +9,7 @@ import {
   LandingLayoutStudioPanel,
   useLandingLayoutStudio,
 } from "@/components/dev/LandingLayoutStudio";
+import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { studioCssVars } from "@/components/dev/landingLayoutStudioState";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { VoicesThatStayedSection } from "@/components/landing/VoicesThatStayedSection";
@@ -37,15 +38,14 @@ const iconMap: Record<string, JSX.Element> = {
 
 const resolveIcon = (iconKey?: string | null) => iconMap[iconKey ?? ""] ?? <Sparkles className="h-5 w-5" strokeWidth={1.5} />;
 
-const studioEnabled =
-  import.meta.env.DEV &&
-  (typeof window === "undefined" || new URLSearchParams(window.location.search).get("studio") !== "0");
+const studioPanelEnabled = isLayoutStudioEnabled();
 
 /** Re-enable when featured-event Experience flow is ready. */
 const SHOW_FEATURED_EVENT_EXPERIENCE_CTA = false;
 
 const Landing = () => {
-  const { enabled: studio, state: studioState, setState: setStudioState } = useLandingLayoutStudio(studioEnabled);
+  const { panelEnabled: studio, state: studioState, setState: setStudioState } =
+    useLandingLayoutStudio(studioPanelEnabled);
   const focus = studio ? studioState.focus : null;
 
   const { data: heroSection } = useHeroSection("landing-hero");
@@ -133,18 +133,12 @@ const Landing = () => {
           backgroundImage={
             hero.backgroundMedia?.src ?? "/images/beiza-elder-gye-nyame-hero.png"
           }
-          backgroundPosition={
-            studio ? `${studioState.hero.posX}% ${studioState.hero.posY}%` : "68% center"
-          }
-          backgroundScale={studio ? studioState.hero.scale : undefined}
-          overlayStyle={
-            !studio
-              ? {
-                  background:
-                    "linear-gradient(to right, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.2) 100%)",
-                }
-              : undefined
-          }
+          backgroundPosition={`${studioState.hero.posX}% ${studioState.hero.posY}%`}
+          backgroundScale={studioState.hero.scale}
+          overlayStyle={{
+            background:
+              "linear-gradient(to right, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.2) 100%)",
+          }}
         />
       ) : null}
 

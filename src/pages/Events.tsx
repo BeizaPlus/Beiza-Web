@@ -6,6 +6,12 @@ import { Footer } from "@/components/Footer";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { useFeaturedEvent, usePublishedEvents } from "@/hooks/usePublicContent";
+import { FramedHeroImage } from "@/components/FramedHeroImage";
+import {
+  LandingLayoutStudioPanel,
+  useLandingLayoutStudio,
+} from "@/components/dev/LandingLayoutStudio";
+import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 
 const EmptyState = ({ title, description }: { title: string; description: ReactNode }) => (
   <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-[32px] border border-white/10 p-16 text-center text-white/70">
@@ -14,8 +20,13 @@ const EmptyState = ({ title, description }: { title: string; description: ReactN
   </div>
 );
 
+const EVENTS_HERO_IMAGE = "/images/beiza-elder-gye-nyame-hero.png";
+
 const Events = () => {
   const navigate = useNavigate();
+  const studioPanel = isLayoutStudioEnabled();
+  const { panelEnabled: studio, state: studioState, setState: setStudioState } =
+    useLandingLayoutStudio(studioPanel);
   const { data: featuredEvent, isLoading: featuredLoading } = useFeaturedEvent();
   const { data: events = [], isLoading: eventsLoading } = usePublishedEvents();
 
@@ -41,10 +52,10 @@ const Events = () => {
     <div className="min-h-screen bg-background text-foreground">
       <Navigation />
       <section className="relative -mt-24 min-h-[min(72vh,640px)] overflow-hidden">
-        <img
-          src="/images/beiza-elder-gye-nyame-hero.png"
+        <FramedHeroImage
+          src={EVENTS_HERO_IMAGE}
           alt="Elder seated at peace with the Gye Nyame symbol behind him"
-          className="absolute inset-0 h-full w-full object-cover object-[70%_center]"
+          frame={studioState.hero}
         />
         <div
           className="absolute inset-0"
@@ -228,6 +239,9 @@ const Events = () => {
         </section>
       </main>
       <Footer />
+      {studio ? (
+        <LandingLayoutStudioPanel state={studioState} onChange={setStudioState} />
+      ) : null}
     </div>
   );
 };

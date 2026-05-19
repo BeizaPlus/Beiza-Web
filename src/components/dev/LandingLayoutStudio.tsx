@@ -113,7 +113,8 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
       {state.focus === "hero" ? (
         <div className="space-y-3">
           <p className="text-[11px] text-muted-foreground">
-            Move the Adinkra blocks — lower Y shifts the photo up (blocks rise on screen).
+            Pan the portrait (X/Y). Zoom out to see more of the frame; zoom in to tighten on the
+            subject and Gye Nyame.
           </p>
           <SliderRow
             label="Background X"
@@ -123,17 +124,14 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
             onChange={(posX) => patchHero({ posX })}
           />
           <SliderRow
-            label="Background Y (up)"
+            label="Background Y"
             value={state.hero.posY}
             min={0}
             max={100}
             onChange={(posY) => patchHero({ posY })}
           />
-          <SliderRow
-            label="Zoom"
+          <ZoomControls
             value={state.hero.scale}
-            min={100}
-            max={140}
             onChange={(scale) => patchHero({ scale })}
           />
           <SliderRow
@@ -247,6 +245,63 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
   );
 }
 
+const HERO_ZOOM_MIN = 70;
+const HERO_ZOOM_MAX = 160;
+const HERO_ZOOM_STEP = 2;
+
+function ZoomControls({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (scale: number) => void;
+}) {
+  const clamp = (n: number) =>
+    Math.min(HERO_ZOOM_MAX, Math.max(HERO_ZOOM_MIN, Math.round(n)));
+
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between text-[11px]">
+        <Label>Zoom</Label>
+        <div className="flex items-center gap-1">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-7 w-7 px-0 text-base"
+            aria-label="Zoom out"
+            onClick={() => onChange(clamp(value - HERO_ZOOM_STEP))}
+          >
+            −
+          </Button>
+          <span className="min-w-[2.5rem] text-center tabular-nums text-muted-foreground">
+            {Math.round(value)}%
+          </span>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-7 w-7 px-0 text-base"
+            aria-label="Zoom in"
+            onClick={() => onChange(clamp(value + HERO_ZOOM_STEP))}
+          >
+            +
+          </Button>
+        </div>
+      </div>
+      <input
+        type="range"
+        className="w-full accent-primary"
+        value={value}
+        min={HERO_ZOOM_MIN}
+        max={HERO_ZOOM_MAX}
+        step={1}
+        onChange={(e) => onChange(clamp(Number(e.target.value)))}
+      />
+    </div>
+  );
+}
+
 function SliderRow({
   label,
   value,
@@ -279,13 +334,13 @@ function SliderRow({
   );
 }
 
-/** Dev-only hook — enabled on localhost when ?studio=1 or always in Vite dev. */
-export function useLandingLayoutStudio(enabled: boolean) {
-  const [state, setState] = useState<LandingLayoutStudioState>(DEFAULT_STUDIO_STATE);
+/** Loads saved hero framing always; panel visibility follows `panelEnabled`. */
+export function useLandingLayoutStudio(panelEnabled: boolean) {
+  const [state, setState] = useState<LandingLayoutStudioState>(() => loadStudioState());
 
   useEffect(() => {
-    if (enabled) setState(loadStudioState());
-  }, [enabled]);
+    setState(loadStudioState());
+  }, []);
 
-  return { enabled, state, setState };
+  return { panelEnabled, state, setState };
 }
