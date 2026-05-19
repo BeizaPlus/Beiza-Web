@@ -110,8 +110,8 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
         <RegionToggle region={region} onChange={setRegionAndSave} />
       </div>
 
-      <div className="mt-12 grid w-full grid-cols-1 items-start gap-[4%] lg:grid-cols-[58%_38%]">
-        <div className="grid w-full grid-cols-1 gap-[4%] sm:grid-cols-2">
+      <div className="mt-12 grid w-full grid-cols-1 gap-6 lg:grid-cols-[58%_38%] lg:items-stretch lg:gap-[4%]">
+        <div className="grid w-full grid-cols-1 gap-[4%] sm:grid-cols-2 sm:auto-rows-fr">
           {visibleOfferings.map((feature) => (
             <FeatureCard
               key={feature.id}
@@ -123,18 +123,18 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
         </div>
 
         <div
-          className="relative flex w-full items-center justify-center overflow-hidden rounded-2xl border border-dashed border-white/25 bg-white/[0.03] aspect-[4/5] max-h-[min(70vh,36rem)] lg:sticky lg:top-28 lg:max-h-none lg:min-h-[100%] lg:aspect-auto lg:h-full"
+          className="relative min-h-[20rem] w-full overflow-hidden rounded-lg border border-white/10 sm:min-h-[24rem] lg:min-h-0 lg:h-full"
           aria-label="Product mockup placeholder"
         >
           {mockupSrc && !mockupFailed ? (
             <img
               src={mockupSrc}
               alt="Beiza Legacy product preview"
-              className="h-full w-full object-cover object-top"
+              className="absolute inset-0 h-full w-full object-cover object-top"
               onError={() => setMockupFailed(true)}
             />
           ) : (
-            <div className="px-[6%] text-center">
+            <div className="flex h-full min-h-[inherit] items-center justify-center bg-white/[0.03] px-[6%] py-12 text-center">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
                 Mockup
               </p>
