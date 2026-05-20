@@ -1,5 +1,4 @@
 {
-  "$comment": "Production must deploy from main commit fdf0e81+ (consolidated api/*/[path].ts). Redeploying commit 284389e will fail API TypeScript checks.",
   "crons": [],
   "redirects": [
     {
