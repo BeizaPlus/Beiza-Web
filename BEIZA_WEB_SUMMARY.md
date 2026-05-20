@@ -411,7 +411,7 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 
 ## Recent commits (reference)
 
-- CMS-first marketing, memoir-linked live events, Ernestina sync, footer/nav alignment, voices from Supabase  
+- `16840cb` — CMS-first marketing, memoir-linked live events, Ernestina sync, footer/nav alignment, voices from Supabase  
 - `16a5cbd` — Stripe Keeper, health/patterns tabs, weekly health questions  
 - `a70e50a` — Summary + tree handle alignment  
 - `3cbd4c9` — Freeform family tree canvas, vault recording, circle UX  
