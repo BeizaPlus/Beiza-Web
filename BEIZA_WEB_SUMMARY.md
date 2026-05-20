@@ -4,7 +4,40 @@
 **Live:** https://beizaplus.com  
 **Stack:** Vite + React + Tailwind + Supabase · Vercel serverless API
 
-Last updated: May 2026 · branch `main` · commit `771fb94`
+Last updated: 20 May 2026 · branch `main`
+
+---
+
+## Product status (where things sit now)
+
+### Shipped and testable locally (`npm run dev` → http://localhost:8080)
+
+| Area | Routes | Notes |
+|------|--------|--------|
+| **Marketing** | `/`, `/pricing`, `/heritage`, `/recover`, `/events` | Nav: Vault · Circle · Heritage |
+| **Circle directory** | `/circle` → `/circle/:id/enter` → `/circle/:id/tree` | 6-char access code gate; bearer token in `localStorage` |
+| **Freeform tree** | `/circle/:id/tree` | React Flow canvas — drag nodes, gold handles, edges, grouping (**G**), leader pin, light/dark, persona chat |
+| **Record** | `/legacy/record`, `/circle/:id/record` | Tap-to-record; circle path uses bearer token API |
+| **Vault** | `/legacy/vault` | Playback, rename, **share via link (free)**; delete/download → Keeper upsell |
+| **Legacy shell** | `/legacy`, `/legacy/family` | Create/join circle, invite codes |
+
+**Local tier override:** `VITE_LEGACY_TIER=keeper|heritage` in `.env` (billing not live yet).
+
+**Layout studio:** `?studio=1` on landing/heritage for hero framing edits.
+
+### Spec’d / not in repo yet
+
+| Feature | Status |
+|---------|--------|
+| **Stripe Keeper checkout** | Not wired — needs currency + Price ID confirmation |
+| **Weekly health questions** | Architecture locked (52-week cycle, idempotent sends, HMAC opt-out) — **no migrations/API yet** |
+| **Patterns tab (full)** | UI exists; needs sustained health data + `health-patterns` API in prod |
+
+### Production deploy
+
+- **Live:** https://beizaplus.com (auto-deploy from `main`)
+- **Vercel env required for circle gate:** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
+- **Apply Supabase migrations** through `20260527` (tree edges, canvas positions, share tokens, profile fields, sibling order)
 
 ---
 
@@ -66,7 +99,7 @@ Recording is **not** in the main nav — it is contextual on the Circle tree hea
 2. Click cover → **`/circle/:id/enter`** — full-screen gate (`#0a0a0a`), 6-character code, gold **Enter circle →**.
 3. **`POST /api/circle/verify-code`** — validates code, issues signed session token, creates `circle_members` row (`joined_via: 'code'`).
 4. Token stored: `localStorage` key `beiza_circle_{id}_token`.
-5. **`/circle/:id/tree`** — react-d3-tree canvas; biography panel; **+ Add memory →** → `/record?circle=…`.
+5. **`/circle/:id/tree`** — full-screen React Flow canvas (`@xyflow/react`); biography side panel; **+ Add memory →** → `/circle/:id/record`.
 
 **Admin:** On circle creation, DB trigger sets `family_circles.access_code` (6-char). Keeper copies from `/legacy/family` (separate app **invite code** for Legacy sign-in).
 
@@ -102,7 +135,11 @@ Fields: deceased name/contact, requester relation/email, optional document, mess
 **Traits:** `person_traits` (circle_id, person_id, category, trait). Categories: physical, personality, skills, known_for. Migration: `20260521T110000`.  
 **Canvas positions:** `family_people.canvas_x / canvas_y` — saved on drag-stop. New nodes placed at viewport centre via `getViewport()`.  
 **Links:** `recording_person_links` (about | by).  
-**Health questions:** `health_question_log` — weekly question cadence tracking.
+**Tree edges:** `tree_edges` — persisted relationships; disconnect via edge menu or person right-click.  
+**Sibling order:** `family_people.sibling_order` (1 = eldest) for auto-layout.  
+**Share tokens:** `recordings.share_token` → `/memory/:token` public player.
+
+**Weekly health questions (planned, not migrated):** explicit `week_number` counter per circle; 52-question bank by stable `id` (append-only, `retired` flag); after week 52, week 1’s dimension repeats — ~156 answers by year 3. Idempotent `(circle_id, week_number)` + per-email send log; HMAC unsubscribe table; keeper-approved custom question queue.
 
 ### Node types (canvas)
 - `person` — default square card (PersonFlowNode)
@@ -217,14 +254,14 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 
 ## Legacy app (`/legacy`)
 
-| Tier | Recording | Rename | Delete | Share | Storage |
-|------|-----------|--------|--------|-------|---------|
-| **Circle** (free) | Unlimited length | Yes | Locked (upsell) | No | 5 GB |
-| **Keeper** ($4.99/mo) | Yes | Yes | Yes | Yes | 500 MB |
-| **Heritage** ($200/yr) | Yes | Yes | Yes | Yes | Unlimited |
+| Tier | Recording | Rename | Delete | Share link | Download raw | Storage |
+|------|-----------|--------|--------|------------|--------------|---------|
+| **Circle** (free) | Unlimited length | Yes | Locked (upsell) | **Yes (free)** | Locked | 5 GB |
+| **Keeper** ($4.99/mo) | Yes | Yes | Yes | Yes | Yes | 500 MB |
+| **Heritage** ($white-glove) | Yes | Yes | Yes | Yes | Yes | Unlimited |
 
-- No duration cap for Circle; blob capture; **Done** while recording; 5 GB gate on upload
-- Delete upsell → Keeper → `/pricing`
+- No duration cap for Circle; tap-to-record toggle; 5 GB gate on upload
+- Delete + download upsell → Keeper → `/pricing` (Stripe checkout **pending**)
 - Dev tier: `VITE_LEGACY_TIER=keeper|heritage`
 - Bottom nav: Home · Tree · Record · Vault · Invite (legacy shell; marketing nav is separate)
 
@@ -257,6 +294,10 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 | `20260522T100000_family_tree.sql` | `family_people`, `recording_person_links`, biography RPC |
 | `20260523T100000_event_stories_trending.sql` | `event_stories`, live event fields |
 | `20260524T100000_recovery_access_family_trees.sql` | `access_code`, `circle_members`, `circle_access_tokens`, `recovery_requests`, public directory RPCs |
+| `20260519T180000_tree_edges_canvas_positions.sql` | `tree_edges`, `canvas_x` / `canvas_y` on `family_people` |
+| `20260525T100000_recordings_share_token.sql` | Public memory share tokens |
+| `20260526T100000_family_people_profile_fields.sql` | Extended profile columns |
+| `20260527T100000_sibling_order.sql` | `sibling_order` for layout |
 
 **RPCs:** `list_public_family_circles()`, `get_public_circle_cover(uuid)`
 
@@ -294,10 +335,10 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 
 ## Recent commits (reference)
 
-- `771fb94` — Circle flows, recovery, access gate, events trending, nav (Vault/Circle/Heritage), draggable carousels, FlagIcon, migrations  
-- `c7ce7b4` — Voices section design alignment  
-- `a739aba` — Hero zoom on Events & Heritage  
-- `3c2ee8d` — What We Do four-locale toggle  
+- `3cbd4c9` — Freeform family tree canvas (React Flow), vault recording flow, circle UX, tree edges, grouping, persona API  
+- `e11d130` — Person gender, career, photo upload, duplicate on tree  
+- `fa59b5f` — Circle directory Adinkra stamp cards  
+- `771fb94` — Circle flows, recovery, access gate, events trending, nav (Vault/Circle/Heritage)  
 
 ---
 

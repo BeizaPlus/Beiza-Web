@@ -582,12 +582,14 @@
     border-radius: 50% !important;
     border: none !important;
     box-shadow: none !important;
-    transform: translate(-50%, -50%);
+    /* No transform override — ReactFlow applies the correct per-position
+       translate for each side (top/right/bottom/left) automatically.
+       Overriding here was causing right + bottom handles to misalign. */
     cursor: crosshair;
     opacity: 0.85;
     z-index: 20;
     pointer-events: all;
-    /* 10px gold dot on the card border (centred in hit area) */
+    /* 10px gold dot centred in the 28px hit area */
     background: radial-gradient(
       circle,
       #E6A817 5px,
