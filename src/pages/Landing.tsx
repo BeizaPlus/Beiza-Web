@@ -43,12 +43,11 @@ const iconMap: Record<string, JSX.Element> = {
 
 const resolveIcon = (iconKey?: string | null) => iconMap[iconKey ?? ""] ?? <Sparkles className="h-5 w-5" strokeWidth={1.5} />;
 
-const studioPanelEnabled = isLayoutStudioEnabled();
-
 /** Re-enable when featured-event Experience flow is ready. */
 const SHOW_FEATURED_EVENT_EXPERIENCE_CTA = false;
 
 const Landing = () => {
+  const studioPanelEnabled = isLayoutStudioEnabled();
   const { panelEnabled: studio, state: studioState, setState: setStudioState } =
     useLandingLayoutStudio(studioPanelEnabled);
   const { frame: eventsHeroFrame } = useHeroLayoutStudio("events");
