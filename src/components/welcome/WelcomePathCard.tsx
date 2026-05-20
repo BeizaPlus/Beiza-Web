@@ -9,8 +9,8 @@ export type WelcomePathCardProps = {
   meta: string;
   backgroundImage?: string;
   backgroundImageAlt?: string;
-  /** CSS gradient when no image (Farewell / Education until hero art ships). */
   backgroundGradient?: string;
+  featured?: boolean;
 };
 
 const PHOTO_OVERLAY =
@@ -25,6 +25,7 @@ export function WelcomePathCard({
   backgroundImage,
   backgroundImageAlt = "",
   backgroundGradient,
+  featured = false,
 }: WelcomePathCardProps) {
   return (
     <Link
@@ -32,6 +33,8 @@ export function WelcomePathCard({
       className={cn(
         "font-sans group relative aspect-[2/3] w-full min-h-[320px] overflow-hidden rounded-[10px] border border-transparent",
         "transition duration-300 hover:border-white sm:min-h-[380px] lg:min-h-[420px]",
+        featured &&
+          "z-10 scale-[1.02] border-primary/40 shadow-[0_0_0_1px_hsl(var(--primary)/0.45),0_0_28px_hsl(var(--primary)/0.22)] sm:scale-[1.04] lg:min-h-[400px] lg:scale-[1.05]",
       )}
     >
       {backgroundImage ? (
@@ -63,10 +66,7 @@ export function WelcomePathCard({
         <h2 className="font-sans text-[1.35rem] font-semibold leading-tight text-white sm:text-[1.5rem] lg:text-[1.65rem]">
           {title}
         </h2>
-        <p className="mt-2 text-[13px] font-normal leading-snug text-white/90 sm:text-sm">
-          <span className="text-white/70">— </span>
-          {subtitle}
-        </p>
+        <p className="mt-2 text-[13px] font-normal leading-snug text-white/90 sm:text-sm">{subtitle}</p>
         <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.12em] text-white/65">{meta}</p>
       </div>
     </Link>
