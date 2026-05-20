@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type WelcomePathCardProps = {
@@ -7,6 +8,9 @@ export type WelcomePathCardProps = {
   title: string;
   subtitle: string;
   meta: string;
+  icon: LucideIcon;
+  iconCircleClass: string;
+  iconClass?: string;
   backgroundImage?: string;
   backgroundImageAlt?: string;
   backgroundGradient?: string;
@@ -22,6 +26,9 @@ export function WelcomePathCard({
   title,
   subtitle,
   meta,
+  icon: Icon,
+  iconCircleClass,
+  iconClass = "h-5 w-5",
   backgroundImage,
   backgroundImageAlt = "",
   backgroundGradient,
@@ -63,6 +70,14 @@ export function WelcomePathCard({
       </span>
 
       <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-5 pt-20 text-left sm:px-5 sm:pb-6">
+        <span
+          className={cn(
+            "mb-3 flex h-10 w-10 items-center justify-center rounded-full",
+            iconCircleClass,
+          )}
+        >
+          <Icon className={iconClass} aria-hidden />
+        </span>
         <h2 className="font-sans text-[1.35rem] font-semibold leading-tight text-white sm:text-[1.5rem] lg:text-[1.65rem]">
           {title}
         </h2>

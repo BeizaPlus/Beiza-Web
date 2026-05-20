@@ -44,6 +44,15 @@
     /* Supporting tokens */
     --accent-gold: 43 91.8% 52%;
     --accent-mint: 129 6.9% 37.1%;
+
+    /* Welcome gate path icon circles (derived from palette above) */
+    --welcome-icon-legacy-bg: var(--accent-mint) / 0.22;
+    --welcome-icon-legacy-fg: var(--accent-mint);
+    --welcome-icon-education-bg: var(--primary) / 0.22;
+    --welcome-icon-education-fg: var(--primary);
+    --welcome-icon-farewell-bg: var(--secondary-foreground) / 0.16;
+    --welcome-icon-farewell-fg: var(--muted-foreground);
+
     --text-subtle: 0 0% 88.2%;
     --glass-border: 0 0% 18.4%;
     --glass-overlay: hsla(0 0% 5% / 0.85);

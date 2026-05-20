@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { BookOpen, Feather, GraduationCap } from "lucide-react";
 import { WelcomePathCard } from "@/components/welcome/WelcomePathCard";
+import { welcomePathIconCircleClass } from "@/lib/welcomePathIconStyles";
 import {
   getStoredWelcomeTheme,
   storeWelcomeTheme,
@@ -45,6 +47,8 @@ const PATHS = [
     subtitle:
       "Discover Adinkra symbols and the living wisdom your people carried across generations.",
     meta: "Explore",
+    icon: GraduationCap,
+    iconCircleClass: welcomePathIconCircleClass.education,
     backgroundGradient: "linear-gradient(165deg, #3d3428 0%, #1a1612 55%, #0a0908 100%)",
   },
   {
@@ -54,6 +58,8 @@ const PATHS = [
     subtitle:
       "Capture voices, build your family tree, and turn memories into a memoir that lasts forever.",
     meta: "Start here",
+    icon: BookOpen,
+    iconCircleClass: welcomePathIconCircleClass.legacy,
     backgroundImage: LEGACY_CARD_IMAGE,
     backgroundImageAlt: "Hands holding a My Life Story memoir book",
     featured: true,
@@ -65,6 +71,8 @@ const PATHS = [
     subtitle:
       "Memorial art, legacy vessels, and caskets crafted to honor a life with dignity and beauty.",
     meta: "Learn more",
+    icon: Feather,
+    iconCircleClass: welcomePathIconCircleClass.farewell,
     backgroundGradient: "linear-gradient(165deg, #1e2838 0%, #0c1018 55%, #050608 100%)",
   },
 ] as const;
