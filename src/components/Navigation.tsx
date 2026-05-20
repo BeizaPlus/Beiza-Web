@@ -15,7 +15,9 @@ function navIdFromHref(href: string): string {
   if (href === "/circle" || href.startsWith("/circle") || href.startsWith("/family-trees")) {
     return "circle";
   }
-  if (href === "/heritage" || href.startsWith("/white-swan")) return "heritage";
+  if (href === "/heritage" || href === "/farewell" || href.startsWith("/white-swan")) {
+    return "heritage";
+  }
   return href.replace(/^\//, "").replace(/\//g, "-") || "nav";
 }
 
@@ -32,7 +34,11 @@ function isActiveNavPath(pathname: string, href: string): boolean {
     );
   }
   if (href === "/heritage") {
-    return pathname === "/heritage" || pathname.startsWith("/white-swan");
+    return (
+      pathname === "/heritage" ||
+      pathname === "/farewell" ||
+      pathname.startsWith("/white-swan")
+    );
   }
   return pathname === href;
 }

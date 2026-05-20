@@ -23,7 +23,7 @@ export default function EducationPage() {
               and return. Learn the marks, then bring your family&apos;s story into Legacy.
             </p>
             <div className="flex flex-wrap justify-center gap-3 pt-2">
-              <CTAButton to="/legacy" label="Start preserving stories" />
+              <CTAButton to="/heritage" label="Start preserving stories" />
               <CTAButton
                 to="/"
                 label="Welcome gate"
@@ -52,8 +52,16 @@ export default function EducationPage() {
           </div>
           <p className={`${marketingContainer} mt-12 text-center font-manrope text-sm text-white/60`}>
             Ready to record a voice or build your tree?{" "}
-            <Link to="/legacy" className="text-[#E6A817] underline underline-offset-4 hover:text-[#f0bc3a]">
+            <Link to="/heritage" className="text-[#E6A817] underline underline-offset-4 hover:text-[#f0bc3a]">
               Open Legacy →
+            </Link>
+          </p>
+          <p className={`${marketingContainer} mt-4 text-center`}>
+            <Link
+              to="/education/story-questions"
+              className="font-manrope text-sm text-[#E6A817] underline underline-offset-4 hover:text-[#f0bc3a]"
+            >
+              52 family story questions →
             </Link>
           </p>
         </section>

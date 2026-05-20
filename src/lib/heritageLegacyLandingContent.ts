@@ -1,0 +1,103 @@
+export const LEGACY_HERO = {
+  headline: "Reminisce now. Treasure forever.",
+  subtext:
+    "Preserve a life story in a beautiful book — yours or someone you love. Celebrate a loved one's legacy for generations to come.",
+  cta: "Get started",
+  ctaHref: "/legacy/family",
+  image: "/assets/legacy-hero.jpg",
+  imageAlt: "Hands holding a My Life Story memoir book",
+};
+
+export const MEMOIR_STEPS = [
+  {
+    number: "1",
+    icon: "mail" as const,
+    text: "Every week, we'll send you a thoughtful question to begin the writing.",
+  },
+  {
+    number: "2",
+    icon: "mic" as const,
+    text: "You or your loved one can speak the story, write it, or reply by email and add photos.",
+  },
+  {
+    number: "3",
+    icon: "book" as const,
+    text: "Review the stories, and when you're ready, turn them into a beautiful printed book.",
+  },
+];
+
+export const TESTIMONIALS = [
+  {
+    quote: "My father never wrote anything down. After twelve weeks, we had a book our children fight over at Christmas.",
+    name: "Amara Osei",
+    role: "Daughter · Accra",
+  },
+  {
+    quote: "I recorded my mother in Twi and English. Beiza kept her phrasing — it still sounds like her when I read it.",
+    name: "James Mensah",
+    role: "Son · London",
+  },
+  {
+    quote: "We started with one question about her village. It opened forty years of stories we had never heard.",
+    name: "Priya Naidoo",
+    role: "Granddaughter · Toronto",
+  },
+];
+
+export const LEGACY_FAQ = [
+  {
+    q: "What's included in a Beiza Legacy membership?",
+    a: "Weekly story prompts, voice recording, family tree, vault storage, and tools to compile answers into a memoir. Keeper adds unlimited storage, downloads, and printed book options.",
+  },
+  {
+    q: "Can I add any question myself?",
+    a: "Yes. You can add custom prompts alongside our weekly questions — perfect for holidays, reunions, or a specific chapter you want captured.",
+  },
+  {
+    q: "Can I answer on behalf of someone I love?",
+    a: "Absolutely. Many families record on behalf of parents or grandparents. You can invite them to contribute, or capture their answers in your own circle.",
+  },
+  {
+    q: "Can I create multiple copies of the book?",
+    a: "Yes. When your memoir is ready, order additional printed copies for siblings, cousins, and the next generation.",
+  },
+];
+
+export const SAMPLE_QUESTIONS = [
+  "What are you most proud of in your life?",
+  "What's one of the earliest memories you have?",
+  "What took your breath away?",
+  "When you think of the word home, what do you see?",
+  "What is most memorable for you?",
+  "Who taught you what kindness looks like?",
+  "What song still carries you back?",
+  "What would you want your grandchildren to never forget?",
+];
+
+export const LEGACY_PRICING = [
+  {
+    id: "circle",
+    name: "Circle",
+    price: "Free",
+    body: "Family tree, voice recording, weekly questions, 50MB storage.",
+    cta: "Start free",
+    href: "/legacy/family",
+  },
+  {
+    id: "keeper",
+    name: "Keeper",
+    price: "$4.99/mo",
+    body: "Unlimited storage, memoir compilation, downloadable and printed book.",
+    cta: "Upgrade",
+    href: "/pricing",
+    featured: true,
+  },
+  {
+    id: "heritage",
+    name: "Heritage",
+    price: "Custom",
+    body: "Visual ancestry scene, legacy vessel, statue, white glove service.",
+    cta: "Plan with us",
+    href: "/farewell",
+  },
+];

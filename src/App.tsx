@@ -24,7 +24,9 @@ import LegacyFamilyPage from "./pages/legacy/family";
 import LegacyCirclePage from "./pages/legacy/circle";
 import VaultExplore from "./pages/VaultExplore";
 import PricingPage from "./pages/Pricing";
-import HeritagePage from "./pages/Heritage";
+import HeritageLegacyLanding from "./pages/HeritageLegacyLanding";
+import FarewellHeritagePage from "./pages/Heritage";
+import StoryQuestionsArticle from "./pages/education/StoryQuestionsArticle";
 import RecoverPage from "./pages/Recover";
 import FamilyTreesDirectoryPage from "./pages/family-trees/index";
 import FamilyTreeEnterPage from "./pages/family-trees/enter";
@@ -45,6 +47,7 @@ const App = () => (
           <Route path="/" element={<WelcomeGate />} />
           <Route path="/home" element={<Landing />} />
           <Route path="/education" element={<EducationPage />} />
+          <Route path="/education/story-questions" element={<StoryQuestionsArticle />} />
           <Route path="/gallery" element={<Navigate to="/circle" replace />} />
           <Route path="/vault" element={<Navigate to="/legacy/vault" replace />} />
           <Route path="/record" element={<RecordRedirect />} />
@@ -68,7 +71,9 @@ const App = () => (
           <Route path="/vault/explore" element={<VaultExplore />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/memory/:token" element={<MemorySharePage />} />
-          <Route path="/heritage" element={<HeritagePage />} />
+          <Route path="/heritage" element={<HeritageLegacyLanding />} />
+          <Route path="/farewell" element={<FarewellHeritagePage />} />
+          <Route path="/white-swan" element={<Navigate to="/farewell" replace />} />
           <Route path="/admin/*" element={<AdminApp />} />
           <Route path="/legacy" element={<LegacyLayout />}>
             <Route index element={<LegacyHomePage />} />

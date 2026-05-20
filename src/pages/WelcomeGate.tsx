@@ -4,7 +4,7 @@ import { BRAND_IMAGES } from "@/lib/brandImages";
 
 const PATHS = [
   {
-    to: "/legacy",
+    to: "/heritage",
     label: "Legacy",
     title: "Preserve a life story",
     description:
@@ -16,7 +16,7 @@ const PATHS = [
     backgroundImageAlt: "Hands holding a My Life Story memoir book",
   },
   {
-    to: "/heritage",
+    to: "/farewell",
     label: "Farewell",
     title: "Plan a farewell",
     description:

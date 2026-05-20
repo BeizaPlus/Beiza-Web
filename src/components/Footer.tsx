@@ -68,10 +68,10 @@ export const Footer = () => {
             </p>
             <p className="text-subtle text-sm">
               <Link
-                to="/heritage"
+                to="/farewell"
                 className="text-muted-foreground transition-colors hover:text-subtle"
               >
-                Planning ahead? Heritage →
+                Planning a farewell? →
               </Link>
             </p>
             <p className="text-subtle text-sm">

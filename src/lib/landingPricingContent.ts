@@ -110,7 +110,7 @@ export function mergePricingContent(
 export const TIER_HREFS: Record<string, string> = {
   circle: "/legacy/family",
   keeper: "/pricing",
-  heritage: "/heritage",
+  heritage: "/farewell",
 };
 
 export function tierFlags(tierId: string) {
