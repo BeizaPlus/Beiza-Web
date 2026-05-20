@@ -1,4 +1,4 @@
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { TimelineStoryCard } from "./TimelineStoryCard";
 import {
@@ -59,7 +59,8 @@ type EraSectionProps = {
   groupEntries: MemoirTimelineEntry[];
   globalEntryOffset: number;
   galleryPool: GalleryImagePoolItem[];
-  defaultOpen: boolean;
+  open: boolean;
+  onToggle: () => void;
   onEntrySelect?: (entry: MemoirTimelineEntry) => void;
 };
 
@@ -68,17 +69,16 @@ function EraSection({
   groupEntries,
   globalEntryOffset,
   galleryPool,
-  defaultOpen,
+  open,
+  onToggle,
   onEntrySelect,
 }: EraSectionProps) {
-  const [open, setOpen] = useState(defaultOpen);
-
   return (
     <section className="rounded-2xl border border-white/10 bg-white/[0.02]">
       <button
         type="button"
         className="flex w-full items-center gap-4 px-5 py-4 text-left transition hover:bg-white/5"
-        onClick={() => setOpen((value) => !value)}
+        onClick={onToggle}
         aria-expanded={open}
       >
         <span className="rounded-full border border-white/15 bg-white/5 px-4 py-1 text-xs uppercase tracking-[0.3em] text-white/60">
@@ -98,31 +98,29 @@ function EraSection({
         <div className="border-t border-white/10 px-2 pb-8 pt-4 sm:px-4">
           <div className="flex flex-col gap-16">
             {groupEntries.map((entry, index) => {
-              const orientation = index % 2 === 0 ? "left" : "right";
               const entryIndex = globalEntryOffset + index;
               const image = resolveTimelineEntryImage(entry, entryIndex, galleryPool);
 
               return (
                 <Fragment key={entry.id}>
                   <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
-                    <div className="relative hidden w-1/2 items-center justify-center lg:flex">
-                      <div className="absolute left-1/2 flex h-full -translate-x-1/2 justify-center">
-                        <span className="w-px flex-1 bg-white/10" />
-                      </div>
-                      <div className="relative flex items-center gap-6">
-                        {orientation === "left" ? null : <span className="h-px w-16 bg-white/10" />}
-                        <span className="h-10 w-10 rounded-full border border-white/20 bg-white/10 backdrop-blur">
-                          <span className="sr-only">{new Date(entry.timestamp).toDateString()}</span>
+                    {/* Date in left column */}
+                    <div className="relative hidden w-1/2 items-center justify-end pr-10 lg:flex">
+                      <div className="pointer-events-none absolute right-0 top-0 h-full w-px bg-white/10" />
+                      <div className="flex flex-col items-end text-right">
+                        <span className="text-xs uppercase tracking-[0.3em] text-white/25">
+                          {new Date(entry.timestamp).toLocaleDateString(undefined, { month: "short" })}
                         </span>
-                        {orientation === "left" ? <span className="h-px w-16 bg-white/10" /> : null}
+                        <span className="text-7xl font-light leading-none tabular-nums text-white/20">
+                          {new Date(entry.timestamp).getFullYear()}
+                        </span>
                       </div>
                     </div>
 
-                    <div className="flex w-full lg:w-1/2">
+                    <div className="flex w-full pl-8 lg:w-1/2">
                       <TimelineStoryCard
                         entry={entry}
                         image={image}
-                        orientation={orientation}
                         onSelect={onEntrySelect}
                       />
                     </div>
@@ -158,6 +156,34 @@ export const UnifiedTimeline = ({
     return offsets;
   }, [groups]);
 
+  const groupKey = useMemo(() => groups.map(([l]) => l).join("\u0001"), [groups]);
+
+  const [openByLabel, setOpenByLabel] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    setOpenByLabel((prev) => {
+      const next = { ...prev };
+      let changed = false;
+      const valid = new Set(groups.map(([l]) => l));
+
+      for (const key of Object.keys(next)) {
+        if (!valid.has(key)) {
+          delete next[key];
+          changed = true;
+        }
+      }
+
+      groups.forEach(([label], index) => {
+        if (next[label] === undefined) {
+          next[label] = index === 0;
+          changed = true;
+        }
+      });
+
+      return changed ? next : prev;
+    });
+  }, [groupKey]);
+
   if (isLoading) {
     return <LoadingState />;
   }
@@ -168,21 +194,26 @@ export const UnifiedTimeline = ({
 
   return (
     <div className="relative mx-auto flex w-full max-w-5xl flex-col gap-8 py-8">
-      <div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-white/40 via-white/20 to-transparent lg:block" />
-
-      {groups.map(([label, groupEntries], groupIndex) => (
-        <EraSection
-          key={label}
-          label={label}
-          groupEntries={groupEntries}
-          globalEntryOffset={eraOffsets[groupIndex] ?? 0}
-          galleryPool={galleryPool}
-          defaultOpen={groupIndex === 0}
-          onEntrySelect={onEntrySelect}
-        />
-      ))}
+      {groups.map(([label, groupEntries], groupIndex) => {
+        const open = openByLabel[label] ?? groupIndex === 0;
+        return (
+          <EraSection
+            key={label}
+            label={label}
+            groupEntries={groupEntries}
+            globalEntryOffset={eraOffsets[groupIndex] ?? 0}
+            galleryPool={galleryPool}
+            open={open}
+            onToggle={() =>
+              setOpenByLabel((prev) => ({
+                ...prev,
+                [label]: !open,
+              }))
+            }
+            onEntrySelect={onEntrySelect}
+          />
+        );
+      })}
     </div>
   );
 };
-
-

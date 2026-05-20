@@ -6,14 +6,12 @@ import type { MemoirTimelineEntry } from "@/types/memoir";
 type TimelineStoryCardProps = {
   entry: MemoirTimelineEntry;
   image: ResolvedTimelineImage;
-  orientation?: "left" | "right";
   onSelect?: (entry: MemoirTimelineEntry) => void;
 };
 
 export const TimelineStoryCard = ({
   entry,
   image,
-  orientation = "right",
   onSelect,
 }: TimelineStoryCardProps) => {
   const handleSelect = () => {
@@ -25,9 +23,8 @@ export const TimelineStoryCard = ({
   return (
     <article
       className={cn(
-        "group relative flex flex-col gap-4 rounded-lg border border-white/10 bg-white/5 p-6 text-left text-white shadow-glass transition hover:-translate-y-1 hover:bg-white/10 hover:shadow-xl",
+        "group relative flex w-full flex-col gap-4 rounded-lg border border-white/10 bg-white/5 p-6 text-left text-white shadow-glass transition hover:-translate-y-1 hover:bg-white/10 hover:shadow-xl",
         "backdrop-blur",
-        orientation === "left" ? "lg:mr-14" : "lg:ml-14",
       )}
     >
       <div className="overflow-hidden rounded-lg border border-white/10">
@@ -55,14 +52,6 @@ export const TimelineStoryCard = ({
 
       <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
         <span className="rounded-full bg-white/10 px-3 py-1">{entry.eraLabel ?? "Moments"}</span>
-        <time dateTime={entry.timestamp} className="rounded-full bg-white/5 px-3 py-1">
-          {new Date(entry.timestamp).toLocaleDateString(undefined, { year: "numeric", month: "short" })}
-        </time>
-        {entry.endTimestamp ? (
-          <time dateTime={entry.endTimestamp} className="rounded-full bg-white/5 px-3 py-1">
-            {new Date(entry.endTimestamp).toLocaleDateString(undefined, { year: "numeric", month: "short" })}
-          </time>
-        ) : null}
       </div>
 
       <div>

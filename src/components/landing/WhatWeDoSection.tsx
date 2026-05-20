@@ -3,6 +3,7 @@ import { FlagIcon } from "@/components/ui/FlagIcon";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FeatureCard } from "@/components/framer/FeatureCard";
 import { marketingContainer, marketingSection, segmentToggleOption, segmentToggleShell } from "@/lib/brandUi";
+import { useDraggableScroll } from "@/hooks/useDraggableScroll";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
@@ -87,6 +88,7 @@ type WhatWeDoSectionProps = {
 export function WhatWeDoSection({ offerings, mockupSrc, className, style }: WhatWeDoSectionProps) {
   const [locale, setLocale] = useState<LegacyLocale>("global");
   const [mockupFailed, setMockupFailed] = useState(false);
+  const localeScrollRef = useDraggableScroll();
 
   useEffect(() => {
     const saved = localStorage.getItem(LOCALE_KEY);
@@ -112,7 +114,11 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
         align="center"
       />
 
-      <div className="mt-8 flex justify-center overflow-x-auto px-1 pb-1">
+      <div
+        ref={localeScrollRef}
+        data-draggable
+        className="mt-8 flex justify-center overflow-x-auto px-1 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      >
         <LocaleToggle locale={locale} onChange={setLocaleAndSave} />
       </div>
 

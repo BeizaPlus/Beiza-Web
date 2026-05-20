@@ -150,6 +150,7 @@ export function MemoirJourney({ entries, isLoading, galleryPool = [] }: MemoirJo
         data-draggable
         className={cn(
           "flex gap-5 overflow-x-auto px-[5%] pb-2 snap-x snap-mandatory",
+          "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
           "scrollbar-none cursor-grab active:cursor-grabbing",
         )}
         style={{ scrollbarWidth: "none" }}
