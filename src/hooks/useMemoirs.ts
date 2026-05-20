@@ -1,6 +1,7 @@
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabaseClient";
+import { isSupabaseConfigured } from "@/lib/contentPolicy";
 import type {
   MemoirDetail,
   MemoirHighlight,
@@ -12,7 +13,7 @@ import type {
 import type { JSONContent } from "@tiptap/react";
 
 const STALE_TIME = 1000 * 60 * 5;
-const isSupabaseReady = Boolean(supabase);
+const isSupabaseReady = isSupabaseConfigured();
 
 const handleError = (scope: string, error: Error | null | undefined) => {
   if (!error) return;
@@ -171,11 +172,9 @@ const mapSummary = (row: MemoirRow): MemoirSummary => {
   let heroMediaSrc: string | undefined = undefined;
   if (row.hero_media?.src) {
     const src = row.hero_media.src;
-    // If it's already a full URL (http/https), use it as-is
-    if (src.startsWith("http://") || src.startsWith("https://")) {
+    if (src.startsWith("http://") || src.startsWith("https://") || src.startsWith("/")) {
       heroMediaSrc = src;
     } else {
-      // Otherwise, it's a storage path - convert to public URL
       const { data } = supabase.storage.from("public-assets").getPublicUrl(src);
       heroMediaSrc = data.publicUrl;
     }

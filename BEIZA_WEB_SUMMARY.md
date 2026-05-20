@@ -4,7 +4,63 @@
 **Live:** https://beizaplus.com  
 **Stack:** Vite + React + Tailwind + Supabase · Vercel serverless API
 
-Last updated: 20 May 2026 · branch `main`
+Last updated: 19 May 2026 · branch `main`
+
+---
+
+## Changelog (developer baseline → production-ready CMS)
+
+### Developer work (on `main` before this pass)
+
+| Commit | What shipped |
+|--------|----------------|
+| `3cbd4c9` | Freeform **React Flow** family tree canvas, vault recording flow, circle UX, tree edges, grouping, persona API |
+| `e11d130` | Person **gender**, **career**, **photo upload**, **duplicate** on tree |
+| `fa59b5f` | Circle directory **Adinkra** stamp cards, per-circle identity |
+| `da35fc3` | Tree edges, grouping, circle APIs, smoke snapshots |
+| `bd45ddc` | Full-screen tree app, local circle APIs, Heritage polish |
+| `771fb94` | Circle flows, **recovery** (`/recover`), access gate, events trending, **Vault · Circle · Heritage** nav |
+| `a70e50a` | Summary refresh; tree **handle alignment** fix (removed bad `translate(-50%,-50%)` on gold handles) |
+| `16a5cbd` | **Stripe Keeper** checkout/webhook/portal; **Health** + **Patterns** person tabs; **weekly health questions** (52-q bank + cron); `legacy_entitlements` |
+
+### Built on top (this session — CMS + UX fixes)
+
+| Area | Change |
+|------|--------|
+| **Mass adoption** | `src/lib/contentPolicy.ts` — production uses **Supabase only**; demo fallbacks only when `VITE_ALLOW_CONTENT_FALLBACK=true` or no Supabase env |
+| **Nav / footer** | Nav reads `navigation_links`; footer reads `footer_links`; footer layout `px-12` aligned with header (was `max-w-7xl px-8`) |
+| **Live events** | Cards link to `/memoirs/{memoir_slug}`; hero image/title pulled from linked **published memoir** when set |
+| **Ernestina** | Migration seeds `madam-ernestina` memoir + syncs `events.hero_media` from memoir source of truth |
+| **Voices carousel** | Testimonials from `testimonials` (`surfaces` includes `landing`); `portrait_url` + display order; empty state when no rows |
+| **Events hero** | `hero_sections` slug `events-hero` (editable in CMS) instead of hardcoded brand PNG only |
+| **Portrait pool** | `gallery_assets` + published `memoirs.hero_media` (no brand PNG injection in prod) |
+| **Offerings** | “What We Do” uses DB offerings only (removed silent swap to hardcoded `GLOBAL_OFFERINGS` when ≤1 row) |
+
+**New migrations (apply after `20260528`):**
+
+- `20260529T100000_ernestina_memoir_sync.sql`
+- `20260530T100000_mass_adoption_cms.sql` — product nav, footer links, `events-hero`, testimonial portrait columns
+
+---
+
+## Mass adoption — CMS-first content
+
+Production builds with `VITE_SUPABASE_*` set **do not** inject demo Monica/Ernestina cards unless `VITE_ALLOW_CONTENT_FALLBACK=true`. Empty tables → empty UI sections (nav/footer still load from Supabase when rows exist).
+
+| Surface | Supabase source | Notes |
+|---------|-----------------|--------|
+| Nav | `navigation_links` | Vault · Circle · Heritage (`20260530` migration) |
+| Footer | `footer_links` + `site_settings` | |
+| Landing hero | `hero_sections` (`landing-hero`) + `site_settings` | |
+| Events hero | `hero_sections` (`events-hero`) | |
+| Offerings / FAQ / Pricing | `offerings`, `faqs`, `pricing_tiers` + `pricing_features` | |
+| Voices carousel | `testimonials` (`surfaces` contains `landing`) + `portrait_url` | `gallery_assets` + `memoirs.hero_media` for pool |
+| Live events / trending | `events`, `event_stories` | Hero imagery from linked **`memoirs`** when `memoir_slug` set |
+| Memoir pages | `memoirs`, sections, highlights, tributes | |
+| Circle directory | RPC `list_public_family_circles` | |
+| Circle tree | `family_people`, `tree_edges`, recordings, health, traits | Per-circle |
+
+**Apply migrations through `20260530T100000_mass_adoption_cms.sql`** (and `20260529` Ernestina memoir sync) on production Supabase.
 
 ---
 
@@ -25,19 +81,22 @@ Last updated: 20 May 2026 · branch `main`
 
 **Layout studio:** `?studio=1` on landing/heritage for hero framing edits.
 
-### Recently shipped (apply migration `20260528T100000_billing_health_weekly.sql`)
+### Recently shipped (migrations `20260528` + `20260529` + `20260530`)
 
 | Feature | Status |
 |---------|--------|
 | **Stripe Keeper** | `POST /api/stripe/create-checkout-session`, webhook, billing portal, `GET /api/stripe/entitlement` — set `STRIPE_*` on Vercel |
-| **Weekly health questions** | 52-question bank seeded; cron `POST /api/cron/weekly-health-send` (Mondays 9:00 UTC); HMAC `/api/health/unsubscribe` |
-| **Health + Patterns tabs** | Person panel tabs; `person_health_conditions`; `POST /api/circle/health-patterns` (3+ members with health data) |
+| **Weekly health questions** | 52-question bank seeded; cron `POST /api/cron/weekly-health-send` (Mondays 9:00 UTC in `vercel.json`); HMAC `/api/health/unsubscribe` |
+| **Health + Patterns tabs** | Person panel: Profile / Health / Memories / Patterns; `person_health_conditions`, `person_traits`; `POST /api/circle/health-patterns` |
+| **CMS-first marketing** | `contentPolicy.ts`; nav/footer/events/voices from Supabase; no fake live events in prod when tables empty |
 
 ### Production deploy
 
 - **Live:** https://beizaplus.com (auto-deploy from `main`)
-- **Vercel env required for circle gate:** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
-- **Apply Supabase migrations** through `20260527` (tree edges, canvas positions, share tokens, profile fields, sibling order)
+- **Vercel env (circle + APIs):** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
+- **Vercel env (Stripe):** `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_KEEPER_MONTHLY`, `CRON_SECRET`, `HEALTH_UNSUBSCRIBE_SECRET`
+- **Vercel env (client):** `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` — do **not** set `VITE_ALLOW_CONTENT_FALLBACK` on production
+- **Apply Supabase migrations** through **`20260530T100000_mass_adoption_cms.sql`** (includes billing `20260528`, Ernestina `20260529`, tree `20260527`, events `20260523`, recovery `20260524`)
 
 ---
 
@@ -139,7 +198,7 @@ Fields: deceased name/contact, requester relation/email, optional document, mess
 **Sibling order:** `family_people.sibling_order` (1 = eldest) for auto-layout.  
 **Share tokens:** `recordings.share_token` → `/memory/:token` public player.
 
-**Weekly health questions (planned, not migrated):** explicit `week_number` counter per circle; 52-question bank by stable `id` (append-only, `retired` flag); after week 52, week 1’s dimension repeats — ~156 answers by year 3. Idempotent `(circle_id, week_number)` + per-email send log; HMAC unsubscribe table; keeper-approved custom question queue.
+**Weekly health questions (`20260528`):** `health_question_bank` (52 seeded), `circle_health_cadence`, `health_question_weeks`, send log, opt-outs, keeper custom-question queue; cron sends Mondays 9:00 UTC.
 
 ### Node types (canvas)
 - `person` — default square card (PersonFlowNode)
@@ -214,11 +273,12 @@ Profile · Health · Memories · Traits · Talk · Patterns
 
 **`/events`**
 
-- Hero (Ernestina portrait)
-- **Live events** row — featured productions (`is_live`, `useLiveEvents`)
-- **Trending** carousel — MasterClass-style vertical cards (`event_stories` table + fallbacks)
+- Hero from `hero_sections` (`events-hero`) — fallback to brand PNG only when `VITE_ALLOW_CONTENT_FALLBACK=true`
+- **Celebrations in production** — `events` where `is_live` + `is_published`; each card → **`/memoirs/{memoir_slug}`**
+- Card image/title prefer linked **memoir** row (`useLiveEvents` + `mapEventsWithLinkedMemoirs`)
+- **Trending** carousel — `event_stories`; memoir-linked stories use memoir `hero_media`
 
-**Carousel UX:** `useDraggableScroll()` hook + `[data-draggable]` CSS — mouse drag on desktop; touch scroll native; snap + arrow buttons unchanged.
+**Carousel UX:** `useDraggableScroll()` + `[data-draggable]` — drag on desktop, touch scroll, snap + arrows.
 
 ---
 
@@ -226,7 +286,7 @@ Profile · Health · Memories · Traits · Talk · Patterns
 
 | Area | Details |
 |------|---------|
-| **Voices that stayed** | Horizontal scroll; equal-height cards (`min-h-[280px]`, `items-stretch`, quote `flex-1`, footer `mt-auto`); country line = name only (`11px #555`, no flag/code) |
+| **Voices that stayed** | Horizontal scroll from `testimonials` (`landing` surface); `portrait_url` or portrait pool; empty state if none published; dev fallback via `VITE_ALLOW_CONTENT_FALLBACK` |
 | **What We Do** | Locale toggle: Global · Ghana · Twi · Spanish · French — inline SVG flags (`FlagIcon.tsx`), no CDN/emoji |
 | **Hero images** | See asset map below |
 | **Design tokens** | `src/lib/brandUi.ts` — `marketingSection`, `segmentToggleShell`, `carouselControlButton`, `legacySurface`, etc. |
@@ -261,7 +321,7 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 | **Heritage** ($white-glove) | Yes | Yes | Yes | Yes | Yes | Unlimited |
 
 - No duration cap for Circle; tap-to-record toggle; 5 GB gate on upload
-- Delete + download upsell → Keeper → `/pricing` (Stripe checkout **pending**)
+- Delete + download upsell → Keeper → `/pricing` → Stripe checkout when `STRIPE_*` configured
 - Dev tier: `VITE_LEGACY_TIER=keeper|heritage`
 - Bottom nav: Home · Tree · Record · Vault · Invite (legacy shell; marketing nav is separate)
 
@@ -283,8 +343,16 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 | `POST /api/recovery-request` | `recovery_requests` + optional storage upload |
 | `POST /api/circle/verify-code` | `circle_access_tokens`, `circle_members` |
 | `GET /api/circle/tree-data` | Service-role read of tree data (token validated) |
+| `POST /api/stripe/create-checkout-session` | Keeper subscription checkout |
+| `POST /api/stripe/webhook` | `legacy_entitlements`, `stripe_events` |
+| `POST /api/stripe/billing-portal` | Stripe customer portal |
+| `GET /api/stripe/entitlement` | Tier for legacy user |
+| `POST /api/cron/weekly-health-send` | Weekly question emails (Bearer `CRON_SECRET`) |
+| `GET /api/health/unsubscribe` | HMAC opt-out links |
+| `POST /api/circle/person-health` | Persist health conditions |
+| `POST /api/circle/health-patterns` | AI patterns across circle |
 
-**Env (Vercel):** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` · optional `CIRCLE_ACCESS_SECRET`
+**Env (Vercel):** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` · optional `CIRCLE_ACCESS_SECRET` · `STRIPE_*` · `CRON_SECRET` · `HEALTH_UNSUBSCRIBE_SECRET` · Resend keys for weekly mail
 
 ### Supabase migrations (apply in order)
 
@@ -297,7 +365,10 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 | `20260519T180000_tree_edges_canvas_positions.sql` | `tree_edges`, `canvas_x` / `canvas_y` on `family_people` |
 | `20260525T100000_recordings_share_token.sql` | Public memory share tokens |
 | `20260526T100000_family_people_profile_fields.sql` | Extended profile columns |
-| `20260527T100000_sibling_order.sql` | `sibling_order` for layout |
+| `20260527T100000_family_people_sibling_order.sql` | `sibling_order` for layout |
+| `20260528T100000_billing_health_weekly.sql` | Stripe entitlements, health conditions, weekly question bank + cron tables |
+| `20260529T100000_ernestina_memoir_sync.sql` | Ernestina memoir seed; sync live event heroes from memoirs |
+| `20260530T100000_mass_adoption_cms.sql` | Product nav/footer in CMS; `events-hero`; testimonial portraits |
 
 **RPCs:** `list_public_family_circles()`, `get_public_circle_cover(uuid)`
 
@@ -307,10 +378,14 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 
 | Path | Role |
 |------|------|
+| `src/lib/contentPolicy.ts` | When static fallbacks are allowed (prod = Supabase only) |
+| `src/hooks/usePublicContent.ts` | All marketing CMS hooks + memoir-enriched events |
+| `src/hooks/useVoicesTestimonials.ts` | Landing voices carousel from `testimonials` |
+| `src/hooks/usePortraitPool.ts` | Gallery + memoir portraits for voices/tree |
 | `src/hooks/useDraggableScroll.ts` | Mouse drag-to-scroll for all horizontal carousels |
 | `src/hooks/useFamilyTreesDirectory.ts` | Public circles, cover, verify code, tree fetch |
-| `src/hooks/useFamilyTree.ts` | `family_people` CRUD, recording links |
-| `src/config/productNav.ts` | Vault · Circle · Heritage + footer links |
+| `src/hooks/useLegacyEntitlement.ts` / `useStripeCheckout.ts` | Keeper billing |
+| `src/config/productNav.ts` | Dev fallback nav labels (DB overrides in prod) |
 | `src/components/ui/FlagIcon.tsx` | Inline SVG flags (GH, ES, FR, GLOBAL) |
 
 ---
@@ -326,19 +401,21 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 ## Deploy checklist
 
 1. Push to `main` — Vercel auto-deploys  
-2. Run Supabase migrations (see table above — especially `20260522`, `20260523`, `20260524`)  
-3. Set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` on Vercel  
-4. Optional: `CIRCLE_ACCESS_SECRET` for circle session tokens  
-5. Hard-refresh after deploy for hero CDN cache  
+2. Run Supabase migrations through **`20260530`** (see table above)  
+3. Set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` + client `VITE_SUPABASE_*` on Vercel  
+4. Stripe webhook → `/api/stripe/webhook`; price ID in `STRIPE_PRICE_KEEPER_MONTHLY`  
+5. Optional: `CIRCLE_ACCESS_SECRET`, `CRON_SECRET`, Resend for weekly health mail  
+6. Hard-refresh after deploy for hero CDN cache  
 
 ---
 
 ## Recent commits (reference)
 
-- `3cbd4c9` — Freeform family tree canvas (React Flow), vault recording flow, circle UX, tree edges, grouping, persona API  
-- `e11d130` — Person gender, career, photo upload, duplicate on tree  
-- `fa59b5f` — Circle directory Adinkra stamp cards  
-- `771fb94` — Circle flows, recovery, access gate, events trending, nav (Vault/Circle/Heritage)  
+- CMS-first marketing, memoir-linked live events, Ernestina sync, footer/nav alignment, voices from Supabase  
+- `16a5cbd` — Stripe Keeper, health/patterns tabs, weekly health questions  
+- `a70e50a` — Summary + tree handle alignment  
+- `3cbd4c9` — Freeform family tree canvas, vault recording, circle UX  
+- `771fb94` — Circle, recovery, Vault/Circle/Heritage nav, events trending  
 
 ---
 

@@ -50,9 +50,9 @@ export const Footer = () => {
 
   return (
     <footer className="bg-black text-white">
-      <div className="mx-auto w-full max-w-7xl px-8 py-24 lg:py-28">
-        <div className="grid gap-16 lg:grid-cols-[1.25fr_1fr] lg:items-start">
-          <div className="max-w-lg space-y-8">
+      <div className="w-full px-12 py-24 lg:py-28">
+        <div className="grid gap-16 lg:grid-cols-[minmax(0,1.2fr)_1fr_auto] lg:items-start lg:justify-between">
+          <div className="max-w-md space-y-8">
             <BeizaLogoLink wordmarkClassName="h-5 w-auto" />
             <p className="text-subtle text-sm leading-relaxed">
               {settings?.footer_tagline ??
@@ -95,40 +95,38 @@ export const Footer = () => {
             </p>
           </div>
 
-          <div className="grid w-full gap-12 sm:grid-cols-2 sm:gap-16">
-            {groupedFooterLinks.map((group) => (
-              <div key={group.groupLabel} className="space-y-5">
-                <p className="text-xs uppercase tracking-[0.3em] text-subtle">{group.groupLabel}</p>
-                <nav className="space-y-3 text-sm">
-                  {group.links.map((item) => (
-                    <Link
-                      key={item.id}
-                      to={item.href}
-                      className="block text-subtle transition-colors duration-200 hover:text-white"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
-                </nav>
-              </div>
-            ))}
-
-            <div className="space-y-5">
-              <p className="text-xs uppercase tracking-[0.3em] text-subtle">Socials</p>
+          {groupedFooterLinks.map((group) => (
+            <div key={group.groupLabel} className="space-y-5 lg:justify-self-center">
+              <p className="text-xs uppercase tracking-[0.3em] text-subtle">{group.groupLabel}</p>
               <nav className="space-y-3 text-sm">
-                {socialLinks.map((item) => (
-                  <a
-                    key={item.label}
-                    href={item.href!}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                {group.links.map((item) => (
+                  <Link
+                    key={item.id}
+                    to={item.href}
                     className="block text-subtle transition-colors duration-200 hover:text-white"
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 ))}
               </nav>
             </div>
+          ))}
+
+          <div className="space-y-5 lg:justify-self-end">
+            <p className="text-xs uppercase tracking-[0.3em] text-subtle">Socials</p>
+            <nav className="space-y-3 text-sm">
+              {socialLinks.map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href!}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-subtle transition-colors duration-200 hover:text-white"
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
           </div>
         </div>
       </div>

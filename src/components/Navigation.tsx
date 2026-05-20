@@ -1,12 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import { PRODUCT_NAV_LINKS } from "@/config/productNav";
+import { PRODUCT_NAV_LINKS, type ProductNavLink } from "@/config/productNav";
+import { allowStaticContentFallback } from "@/lib/contentPolicy";
+import { useNavigationLinks } from "@/hooks/usePublicContent";
 import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
 const CTA = { label: "Contact", href: "/contact" };
+
+function navIdFromHref(href: string): string {
+  if (href === "/vault" || href.startsWith("/legacy/vault")) return "vault";
+  if (href === "/circle" || href.startsWith("/circle") || href.startsWith("/family-trees")) {
+    return "circle";
+  }
+  if (href === "/heritage" || href.startsWith("/white-swan")) return "heritage";
+  return href.replace(/^\//, "").replace(/\//g, "-") || "nav";
+}
 
 function isActiveNavPath(pathname: string, href: string): boolean {
   if (href === "/vault") {
@@ -33,7 +44,7 @@ function navLinkClassName(linkId: string, active: boolean): string {
 }
 
 type NavItemProps = {
-  link: (typeof PRODUCT_NAV_LINKS)[number];
+  link: ProductNavLink;
   onNavigate?: () => void;
   className?: string;
 };
@@ -65,6 +76,18 @@ function NavItem({ link, onNavigate, className }: NavItemProps) {
 
 export const Navigation = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { data: navFromDb = [] } = useNavigationLinks("primary");
+
+  const navLinks: ProductNavLink[] = useMemo(() => {
+    if (navFromDb.length > 0) {
+      return navFromDb.map((link) => ({
+        id: navIdFromHref(link.href),
+        label: link.label,
+        href: link.href,
+      }));
+    }
+    return allowStaticContentFallback() ? PRODUCT_NAV_LINKS : [];
+  }, [navFromDb]);
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "";
@@ -83,7 +106,7 @@ export const Navigation = () => {
             <BeizaLogoLink />
 
             <div className="hidden items-center gap-10 md:flex">
-              {PRODUCT_NAV_LINKS.map((link) => (
+              {navLinks.map((link) => (
                 <NavItem key={link.id} link={link} />
               ))}
             </div>
@@ -129,7 +152,7 @@ export const Navigation = () => {
             </div>
 
             <nav className="mt-8 flex flex-1 flex-col gap-8">
-              {PRODUCT_NAV_LINKS.map((link) => (
+              {navLinks.map((link) => (
                 <NavItem
                   key={link.id}
                   link={link}

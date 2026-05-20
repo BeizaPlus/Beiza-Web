@@ -8,9 +8,10 @@ import {
   useHeroLayoutStudio,
 } from "@/components/dev/HeroLayoutStudio";
 import { heroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
-import { usePublishedEventStories, useLiveEvents } from "@/hooks/usePublicContent";
+import { usePublishedEventStories, useLiveEvents, useHeroSection } from "@/hooks/usePublicContent";
 import { FullBleedHero } from "@/components/FullBleedHero";
 import { BRAND_IMAGES } from "@/lib/brandImages";
+import { allowStaticContentFallback } from "@/lib/contentPolicy";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { LiveEventsRow } from "@/components/events/LiveEventsRow";
 import { TrendingStoriesRow } from "@/components/events/TrendingStoriesRow";
@@ -27,8 +28,19 @@ const Events = () => {
   const { frame: heroFrame, setFrame: setHeroFrame } = useHeroLayoutStudio("events");
   const { data: liveEvents = [], isLoading: liveLoading } = useLiveEvents();
   const { data: stories = [], isLoading: storiesLoading } = usePublishedEventStories();
+  const { data: eventsHero } = useHeroSection("events-hero");
 
   const loading = liveLoading || storiesLoading;
+
+  const heroImageSrc =
+    eventsHero?.backgroundMedia?.src ??
+    (allowStaticContentFallback() ? BRAND_IMAGES.eventsStoriesHero : undefined);
+  const heroImageAlt =
+    eventsHero?.backgroundMedia?.alt ?? "Events hero portrait";
+  const heroTitle = eventsHero?.heading ?? "Because their story deserves to be unforgettable.";
+  const heroDescription =
+    eventsHero?.subheading ??
+    "Personal loss, family memory, and gatherings that honor who they were.";
 
   return (
     <div
@@ -36,20 +48,22 @@ const Events = () => {
       style={heroStudioCssVars(heroFrame) as CSSProperties}
     >
       <Navigation />
+      {heroImageSrc ? (
       <FullBleedHero
-        imageSrc={BRAND_IMAGES.eventsStoriesHero}
-        imageAlt="Madam Ernestina — portrait in black and white"
+        imageSrc={heroImageSrc}
+        imageAlt={heroImageAlt}
         frame={heroFrame}
       >
         <div className="max-w-xl text-left">
           <SectionHeader
             eyebrow="Events"
-            title="Because their story deserves to be unforgettable."
-            description="Personal loss, family memory, and gatherings that honor who they were."
+            title={heroTitle}
+            description={heroDescription}
             variant="dark"
           />
         </div>
       </FullBleedHero>
+      ) : null}
       <main className="space-y-16 pb-24 pt-12 lg:space-y-20 lg:pb-32">
         <section className="mx-auto max-w-6xl px-6">
           {loading ? (

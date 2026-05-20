@@ -4,6 +4,12 @@ import type { InfiniteData } from "@tanstack/react-query";
 
 import { supabase } from "@/lib/supabaseClient";
 import {
+  allowStaticContentFallback,
+  isSupabaseConfigured,
+  resolvePublicItem,
+  resolvePublicList,
+} from "@/lib/contentPolicy";
+import {
   FALLBACK_CONTACT_CHANNELS,
   FALLBACK_FAQS,
   FALLBACK_FEATURED_EVENT,
@@ -91,6 +97,14 @@ export type Testimonial = {
   author: string;
   role?: string | null;
   surfaces: string[];
+  portraitUrl?: string | null;
+  displayOrder?: number;
+  isFeatured?: boolean;
+  location?: string | null;
+  countryCode?: string | null;
+  country?: string | null;
+  initials?: string | null;
+  relation?: string | null;
 };
 
 export type Faq = {
@@ -182,7 +196,7 @@ type GalleryPage = {
   nextOffset: number | null;
 };
 
-const isSupabaseReady = Boolean(supabase);
+const isSupabaseReady = isSupabaseConfigured();
 
 const handleError = (scope: string, error: Error | null | undefined) => {
   if (!error) return;
@@ -225,7 +239,7 @@ function parseHeroMediaJson(
   }
 }
 
-function mapEventRow(event: {
+type EventRow = {
   id: string;
   slug: string;
   memoir_slug?: string | null;
@@ -240,7 +254,17 @@ function mapEventRow(event: {
   is_published?: boolean | null;
   is_live?: boolean | null;
   display_order?: number | null;
-}): PublicEvent {
+};
+
+type MemoirSnippet = {
+  slug: string;
+  title: string;
+  subtitle?: string | null;
+  summary?: string | null;
+  hero_media?: unknown;
+};
+
+function mapEventRow(event: EventRow): PublicEvent {
   return {
     id: event.id,
     slug: event.slug,
@@ -259,9 +283,70 @@ function mapEventRow(event: {
   };
 }
 
+async function fetchMemoirSnippetsBySlugs(slugs: string[]): Promise<Map<string, MemoirSnippet>> {
+  const unique = [...new Set(slugs.filter(Boolean))];
+  if (!isSupabaseReady || unique.length === 0) {
+    return new Map();
+  }
+
+  const { data, error } = await supabase
+    .from("memoirs")
+    .select("slug, title, subtitle, summary, hero_media")
+    .in("slug", unique)
+    .eq("status", "published");
+
+  if (error || !data) {
+    handleError("memoirs.snippets", error);
+    return new Map();
+  }
+
+  return new Map(data.map((row) => [row.slug, row as MemoirSnippet]));
+}
+
+function enrichEventWithMemoir(event: PublicEvent, memoir?: MemoirSnippet): PublicEvent {
+  if (!memoir) return event;
+
+  const memoirHero = parseHeroMediaJson(memoir.hero_media, "memoir", memoir.slug);
+
+  return {
+    ...event,
+    memoirSlug: memoir.slug,
+    title: memoir.title,
+    subtitle: memoir.subtitle ?? event.subtitle,
+    description: memoir.summary ?? event.description,
+    heroMedia: memoirHero ?? event.heroMedia,
+  };
+}
+
+async function mapEventsWithLinkedMemoirs(rows: EventRow[]): Promise<PublicEvent[]> {
+  const memoirSlugs = rows.map((row) => row.memoir_slug ?? row.slug);
+  const memoirMap = await fetchMemoirSnippetsBySlugs(memoirSlugs);
+
+  return rows.map((row) => {
+    const memoirSlug = row.memoir_slug ?? row.slug;
+    return enrichEventWithMemoir(mapEventRow(row), memoirMap.get(memoirSlug));
+  });
+}
+
+function enrichEventStoryWithMemoir(
+  story: EventStory,
+  memoir?: MemoirSnippet,
+): EventStory {
+  if (!memoir) return story;
+
+  const memoirHero = parseHeroMediaJson(memoir.hero_media, "memoir", memoir.slug);
+
+  return {
+    ...story,
+    memoirSlug: memoir.slug,
+    heroMedia: memoirHero ?? story.heroMedia,
+  };
+}
+
 const pickSetting = (map: Record<string, string>, key: string, fallback: string) => {
   const value = map[key]?.trim();
-  return value ? value : fallback;
+  if (value) return value;
+  return allowStaticContentFallback() ? fallback : "";
 };
 
 const buildSiteSettings = (settingsMap: Record<string, string>): SiteSettings => ({
@@ -392,8 +477,31 @@ export const useNavigationLinks = (location = "primary") =>
     queryKey: ["public-navigation-links", location],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<NavigationLink[]> => {
-      // Use fallback content instead of Supabase
-      return FALLBACK_NAVIGATION_LINKS.filter((link) => link.location === location);
+      const fallback = FALLBACK_NAVIGATION_LINKS.filter((link) => link.location === location);
+
+      if (!isSupabaseReady) {
+        return resolvePublicList("navigation_links", null, null, fallback, handleError);
+      }
+
+      const { data, error } = await supabase
+        .from("navigation_links")
+        .select("id, label, href, location, display_order")
+        .eq("location", location)
+        .eq("is_published", true)
+        .order("display_order", { ascending: true });
+
+      if (!data?.length) {
+        return resolvePublicList("navigation_links", null, error, fallback, handleError);
+      }
+
+      return data.map((item) => ({
+        id: item.id,
+        label: item.label,
+        href: item.href,
+        location: item.location ?? location,
+        displayOrder: item.display_order ?? 0,
+        isCta: item.label.toLowerCase() === "contact",
+      }));
     },
   });
 
@@ -402,8 +510,29 @@ export const useFooterLinks = () =>
     queryKey: ["public-footer-links"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<FooterLink[]> => {
-      // Use fallback content instead of Supabase
-      return FALLBACK_FOOTER_LINKS;
+      const fallback = [...FALLBACK_FOOTER_LINKS];
+
+      if (!isSupabaseReady) {
+        return resolvePublicList("footer_links", null, null, fallback, handleError);
+      }
+
+      const { data, error } = await supabase
+        .from("footer_links")
+        .select("id, label, href, group_label, display_order")
+        .eq("is_published", true)
+        .order("display_order", { ascending: true });
+
+      if (!data?.length) {
+        return resolvePublicList("footer_links", null, error, fallback, handleError);
+      }
+
+      return data.map((item) => ({
+        id: item.id,
+        label: item.label,
+        href: item.href,
+        groupLabel: item.group_label ?? "Sections",
+        displayOrder: item.display_order ?? 0,
+      }));
     },
   });
 
@@ -442,8 +571,7 @@ export const useHeroSection = (slug = "landing-hero") =>
     queryKey: ["public-hero-section", slug],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<HeroSection | null> => {
-      if (!isSupabaseReady)
-      {
+      if (!isSupabaseReady) {
         return null;
       }
 
@@ -454,11 +582,12 @@ export const useHeroSection = (slug = "landing-hero") =>
         .eq("is_published", true)
         .maybeSingle();
 
-      if (error || !data)
-      {
+      if (error || !data) {
         handleError("hero_sections", error);
         return null;
       }
+
+      const backgroundMedia = parseHeroMediaJson(data.background_media, "hero-section", data.slug);
 
       return {
         slug: data.slug,
@@ -466,7 +595,9 @@ export const useHeroSection = (slug = "landing-hero") =>
         subheading: data.subheading,
         ctaLabel: data.cta_label,
         ctaHref: data.cta_href,
-        backgroundMedia: data.background_media ?? null,
+        backgroundMedia: backgroundMedia
+          ? { src: backgroundMedia.src, alt: backgroundMedia.alt ?? data.heading }
+          : null,
         reviews: null,
       };
     },
@@ -477,9 +608,8 @@ export const useOfferings = () =>
     queryKey: ["public-offerings"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<Offering[]> => {
-      if (!isSupabaseReady)
-      {
-        return mapFallbackOfferings();
+      if (!isSupabaseReady) {
+        return resolvePublicList("offerings", null, null, mapFallbackOfferings(), handleError);
       }
 
       const { data, error } = await supabase
@@ -488,10 +618,8 @@ export const useOfferings = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (error || !data || data.length === 0)
-      {
-        handleError("offerings", error);
-        return mapFallbackOfferings();
+      if (!data?.length) {
+        return resolvePublicList("offerings", null, error, mapFallbackOfferings(), handleError);
       }
 
       return data.map((item) => ({
@@ -521,15 +649,19 @@ export const useTestimonials = (surfaces?: string | string[]) =>
         return normalized.filter((item) => item.surfaces.some((surface) => filterSurfaces.includes(surface)));
       };
 
-      if (!isSupabaseReady)
-      {
-        return applySurfaceFilter(mapFallbackTestimonials());
+      if (!isSupabaseReady) {
+        return applySurfaceFilter(
+          resolvePublicList("testimonials", null, null, mapFallbackTestimonials(), handleError),
+        );
       }
 
       let query = supabase
         .from("testimonials")
-        .select("id, quote, author, role, surfaces, is_published")
+        .select(
+          "id, quote, author, role, surfaces, is_published, portrait_url, display_order, is_featured, location, country_code, country, initials, relation",
+        )
         .eq("is_published", true)
+        .order("display_order", { ascending: true })
         .order("updated_at", { ascending: false });
 
       if (filterSurfaces.length > 0)
@@ -539,23 +671,29 @@ export const useTestimonials = (surfaces?: string | string[]) =>
 
       const { data, error } = await query;
 
-      if (error || !data || data.length === 0)
-      {
-        handleError("testimonials", error);
-        return applySurfaceFilter(mapFallbackTestimonials());
+      if (!data?.length) {
+        return applySurfaceFilter(
+          resolvePublicList("testimonials", null, error, mapFallbackTestimonials(), handleError),
+        );
       }
 
-      const mapped = applySurfaceFilter(
+      return applySurfaceFilter(
         data.map((item) => ({
           id: item.id,
           quote: item.quote,
           author: item.author,
           role: item.role,
           surfaces: item.surfaces ?? [],
+          portraitUrl: item.portrait_url,
+          displayOrder: item.display_order ?? 0,
+          isFeatured: item.is_featured ?? false,
+          location: item.location,
+          countryCode: item.country_code,
+          country: item.country,
+          initials: item.initials,
+          relation: item.relation,
         })),
       );
-
-      return mapped.length > 0 ? mapped : applySurfaceFilter(mapFallbackTestimonials());
     },
   });
 
@@ -564,9 +702,8 @@ export const useFaqs = () =>
     queryKey: ["public-faqs"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<Faq[]> => {
-      if (!isSupabaseReady)
-      {
-        return mapFallbackFaqs();
+      if (!isSupabaseReady) {
+        return resolvePublicList("faqs", null, null, mapFallbackFaqs(), handleError);
       }
 
       const { data, error } = await supabase
@@ -575,10 +712,8 @@ export const useFaqs = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (error || !data || data.length === 0)
-      {
-        handleError("faqs", error);
-        return mapFallbackFaqs();
+      if (!data?.length) {
+        return resolvePublicList("faqs", null, error, mapFallbackFaqs(), handleError);
       }
 
       return data.map((item) => ({
@@ -595,9 +730,8 @@ export const usePricingTiers = () =>
     queryKey: ["public-pricing-tiers"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<PricingTier[]> => {
-      if (!isSupabaseReady)
-      {
-        return mapFallbackPricingTiers();
+      if (!isSupabaseReady) {
+        return resolvePublicList("pricing_tiers", null, null, mapFallbackPricingTiers(), handleError);
       }
 
       const { data: tiers, error: tiersError } = await supabase
@@ -606,10 +740,8 @@ export const usePricingTiers = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (tiersError || !tiers || tiers.length === 0)
-      {
-        handleError("pricing_tiers", tiersError);
-        return mapFallbackPricingTiers();
+      if (!tiers?.length) {
+        return resolvePublicList("pricing_tiers", null, tiersError, mapFallbackPricingTiers(), handleError);
       }
 
       const tierIds = tiers.map((tier) => tier.id);
@@ -656,9 +788,8 @@ export const useFeaturedEvent = () =>
     queryKey: ["public-featured-event"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<FeaturedEvent | null> => {
-      if (!isSupabaseReady)
-      {
-        return mapFallbackFeaturedEvent();
+      if (!isSupabaseReady) {
+        return resolvePublicItem(null, mapFallbackFeaturedEvent(), null);
       }
 
       const { data, error } = await supabase
@@ -669,13 +800,12 @@ export const useFeaturedEvent = () =>
         .order("updated_at", { ascending: false })
         .limit(1);
 
-      if (error || !data || data.length === 0)
-      {
-        handleError("events", error);
-        return mapFallbackFeaturedEvent();
+      if (!data?.length) {
+        return resolvePublicItem(null, mapFallbackFeaturedEvent(), null);
       }
 
-      return mapEventRow(data[0]);
+      const [enriched] = await mapEventsWithLinkedMemoirs(data);
+      return enriched;
     },
   });
 
@@ -685,7 +815,7 @@ export const useLiveEvents = () =>
     staleTime: STALE_TIME,
     queryFn: async (): Promise<PublicEvent[]> => {
       if (!isSupabaseReady) {
-        return mapFallbackLiveEvents();
+        return resolvePublicList("live-events", null, null, mapFallbackLiveEvents(), handleError);
       }
 
       const { data, error } = await supabase
@@ -695,12 +825,11 @@ export const useLiveEvents = () =>
         .eq("is_live", true)
         .order("display_order", { ascending: true });
 
-      if (error || !data?.length) {
-        handleError("live-events", error);
-        return mapFallbackLiveEvents();
+      if (!data?.length) {
+        return resolvePublicList("live-events", null, error, mapFallbackLiveEvents(), handleError);
       }
 
-      return data.map(mapEventRow);
+      return mapEventsWithLinkedMemoirs(data);
     },
   });
 
@@ -710,7 +839,7 @@ export const usePublishedEventStories = () =>
     staleTime: STALE_TIME,
     queryFn: async (): Promise<EventStory[]> => {
       if (!isSupabaseReady) {
-        return mapFallbackEventStories();
+        return resolvePublicList("event_stories", null, null, mapFallbackEventStories(), handleError);
       }
 
       const { data, error } = await supabase
@@ -721,22 +850,32 @@ export const usePublishedEventStories = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (error || !data) {
-        handleError("event-stories", error);
-        return mapFallbackEventStories();
+      if (!data?.length) {
+        return resolvePublicList("event_stories", null, error, mapFallbackEventStories(), handleError);
       }
 
-      return data.map((story) => ({
-        id: story.id,
-        slug: story.slug,
-        title: story.title,
-        subtitle: story.subtitle,
-        durationLabel: story.duration_label,
-        memoirSlug: story.memoir_slug,
-        heroMedia: parseHeroMediaJson(story.hero_media, "event-story", story.id),
-        isNew: story.is_new ?? false,
-        displayOrder: story.display_order ?? 0,
-      }));
+      const memoirSlugs = data
+        .map((story) => story.memoir_slug)
+        .filter((slug): slug is string => Boolean(slug));
+      const memoirMap = await fetchMemoirSnippetsBySlugs(memoirSlugs);
+
+      return data.map((story) => {
+        const mapped: EventStory = {
+          id: story.id,
+          slug: story.slug,
+          title: story.title,
+          subtitle: story.subtitle,
+          durationLabel: story.duration_label,
+          memoirSlug: story.memoir_slug,
+          heroMedia: parseHeroMediaJson(story.hero_media, "event-story", story.id),
+          isNew: story.is_new ?? false,
+          displayOrder: story.display_order ?? 0,
+        };
+
+        if (!story.memoir_slug) return mapped;
+
+        return enrichEventStoryWithMemoir(mapped, memoirMap.get(story.memoir_slug));
+      });
     },
   });
 
@@ -762,7 +901,7 @@ export const usePublishedEvents = () =>
         return [];
       }
 
-      return data.map(mapEventRow);
+      return mapEventsWithLinkedMemoirs(data);
     },
   });
 
@@ -771,9 +910,8 @@ export const useContactChannels = () =>
     queryKey: ["public-contact-channels"],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<ContactChannel[]> => {
-      if (!isSupabaseReady)
-      {
-        return mapFallbackContactChannels();
+      if (!isSupabaseReady) {
+        return resolvePublicList("contact_channels", null, null, mapFallbackContactChannels(), handleError);
       }
 
       const { data, error } = await supabase
@@ -782,10 +920,8 @@ export const useContactChannels = () =>
         .eq("is_published", true)
         .order("display_order", { ascending: true });
 
-      if (error || !data || data.length === 0)
-      {
-        handleError("contact_channels", error);
-        return mapFallbackContactChannels();
+      if (!data?.length) {
+        return resolvePublicList("contact_channels", null, error, mapFallbackContactChannels(), handleError);
       }
 
       return data.map((item) => ({
@@ -813,9 +949,8 @@ export const usePublishedMemoirTributes = (limit = 32) =>
     queryKey: ["public-memoir-tributes-published", limit],
     staleTime: STALE_TIME,
     queryFn: async (): Promise<MemoirTribute[]> => {
-      if (!isSupabaseReady)
-      {
-        return mapFallbackPublishedTributes();
+      if (!isSupabaseReady) {
+        return resolvePublicList("memoir_tributes", null, null, mapFallbackPublishedTributes(), handleError);
       }
 
       const { data, error } = await supabase
@@ -825,10 +960,8 @@ export const usePublishedMemoirTributes = (limit = 32) =>
         .order("display_order", { ascending: true })
         .limit(limit);
 
-      if (error || !data || data.length === 0)
-      {
-        handleError("memoir_tributes", error);
-        return mapFallbackPublishedTributes();
+      if (!data?.length) {
+        return resolvePublicList("memoir_tributes", null, error, mapFallbackPublishedTributes(), handleError);
       }
 
       return data.map((row) => ({

@@ -30,6 +30,7 @@ import {
   useSiteSettings,
 } from "@/hooks/usePublicContent";
 import { FALLBACK_HERO_LANDING } from "@/lib/fallbackContent";
+import { allowStaticContentFallback } from "@/lib/contentPolicy";
 
 const iconMap: Record<string, JSX.Element> = {
   palette: <Palette className="h-5 w-5" strokeWidth={1.5} />,
@@ -83,6 +84,10 @@ const Landing = () => {
       };
     }
 
+    if (!allowStaticContentFallback()) {
+      return null;
+    }
+
     return {
       slug: FALLBACK_HERO_LANDING.slug,
       heading: FALLBACK_HERO_LANDING.heading,
@@ -128,7 +133,7 @@ const Landing = () => {
       style={studioCssVars(studioState) as CSSProperties}
     >
       <Navigation />
-      {showHero ? (
+      {showHero && hero ? (
         <Hero
           headline={hero.heading}
           paragraph={hero.subheading ?? ""}

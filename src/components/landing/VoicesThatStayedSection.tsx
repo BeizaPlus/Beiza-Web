@@ -166,6 +166,10 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
 
         <div className="relative overflow-hidden py-2">
           <div
+            className="pointer-events-none absolute right-0 top-0 z-10 bottom-4 w-20 bg-gradient-to-l from-background via-background/80 to-transparent md:w-28"
+            aria-hidden
+          />
+          <div
             ref={scrollRef}
             data-draggable
             className={cn(
@@ -176,9 +180,15 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
             style={{ WebkitOverflowScrolling: "touch" }}
             aria-label="Family testimonial cards"
           >
-            {items.map((item, index) => (
-              <VoiceCard key={`${item.name}-${index}`} {...item} tilt={index % 2 === 0 ? -0.6 : 0.6} />
-            ))}
+            {items.length === 0 ? (
+              <p className="px-2 py-8 text-sm text-muted-foreground">
+                Family voices will appear here once testimonials are published in Supabase.
+              </p>
+            ) : (
+              items.map((item, index) => (
+                <VoiceCard key={`${item.name}-${index}`} {...item} tilt={index % 2 === 0 ? -0.6 : 0.6} />
+              ))
+            )}
           </div>
         </div>
 

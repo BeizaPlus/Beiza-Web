@@ -98,7 +98,7 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
     localStorage.setItem(LOCALE_KEY, next);
   };
 
-  const visibleOfferings = offerings.length <= 1 ? GLOBAL_OFFERINGS : offerings;
+  const visibleOfferings = offerings;
   const copy = LOCALE_COPY[locale];
 
   return (

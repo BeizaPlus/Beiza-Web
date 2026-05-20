@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabaseClient";
+import { allowStaticContentFallback } from "@/lib/contentPolicy";
 import { BRAND_IMAGES } from "@/lib/brandImages";
 import { mediaSrcFromJson, publicStorageUrl } from "@/lib/supabaseMedia";
 
@@ -8,7 +9,9 @@ export function usePortraitPool() {
   return useQuery({
     queryKey: ["portrait-pool"],
     queryFn: async (): Promise<string[]> => {
-      const urls: string[] = [BRAND_IMAGES.eventsStoriesHero, BRAND_IMAGES.heritageHero];
+      const urls: string[] = allowStaticContentFallback()
+        ? [BRAND_IMAGES.eventsStoriesHero, BRAND_IMAGES.heritageHero]
+        : [];
 
       if (!supabase) return urls;
 

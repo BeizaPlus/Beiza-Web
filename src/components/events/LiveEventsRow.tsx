@@ -22,11 +22,15 @@ export function LiveEventsRow({ events, className }: LiveEventsRowProps) {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {events.map((event) => (
+        {events.map((event) => {
+          const memoirHref = `/memoirs/${event.memoirSlug ?? event.slug}`;
+
+          return (
           <Link
             key={event.id}
-            to={`/memoirs/${event.memoirSlug ?? event.slug}`}
+            to={memoirHref}
             className="glass-panel group grid overflow-hidden rounded-2xl border border-white/10 transition hover:border-primary/40 md:grid-cols-[1fr_1.1fr]"
+            aria-label={`Open memoir: ${event.title}`}
           >
             <div className="flex flex-col justify-between gap-4 p-6 md:p-8">
               <div className="space-y-2">
@@ -64,7 +68,8 @@ export function LiveEventsRow({ events, className }: LiveEventsRowProps) {
               )}
             </div>
           </Link>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
