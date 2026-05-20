@@ -1,6 +1,10 @@
-import { BookOpen, ChevronDown, Feather, GraduationCap } from "lucide-react";
+import { ChevronDown, BookOpen, Feather, GraduationCap } from "lucide-react";
 import { WelcomePathCard } from "@/components/welcome/WelcomePathCard";
-import { BRAND_IMAGES } from "@/lib/brandImages";
+import { legacyBody, legacyDisplay } from "@/lib/legacyLandingFonts";
+import { cn } from "@/lib/utils";
+
+/** Book photo only — not the full /heritage page screenshot */
+const LEGACY_CARD_IMAGE = "/assets/welcome-legacy-card.png";
 
 const PATHS = [
   {
@@ -11,8 +15,8 @@ const PATHS = [
       "Capture voices, build your family tree, and turn memories into a memoir that lasts forever.",
     cta: "Start here →",
     icon: BookOpen,
-    iconCircleClass: "bg-[#d4ebe0] text-[#1a4d3a]",
-    backgroundImage: BRAND_IMAGES.welcomeLegacyLifeStory,
+    iconCircleClass: "bg-[#d4ebe0]/95 text-[#1a4d3a]",
+    backgroundImage: LEGACY_CARD_IMAGE,
     backgroundImageAlt: "Hands holding a My Life Story memoir book",
   },
   {
@@ -39,16 +43,21 @@ const PATHS = [
 
 export default function WelcomeGate() {
   return (
-    <div className="welcome-gate flex min-h-screen flex-col bg-[#0a0a0a] text-white">
+    <div className={cn("flex min-h-screen flex-col bg-[#0a0a0a] text-white", legacyBody)}>
       <header className="flex flex-col items-center px-6 pt-14 text-center sm:pt-16">
-        <h1 className="welcome-gate-serif text-4xl font-medium tracking-[0.12em] text-white sm:text-5xl">
+        <h1
+          className={cn(
+            legacyDisplay,
+            "text-4xl font-light tracking-[0.14em] text-white sm:text-[2.75rem]",
+          )}
+        >
           BEIZA
         </h1>
-        <p className="mt-3 font-manrope text-[10px] font-medium uppercase tracking-[0.32em] text-white/70">
+        <p className="mt-3 text-[10px] font-light uppercase tracking-[0.32em] text-white/65">
           Stories of the people we love
         </p>
         <div className="mt-8 h-px w-full max-w-md bg-white/10" aria-hidden />
-        <p className="welcome-gate-serif mt-8 text-lg italic text-white/95 sm:text-xl">
+        <p className={cn(legacyDisplay, "mt-8 text-lg italic font-light text-white/95 sm:text-xl")}>
           Where would you like to begin?
         </p>
       </header>
