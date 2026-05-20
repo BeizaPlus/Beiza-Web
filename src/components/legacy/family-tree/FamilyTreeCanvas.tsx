@@ -129,7 +129,7 @@ function FamilyTreeCanvasInner({
   circleId,
   treeEdges: initialTreeEdges = [],
   persistViaApi = false,
-  selectedPersonId,
+  selectedPersonId: _selectedPersonId,
   onSelectPerson,
   layout = "fullViewport",
   fullscreen = false,
@@ -139,7 +139,7 @@ function FamilyTreeCanvasInner({
   onOpenMemoir,
   fitTreeOnLoad = false,
 }: FamilyTreeCanvasProps) {
-  const { fitView, getNodes, screenToFlowPosition } = useReactFlow();
+  const { fitView, getNodes } = useReactFlow();
   const { isLight } = useTreeTheme();
   const { toast } = useToast();
   const [treeEdgeRows, setTreeEdgeRows] = useState<TreeEdgeRow[]>(initialTreeEdges);
@@ -181,7 +181,13 @@ function FamilyTreeCanvasInner({
   }, [people]);
 
   useEffect(() => {
-    setTreeEdgeRows(initialTreeEdges);
+    // Only reset from parent if the edge IDs actually changed — prevents
+    // re-render loops when parent passes a new array reference with same data.
+    setTreeEdgeRows((prev) => {
+      const prevIds = prev.map((r) => r.id).join("\0");
+      const nextIds = initialTreeEdges.map((r) => r.id).join("\0");
+      return prevIds === nextIds ? prev : initialTreeEdges;
+    });
   }, [initialTreeEdges]);
 
   useEffect(() => {
@@ -190,13 +196,15 @@ function FamilyTreeCanvasInner({
 
   useEffect(() => {
     if (!circleId) return;
+    // Fetch once on mount / circleId change — do NOT include initialTreeEdges
+    // in deps or every parent re-render triggers a re-fetch → flicker.
     void fetchTreeEdges(circleId, persistViaApi)
       .then((rows) => {
         if (rows.length > 0) setTreeEdgeRows(rows);
-        else if (initialTreeEdges.length === 0) setTreeEdgeRows([]);
       })
-      .catch(() => setTreeEdgeRows(initialTreeEdges));
-  }, [circleId, persistViaApi, initialTreeEdges]);
+      .catch(() => {/* keep current rows on error */});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [circleId, persistViaApi]);
 
   const { data: portraitPoolData } = usePortraitPool();
   const portraitPool = portraitPoolData ?? EMPTY_PORTRAIT_POOL;
