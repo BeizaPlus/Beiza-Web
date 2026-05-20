@@ -9,3 +9,18 @@ export function displayCircleName(name: string | null | undefined): string {
   if (/^Screenshot Tree\b/i.test(withoutTimestamp)) return "Your family circle";
   return withoutTimestamp || "Your family circle";
 }
+
+/**
+ * Formats a circle name as a possessive family title.
+ * "The Oppong"  → "The Oppong's"
+ * "Mensah"      → "The Mensah's"
+ * Already has possessive → unchanged.
+ */
+export function familyTitle(name: string | null | undefined): string {
+  const clean = displayCircleName(name);
+  if (clean === "Your family circle") return clean;
+  if (clean.endsWith("'s") || clean.endsWith("s'")) return clean;
+  // Strip leading "The " to avoid "The The Mensah's"
+  const base = clean.replace(/^The\s+/i, "");
+  return `The ${base}'s`;
+}

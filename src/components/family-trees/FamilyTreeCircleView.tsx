@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { FamilyTreeCanvas } from "@/components/legacy/family-tree/FamilyTreeCanvas";
 import { PersonBiographyPanel } from "@/components/legacy/family-tree/PersonBiographyPanel";
 import { TreeAppShell } from "@/components/family-trees/TreeAppShell";
 import { TreeThemeProvider } from "@/components/legacy/family-tree/TreeThemeProvider";
 import { TreePersonaChat } from "@/components/family-trees/TreePersonaChat";
-import { displayCircleName } from "@/lib/legacy/displayCircleName";
+import { familyTitle } from "@/lib/legacy/displayCircleName";
 import { resolveTreeLeader } from "@/lib/legacy/treeLeader";
 import { computeLeaderCenteredPositions } from "@/lib/legacy/leaderCenteredLayout";
 import {
@@ -24,6 +25,7 @@ import type {
 } from "@/lib/legacy/types";
 import { useToast } from "@/hooks/use-toast";
 import type { TreeEdgeRow } from "@/lib/legacy/treeRelationships";
+import { memoirHrefFromTree } from "@/lib/legacy/treeMemoirNav";
 
 type FamilyTreeCircleViewProps = {
   circleId: string;
@@ -35,6 +37,8 @@ type FamilyTreeCircleViewProps = {
   healthConditions?: PersonHealthCondition[];
   persistViaApi?: boolean;
   backHref?: string;
+  /** Canvas URL used when returning from a linked memoir (defaults to /circle/:id/tree). */
+  treeHref?: string;
   showInviteBar?: boolean;
   accessCode?: string;
   onCopyAccessCode?: () => void;
@@ -50,10 +54,15 @@ export function FamilyTreeCircleView({
   healthConditions = [],
   persistViaApi = false,
   backHref = "/circle",
+  treeHref,
   showInviteBar,
   onCopyAccessCode,
 }: FamilyTreeCircleViewProps) {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const canvasHref = treeHref ?? `/circle/${circleId}/tree`;
+  const fitTreeOnLoad = searchParams.get("fit") === "1";
   const [peopleList, setPeopleList] = useState(people);
   const [selectedPersonId, setSelectedPersonId] = useState<string | null>(null);
   const [panelOpen, setPanelOpen] = useState(false);
@@ -74,7 +83,7 @@ export function FamilyTreeCircleView({
   }, [people]);
 
   const selectedPerson = peopleList.find((p) => p.id === selectedPersonId) ?? null;
-  const title = displayCircleName(circleName);
+  const title = familyTitle(circleName);
   const treeLeader = resolveTreeLeader(peopleList, links);
 
   const handleSetTreeLeader = async (personId: string) => {
@@ -177,6 +186,13 @@ export function FamilyTreeCircleView({
     setPanelOpen(true);
   };
 
+  const handleOpenMemoir = useCallback(
+    (memoirSlug: string) => {
+      navigate(memoirHrefFromTree(memoirSlug, circleId, canvasHref));
+    },
+    [navigate, circleId, canvasHref],
+  );
+
   return (
     <TreeThemeProvider>
     <TreeAppShell
@@ -215,6 +231,8 @@ export function FamilyTreeCircleView({
           persistViaApi={persistViaApi}
           selectedPersonId={selectedPersonId}
           onSelectPerson={openPerson}
+          onOpenMemoir={handleOpenMemoir}
+          fitTreeOnLoad={fitTreeOnLoad}
           onPeopleChange={setPeopleList}
           onTreeEdgesChange={setLiveTreeEdges}
           layout="fullViewport"

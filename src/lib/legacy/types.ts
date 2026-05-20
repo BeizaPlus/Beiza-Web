@@ -72,6 +72,8 @@ export interface FamilyPerson {
   is_tree_anchor: boolean;
   canvas_x?: number | null;
   canvas_y?: number | null;
+  /** Published memoir slug — double-click opens /memoirs/{memoir_slug}. */
+  memoir_slug?: string | null;
   created_by: string | null;
   created_at: string;
 }

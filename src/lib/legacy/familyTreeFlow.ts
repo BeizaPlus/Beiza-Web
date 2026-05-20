@@ -16,6 +16,7 @@ export type PersonNodeData = {
   photoUrl?: string | null;
   selected?: boolean;
   isTreeLeader?: boolean;
+  memoirSlug?: string | null;
   canEdit?: boolean;
   onEditPerson?: (personId: string, displayName: string, relationLabel: string) => void;
 };

@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef, useState } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { AudioLines, MapPin } from "lucide-react";
+import { AudioLines, BookOpen, MapPin } from "lucide-react";
 import { BeizaCircleMark } from "@/components/family-trees/BeizaCircleMark";
 import type { PersonNodeData } from "@/lib/legacy/familyTreeFlow";
 import type { PersonNodeVisual } from "@/lib/legacy/personNodeShapes";
@@ -207,10 +207,13 @@ function PersonNodeCoreComponent({ data, visual }: PersonNodeCoreProps) {
     </div>
   );
 
+  const hasMemoir = Boolean(data.memoirSlug?.trim());
+
   return (
     <div
       className="family-tree-person-node relative flex flex-col items-center"
       style={{ width: cardWidth }}
+      title={hasMemoir ? "Double-click to open life chapters" : undefined}
     >
       {data.isTreeLeader ? (
         <span
@@ -219,6 +222,17 @@ function PersonNodeCoreComponent({ data, visual }: PersonNodeCoreProps) {
         >
           <MapPin className="h-2.5 w-2.5" aria-hidden />
           Leader
+        </span>
+      ) : null}
+      {hasMemoir ? (
+        <span
+          className={cn(
+            "absolute z-20 flex items-center gap-0.5 rounded-full border border-[#3a2800] bg-[#0e0c00] px-1.5 py-0.5 font-manrope text-[9px] font-medium uppercase tracking-wider text-[#E6A817]",
+            data.isTreeLeader ? "top-3 right-0" : "-top-2 right-0",
+          )}
+          title="Has a published memoir — double-click to open"
+        >
+          <BookOpen className="h-2.5 w-2.5" aria-hidden />
         </span>
       ) : null}
 

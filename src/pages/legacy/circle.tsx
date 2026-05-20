@@ -79,6 +79,7 @@ export default function LegacyCirclePage() {
       recordings={recordings}
       treeEdges={treeEdges}
       backHref="/legacy"
+      treeHref="/legacy/circle"
     />
   );
 }

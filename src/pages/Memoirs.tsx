@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
+import { familyTreeBackHref, parseTreeMemoirReturn } from "@/lib/legacy/treeMemoirNav";
 
 import { Footer } from "@/components/Footer";
 import { Navigation } from "@/components/Navigation";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { TributeStack } from "@/components/framer/TributeStack";
-import { UnifiedTimeline } from "@/components/memoir/UnifiedTimeline";
+import { MemoirChaptersSection } from "@/components/memoir/MemoirChaptersSection";
 import { SingleImageDialog } from "@/components/SingleImageDialog";
 import { TributeFormDialog } from "@/components/tribute/TributeFormDialog";
 import {
@@ -153,6 +154,8 @@ const ensureEmbedUrl = (url?: string, provided?: string) => {
 
 const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSummary[] }) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const treeReturn = parseTreeMemoirReturn(searchParams);
+  const familyTreeBackTo = treeReturn ? familyTreeBackHref(treeReturn) : null;
   const desiredTab = searchParams.get("tab") === "live" ? "live" : "story";
   const [activeTab, setActiveTab] = useState<"story" | "live">(desiredTab as "story" | "live");
   const desiredSubTab = searchParams.get("subtab") === "tributes" ? "tributes" : "gallery";
@@ -324,6 +327,17 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
     <div className="min-h-screen bg-background text-foreground">
       <Navigation />
       <main className="flex flex-col pb-24 pt-4 lg:pb-32">
+        {familyTreeBackTo ? (
+          <div className="mx-auto w-full max-w-6xl px-6 pt-6">
+            <Link
+              to={familyTreeBackTo}
+              className="inline-flex items-center gap-2 text-sm font-medium text-[#E6A817] transition-colors hover:text-[#f0bc3a]"
+            >
+              <span aria-hidden>←</span>
+              Family tree
+            </Link>
+          </div>
+        ) : null}
         <section className="mx-auto w-full max-w-6xl px-6">
           <SectionHeader
             eyebrow="Legacy Memoir"
@@ -407,20 +421,14 @@ const MemoirDetailView = ({ slug, memoirs }: { slug: string; memoirs: MemoirSumm
                   </div>
                 </section>
 
-                <section className="pt-12">
-                  <SectionHeader
-                    eyebrow="Timeline"
-                    title={summary ? `Chapters of ${summary.title}` : "Memoir timeline"}
-                    description={
-                      summary?.summary ??
-                      "Scroll through defining seasons — curated memories, voices, and locations that shaped this legacy."
-                    }
-                    align="center"
-                  />
-                  <div className="mt-12">
-                    <UnifiedTimeline entries={entries} isLoading={timelineLoading} />
-                  </div>
-                </section>
+                <MemoirChaptersSection
+                  memoirTitle={summary?.title}
+                  memoirSummary={summary?.summary}
+                  heroMedia={summary?.heroMedia}
+                  highlights={detail?.highlights ?? []}
+                  entries={entries}
+                  isLoading={timelineLoading}
+                />
 
                 {/* Gallery and Tributes in nested tabs */}
                 <section className="pt-12">

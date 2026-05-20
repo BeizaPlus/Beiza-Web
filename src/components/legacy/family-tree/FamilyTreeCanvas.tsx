@@ -107,6 +107,9 @@ type FamilyTreeCanvasProps = {
   onFullscreenChange?: (active: boolean) => void;
   onPeopleChange?: (people: FamilyPerson[]) => void;
   onTreeEdgesChange?: (edges: TreeEdgeRow[]) => void;
+  onOpenMemoir?: (memoirSlug: string, personId: string) => void;
+  /** When true (e.g. returning from a memoir), fit the full tree in view once nodes load. */
+  fitTreeOnLoad?: boolean;
 };
 
 function isPersonNode(node: Node<FamilyTreeNodeData> | undefined) {
@@ -131,6 +134,8 @@ function FamilyTreeCanvasInner({
   onFullscreenChange,
   onPeopleChange,
   onTreeEdgesChange,
+  onOpenMemoir,
+  fitTreeOnLoad = false,
 }: FamilyTreeCanvasProps) {
   const { fitView, getNodes, screenToFlowPosition } = useReactFlow();
   const { isLight } = useTreeTheme();
@@ -161,7 +166,17 @@ function FamilyTreeCanvasInner({
   const [personEdits, setPersonEdits] = useState<Map<string, PersonEdit>>(() => new Map());
   const [pendingDisconnectPersonId, setPendingDisconnectPersonId] = useState<string | null>(null);
   const groupStateRef = useRef<TreeGroupState>(emptyTreeGroupState());
-  const hasFittedRef  = useRef(false);
+  const hasFittedRef = useRef(false);
+  const fitOnLoadDoneRef = useRef(false);
+
+  const memoirSlugByPersonId = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const person of people) {
+      const slug = person.memoir_slug?.trim();
+      if (slug) map.set(person.id, slug);
+    }
+    return map;
+  }, [people]);
 
   useEffect(() => {
     setTreeEdgeRows(initialTreeEdges);
@@ -486,14 +501,35 @@ function FamilyTreeCanvasInner({
     if (!hasFittedRef.current && merged.some((n) => isPersonFlowNodeType(n.type))) {
       hasFittedRef.current = true;
       window.requestAnimationFrame(() => {
-        if (treeLeaderId) {
+        if (fitTreeOnLoad) {
+          void fitView({ padding: 0.2, duration: 300 });
+        } else if (treeLeaderId) {
           void fitView({ padding: 0.22, duration: 300, nodes: [{ id: treeLeaderId }] });
         } else {
           void fitView({ padding: 0.2, duration: 300 });
         }
       });
     }
-  }, [flowSnapshot.nodes, flowSnapshot.edges, setNodes, setEdges, mergeWithGroupState, fitView, treeLeaderId]);
+  }, [
+    flowSnapshot.nodes,
+    flowSnapshot.edges,
+    setNodes,
+    setEdges,
+    mergeWithGroupState,
+    fitView,
+    treeLeaderId,
+    fitTreeOnLoad,
+  ]);
+
+  useEffect(() => {
+    if (!fitTreeOnLoad || fitOnLoadDoneRef.current) return;
+    const hasPeople = flowSnapshot.nodes.some((n) => isPersonFlowNodeType(n.type));
+    if (!hasPeople) return;
+    fitOnLoadDoneRef.current = true;
+    window.requestAnimationFrame(() => {
+      void fitView({ padding: 0.2, duration: 400 });
+    });
+  }, [fitTreeOnLoad, flowSnapshot.nodes, fitView]);
 
   const groupSelectedNodes = useCallback(() => {
     const current = getNodes();
@@ -881,6 +917,19 @@ function FamilyTreeCanvasInner({
     [onSelectPerson],
   );
 
+  const onNodeDoubleClick: NodeMouseHandler<Node<FamilyTreeNodeData>> = useCallback(
+    (event, node) => {
+      if (node.data.kind !== "person") return;
+      event.preventDefault();
+      const slug =
+        node.data.memoirSlug?.trim() ?? memoirSlugByPersonId.get(node.data.personId);
+      if (slug && onOpenMemoir) {
+        onOpenMemoir(slug, node.data.personId);
+      }
+    },
+    [memoirSlugByPersonId, onOpenMemoir],
+  );
+
   const canvasHeight = fullscreen
     ? "100vh"
     : layout === "fullViewport"
@@ -920,6 +969,7 @@ function FamilyTreeCanvasInner({
         connectionRadius={50}
         onNodeDragStop={onNodeDragStop}
         onNodeClick={onNodeClick}
+        onNodeDoubleClick={onNodeDoubleClick}
         onNodeContextMenu={onNodeContextMenu}
         onEdgeContextMenu={onEdgeContextMenu}
         onEdgeClick={onEdgeClick}

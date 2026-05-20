@@ -44,7 +44,7 @@ const Events = () => {
 
   return (
     <div
-      className="min-h-screen bg-background text-foreground"
+      className="min-h-screen overflow-hidden bg-background text-foreground"
       style={heroStudioCssVars(heroFrame) as CSSProperties}
     >
       <Navigation />

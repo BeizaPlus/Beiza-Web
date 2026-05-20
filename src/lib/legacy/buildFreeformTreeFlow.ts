@@ -145,6 +145,7 @@ export function buildFreeformTreeFlow(params: {
         photoUrl: person.photo_url ?? null,
         selected: selectedPersonId === person.id,
         isTreeLeader: Boolean(leaderId && person.id === leaderId),
+        memoirSlug: person.memoir_slug?.trim() || null,
       } satisfies PersonNodeData,
     });
 

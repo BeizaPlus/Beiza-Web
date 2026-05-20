@@ -1,17 +1,23 @@
 import { ArrowUpRight, MapPin, Play } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { ResolvedTimelineImage } from "@/lib/memoir/timelineImages";
 import type { MemoirTimelineEntry } from "@/types/memoir";
 
 type TimelineStoryCardProps = {
   entry: MemoirTimelineEntry;
+  image: ResolvedTimelineImage;
   orientation?: "left" | "right";
   onSelect?: (entry: MemoirTimelineEntry) => void;
 };
 
-export const TimelineStoryCard = ({ entry, orientation = "right", onSelect }: TimelineStoryCardProps) => {
+export const TimelineStoryCard = ({
+  entry,
+  image,
+  orientation = "right",
+  onSelect,
+}: TimelineStoryCardProps) => {
   const handleSelect = () => {
-    if (onSelect)
-    {
+    if (onSelect) {
       onSelect(entry);
     }
   };
@@ -21,18 +27,29 @@ export const TimelineStoryCard = ({ entry, orientation = "right", onSelect }: Ti
       className={cn(
         "group relative flex flex-col gap-4 rounded-lg border border-white/10 bg-white/5 p-6 text-left text-white shadow-glass transition hover:-translate-y-1 hover:bg-white/10 hover:shadow-xl",
         "backdrop-blur",
-        orientation === "left" ? "lg:mr-14" : "lg:ml-14"
+        orientation === "left" ? "lg:mr-14" : "lg:ml-14",
       )}
     >
       <div className="overflow-hidden rounded-lg border border-white/10">
         <div className="relative aspect-[3/2] w-full overflow-hidden">
-          <img
-            src={entry.image.src}
-            alt={entry.image.alt}
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-            loading="lazy"
-          />
+          {image.src ? (
+            <img
+              src={image.src}
+              alt={image.alt}
+              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] text-xs uppercase tracking-[0.2em] text-white/40">
+              Photo coming soon
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent" />
+          {image.isGalleryPlaceholder ? (
+            <span className="absolute left-3 top-3 rounded-full border border-white/15 bg-black/50 px-2.5 py-1 text-[10px] uppercase tracking-[0.2em] text-white/70 backdrop-blur-sm">
+              Gallery
+            </span>
+          ) : null}
         </div>
       </div>
 
@@ -96,4 +113,3 @@ export const TimelineStoryCard = ({ entry, orientation = "right", onSelect }: Ti
     </article>
   );
 };
-
