@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Landing from "./pages/Landing";
+import WelcomeGate from "./pages/WelcomeGate";
+import EducationPage from "./pages/Education";
 import Contact from "./pages/Contact";
 import TributePage from "./pages/TributePage";
 import Events from "./pages/Events";
@@ -40,7 +42,9 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<WelcomeGate />} />
+          <Route path="/home" element={<Landing />} />
+          <Route path="/education" element={<EducationPage />} />
           <Route path="/gallery" element={<Navigate to="/circle" replace />} />
           <Route path="/vault" element={<Navigate to="/legacy/vault" replace />} />
           <Route path="/record" element={<RecordRedirect />} />

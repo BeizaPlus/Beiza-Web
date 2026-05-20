@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap');
 @import url('https://fonts.cdnfonts.com/css/satoshi');
 
 @tailwind base;
@@ -775,6 +775,10 @@
 }
 
 @layer utilities {
+  .welcome-gate-serif {
+    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  }
+
   .animate-fade-up {
     animation: fade-up 0.6s var(--transition-studio) both;
   }

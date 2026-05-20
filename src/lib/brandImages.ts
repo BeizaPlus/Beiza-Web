@@ -1,5 +1,7 @@
 /** Brand image paths — do not swap emotional registers. */
 export const BRAND_IMAGES = {
+  /** Welcome gate — Legacy path card (My Life Story book photo) */
+  welcomeLegacyLifeStory: "/images/beiza-legacy-life-story-book.jpg",
   /** Heritage / White Swan only — elder + Gye Nyame */
   heritageHero: "/images/beiza-elder-gye-nyame-hero.png",
   /** Events + Stories — Ernestina B&W portrait */
