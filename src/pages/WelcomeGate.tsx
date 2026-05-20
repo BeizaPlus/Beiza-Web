@@ -1,9 +1,14 @@
-import { ChevronDown, BookOpen, Feather, GraduationCap } from "lucide-react";
+import { useEffect, useState } from "react";
 import { WelcomePathCard } from "@/components/welcome/WelcomePathCard";
+import {
+  getStoredWelcomeTheme,
+  storeWelcomeTheme,
+  WelcomeThemeToggle,
+  type WelcomeTheme,
+} from "@/components/welcome/WelcomeThemeToggle";
 import { legacyBody, legacyDisplay } from "@/lib/legacyLandingFonts";
 import { cn } from "@/lib/utils";
 
-/** Book photo only — not the full /heritage page screenshot */
 const LEGACY_CARD_IMAGE = "/assets/welcome-legacy-card.png";
 
 const PATHS = [
@@ -11,11 +16,9 @@ const PATHS = [
     to: "/heritage",
     label: "Legacy",
     title: "Preserve a life story",
-    description:
+    subtitle:
       "Capture voices, build your family tree, and turn memories into a memoir that lasts forever.",
-    cta: "Start here →",
-    icon: BookOpen,
-    iconCircleClass: "bg-[#d4ebe0]/95 text-[#1a4d3a]",
+    meta: "Start here",
     backgroundImage: LEGACY_CARD_IMAGE,
     backgroundImageAlt: "Hands holding a My Life Story memoir book",
   },
@@ -23,65 +26,85 @@ const PATHS = [
     to: "/farewell",
     label: "Farewell",
     title: "Plan a farewell",
-    description:
+    subtitle:
       "Memorial art, legacy vessels, and caskets crafted to honor a life with dignity and beauty.",
-    cta: "Learn more →",
-    icon: Feather,
-    iconCircleClass: "bg-[#d6e8f5] text-[#1e4a6b]",
+    meta: "Learn more",
+    backgroundGradient: "linear-gradient(165deg, #1e2838 0%, #0c1018 55%, #050608 100%)",
   },
   {
     to: "/education",
     label: "Education",
     title: "Learn your symbols",
-    description:
-      "Discover the Adinkra symbols and the living wisdom your people carried across generations.",
-    cta: "Explore →",
-    icon: GraduationCap,
-    iconCircleClass: "bg-[#e8dfd0] text-[#5c4a32]",
+    subtitle:
+      "Discover Adinkra symbols and the living wisdom your people carried across generations.",
+    meta: "Explore",
+    backgroundGradient: "linear-gradient(165deg, #3d3428 0%, #1a1612 55%, #0a0908 100%)",
   },
 ] as const;
 
 export default function WelcomeGate() {
+  const [theme, setTheme] = useState<WelcomeTheme>("dark");
+
+  useEffect(() => {
+    setTheme(getStoredWelcomeTheme());
+  }, []);
+
+  const handleThemeChange = (next: WelcomeTheme) => {
+    setTheme(next);
+    storeWelcomeTheme(next);
+  };
+
+  const isLight = theme === "light";
+
   return (
-    <div className={cn("flex min-h-screen flex-col bg-[#0a0a0a] text-white", legacyBody)}>
-      <header className="flex flex-col items-center px-6 pt-14 text-center sm:pt-16">
+    <div
+      className={cn(
+        legacyBody,
+        "welcome-gate-page flex min-h-screen flex-col transition-colors duration-300",
+        isLight ? "bg-[#f7f6f3] text-[#1a1816]" : "bg-black text-white",
+      )}
+    >
+      <div className="absolute right-5 top-5 z-20 sm:right-8 sm:top-8">
+        <WelcomeThemeToggle theme={theme} onThemeChange={handleThemeChange} />
+      </div>
+
+      <header className="flex flex-col items-center px-6 pb-4 pt-16 text-center sm:pt-20">
         <h1
           className={cn(
             legacyDisplay,
-            "text-4xl font-light tracking-[0.14em] text-white sm:text-[2.75rem]",
+            "text-[2.5rem] font-light tracking-[0.12em] sm:text-[2.75rem]",
+            isLight ? "text-[#1a1816]" : "text-white",
           )}
         >
           BEIZA
         </h1>
-        <p className="mt-3 text-[10px] font-light uppercase tracking-[0.32em] text-white/65">
+        <p
+          className={cn(
+            legacyBody,
+            "mt-3 text-[10px] font-light uppercase tracking-[0.32em]",
+            isLight ? "text-[#1a1816]/55" : "text-white/60",
+          )}
+        >
           Stories of the people we love
         </p>
-        <div className="mt-8 h-px w-full max-w-md bg-white/10" aria-hidden />
-        <p className={cn(legacyDisplay, "mt-8 text-lg italic font-light text-white/95 sm:text-xl")}>
+        <p
+          className={cn(
+            legacyDisplay,
+            "mt-10 max-w-md text-lg italic font-light sm:text-xl",
+            isLight ? "text-[#1a1816]/90" : "text-white/95",
+          )}
+        >
           Where would you like to begin?
         </p>
       </header>
 
-      <main
-        id="paths"
-        className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pb-8 pt-10 sm:px-6 lg:px-10"
-      >
-        <div className="flex flex-col gap-4 lg:flex-row lg:gap-5">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-6 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
           {PATHS.map((path) => (
             <WelcomePathCard key={path.to} {...path} />
           ))}
         </div>
       </main>
-
-      <div className="flex justify-center pb-10 pt-2">
-        <a
-          href="#paths"
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/50 transition hover:border-white/40 hover:text-white/80"
-          aria-label="Scroll to paths"
-        >
-          <ChevronDown className="h-4 w-4" aria-hidden />
-        </a>
-      </div>
     </div>
   );
 }

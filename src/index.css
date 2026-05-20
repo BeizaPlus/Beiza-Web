@@ -775,16 +775,33 @@
 }
 
 @layer utilities {
-  .welcome-gate-serif {
-    font-family: "Playfair Display", Georgia, "Times New Roman", serif;
-  }
-
   .legacy-display {
     font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   }
 
   .legacy-body {
-    font-family: "Jost", Manrope, system-ui, sans-serif;
+    font-family: "Jost", sans-serif;
+  }
+
+  .welcome-gate-page {
+    font-family: "Jost", sans-serif;
+  }
+
+  .welcome-gate-page .legacy-display,
+  .welcome-gate-page h1,
+  .welcome-gate-page h2 {
+    font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  }
+
+  .heritage-legacy-page {
+    font-family: "Jost", sans-serif;
+  }
+
+  .heritage-legacy-page .legacy-display,
+  .heritage-legacy-page h1,
+  .heritage-legacy-page h2,
+  .heritage-legacy-page h3 {
+    font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
   }
 
   .animate-fade-up {

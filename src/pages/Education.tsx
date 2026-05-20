@@ -15,7 +15,7 @@ export default function EducationPage() {
             <p className="font-manrope text-xs uppercase tracking-[0.3em] text-[#E6A817]">
               Education
             </p>
-            <h1 className="welcome-gate-serif text-3xl font-medium sm:text-4xl">
+            <h1 className="legacy-display text-3xl font-light sm:text-4xl">
               The visual language of your people
             </h1>
             <p className="mx-auto max-w-2xl font-manrope text-sm leading-relaxed text-muted-foreground sm:text-base">
@@ -43,7 +43,7 @@ export default function EducationPage() {
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[#1e1800] font-manrope text-xs font-semibold uppercase tracking-wider text-[#E6A817]">
                   {symbol.name.slice(0, 2)}
                 </div>
-                <h2 className="welcome-gate-serif text-lg font-medium">{symbol.name}</h2>
+                <h2 className="legacy-display text-lg font-light">{symbol.name}</h2>
                 <p className="mt-2 font-manrope text-sm leading-relaxed text-white/70">
                   {symbol.meaning}
                 </p>

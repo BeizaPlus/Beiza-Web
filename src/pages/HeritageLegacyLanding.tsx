@@ -65,7 +65,7 @@ export default function HeritageLegacyLanding() {
   }, []);
 
   return (
-    <div className={cn("min-h-screen", CREAM, legacyBody)}>
+    <div className={cn("heritage-legacy-page min-h-screen", CREAM, legacyBody)}>
       <header className="border-b border-[#e8e2d8]/80">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
           <Link to="/" className={cn(legacyDisplay, "text-xl tracking-[0.2em] text-[#2c2824]")}>

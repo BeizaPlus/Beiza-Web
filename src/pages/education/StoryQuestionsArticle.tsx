@@ -57,7 +57,7 @@ export default function StoryQuestionsArticle() {
   }, []);
 
   return (
-    <div className={cn("min-h-screen bg-[#f7f4ef] text-[#2c2824]", legacyBody)}>
+    <div className={cn("heritage-legacy-page min-h-screen bg-[#f7f4ef] text-[#2c2824]", legacyBody)}>
       <FaqJsonLd />
       <header className="border-b border-[#e8e2d8]">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-5">
