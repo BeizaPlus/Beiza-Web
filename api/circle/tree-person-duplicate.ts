@@ -6,6 +6,7 @@ type Body = {
   person_id?: string;
   canvas_x?: number;
   canvas_y?: number;
+  append_copy_suffix?: boolean;
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -44,19 +45,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(404).json({ error: "Person not found." });
   }
 
-  const offsetX = typeof body.canvas_x === "number" ? body.canvas_x : (source.canvas_x ?? 0) + 48;
-  const offsetY = typeof body.canvas_y === "number" ? body.canvas_y : (source.canvas_y ?? 0) + 48;
+  const baseX = source.canvas_x ?? 0;
+  const baseY = source.canvas_y ?? 0;
+  const offsetX = typeof body.canvas_x === "number" ? body.canvas_x : baseX + 60;
+  const offsetY = typeof body.canvas_y === "number" ? body.canvas_y : baseY + 60;
+
+  const displayName =
+    body.append_copy_suffix && !String(source.display_name).includes("(copy)")
+      ? `${source.display_name} (copy)`
+      : source.display_name;
 
   const { data: created, error: insertError } = await session.supabase
     .from("family_people")
     .insert({
       circle_id: circleId,
-      display_name: source.display_name,
+      display_name: displayName,
       relation_label: source.relation_label,
       status: source.status,
       gender: source.gender ?? null,
       career_path: source.career_path ?? null,
+      birthplace: source.birthplace ?? null,
+      education: source.education ?? null,
+      languages: source.languages ?? null,
+      religion: source.religion ?? null,
+      bio: source.bio ?? null,
+      nickname: source.nickname ?? null,
+      birth_year: source.birth_year ?? null,
+      sibling_order: source.sibling_order ?? null,
+      death_year: source.death_year ?? null,
       photo_url: source.photo_url ?? null,
+      adinkra_id: source.adinkra_id ?? null,
       canvas_x: offsetX,
       canvas_y: offsetY,
     })

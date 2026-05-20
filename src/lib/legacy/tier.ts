@@ -11,6 +11,7 @@ export function canDeleteVaultMemories(tier: LegacyTier) {
   return tier === "keeper" || tier === "heritage";
 }
 
-export function canDownloadOrShare(tier: LegacyTier) {
+/** Raw audio file download — Keeper+ only. Sharing via link is free on all tiers. */
+export function canDownloadRecordings(tier: LegacyTier) {
   return tier === "keeper" || tier === "heritage";
 }

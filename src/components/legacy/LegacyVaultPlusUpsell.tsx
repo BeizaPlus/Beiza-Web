@@ -4,7 +4,7 @@ import { legacyGoldPanel } from "@/lib/brandUi";
 
 const FEATURES = [
   { icon: Trash2, label: "Delete any memory at any time" },
-  { icon: Download, label: "Download & share recordings" },
+  { icon: Download, label: "Download recordings as audio files" },
   { icon: Sparkles, label: "Story cards from your photos" },
 ] as const;
 
@@ -22,7 +22,7 @@ export function LegacyVaultPlusUpsell() {
       </div>
 
       <p className="mb-3 text-xs leading-relaxed text-muted-foreground">
-        Basic plan memories are permanent — upgrade to manage, delete, and organize your
+        Basic plan memories are permanent — upgrade to manage, delete, and download your
         family&apos;s stories.
       </p>
 

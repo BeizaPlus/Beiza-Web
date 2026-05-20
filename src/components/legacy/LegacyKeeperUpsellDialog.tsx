@@ -10,19 +10,35 @@ import {
 type LegacyKeeperUpsellDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  reason?: "delete" | "download";
 };
 
-export function LegacyKeeperUpsellDialog({ open, onOpenChange }: LegacyKeeperUpsellDialogProps) {
+export function LegacyKeeperUpsellDialog({
+  open,
+  onOpenChange,
+  reason = "delete",
+}: LegacyKeeperUpsellDialogProps) {
+  const isDownload = reason === "download";
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="border-border bg-card text-foreground sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-lg text-white">
-            Vault control is a Keeper feature
+            {isDownload ? "Download is a Keeper feature" : "Vault control is a Keeper feature"}
           </DialogTitle>
           <DialogDescription className="text-sm leading-relaxed text-muted-foreground">
-            On the free Circle plan, memories are permanent — they&apos;re kept forever. Upgrade to
-            Keeper to delete, manage, and download your recordings.
+            {isDownload ? (
+              <>
+                Sharing memories via link is free on every plan. Upgrade to Keeper to download raw
+                audio files to your device.
+              </>
+            ) : (
+              <>
+                On the free Circle plan, memories are permanent — they&apos;re kept forever. Upgrade
+                to Keeper to delete and manage your recordings. Sharing via link stays free.
+              </>
+            )}
           </DialogDescription>
         </DialogHeader>
         <Link

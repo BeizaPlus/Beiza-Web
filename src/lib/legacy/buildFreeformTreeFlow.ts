@@ -2,11 +2,15 @@ import type { Edge, Node } from "@xyflow/react";
 import { format } from "date-fns";
 import type { FamilyPerson, LegacyRecording, RecordingPersonLink } from "@/lib/legacy/types";
 import { countMemoriesForPerson, personInitials } from "@/lib/legacy/familyTree";
+import { resolveTreeLeaderId } from "@/lib/legacy/treeLeader";
+import { computeLeaderCenteredPositions } from "@/lib/legacy/leaderCenteredLayout";
+import { getFlowNodeType } from "@/lib/legacy/personNodeShapes";
 import {
+  edgeStyleForRelationship,
   formatRelationship,
-  PERSON_EDGE_STYLE,
   type TreeEdgeRow,
 } from "@/lib/legacy/treeRelationships";
+import { normalizeTreeHandleId } from "@/lib/legacy/personNodeMetrics";
 import { defaultTreeHandles, pickTreeEdgeHandles } from "@/lib/legacy/treeEdgeHandles";
 import type { FamilyTreeNodeData, PersonNodeData } from "@/lib/legacy/familyTreeFlow";
 
@@ -46,11 +50,11 @@ export function treeEdgesToFlowEdges(
       id: row.id,
       source: row.source_person_id,
       target: row.target_person_id,
-      sourceHandle: handles.sourceHandle,
-      targetHandle: handles.targetHandle,
+      sourceHandle: normalizeTreeHandleId(handles.sourceHandle),
+      targetHandle: normalizeTreeHandleId(handles.targetHandle),
       label: formatRelationship(row.relationship_type),
       type: "smoothstep",
-      style: PERSON_EDGE_STYLE,
+      style: edgeStyleForRelationship(row.relationship_type),
       labelStyle: { fill: "#888888", fontSize: 10 },
       labelBgStyle: { fill: "#111111", fillOpacity: 0.9 },
       labelBgPadding: [4, 6] as [number, number],
@@ -88,6 +92,19 @@ export function buildFreeformTreeFlow(params: {
     return { nodes, edges, personEdgeCount: treeEdges.length };
   }
 
+  const leaderId = resolveTreeLeaderId(people, links);
+  const anyoneWithoutCanvas = people.some(
+    (p) =>
+      p.canvas_x == null ||
+      p.canvas_y == null ||
+      !Number.isFinite(p.canvas_x) ||
+      !Number.isFinite(p.canvas_y),
+  );
+  const leaderLayout =
+    leaderId && anyoneWithoutCanvas
+      ? computeLeaderCenteredPositions(people, treeEdges, leaderId)
+      : null;
+
   const recordingById = new Map(recordings.map((r) => [r.id, r]));
   const aboutByPerson = new Map<string, RecordingPersonLink[]>();
   for (const link of links) {
@@ -105,20 +122,21 @@ export function buildFreeformTreeFlow(params: {
       Number.isFinite(person.canvas_y);
     const position = hasCanvas
       ? { x: person.canvas_x!, y: person.canvas_y! }
-      : defaultPosition(index, people.length);
+      : (leaderLayout?.get(person.id) ?? defaultPosition(index, people.length));
     positionMap.set(person.id, position);
 
     const memoryCount = countMemoriesForPerson(person.id, links);
+    const relation = (person.relation_label ?? "").toUpperCase();
     nodes.push({
       id: person.id,
-      type: "person",
+      type: getFlowNodeType(relation),
       position,
       draggable: true,
       data: {
         kind: "person",
         personId: person.id,
         name: person.display_name,
-        relation: (person.relation_label ?? "").toUpperCase(),
+        relation,
         gender: person.gender ?? null,
         careerPath: person.career_path ?? null,
         status: person.status,
@@ -126,6 +144,7 @@ export function buildFreeformTreeFlow(params: {
         memoryCount,
         photoUrl: person.photo_url ?? null,
         selected: selectedPersonId === person.id,
+        isTreeLeader: Boolean(leaderId && person.id === leaderId),
       } satisfies PersonNodeData,
     });
 

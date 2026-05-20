@@ -44,6 +44,31 @@ export const PERSON_EDGE_STYLE = {
   strokeWidth: 1.5,
 } as const;
 
+export function edgeStyleForRelationship(relationshipType: string) {
+  switch (relationshipType) {
+    case "parent_of":
+    case "grandparent_of":
+      return { stroke: "rgba(230, 168, 23, 0.3)", strokeWidth: 1.5 };
+    case "child_of":
+    case "grandchild_of":
+      return { stroke: "rgba(68, 102, 255, 0.5)", strokeWidth: 1 };
+    case "sibling_of":
+      return {
+        stroke: "rgba(68, 102, 255, 0.3)",
+        strokeWidth: 1,
+        strokeDasharray: "6 3",
+      };
+    case "spouse_of":
+      return {
+        stroke: "rgba(230, 168, 23, 0.4)",
+        strokeWidth: 1.5,
+        strokeDasharray: "3 3",
+      };
+    default:
+      return PERSON_EDGE_STYLE;
+  }
+}
+
 export const PERSON_EDGE_SELECTED_STYLE = {
   stroke: "#CE1126",
   strokeWidth: 2,

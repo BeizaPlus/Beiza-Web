@@ -18,7 +18,7 @@ export function TreeSelectionToolbar({
 
   return (
     <div
-      className="absolute left-1/2 top-4 z-[100] flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#1e1e1e] bg-[#111111]/95 px-2 py-1.5 shadow-lg backdrop-blur-sm"
+      className="tree-chrome absolute left-1/2 top-4 z-[100] flex -translate-x-1/2 items-center gap-2 rounded-full border border-[#1e1e1e] bg-[#111111]/95 px-2 py-1.5 shadow-lg backdrop-blur-sm"
       role="toolbar"
       aria-label="Selection actions"
     >

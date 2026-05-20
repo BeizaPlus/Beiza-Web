@@ -1,10 +1,11 @@
+import type { ReactNode } from "react";
 import clsx from "clsx";
 import { motion, type Variants } from "framer-motion";
 
 export type SectionHeaderProps = {
-  eyebrow?: string;
-  title: string;
-  description?: string;
+  eyebrow?: ReactNode;
+  title: ReactNode;
+  description?: ReactNode;
   align?: "left" | "center";
   className?: string;
   variant?: "dark" | "light";

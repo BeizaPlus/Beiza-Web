@@ -11,6 +11,10 @@ Canonical frame (`HERITAGE_HERO_DEFAULTS` / `src/data/heritage-hero-canonical.js
 - "Plan your Heritage experience →" scrolls to `#consultation`
 - "Already lost someone? Recover a voice →" links to `/recover`
 
+### Beiza icon (`beiza-icon.svg` / `BeizaCircleMark`)
+- **Scope:** Circle directory cards (`/circle`) only — **not** nav, favicon, Legacy shell, or enter gate.
+- Path coordinates in `public/images/beiza-icon.svg` are **locked** — do not modify. Only size/position on cards (20×20, top-left).
+
 ### Circle card visual (/circle directory)
 - Card top area: `/images/beiza-adinkra-stamp-hand.png` (or assigned Adinkra per `adinkra_id` when symbol assets exist)
 - **DO NOT** use the stick-figure `MiniTreePreview` SVG tree on directory cards
@@ -36,6 +40,88 @@ Canonical frame (`HERITAGE_HERO_DEFAULTS` / `src/data/heritage-hero-canonical.js
 - **`onNodeDragStop`:** Read the current handler before editing. Preserve: `setPositionOverrides`, `setEdges` person-edge refresh via `treeEdgesToFlowEdges`, and `savePersonCanvasPosition`. Use `buildPersonAbsolutePositionMap` for edge refresh (not raw `node.position` when grouped). `useRef` must be imported from React for `groupStateRef`.
 - **Person photo upload API:** The photo endpoint writes `photo_url` back to `family_people` in the **same request** (upload + DB update). Do **not** add a second client `PATCH` to `tree-person` after upload — use the URL returned in the photo API response and update local state / `people[]` from that.
 - **New person placement:** Use `getViewport()` from `useReactFlow` for current pan/zoom, then `screenToFlowPosition()` on the viewport centre so new people land at the **visible centre** of the canvas — not at `(0, 0)`.
+
+### AI persona (server-side)
+- **`VITE_AI_PROVIDER`** is read on the **server** (Vercel API routes / `vercelApiDevPlugin` loads `.env`) — **not** in the browser. Use `process.env.VITE_AI_PROVIDER` in API handlers (works locally and on Vercel).
+- **Local test:** `ollama serve` running; model pulled: `ollama pull llama3.2` (default target `llama3.2`).
+- **System prompt is the most important part.** If the family has recordings with link type **`by`** that person (their own voice / prompts), those transcripts are the **foundation of the persona** — prioritize `by` links over `about` when building context.
+- **Agentic loop:** `POST /api/circle/persona-chat` — Claude/Ollama may call multiple tools per turn before replying: `add_person`, `connect_people`, `update_person` (`api/lib/personaAgent.ts`, `api/lib/personaTools.ts`).
+- **Canvas refresh:** When tools mutate the tree, API returns `tree_updated: true`; client dispatches `beiza:tree-updated` with `{ circleId }` — tree page refetches via `fetchCircleTreeData` (no full reload). Event: `BEIZA_TREE_UPDATED` in `src/lib/legacy/personaEvents.ts`.
+
+### Vault screen (/legacy/vault)
+- Free users CAN:
+  - Record unlimited-length voice memories
+  - Rename their memories
+  - **SHARE** memories via link (generates `beizalegacy.com/memory/[token]` — Beiza player only, no raw download)
+  - Play back recordings
+- Free users CANNOT:
+  - Delete recordings (locked trash icon)
+  - Download raw audio files
+- **Sharing is free on all tiers** — share button always active on memory cards.
+- **Download raw audio** — Keeper and Heritage only.
+- Upsell copy: "Download recordings as audio files" — never "Download & share" as a paid bundle.
+
+### Patterns / health architecture (product — do not conflate layers)
+Three distinct layers; the Patterns tab synthesizes across all of them:
+1. **Traits = character** — personality, physical descriptors, gifts, known-for (who they were). Side panel **Traits** section; persist to `family_people` trait columns when added (today: `localStorage` interim).
+2. **Health = medical** — conditions, screenings, diagnoses per person (separate from character). Built passively via **weekly question** (one answer/week → health graph over years). Not the same table/UX as career/bio.
+3. **Patterns = AI synthesis** — cross-generation reasoning over traits + health + tree edges + profile fields (`career_path`, `birthplace`, `languages`, etc.). Example output: *"Three generations of hypertension on the paternal side — your father, his father, and two uncles. Consider regular blood pressure screening."*
+- **Weekly question** = engine that fills the health graph without a medical intake form.
+- **Warning system** = Patterns tab closes the loop: surfaced risks → actionable preventive guidance.
+- **Tree profile fields** (`family_people` + persona tools) = character + lineage dataset for Patterns; every panel field save is infrastructure for the reasoning layer.
+- Do not store medical data in trait tags or vice versa.
+
+### Node data fields (tree canvas)
+- All profile fields save to `family_people` on blur (panel) or context menu save.
+- Right panel **Profile** section mirrors node dropdown fields — shared `peopleList` state in `FamilyTreeCircleView`.
+- **Alt+drag** duplicates node with new UUID, `(copy)` suffix, +40px offset; context menu duplicate uses +60px — same `duplicateFamilyPerson`.
+- **career_path** shows on node card below name (truncated 20 chars); relation label only on card when no career.
+- **Disconnect node** removes all edges for that person (confirm dialog), not the node.
+
+### Tree relationship lines
+- Click a line label (e.g. **Parent of**) or right-click → **Edit relationship** to change type.
+- Changing a person’s role (e.g. **CHILD** → **GRANDCHILD** in the side panel) updates all connected lines (e.g. **Parent of** → **Grandparent of**) via `relationshipSync.ts`.
+
+### Sibling birth order (auto-layout)
+- `family_people.sibling_order` — **1 = eldest** among siblings with the same `parent_id`.
+- Side panel → **Birth order (siblings)** — reorder with “More eldest / More youngest”; then run **vertical/horizontal layout** on the toolbar.
+- If `sibling_order` is unset, layout falls back to `birth_year` (older = further left).
+
+### Family leader pin (tree canvas)
+- **Who is leader:** `resolveTreeLeader()` in `src/lib/legacy/treeLeader.ts` — priority: (1) explicit pin `is_tree_anchor`, (2) KEEPER/SELF/ME relation, (3) most memory links, (4) first gone, (5) earliest tree member.
+- Tree header shows **Leader: [name]** and reason; click opens their profile panel.
+- Pin via context menu or side panel → sets `is_tree_anchor` and reorganizes layout at pin `(0,0)`.
+- Leader node shows gold **Leader** badge with map pin.
+
+### Node shape system (tree canvas)
+- Ancestor/grandparent → circle 140px (`circlePerson`)
+- Parent/uncle/aunt → rounded rect (`person`, default)
+- Self/keeper → soft square 160px (`squarePerson`) with pulse
+- Child/grandchild → circle 100px (`circlePerson`)
+- Shape from `relation_label` via `getFlowNodeType` — never hardcode per person id
+- Edge styles vary by `relationship_type` (`edgeStyleForRelationship`)
+
+### Tree light / dark mode
+- Toggle: **sun/moon** in header and bottom-left zoom toolbar (`TreeThemeProvider`, `beiza_tree_theme` in localStorage).
+- Light mode uses `.tree-theme-light` CSS variables on `.tree-shell` — canvas, panel, chrome, nodes.
+
+### Recording upload paths
+- **`persistViaApi={false}`** (legacy `/legacy/record`): `saveRecordedMemory` → `uploadLegacyRecording` — requires **`supabase.auth.getUser()`** (logged-in legacy user).
+- **`persistViaApi={true}`** (public `/circle/:id/record`): `saveRecordedMemory` → `POST /api/circle/record-memory` with circle **bearer token**; server uses **service role** for storage + `recordings` insert.
+- Tree canvas and record UI use the same `persistViaApi` flag — never call `uploadLegacyRecording` from the public circle route.
+
+### Node side panel (`PersonBiographyPanel`)
+- **Memories:** Never leave "Gathering memories…" spinning forever — 4s timeout → empty state; circle route loads via `tree-data` + `recording_person_links` (not anon `get_person_biography` RPC).
+- **Editing:** All profile fields inline; autosave on blur via `onProfileSave`; brief gold **Saved** flash — no save button.
+- **Layout:** Sticky header (photo, name, relation); scrollable body (`overflow-y: auto`).
+- **Tags:** Languages → `family_people.languages[]`; traits (known for, physical, personality, gifts) → session `localStorage` until DB columns exist.
+
+### Node handles (tree canvas)
+- Hit area: 40px × 40px (`.family-tree-handle` in `index.css`); visual dot via `box-shadow` inset ~10px, color `#E6A817` only — never blue.
+- `connectionRadius={50}` on ReactFlow — snap within 50px of a handle.
+- Handles visible on node hover, when selected, and when any connection drag is in progress (`.family-tree-flow.connecting`).
+- Relationship picker: drag direction infers parent / child / sibling options (`treeConnectionInference.ts`); diagonal shows full picker.
+- Relation chevron (`.node-relation-chevron`): visible on node hover only.
 
 ### Homepage hero (layout only)
 - Full bleed (100vw) — no max-width on the outer hero shell

@@ -7,9 +7,11 @@ type TreeNodeContextMenuProps = {
   displayName: string;
   gender?: FamilyPersonGender | null;
   careerPath?: string | null;
+  isTreeLeader?: boolean;
   onGenderChange: (gender: FamilyPersonGender | null) => void;
   onCareerSave: (careerPath: string | null) => void;
   onPhotoSelected: (file: File) => void;
+  onSetTreeLeader?: () => void;
   onDuplicate: () => void;
   onDisconnect: () => void;
   onClose: () => void;
@@ -24,6 +26,8 @@ export function TreeNodeContextMenu({
   onGenderChange,
   onCareerSave,
   onPhotoSelected,
+  isTreeLeader,
+  onSetTreeLeader,
   onDuplicate,
   onDisconnect,
   onClose,
@@ -34,7 +38,7 @@ export function TreeNodeContextMenu({
   return (
     <div
       role="menu"
-      className="fixed z-[9999] w-[200px] rounded-lg border border-[#1e1e1e] bg-[#111111] py-1 shadow-xl"
+      className="tree-chrome fixed z-[9999] w-[200px] rounded-lg border border-[#1e1e1e] bg-[#111111] py-1 text-white shadow-xl"
       style={{ top: y, left: x }}
       onMouseLeave={onClose}
     >
@@ -116,6 +120,22 @@ export function TreeNodeContextMenu({
           Save career
         </button>
       </div>
+
+      {onSetTreeLeader ? (
+        <button
+          type="button"
+          role="menuitem"
+          onClick={() => {
+            onSetTreeLeader();
+            onClose();
+          }}
+          className={`w-full border-t border-[#1a1a1a] px-3.5 py-1.5 text-left font-manrope text-xs hover:bg-[#1a1a1a] ${
+            isTreeLeader ? "text-[#E6A817]" : "text-[#cccccc]"
+          }`}
+        >
+          {isTreeLeader ? "★ Family leader (pinned)" : "Pin as family leader"}
+        </button>
+      ) : null}
 
       <button
         type="button"

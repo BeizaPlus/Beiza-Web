@@ -1,17 +1,28 @@
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { LegacyVaultMemoryCard } from "@/components/legacy/LegacyVaultMemoryCard";
+import { LegacyVaultCategorySection } from "@/components/legacy/LegacyVaultCategorySection";
 import { LegacyVaultPlusUpsell } from "@/components/legacy/LegacyVaultPlusUpsell";
+import { LegacyVaultSequencePlayer } from "@/components/legacy/LegacyVaultSequencePlayer";
 import { LegacyKeeperUpsellDialog } from "@/components/legacy/LegacyKeeperUpsellDialog";
 import {
+  ensureRecordingShareToken,
   useDeleteLegacyRecording,
   useLegacyRecordings,
   useMyLegacyCircle,
   useUpdateLegacyRecordingTitle,
 } from "@/hooks/useLegacy";
-import { canDeleteVaultMemories, getLegacyTier } from "@/lib/legacy/tier";
-import { useRef } from "react";
+import {
+  canDeleteVaultMemories,
+  canDownloadRecordings,
+  getLegacyTier,
+} from "@/lib/legacy/tier";
+import { getMemoryShareUrl } from "@/lib/legacy/shareUrl";
+import {
+  groupVaultRecordingsByCategory,
+  sortRecordingsForNarrative,
+} from "@/lib/legacy/vaultNarrative";
+import type { LegacyRecording } from "@/lib/legacy/types";
 import { useToast } from "@/hooks/use-toast";
 import {
   Dialog,
@@ -26,6 +37,7 @@ export default function LegacyVaultPage() {
   const { toast } = useToast();
   const tier = getLegacyTier();
   const canDelete = canDeleteVaultMemories(tier);
+  const canDownload = canDownloadRecordings(tier);
   const { data: circleCtx } = useMyLegacyCircle();
   const circle = circleCtx?.circle;
   const { data: recordings = [], isLoading } = useLegacyRecordings(circle?.id);
@@ -35,21 +47,37 @@ export default function LegacyVaultPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [keeperUpsellOpen, setKeeperUpsellOpen] = useState(false);
+  const [keeperUpsellReason, setKeeperUpsellReason] = useState<"delete" | "download">("delete");
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [sharingId, setSharingId] = useState<string | null>(null);
 
-  const togglePlay = (id: string, url: string | null) => {
-    if (!url) return;
-    if (playingId === id) {
+  const narrativeSequence = useMemo(
+    () => sortRecordingsForNarrative(recordings),
+    [recordings],
+  );
+  const categoryGroups = useMemo(
+    () => groupVaultRecordingsByCategory(recordings),
+    [recordings],
+  );
+
+  const openKeeperUpsell = (reason: "delete" | "download") => {
+    setKeeperUpsellReason(reason);
+    setKeeperUpsellOpen(true);
+  };
+
+  const togglePlay = (rec: LegacyRecording) => {
+    if (!rec.audio_url) return;
+    if (playingId === rec.id) {
       audioRef.current?.pause();
       setPlayingId(null);
       return;
     }
     if (audioRef.current) audioRef.current.pause();
-    const audio = new Audio(url);
+    const audio = new Audio(rec.audio_url);
     audioRef.current = audio;
     audio.onended = () => setPlayingId(null);
     void audio.play();
-    setPlayingId(id);
+    setPlayingId(rec.id);
   };
 
   const handleRename = (id: string, title: string) => {
@@ -65,6 +93,36 @@ export default function LegacyVaultPage() {
         },
       },
     );
+  };
+
+  const handleShare = async (rec: LegacyRecording) => {
+    setSharingId(rec.id);
+    try {
+      const token = rec.share_token ?? (await ensureRecordingShareToken(rec.id));
+      const url = getMemoryShareUrl(token);
+      await navigator.clipboard.writeText(url);
+      toast({
+        title: "Share link copied",
+        description: "Anyone with this link can listen in Beiza — not download the file.",
+      });
+    } catch {
+      toast({
+        title: "Could not create share link",
+        description: "Try again in a moment.",
+        variant: "destructive",
+      });
+    } finally {
+      setSharingId(null);
+    }
+  };
+
+  const handleDownload = (rec: LegacyRecording) => {
+    if (!rec.audio_url) return;
+    const anchor = document.createElement("a");
+    anchor.href = rec.audio_url;
+    anchor.download = `${(rec.title || "beiza-memory").replace(/\s+/g, "-")}.webm`;
+    anchor.rel = "noopener";
+    anchor.click();
   };
 
   const confirmDelete = () => {
@@ -99,7 +157,9 @@ export default function LegacyVaultPage() {
     <div className="space-y-5">
       <header>
         <h2 className="text-xl font-bold text-white">Your Family&apos;s Legacy Vault</h2>
-        <p className="mt-1 text-[13px] text-[#888]">Listen back to preserved voices and stories.</p>
+        <p className="mt-1 text-[13px] text-[#888]">
+          Listen back to preserved voices and stories. Share any memory free — download on Keeper.
+        </p>
       </header>
 
       {isLoading && (
@@ -117,25 +177,41 @@ export default function LegacyVaultPage() {
 
       {!isLoading && recordings.length > 0 && (
         <>
-          <ul className="space-y-3">
-            {recordings.map((rec) => (
-              <LegacyVaultMemoryCard
-                key={rec.id}
-                recording={rec}
-                isPlaying={playingId === rec.id}
+          <LegacyVaultSequencePlayer
+            sequence={narrativeSequence}
+            activeId={playingId}
+            onActiveChange={setPlayingId}
+          />
+
+          <div className="space-y-6">
+            {categoryGroups.map((group, i) => (
+              <LegacyVaultCategorySection
+                key={group.category}
+                group={group}
+                defaultOpen={i === 0}
+                playingId={playingId}
                 canDelete={canDelete}
-                onPlay={() => togglePlay(rec.id, rec.audio_url)}
-                onRename={(title) => handleRename(rec.id, title)}
-                onDelete={() => setPendingDeleteId(rec.id)}
-                onDeleteLocked={() => setKeeperUpsellOpen(true)}
+                canDownload={canDownload}
+                onPlay={togglePlay}
+                onRename={handleRename}
+                onShare={handleShare}
+                onDownload={handleDownload}
+                onDownloadLocked={() => openKeeperUpsell("download")}
+                onDelete={setPendingDeleteId}
+                onDeleteLocked={() => openKeeperUpsell("delete")}
               />
             ))}
-          </ul>
+          </div>
+
           {!canDelete ? <LegacyVaultPlusUpsell /> : null}
         </>
       )}
 
-      <LegacyKeeperUpsellDialog open={keeperUpsellOpen} onOpenChange={setKeeperUpsellOpen} />
+      <LegacyKeeperUpsellDialog
+        open={keeperUpsellOpen}
+        onOpenChange={setKeeperUpsellOpen}
+        reason={keeperUpsellReason}
+      />
 
       <Dialog open={Boolean(pendingDeleteId)} onOpenChange={(o) => !o && setPendingDeleteId(null)}>
         <DialogContent className="border-border bg-card text-foreground sm:max-w-md">

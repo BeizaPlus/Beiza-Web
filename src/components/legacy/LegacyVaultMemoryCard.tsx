@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Lock, Pause, Pencil, Play, Trash2 } from "lucide-react";
+import { Download, Lock, Pause, Pencil, Play, Share2, Trash2 } from "lucide-react";
 import type { LegacyRecording } from "@/lib/legacy/types";
 import { legacySurface } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
@@ -9,8 +9,12 @@ type LegacyVaultMemoryCardProps = {
   recording: LegacyRecording;
   isPlaying: boolean;
   canDelete: boolean;
+  canDownload: boolean;
   onPlay: () => void;
   onRename: (title: string) => void;
+  onShare: () => void;
+  onDownload?: () => void;
+  onDownloadLocked?: () => void;
   onDelete?: () => void;
   onDeleteLocked?: () => void;
 };
@@ -29,18 +33,59 @@ function formatDate(iso: string) {
   });
 }
 
+function ActionButton({
+  locked,
+  label,
+  onClick,
+  onLocked,
+  children,
+}: {
+  locked?: boolean;
+  label: string;
+  onClick?: () => void;
+  onLocked?: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      className={cn(
+        "relative flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg border border-border bg-transparent transition-colors",
+        !locked && "hover:border-primary",
+      )}
+      onClick={() => {
+        if (locked) onLocked?.();
+        else onClick?.();
+      }}
+      aria-label={label}
+    >
+      {children}
+      {locked ? (
+        <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-primary">
+          <Lock className="h-1.5 w-1.5 text-primary-foreground" aria-hidden />
+        </span>
+      ) : null}
+    </button>
+  );
+}
+
 export function LegacyVaultMemoryCard({
   recording,
   isPlaying,
   canDelete,
+  canDownload,
   onPlay,
   onRename,
+  onShare,
+  onDownload,
+  onDownloadLocked,
   onDelete,
   onDeleteLocked,
 }: LegacyVaultMemoryCardProps) {
   const [editing, setEditing] = useState(false);
   const [draftTitle, setDraftTitle] = useState(recording.title ?? "");
-  const locked = !canDelete;
+  const deleteLocked = !canDelete;
+  const downloadLocked = !canDownload;
 
   const commitRename = () => {
     setEditing(false);
@@ -51,7 +96,10 @@ export function LegacyVaultMemoryCard({
   };
 
   return (
-    <li className={cn(legacySurface, "relative flex items-start gap-3.5 overflow-hidden px-4 py-3.5")}>
+    <li
+      className={cn(legacySurface, "relative flex items-start gap-3.5 overflow-hidden px-4 py-3.5")}
+      data-recording-id={recording.id}
+    >
       <button
         type="button"
         className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-0 bg-primary disabled:opacity-50"
@@ -108,31 +156,39 @@ export function LegacyVaultMemoryCard({
         </p>
       </div>
 
-      <button
-        type="button"
-        className={cn(
-          "relative mt-0.5 flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg border border-border bg-transparent transition-colors",
-          !locked && "hover:border-primary",
-        )}
-        onClick={() => {
-          if (locked) onDeleteLocked?.();
-          else onDelete?.();
-        }}
-        aria-label={locked ? "Delete locked — upgrade to remove" : "Delete memory"}
-      >
-        <Trash2
-          className={cn(
-            "h-4 w-4 transition-colors",
-            locked ? "text-muted-foreground/60" : "text-muted-foreground",
-          )}
-          aria-hidden
-        />
-        {locked ? (
-          <span className="absolute -right-1 -top-1 flex h-2.5 w-2.5 items-center justify-center rounded-full bg-primary">
-            <Lock className="h-1.5 w-1.5 text-primary-foreground" aria-hidden />
-          </span>
-        ) : null}
-      </button>
+      <div className="mt-0.5 flex shrink-0 gap-1.5">
+        <ActionButton label="Share memory link" onClick={onShare}>
+          <Share2 className="h-4 w-4 text-primary" aria-hidden />
+        </ActionButton>
+        <ActionButton
+          locked={downloadLocked}
+          label={downloadLocked ? "Download locked — upgrade to Keeper" : "Download audio file"}
+          onClick={onDownload}
+          onLocked={onDownloadLocked}
+        >
+          <Download
+            className={cn(
+              "h-4 w-4",
+              downloadLocked ? "text-muted-foreground/60" : "text-muted-foreground",
+            )}
+            aria-hidden
+          />
+        </ActionButton>
+        <ActionButton
+          locked={deleteLocked}
+          label={deleteLocked ? "Delete locked — upgrade to remove" : "Delete memory"}
+          onClick={onDelete}
+          onLocked={onDeleteLocked}
+        >
+          <Trash2
+            className={cn(
+              "h-4 w-4",
+              deleteLocked ? "text-muted-foreground/60" : "text-muted-foreground",
+            )}
+            aria-hidden
+          />
+        </ActionButton>
+      </div>
     </li>
   );
 }

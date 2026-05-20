@@ -186,6 +186,9 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
 
       {state.focus === "pricing" ? (
         <div className="space-y-3">
+          <p className="text-[10px] leading-snug text-muted-foreground">
+            Click any text on the billing cards to edit. Sliders only move the section — card layout stays fixed.
+          </p>
           <SliderRow
             label="Section move up"
             value={-state.pricing.offsetY}

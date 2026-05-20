@@ -27,6 +27,9 @@ import RecoverPage from "./pages/Recover";
 import FamilyTreesDirectoryPage from "./pages/family-trees/index";
 import FamilyTreeEnterPage from "./pages/family-trees/enter";
 import FamilyTreeCanvasPage from "./pages/family-trees/tree";
+import CircleRecordPage from "./pages/family-trees/record";
+import MemorySharePage from "./pages/MemoryShare";
+import RecordRedirect from "./pages/RecordRedirect";
 
 const queryClient = new QueryClient();
 
@@ -40,14 +43,16 @@ const App = () => (
           <Route path="/" element={<Landing />} />
           <Route path="/gallery" element={<Navigate to="/circle" replace />} />
           <Route path="/vault" element={<Navigate to="/legacy/vault" replace />} />
-          <Route path="/record" element={<Navigate to="/legacy/record" replace />} />
+          <Route path="/record" element={<RecordRedirect />} />
           <Route path="/recover" element={<RecoverPage />} />
           <Route path="/circle" element={<FamilyTreesDirectoryPage />} />
           <Route path="/family-trees" element={<Navigate to="/circle" replace />} />
           <Route path="/circle/:id/enter" element={<FamilyTreeEnterPage />} />
           <Route path="/circle/:id/tree" element={<FamilyTreeCanvasPage />} />
+          <Route path="/circle/:id/record" element={<CircleRecordPage />} />
           <Route path="/family-trees/:id/enter" element={<FamilyTreeEnterPage />} />
           <Route path="/family-trees/:id/tree" element={<FamilyTreeCanvasPage />} />
+          <Route path="/family-trees/:id/record" element={<CircleRecordPage />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/tribute/:id?" element={<TributePage />} />
           <Route path="/events" element={<Events />} />
@@ -58,6 +63,7 @@ const App = () => (
           <Route path="/download" element={<Download />} />
           <Route path="/vault/explore" element={<VaultExplore />} />
           <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/memory/:token" element={<MemorySharePage />} />
           <Route path="/heritage" element={<HeritagePage />} />
           <Route path="/admin/*" element={<AdminApp />} />
           <Route path="/legacy" element={<LegacyLayout />}>

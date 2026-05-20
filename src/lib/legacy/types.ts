@@ -35,6 +35,7 @@ export interface LegacyRecording {
   prompt_category?: string | null;
   prompt_arc_position?: string | null;
   prompt_tags?: string[] | null;
+  share_token?: string | null;
 }
 
 export type RecordPhase = "prepare" | "recording" | "upload" | "tag" | "seal";
@@ -53,6 +54,17 @@ export interface FamilyPerson {
   relation_label: string | null;
   gender?: FamilyPersonGender | null;
   career_path?: string | null;
+  birthplace?: string | null;
+  education?: string | null;
+  languages?: string[] | null;
+  religion?: string | null;
+  bio?: string | null;
+  nickname?: string | null;
+  birth_year?: number | null;
+  /** 1 = eldest among siblings (same parent_id). Drives auto-layout sibling order. */
+  sibling_order?: number | null;
+  death_year?: number | null;
+  adinkra_id?: string | null;
   status: FamilyPersonStatus;
   user_id: string | null;
   member_id: string | null;
@@ -63,6 +75,23 @@ export interface FamilyPerson {
   created_by: string | null;
   created_at: string;
 }
+
+/** Profile fields editable from tree UI — patterns dataset building blocks. */
+export type FamilyPersonProfilePatch = Partial<{
+  display_name: string;
+  relation_label: string;
+  gender: FamilyPersonGender | null;
+  career_path: string | null;
+  birthplace: string | null;
+  education: string | null;
+  languages: string[] | null;
+  religion: string | null;
+  bio: string | null;
+  nickname: string | null;
+  birth_year: number | null;
+  sibling_order: number | null;
+  death_year: number | null;
+}>;
 
 export interface RecordingPersonLink {
   id: string;

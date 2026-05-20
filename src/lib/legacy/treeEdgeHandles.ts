@@ -6,7 +6,7 @@ export type TreeHandleIds = {
 };
 
 const NODE_W = 180;
-const NODE_H = 160;
+const NODE_H = 156;
 
 export function pickTreeEdgeHandles(
   sourcePos: { x: number; y: number },
@@ -22,12 +22,12 @@ export function pickTreeEdgeHandles(
   if (Math.abs(dx) >= Math.abs(dy)) {
     return dx >= 0
       ? { sourceHandle: "right", targetHandle: "left" }
-      : { sourceHandle: "left-s", targetHandle: "right-t" };
+      : { sourceHandle: "left", targetHandle: "right" };
   }
 
   return dy >= 0
     ? { sourceHandle: "bottom", targetHandle: "top" }
-    : { sourceHandle: "top-s", targetHandle: "bottom-t" };
+    : { sourceHandle: "top", targetHandle: "bottom" };
 }
 
 export function defaultTreeHandles(): TreeHandleIds {

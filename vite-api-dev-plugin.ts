@@ -12,8 +12,11 @@ const API_ROUTES: Record<string, string> = {
   "/api/circle/tree-person": "/api/circle/tree-person.ts",
   "/api/circle/tree-person-photo": "/api/circle/tree-person-photo.ts",
   "/api/circle/tree-person-duplicate": "/api/circle/tree-person-duplicate.ts",
+  "/api/circle/record-memory": "/api/circle/record-memory.ts",
   "/api/recovery-request": "/api/recovery-request.ts",
   "/api/heritage-inquiry": "/api/heritage-inquiry.ts",
+  "/api/memory/public": "/api/memory/public.ts",
+  "/api/circle/persona-chat": "/api/circle/persona-chat.ts",
 };
 
 function loadDevEnv() {

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { BeizaCircleMark } from "@/components/family-trees/BeizaCircleMark";
 import {
   CIRCLE_CARD_STAMP_IMAGE,
   getAdinkraById,
@@ -49,8 +50,13 @@ export function CircleCardVisual({ adinkraId, className }: CircleCardVisualProps
         style={{ background: CARD_GRADIENT }}
         aria-hidden
       />
+      <BeizaCircleMark
+        size={20}
+        className="pointer-events-none absolute left-3 top-3 z-[1] rounded-sm opacity-90"
+      />
+
       {adinkra ? (
-        <p className="pointer-events-none absolute bottom-2 right-2 z-[1] font-manrope text-[10px] font-normal italic text-[#555555]">
+        <p className="pointer-events-none absolute bottom-2 left-3 z-[1] font-manrope text-[10px] font-normal italic text-[#555555]">
           {adinkra.name}
         </p>
       ) : null}

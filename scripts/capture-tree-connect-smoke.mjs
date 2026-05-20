@@ -8,7 +8,8 @@ import { createClient } from "@supabase/supabase-js";
 import { chromium } from "playwright";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-const outDir = path.join(root, "docs", "progress-snapshots", "tree-connect-smoke");
+const stamp = process.env.SMOKE_OUT_DIR ?? "smoke-run-2026-05-19";
+const outDir = path.join(root, "docs", "progress-snapshots", stamp, "tree-connect");
 
 const env = Object.fromEntries(
   fs

@@ -8,7 +8,7 @@ import { createClient } from "@supabase/supabase-js";
 import { chromium } from "playwright";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-const stamp = new Date().toISOString().slice(0, 10);
+const stamp = process.env.SMOKE_OUT_DIR ?? new Date().toISOString().slice(0, 10);
 const outDir = path.join(root, "docs", "progress-snapshots", `full-smoke-${stamp}`);
 
 function loadEnv() {

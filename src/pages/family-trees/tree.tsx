@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import { FamilyTreeCircleView } from "@/components/family-trees/FamilyTreeCircleView";
 import { fetchCircleTreeData, type CircleTreePayload } from "@/hooks/useFamilyTreesDirectory";
 import { clearCircleToken, getStoredCircleToken } from "@/lib/circleAccess";
+import { BEIZA_TREE_UPDATED, type BeizaTreeUpdatedDetail } from "@/lib/legacy/personaEvents";
 import { useToast } from "@/hooks/use-toast";
 
 export default function FamilyTreeCanvasPage() {
@@ -35,6 +36,23 @@ export default function FamilyTreeCanvasPage() {
       })
       .finally(() => setLoading(false));
   }, [circleId, navigate]);
+
+  useEffect(() => {
+    if (!circleId) return;
+
+    const onTreeUpdated = (event: Event) => {
+      const detail = (event as CustomEvent<BeizaTreeUpdatedDetail>).detail;
+      if (detail?.circleId !== circleId) return;
+      const token = getStoredCircleToken(circleId);
+      if (!token) return;
+      void fetchCircleTreeData(circleId, token).then(setPayload).catch(() => {
+        /* keep current tree if refresh fails */
+      });
+    };
+
+    window.addEventListener(BEIZA_TREE_UPDATED, onTreeUpdated);
+    return () => window.removeEventListener(BEIZA_TREE_UPDATED, onTreeUpdated);
+  }, [circleId]);
 
   const copyCode = async () => {
     if (!payload?.circle.access_code) return;

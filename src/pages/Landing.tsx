@@ -12,7 +12,7 @@ import {
 import { useHeroLayoutStudio } from "@/components/dev/HeroLayoutStudio";
 import { heroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
-import { studioCssVars } from "@/components/dev/landingLayoutStudioState";
+import { saveStudioState, studioCssVars } from "@/components/dev/landingLayoutStudioState";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FullBleedHero } from "@/components/FullBleedHero";
 import { VoicesThatStayedSection } from "@/components/landing/VoicesThatStayedSection";
@@ -233,7 +233,15 @@ const Landing = () => {
               : undefined
           }
         >
-          <LegacyCurationPricing />
+          <LegacyCurationPricing
+            content={studio ? studioState.pricingContent : undefined}
+            editable={studio && focus === "pricing"}
+            onContentChange={(pricingContent) => {
+              const next = { ...studioState, pricingContent };
+              setStudioState(next);
+              saveStudioState(next);
+            }}
+          />
         </div>
         ) : null}
 

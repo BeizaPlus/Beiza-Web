@@ -11,7 +11,7 @@ type Body = {
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "OPTIONS") {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "POST, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "POST, PATCH, DELETE, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
     return res.status(200).end();
   }
@@ -45,6 +45,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     res.setHeader("Access-Control-Allow-Origin", "*");
     return res.status(200).json({ ok: true });
+  }
+
+  if (req.method === "PATCH") {
+    const body = (typeof req.body === "string" ? JSON.parse(req.body) : req.body) as Body & {
+      edge_id?: string;
+    };
+    const patchCircleId = body.circle_id?.trim();
+    const edgeId = body.edge_id?.trim();
+    const relationshipType = body.relationship_type?.trim();
+
+    if (!patchCircleId || !edgeId || !relationshipType) {
+      return res.status(400).json({ error: "circle_id, edge_id, and relationship_type are required." });
+    }
+
+    const session = await verifyCircleSession(req, patchCircleId);
+    if (!session.ok) {
+      return res.status(session.status).json({ error: session.error });
+    }
+
+    const { data: edge, error } = await session.supabase
+      .from("tree_edges")
+      .update({ relationship_type: relationshipType })
+      .eq("id", edgeId)
+      .eq("circle_id", patchCircleId)
+      .select()
+      .single();
+
+    if (error) {
+      return res.status(500).json({ error: error.message });
+    }
+
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    return res.status(200).json({ edge });
   }
 
   if (req.method !== "POST") {

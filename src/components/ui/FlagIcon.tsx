@@ -17,10 +17,15 @@ export function FlagIcon({ country, size = 20, className }: FlagIconProps) {
         aria-label="Ghana flag"
         className={className}
       >
-        <rect width="30" height="6.67" y="0" fill="#006B3F" />
-        <rect width="30" height="6.67" y="6.67" fill="#FCD116" />
-        <rect width="30" height="6.67" y="13.33" fill="#CE1126" />
-        <polygon points="15,7.5 16.5,12 12,9 18,9 13.5,12" fill="#000000" />
+        {/* Red top, Gold middle, Green bottom */}
+        <rect width="30" height="6.67" y="0"     fill="#CE1126" />
+        <rect width="30" height="6.67" y="6.67"  fill="#FCD116" />
+        <rect width="30" height="6.67" y="13.33" fill="#006B3F" />
+        {/* Black 5-pointed star centred in the gold band */}
+        <polygon
+          points="15,7 15.71,9.03 17.85,9.07 16.14,10.37 16.76,12.43 15,11.2 13.24,12.43 13.86,10.37 12.15,9.07 14.29,9.03"
+          fill="#000000"
+        />
       </svg>
     ),
 

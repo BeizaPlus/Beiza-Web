@@ -8,6 +8,16 @@ type Body = {
   relation_label?: string;
   gender?: string | null;
   career_path?: string | null;
+  birthplace?: string | null;
+  education?: string | null;
+  languages?: string[] | null;
+  religion?: string | null;
+  bio?: string | null;
+  nickname?: string | null;
+  birth_year?: number | null;
+  sibling_order?: number | null;
+  death_year?: number | null;
+  is_tree_anchor?: boolean;
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -30,7 +40,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: "circle_id and person_id are required." });
   }
 
-  const update: Record<string, string | null> = {};
+  const update: Record<string, unknown> = {};
 
   if (body.display_name !== undefined) {
     const displayName = body.display_name.trim();
@@ -53,8 +63,52 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (body.career_path !== undefined) {
-    const career = body.career_path === null ? null : body.career_path.trim();
-    update.career_path = career || null;
+    update.career_path = body.career_path === null ? null : body.career_path.trim() || null;
+  }
+
+  if (body.birthplace !== undefined) {
+    update.birthplace = body.birthplace === null ? null : body.birthplace.trim() || null;
+  }
+
+  if (body.education !== undefined) {
+    update.education = body.education === null ? null : body.education.trim() || null;
+  }
+
+  if (body.languages !== undefined) {
+    update.languages =
+      body.languages === null || body.languages.length === 0 ? null : body.languages;
+  }
+
+  if (body.religion !== undefined) {
+    update.religion = body.religion === null ? null : body.religion.trim() || null;
+  }
+
+  if (body.bio !== undefined) {
+    update.bio = body.bio === null ? null : body.bio.trim() || null;
+  }
+
+  if (body.nickname !== undefined) {
+    update.nickname = body.nickname === null ? null : body.nickname.trim() || null;
+  }
+
+  if (body.birth_year !== undefined) {
+    update.birth_year = body.birth_year;
+  }
+
+  if (body.sibling_order !== undefined) {
+    const order = body.sibling_order;
+    if (order !== null && (!Number.isInteger(order) || order < 1)) {
+      return res.status(400).json({ error: "sibling_order must be a positive integer or null." });
+    }
+    update.sibling_order = order;
+  }
+
+  if (body.death_year !== undefined) {
+    update.death_year = body.death_year;
+  }
+
+  if (body.is_tree_anchor === true) {
+    update.is_tree_anchor = true;
   }
 
   if (Object.keys(update).length === 0) {
@@ -66,12 +120,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(session.status).json({ error: session.error });
   }
 
+  if (body.is_tree_anchor === true) {
+    await session.supabase
+      .from("family_people")
+      .update({ is_tree_anchor: false })
+      .eq("circle_id", circleId);
+  }
+
   const { data: person, error } = await session.supabase
     .from("family_people")
     .update(update)
     .eq("id", personId)
     .eq("circle_id", circleId)
-    .select("id, display_name, relation_label, gender, career_path, photo_url")
+    .select("*")
     .single();
 
   if (error) {

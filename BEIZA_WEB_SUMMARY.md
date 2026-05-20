@@ -94,33 +94,82 @@ Fields: deceased name/contact, requester relation/email, optional document, mess
 
 ## Family tree (data & UI)
 
+### Schema
 **Tree nodes:** `family_people` (self-referential `parent_id`) — not a separate `tree_nodes` table.  
-**Person fields:** `gender?: "male" | "female" | null`, `career_path?: string | null` on `family_people`; read via `GET /api/circle/tree-data` (`SELECT *`) — no read API changes. Migration: `20260519T200000_family_people_gender_career.sql`. Writes via `tree-person` when edit UI is added.  
-**Tree edges:** `tree_edges` table — persists person-to-person connections with `relationship_type`.  
-**Links:** `recording_person_links` (`about` | `by`).  
-**Biography:** `get_person_biography()` RPC (fragments from recordings).  
-**Canvas positions:** `family_people.canvas_x / canvas_y` — saved on drag-stop. New nodes: `getViewport()` + `screenToFlowPosition()` at viewport centre (not `(0,0)`).  
-**Person photos:** `POST /api/circle/tree-person-photo` uploads to `family-people-photos` and sets `photo_url` in one request.  
-**Person profile:** `PATCH /api/circle/tree-person` supports `gender`, `career_path`, name, role. Right-click node → gender, career, photo, duplicate.
+**Person fields on `family_people`:** `gender`, `career_path`, `nickname`, `birth_year`, `birth_date`, `death_year`, `birthplace`, `religion`, `education`, `languages`, `short_bio` — all nullable. Added via migrations `20260519T200000`, `20260521T100000`, `20260522T200000`.  
+**Tree edges:** `tree_edges` (circle_id, source_person_id, target_person_id, relationship_type). Unique pair constraint per circle.  
+**Health:** `person_health_conditions` (circle_id, person_id, category, condition, age_of_onset, still_active). Categories: cardiovascular, metabolic, neurological, mental_health, cancer, autoimmune, respiratory, musculoskeletal, hereditary, addiction, other. Migration: `20260522T100000`.  
+**Traits:** `person_traits` (circle_id, person_id, category, trait). Categories: physical, personality, skills, known_for. Migration: `20260521T110000`.  
+**Canvas positions:** `family_people.canvas_x / canvas_y` — saved on drag-stop. New nodes placed at viewport centre via `getViewport()`.  
+**Links:** `recording_person_links` (about | by).  
+**Health questions:** `health_question_log` — weekly question cadence tracking.
 
-**UI:** `FamilyTreeCanvas` (`@xyflow/react` v12), `PersonFlowNode` (8 handles, 4 sides), `PersonBiographyPanel`, `RelationshipPickerModal`, `TreeEdgeContextMenu`.  
-**Record flow:** “Who is this memory about?” on seal links person to recording.
+### Node types (canvas)
+- `person` — default square card (PersonFlowNode)
+- `circlePerson` — circular photo node (CirclePersonFlowNode)  
+- `squarePerson` — square variant (SquarePersonFlowNode)
+- `memory` — audio memory linked to person
+- `group` — GroupFlowNode wraps selected nodes (G key or BoxSelect toolbar)
 
-**Edge connection flow:**
-1. Drag from any gold handle → blue connection line appears
-2. Release on target node handle → `onConnect` fires (uses `getNodes()` for live state — stale-closure fix)
-3. `RelationshipPickerModal` opens → user picks type → `confirmConnection` calls `saveTreeEdge`
-4. API path (`persistViaApi=true`): `POST /api/circle/tree-edge` → inserts to `tree_edges` via service role key
-5. Right-click an edge → `TreeEdgeContextMenu` → `DELETE /api/circle/tree-edge`
-6. Edges reload on mount via `fetchTreeEdges` (called in `useEffect` on `circleId` change)
+### API routes (`api/circle/`)
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `tree-data` | GET | All people, edges, traits, health, recordings for a circle |
+| `tree-edge` | POST/DELETE | Create or remove a tree edge |
+| `tree-edge-disconnect` | DELETE | Remove all edges for a person |
+| `tree-person` | PATCH/POST | Update or create a family_people row |
+| `tree-person-photo` | POST | Upload photo → Storage → set photo_url |
+| `tree-person-duplicate` | POST | Clone a person node with offset position |
+| `tree-position` | PATCH | Save canvas_x/y for a person |
+| `persona-chat` | POST | AI tree guide + chat (Ollama local / Claude prod) |
+| `record-memory` | POST | Upload audio + link to person (bearer-token path) |
+| `health-patterns` | POST | AI pattern analysis across circle health data |
 
-**Key files:**
-- `src/components/legacy/family-tree/FamilyTreeCanvas.tsx` — main canvas, connection logic
-- `src/components/legacy/family-tree/flow/PersonFlowNode.tsx` — handles outside content div (no overflow clipping)
-- `src/lib/legacy/treeCanvasPersistence.ts` — Supabase + API I/O for edges and positions
-- `src/lib/legacy/treeEdgeHandles.ts` — picks source/target handle IDs based on relative node position
-- `api/circle/tree-edge.ts` — POST (create) + DELETE (remove) edge via bearer token
-- `supabase/migrations/20260519T180000_tree_edges_canvas_positions.sql` — `tree_edges` table + RLS
+### Edge connection flow
+1. Drag from gold handle (40px hit area, 10px visible dot) → connection line
+2. `inferConnectionDirection()` reads source handle + position delta → direction
+3. `labelToRole()` reads source/target `relation_label` → role
+4. `inferRelationshipType(sourceRole, targetRole, direction)`:
+   - HIGH confidence (both roles match) → auto-save, skip modal, toast
+   - MEDIUM (one role) → modal opens with type pre-selected
+   - NONE → modal, direction-based priority pills shown first
+5. `confirmConnection()` → `saveTreeEdge()` → API or Supabase
+6. Right-click edge → `TreeEdgeContextMenu` → delete
+7. Right-click node → `TreeNodeContextMenu` → disconnect all / duplicate / gender / career / photo
+
+### Canvas features
+- **Auto-layout:** dagre TB (vertical) or LR (horizontal) via toolbar — saves positions to DB
+- **Grouping:** G key or toolbar BoxSelect — wraps selected nodes in a group node; double-click to ungroup
+- **Edge style toggle:** orthogonal (smoothstep) ↔ curved (bezier) via toolbar
+- **Flicker fix:** `prevNodeSnapshotRef` guards `setNodes` from running on every render; `positionOverrides` as plain object not Map
+- **fitView:** fires once via `hasFittedRef` after first person nodes appear
+- **Leader:** `TREE_LEADER_PIN` centres auto-layout on the tree leader node
+- **Inline recorder:** `InlineMemoryRecorder` in PersonNodePanel → records audio → `POST /api/circle/record-memory` → linked to person
+- **Voice input:** `VoiceInputButton` (WebSpeech API) in tree guide chat
+- **Tree guide:** `PersonaChat` → `POST /api/circle/persona-chat` → Ollama (local) or Claude (prod). Defaults to Ollama when no `ANTHROPIC_API_KEY`. Builds tree via tool calls.
+
+### PersonNodePanel tabs
+Profile · Health · Memories · Traits · Talk · Patterns  
+- **Profile:** inline-edit all person fields, autosave on blur with “Saved ✓” flash  
+- **Health:** toggle conditions per category, age_of_onset inline  
+- **Memories:** recordings list + `InlineMemoryRecorder` (no page nav needed)  
+- **Traits:** physical / personality / skills / known_for tag pills  
+- **Talk:** AI chat with the person using their recordings as context  
+- **Patterns:** locked until 3+ members have health data; unlocks AI pattern analysis
+
+### AI providers
+- `VITE_AI_PROVIDER=ollama` (default when no Anthropic key) → `OLLAMA_BASE_URL:11434`, `OLLAMA_MODEL=llama3.2`
+- `VITE_AI_PROVIDER=anthropic` + `ANTHROPIC_API_KEY` → Claude Opus 4.7 (production)
+- Auto-fallback: if provider=anthropic but key missing → falls back to Ollama silently
+
+### Key files
+- `src/components/legacy/family-tree/FamilyTreeCanvas.tsx` — main canvas
+- `src/lib/legacy/treeConnectionInference.ts` — direction + label → relationship inference
+- `src/lib/legacy/autoLayoutTree.ts` — dagre layout (TB/LR) with leader pinning
+- `src/lib/legacy/layoutGroupNodes.ts` — group/ungroup logic
+- `src/lib/legacy/treeCanvasPersistence.ts` — all Supabase + API I/O
+- `api/lib/personaAgent.ts` — AI agentic loop (Anthropic + Ollama paths)
+- `api/lib/personaTools.ts` — add_person, connect_people, update_person, add_health_condition
 
 ---
 
@@ -178,6 +227,12 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 - Delete upsell → Keeper → `/pricing`
 - Dev tier: `VITE_LEGACY_TIER=keeper|heritage`
 - Bottom nav: Home · Tree · Record · Vault · Invite (legacy shell; marketing nav is separate)
+
+### AI persona (planned / API routes)
+
+- **`VITE_AI_PROVIDER`** — server env only (`process.env` in `/api/*`); `vercelApiDevPlugin` injects `.env` for local dev. Not available in client bundles.
+- **Local:** `ollama serve` + `ollama pull llama3.2`
+- **Persona context:** System prompt quality matters most. Recordings linked **`by`** the person (their own voice prompts) are the persona foundation; use those before `about` memories from others.
 
 ---
 

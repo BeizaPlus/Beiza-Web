@@ -43,7 +43,7 @@ export function PersonNodeEditMenu({ personId, name, relation, onSave }: PersonN
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="nodrag nopan absolute right-1.5 top-1.5 z-10 flex h-7 w-7 items-center justify-center rounded-md bg-[#0a0a0a]/80 text-[#E6A817] hover:bg-[#1a1a1a]"
+          className="node-relation-chevron nodrag nopan absolute right-1.5 top-1.5 z-10 flex h-7 w-7 items-center justify-center rounded-md bg-[#0a0a0a]/80 text-[#E6A817] hover:bg-[#1a1a1a]"
           aria-label="Edit name and role"
           onClick={(e) => e.stopPropagation()}
         >
@@ -51,7 +51,7 @@ export function PersonNodeEditMenu({ personId, name, relation, onSave }: PersonN
         </button>
       </PopoverTrigger>
       <PopoverContent
-        className="nodrag nopan z-[100] w-52 border-[#1e1e1e] bg-[#111111] p-3 text-white shadow-xl"
+        className="tree-chrome nodrag nopan z-[100] w-52 border-[#1e1e1e] bg-[#111111] p-3 text-white shadow-xl"
         align="end"
         side="bottom"
         onClick={(e) => e.stopPropagation()}

@@ -9,6 +9,7 @@ import type {
 } from "@/lib/legacy/types";
 import { linkRecordingToPeople } from "@/hooks/useFamilyTree";
 import { extensionForMime, FREE_VAULT_STORAGE_BYTES } from "@/lib/legacy/audioRecording";
+import { generateShareToken } from "@/lib/legacy/shareUrl";
 import type { StoryPrompt } from "@/lib/prompts";
 
 const LEGACY_BUCKET = "legacy-recordings";
@@ -162,6 +163,11 @@ export function useJoinLegacyCircle() {
   });
 }
 
+/**
+ * Legacy shell only — requires `supabase.auth.getUser()` (logged-in legacy user).
+ * Public `/circle/:id/tree` uses `saveRecordedMemory({ persistViaApi: true })` →
+ * `POST /api/circle/record-memory` with the circle bearer token instead.
+ */
 export async function uploadLegacyRecording(params: {
   circleId: string;
   prompt: StoryPrompt;
@@ -245,6 +251,27 @@ export function useUpdateLegacyRecordingTitle() {
       void queryClient.invalidateQueries({ queryKey: ["legacy", "recordings"] });
     },
   });
+}
+
+/** Ensure a public share token exists; returns token for link copy. */
+export async function ensureRecordingShareToken(recordingId: string): Promise<string> {
+  const { data: existing, error: readError } = await supabase!
+    .from("recordings")
+    .select("share_token")
+    .eq("id", recordingId)
+    .single();
+  if (readError) throw readError;
+  if (existing?.share_token) return existing.share_token as string;
+
+  const shareToken = generateShareToken();
+  const { data, error } = await supabase!
+    .from("recordings")
+    .update({ share_token: shareToken })
+    .eq("id", recordingId)
+    .select("share_token")
+    .single();
+  if (error) throw error;
+  return (data?.share_token as string) ?? shareToken;
 }
 
 export function useDeleteLegacyRecording() {

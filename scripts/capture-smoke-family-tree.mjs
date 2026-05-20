@@ -9,7 +9,8 @@ import { createClient } from "@supabase/supabase-js";
 import { chromium } from "playwright";
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
-const outDir = path.join(root, "docs", "progress-snapshots", "smoke-family-tree");
+const stamp = process.env.SMOKE_OUT_DIR ?? "smoke-run-2026-05-19";
+const outDir = path.join(root, "docs", "progress-snapshots", stamp);
 
 function loadEnv() {
   return Object.fromEntries(
@@ -141,18 +142,70 @@ async function main() {
   await page.waitForTimeout(600);
   await shot("01-circle-directory.png");
 
-  await page.goto(`${base}/circle/${circle.id}/enter`, { waitUntil: "networkidle" });
-  await shot("02-access-gate.png");
+  await page.evaluate(() => {
+    for (const key of Object.keys(localStorage)) {
+      if (key.startsWith("beiza_circle_")) localStorage.removeItem(key);
+    }
+  });
 
-  await page.locator('input[aria-label="Access code"]').fill(circle.access_code);
-  await shot("03-access-gate-code-filled.png");
+  await page.goto(`${base}/circle/${circle.id}/enter`, { waitUntil: "domcontentloaded", timeout: 60000 });
+  const codeInput = page.locator('input[aria-label="Access code"]');
+  const gateVisible = await codeInput
+    .waitFor({ state: "visible", timeout: 15000 })
+    .then(() => true)
+    .catch(() => false);
 
-  await page.getByRole("button", { name: /Enter circle/i }).click();
-  await page.waitForURL(/\/tree/, { timeout: 15000 });
+  if (gateVisible) {
+    await shot("02-access-gate.png");
+    await codeInput.fill(circle.access_code);
+    await shot("03-access-gate-code-filled.png");
+    await page.getByRole("button", { name: /Enter circle/i }).click();
+    await page.waitForURL(/\/tree/, { timeout: 15000 });
+  } else {
+    console.log("  (access gate skipped — using session token for tree)");
+    await page.evaluate(
+      ({ circleId, token }) => {
+        localStorage.setItem(`beiza_circle_${circleId}_token`, token);
+      },
+      { circleId: circle.id, token: sessionToken },
+    );
+    await page.goto(`${base}/circle/${circle.id}/tree`, { waitUntil: "domcontentloaded", timeout: 60000 });
+  }
+
+  await page.waitForSelector(".react-flow, .family-tree-flow", { timeout: 30000 });
   await page.waitForTimeout(3500);
   const treeShot = path.join(outDir, "04-family-tree-canvas.png");
   await page.screenshot({ path: treeShot, fullPage: false });
   console.log("  Saved 04-family-tree-canvas.png");
+
+  const firstNode = page.locator(".react-flow__node").first();
+  await firstNode.click({ force: true });
+  await page.waitForTimeout(1200);
+  await page.screenshot({
+    path: path.join(outDir, "04b-tree-node-selected.png"),
+    fullPage: false,
+  });
+  console.log("  Saved 04b-tree-node-selected.png");
+
+  const panelAside = page.locator("aside.fixed.inset-y-0.right-0");
+  await panelAside.waitFor({ state: "visible", timeout: 10000 }).catch(() => null);
+  await page.waitForTimeout(800);
+  await page.screenshot({
+    path: path.join(outDir, "04c-person-side-panel.png"),
+    fullPage: false,
+  });
+  console.log("  Saved 04c-person-side-panel.png");
+
+  const memoriesSection = page.getByText(/Their story/i);
+  if (await memoriesSection.isVisible().catch(() => false)) {
+    await memoriesSection.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(500);
+    await page.screenshot({
+      path: path.join(outDir, "04d-panel-memories-section.png"),
+      fullPage: false,
+    });
+    console.log("  Saved 04d-panel-memories-section.png");
+  }
 
   // /circle/:id/tree needs Vercel API locally; use /legacy/circle with auth for tree UI
   const ts = Date.now();
@@ -249,6 +302,9 @@ Captured: ${new Date().toISOString()}
 | 02-access-gate.png | Private circle gate |
 | 03-access-gate-code-filled.png | Code filled |
 | 04-family-tree-canvas.png | After Enter — public /circle/.../tree |
+| 04b-tree-node-selected.png | Node selected on canvas |
+| 04c-person-side-panel.png | Full profile side panel |
+| 04d-panel-memories-section.png | Panel memories section (no infinite loading) |
 | 05-legacy-family-tree.png | Tree canvas via /legacy/circle (signed in) |
 | 06-legacy-family-tree-mobile.png | Mobile tree view |
 

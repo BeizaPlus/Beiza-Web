@@ -1,3 +1,9 @@
+import {
+  DEFAULT_PRICING_CONTENT,
+  mergePricingContent,
+  type PricingSectionContent,
+} from "@/lib/landingPricingContent";
+
 export type StudioFocus = "hero" | "heritageHero" | "offerings" | "faq" | "pricing" | "outro";
 
 export type LandingLayoutStudioState = {
@@ -7,6 +13,7 @@ export type LandingLayoutStudioState = {
   faq: { offsetY: number; paddingTop: number };
   pricing: { offsetY: number; paddingTop: number };
   outro: { offsetY: number; paddingTop: number };
+  pricingContent: PricingSectionContent;
 };
 
 /** Canonical homepage layout — exported from Layout Studio 2026-05-19. */
@@ -17,9 +24,10 @@ export const DEFAULT_STUDIO_STATE: LandingLayoutStudioState = {
   faq: { offsetY: -48, paddingTop: 72 },
   pricing: { offsetY: 0, paddingTop: 96 },
   outro: { offsetY: 0, paddingTop: 96 },
+  pricingContent: DEFAULT_PRICING_CONTENT,
 };
 
-const STORAGE_KEY = "beiza-landing-layout-studio-v2";
+const STORAGE_KEY = "beiza-landing-layout-studio-v3";
 
 export function mergeStudioState(partial: Partial<LandingLayoutStudioState>): LandingLayoutStudioState {
   return {
@@ -30,6 +38,7 @@ export function mergeStudioState(partial: Partial<LandingLayoutStudioState>): La
     faq: { ...DEFAULT_STUDIO_STATE.faq, ...partial.faq },
     pricing: { ...DEFAULT_STUDIO_STATE.pricing, ...partial.pricing },
     outro: { ...DEFAULT_STUDIO_STATE.outro, ...partial.outro },
+    pricingContent: mergePricingContent(partial.pricingContent),
   };
 }
 

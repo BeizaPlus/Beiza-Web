@@ -46,15 +46,26 @@ export function countMemoriesForPerson(
   return links.filter((l) => l.person_id === personId).length;
 }
 
-/** Pick tree root: manual anchor → most memories about → first gone → first person */
+function isKeeperRelationLabel(relation: string | null | undefined) {
+  const r = (relation ?? "").trim().toUpperCase();
+  return r === "KEEPER" || r === "SELF" || r === "ME";
+}
+
+/**
+ * Leader id for layout — same priority as {@link resolveTreeLeader} in treeLeader.ts.
+ * @see resolveTreeLeader when you need the reason shown in UI.
+ */
 export function resolveTreeAnchor(
   people: FamilyPerson[],
   aboutCounts: Map<string, number>,
 ): string | null {
   if (people.length === 0) return null;
 
-  const anchor = people.find((p) => p.is_tree_anchor);
-  if (anchor) return anchor.id;
+  const pinned = people.find((p) => p.is_tree_anchor);
+  if (pinned) return pinned.id;
+
+  const keeper = people.find((p) => isKeeperRelationLabel(p.relation_label));
+  if (keeper) return keeper.id;
 
   let bestId: string | null = null;
   let bestCount = -1;
@@ -70,7 +81,10 @@ export function resolveTreeAnchor(
   const gone = people.find((p) => p.status === "gone");
   if (gone) return gone.id;
 
-  return people[0]?.id ?? null;
+  const byCreated = [...people].sort(
+    (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+  );
+  return byCreated[0]?.id ?? null;
 }
 
 export function buildTreeData(

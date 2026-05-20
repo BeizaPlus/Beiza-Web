@@ -68,6 +68,11 @@ export default function FamilyTreesDirectoryPage() {
                       <div className="flex items-start justify-between gap-2">
                         <h2 className="font-manrope text-lg font-semibold text-white group-hover:text-primary">
                           {circle.name}
+                          {circle.branch ? (
+                            <span className="ml-1.5 font-manrope text-sm font-normal text-[#E6A817]/70">
+                              · {circle.branch}
+                            </span>
+                          ) : null}
                         </h2>
                         {isYours ? (
                           <span className="shrink-0 rounded-full border border-primary/40 bg-primary/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-primary">

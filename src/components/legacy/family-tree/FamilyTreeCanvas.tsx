@@ -20,8 +20,21 @@ import { buildFreeformTreeFlow, treeEdgesToFlowEdges } from "@/lib/legacy/buildF
 import type { FamilyTreeNodeData } from "@/lib/legacy/familyTreeFlow";
 import { filterValidTreeEdges, filterValidTreeNodes } from "@/lib/legacy/filterTreeNodes";
 import { PersonFlowNode } from "@/components/legacy/family-tree/flow/PersonFlowNode";
+import { CirclePersonFlowNode } from "@/components/legacy/family-tree/flow/CirclePersonFlowNode";
+import { SquarePersonFlowNode } from "@/components/legacy/family-tree/flow/SquarePersonFlowNode";
 import { MemoryFlowNode } from "@/components/legacy/family-tree/flow/MemoryFlowNode";
+import { TreeAltDragHint } from "@/components/legacy/family-tree/TreeAltDragHint";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { TreeFlowControls } from "@/components/legacy/family-tree/TreeFlowControls";
+import { useTreeTheme } from "@/components/legacy/family-tree/TreeThemeProvider";
 import { RelationshipPickerModal } from "@/components/legacy/family-tree/RelationshipPickerModal";
 import { TreeEdgeContextMenu } from "@/components/legacy/family-tree/TreeEdgeContextMenu";
 import { TreeNodeContextMenu } from "@/components/legacy/family-tree/TreeNodeContextMenu";
@@ -37,6 +50,7 @@ import {
   ungroupNodes,
   type TreeGroupState,
 } from "@/lib/legacy/layoutGroupNodes";
+import { autoLayoutTree, type LayoutDirection } from "@/lib/legacy/autoLayoutTree";
 import { usePortraitPool, portraitForPerson } from "@/hooks/usePortraitPool";
 import { TREE_HEADER_HEIGHT } from "@/components/family-trees/TreeAppShell";
 import { useToast } from "@/hooks/use-toast";
@@ -50,7 +64,12 @@ import {
   savePersonPhoto,
   savePersonProfile,
   saveTreeEdge,
+  setTreeLeader,
+  updateTreeEdge,
 } from "@/lib/legacy/treeCanvasPersistence";
+import { planEdgeUpdatesForRelationChange } from "@/lib/legacy/relationshipSync";
+import { computeLeaderCenteredPositions } from "@/lib/legacy/leaderCenteredLayout";
+import { resolveTreeLeader } from "@/lib/legacy/treeLeader";
 import type { FamilyPersonGender } from "@/lib/legacy/types";
 import {
   formatRelationship,
@@ -58,11 +77,21 @@ import {
   type RelationshipType,
   type TreeEdgeRow,
 } from "@/lib/legacy/treeRelationships";
+import {
+  inferConnectionDirection,
+  relationshipChoicesForDirection,
+  type ConnectionDirection,
+  type InferredRelationshipChoice,
+} from "@/lib/legacy/treeConnectionInference";
 
 const nodeTypes = {
   person: PersonFlowNode,
+  circlePerson: CirclePersonFlowNode,
+  squarePerson: SquarePersonFlowNode,
   memory: MemoryFlowNode,
 };
+
+const PERSON_NODE_TYPES = new Set(["person", "circlePerson", "squarePerson"]);
 
 type FamilyTreeCanvasProps = {
   people: FamilyPerson[];
@@ -77,10 +106,15 @@ type FamilyTreeCanvasProps = {
   fullscreen?: boolean;
   onFullscreenChange?: (active: boolean) => void;
   onPeopleChange?: (people: FamilyPerson[]) => void;
+  onTreeEdgesChange?: (edges: TreeEdgeRow[]) => void;
 };
 
 function isPersonNode(node: Node<FamilyTreeNodeData> | undefined) {
   return node?.data.kind === "person";
+}
+
+function isPersonFlowNodeType(type: string | undefined) {
+  return type !== undefined && PERSON_NODE_TYPES.has(type);
 }
 
 function FamilyTreeCanvasInner({
@@ -96,14 +130,21 @@ function FamilyTreeCanvasInner({
   fullscreen = false,
   onFullscreenChange,
   onPeopleChange,
+  onTreeEdgesChange,
 }: FamilyTreeCanvasProps) {
   const { fitView, getNodes, screenToFlowPosition } = useReactFlow();
+  const { isLight } = useTreeTheme();
   const { toast } = useToast();
   const [treeEdgeRows, setTreeEdgeRows] = useState<TreeEdgeRow[]>(initialTreeEdges);
   const [positionOverrides, setPositionOverrides] = useState<Map<string, { x: number; y: number }>>(
     () => new Map(),
   );
   const [pendingConnection, setPendingConnection] = useState<Connection | null>(null);
+  const [connectionDirection, setConnectionDirection] = useState<ConnectionDirection | null>(null);
+  const [inferredChoices, setInferredChoices] = useState<InferredRelationshipChoice[] | null>(
+    null,
+  );
+  const [isConnecting, setIsConnecting] = useState(false);
   const [showRelationshipPicker, setShowRelationshipPicker] = useState(false);
   const [edgeContextMenu, setEdgeContextMenu] = useState<{ x: number; y: number; edgeId: string } | null>(
     null,
@@ -111,19 +152,24 @@ function FamilyTreeCanvasInner({
   const [nodeContextMenu, setNodeContextMenu] = useState<{ x: number; y: number; personId: string } | null>(
     null,
   );
-  type PersonEdit = {
-    display_name?: string;
-    relation_label?: string;
-    gender?: FamilyPersonGender | null;
-    career_path?: string | null;
-    photo_url?: string | null;
+  const [editingEdge, setEditingEdge] = useState<TreeEdgeRow | null>(null);
+  type PersonEdit = Partial<FamilyPerson> & {
+    displayName?: string;
+    relationLabel?: string;
+    careerPath?: string | null;
   };
   const [personEdits, setPersonEdits] = useState<Map<string, PersonEdit>>(() => new Map());
+  const [pendingDisconnectPersonId, setPendingDisconnectPersonId] = useState<string | null>(null);
   const groupStateRef = useRef<TreeGroupState>(emptyTreeGroupState());
+  const hasFittedRef  = useRef(false);
 
   useEffect(() => {
     setTreeEdgeRows(initialTreeEdges);
   }, [initialTreeEdges]);
+
+  useEffect(() => {
+    onTreeEdgesChange?.(treeEdgeRows);
+  }, [treeEdgeRows, onTreeEdgesChange]);
 
   useEffect(() => {
     if (!circleId) return;
@@ -144,10 +190,19 @@ function FamilyTreeCanvasInner({
         const edit = personEdits.get(p.id);
         return {
           ...p,
-          display_name: edit?.display_name ?? p.display_name,
-          relation_label: edit?.relation_label ?? p.relation_label,
-          gender: edit?.gender !== undefined ? edit.gender : p.gender,
-          career_path: edit?.career_path !== undefined ? edit.career_path : p.career_path,
+          ...edit,
+          display_name: p.display_name ?? edit?.display_name ?? edit?.displayName,
+          relation_label: p.relation_label ?? edit?.relation_label ?? edit?.relationLabel,
+          career_path: p.career_path ?? edit?.career_path ?? edit?.careerPath,
+          gender: p.gender ?? edit?.gender,
+          birthplace: p.birthplace ?? edit?.birthplace,
+          education: p.education ?? edit?.education,
+          languages: p.languages ?? edit?.languages,
+          religion: p.religion ?? edit?.religion,
+          bio: p.bio ?? edit?.bio,
+          nickname: p.nickname ?? edit?.nickname,
+          birth_year: p.birth_year ?? edit?.birth_year,
+          death_year: p.death_year ?? edit?.death_year,
           photo_url:
             edit?.photo_url ??
             portraitForPerson(p.id, p.photo_url, portraitPool) ??
@@ -158,6 +213,12 @@ function FamilyTreeCanvasInner({
       }),
     [people, portraitPool, positionOverrides, personEdits],
   );
+
+  const treeLeader = useMemo(
+    () => resolveTreeLeader(peopleWithPortraits, links),
+    [peopleWithPortraits, links],
+  );
+  const treeLeaderId = treeLeader?.personId ?? null;
 
   const flowSnapshot = useMemo(() => {
     const built = buildFreeformTreeFlow({
@@ -180,23 +241,97 @@ function FamilyTreeCanvasInner({
 
   const applyPersonPatch = useCallback(
     (personId: string, patch: PersonEdit) => {
+      const normalized: PersonEdit = {
+        ...patch,
+        display_name: patch.display_name ?? patch.displayName,
+        relation_label: patch.relation_label ?? patch.relationLabel,
+        career_path: patch.career_path ?? patch.careerPath,
+      };
       setPersonEdits((prev) => {
         const next = new Map(prev);
-        next.set(personId, { ...prev.get(personId), ...patch });
+        next.set(personId, { ...prev.get(personId), ...normalized });
         return next;
       });
       if (onPeopleChange) {
         onPeopleChange(
-          people.map((p) => (p.id === personId ? { ...p, ...patch } : p)),
+          people.map((p) => (p.id === personId ? { ...p, ...normalized } : p)),
         );
       }
     },
     [onPeopleChange, people],
   );
 
+  const runDuplicatePerson = useCallback(
+    async (personId: string, offsetX: number, offsetY: number) => {
+      if (!circleId) return;
+      const source = peopleWithPortraits.find((p) => p.id === personId);
+      if (!source) return;
+
+      const baseX = source.canvas_x ?? 0;
+      const baseY = source.canvas_y ?? 0;
+
+      try {
+        const created = await duplicateFamilyPerson({
+          circleId,
+          personId,
+          canvasX: baseX + offsetX,
+          canvasY: baseY + offsetY,
+          appendCopySuffix: true,
+          useApi: persistViaApi,
+        });
+        if (onPeopleChange) {
+          onPeopleChange([...people, created]);
+        }
+        toast({ title: "Person duplicated" });
+      } catch {
+        toast({ title: "Could not duplicate", variant: "destructive" });
+      }
+    },
+    [circleId, people, peopleWithPortraits, persistViaApi, onPeopleChange, toast],
+  );
+
+  const applyEdgeUpdates = useCallback(
+    async (updates: { edgeId: string; relationship_type: RelationshipType }[]) => {
+      if (!circleId || updates.length === 0) return;
+      const rowsById = new Map(treeEdgeRows.map((r) => [r.id, r]));
+      for (const u of updates) {
+        const row = await updateTreeEdge({
+          circleId,
+          edgeId: u.edgeId,
+          relationshipType: u.relationship_type,
+          useApi: persistViaApi,
+        });
+        rowsById.set(row.id, row);
+      }
+      setTreeEdgeRows(Array.from(rowsById.values()));
+      toast({
+        title: "Connections updated",
+        description:
+          updates.length === 1
+            ? formatRelationship(updates[0]!.relationship_type)
+            : `${updates.length} relationship lines updated`,
+      });
+    },
+    [circleId, persistViaApi, treeEdgeRows, toast],
+  );
+
+  const syncEdgesForRelationChange = useCallback(
+    async (personId: string, newRelationLabel: string) => {
+      const updates = planEdgeUpdatesForRelationChange(
+        personId,
+        newRelationLabel,
+        treeEdgeRows,
+        peopleWithPortraits,
+      );
+      await applyEdgeUpdates(updates);
+    },
+    [treeEdgeRows, peopleWithPortraits, applyEdgeUpdates],
+  );
+
   const handleEditPerson = useCallback(
     async (personId: string, displayName: string, relationLabel: string) => {
       if (!circleId) return;
+      const prior = peopleWithPortraits.find((p) => p.id === personId)?.relation_label ?? null;
       try {
         await savePersonProfile({
           circleId,
@@ -209,11 +344,14 @@ function FamilyTreeCanvasInner({
           display_name: displayName,
           relation_label: relationLabel,
         });
+        if (prior?.toUpperCase() !== relationLabel.toUpperCase()) {
+          await syncEdgesForRelationChange(personId, relationLabel);
+        }
       } catch {
         toast({ title: "Could not save", variant: "destructive" });
       }
     },
-    [circleId, persistViaApi, applyPersonPatch, toast],
+    [circleId, persistViaApi, applyPersonPatch, toast, peopleWithPortraits, syncEdgesForRelationChange],
   );
 
   const handleGenderChange = useCallback(
@@ -262,43 +400,60 @@ function FamilyTreeCanvasInner({
   );
 
   const handleDuplicatePerson = useCallback(
+    (personId: string) => {
+      void runDuplicatePerson(personId, 60, 60);
+    },
+    [runDuplicatePerson],
+  );
+
+  const handleSetTreeLeader = useCallback(
     async (personId: string) => {
       if (!circleId) return;
-      const source = peopleWithPortraits.find((p) => p.id === personId);
-      if (!source) return;
-
-      const center = screenToFlowPosition({
-        x: window.innerWidth / 2,
-        y: (window.innerHeight + TREE_HEADER_HEIGHT) / 2,
-      });
-      const baseX = source.canvas_x ?? center.x;
-      const baseY = source.canvas_y ?? center.y;
-
       try {
-        const created = await duplicateFamilyPerson({
-          circleId,
-          personId,
-          canvasX: baseX + 48,
-          canvasY: baseY + 48,
-          useApi: persistViaApi,
+        await setTreeLeader({ circleId, personId, useApi: persistViaApi });
+        const positions = computeLeaderCenteredPositions(people, treeEdgeRows, personId);
+        const nextPeople = people.map((p) => {
+          const pos = positions.get(p.id);
+          return {
+            ...p,
+            is_tree_anchor: p.id === personId,
+            canvas_x: pos?.x ?? p.canvas_x,
+            canvas_y: pos?.y ?? p.canvas_y,
+          };
         });
-        if (onPeopleChange) {
-          onPeopleChange([...people, created]);
+        if (onPeopleChange) onPeopleChange(nextPeople);
+        setPositionOverrides(new Map());
+        for (const p of nextPeople) {
+          if (p.canvas_x == null || p.canvas_y == null) continue;
+          void savePersonCanvasPosition({
+            circleId,
+            personId: p.id,
+            x: p.canvas_x,
+            y: p.canvas_y,
+            useApi: persistViaApi,
+          });
         }
-        toast({ title: "Person duplicated" });
+        toast({ title: "Family leader pinned", description: "Tree reorganizes around this person." });
+        window.requestAnimationFrame(() => {
+          void fitView({
+            padding: 0.22,
+            duration: 400,
+            nodes: [{ id: personId }],
+          });
+        });
       } catch {
-        toast({ title: "Could not duplicate", variant: "destructive" });
+        toast({ title: "Could not pin leader", variant: "destructive" });
       }
     },
-    [
-      circleId,
-      people,
-      peopleWithPortraits,
-      persistViaApi,
-      onPeopleChange,
-      screenToFlowPosition,
-      toast,
-    ],
+    [circleId, persistViaApi, onPeopleChange, people, toast, fitView],
+  );
+
+  const onNodeDragStart = useCallback(
+    (event: React.MouseEvent, node: Node<FamilyTreeNodeData>) => {
+      if (!event.altKey || node.data.kind !== "person" || !circleId) return;
+      void runDuplicatePerson(node.id, 40, 40);
+    },
+    [circleId, runDuplicatePerson],
   );
 
   const enrichPersonNodes = useCallback(
@@ -324,14 +479,26 @@ function FamilyTreeCanvasInner({
   );
 
   useEffect(() => {
-    setNodes(mergeWithGroupState(flowSnapshot.nodes));
+    const merged = mergeWithGroupState(flowSnapshot.nodes);
+    setNodes(merged);
     setEdges(flowSnapshot.edges);
-  }, [flowSnapshot.nodes, flowSnapshot.edges, setNodes, setEdges, mergeWithGroupState]);
+    // Fit view once — after the first real nodes land (not on every update)
+    if (!hasFittedRef.current && merged.some((n) => isPersonFlowNodeType(n.type))) {
+      hasFittedRef.current = true;
+      window.requestAnimationFrame(() => {
+        if (treeLeaderId) {
+          void fitView({ padding: 0.22, duration: 300, nodes: [{ id: treeLeaderId }] });
+        } else {
+          void fitView({ padding: 0.2, duration: 300 });
+        }
+      });
+    }
+  }, [flowSnapshot.nodes, flowSnapshot.edges, setNodes, setEdges, mergeWithGroupState, fitView, treeLeaderId]);
 
   const groupSelectedNodes = useCallback(() => {
     const current = getNodes();
     const selectedIds = current
-      .filter((n) => n.selected && n.type === "person")
+      .filter((n) => n.selected && isPersonFlowNodeType(n.type))
       .map((n) => n.id);
     if (selectedIds.length < 2) return;
 
@@ -369,28 +536,69 @@ function FamilyTreeCanvasInner({
     return map;
   }, [people]);
 
-  const onConnect = useCallback((connection: Connection) => {
-    if (!connection.source || !connection.target) return;
-    if (connection.source === connection.target) return;
+  const onConnect = useCallback(
+    (connection: Connection) => {
+      if (!connection.source || !connection.target) return;
+      if (connection.source === connection.target) return;
 
-    const current = getNodes() as Node<FamilyTreeNodeData>[];
-    const sourceNode = current.find((n) => n.id === connection.source);
-    const targetNode = current.find((n) => n.id === connection.target);
-    if (!isPersonNode(sourceNode) || !isPersonNode(targetNode)) return;
+      const current = getNodes() as Node<FamilyTreeNodeData>[];
+      const sourceNode = current.find((n) => n.id === connection.source);
+      const targetNode = current.find((n) => n.id === connection.target);
+      if (!isPersonNode(sourceNode) || !isPersonNode(targetNode)) return;
 
-    setPendingConnection(connection);
-    setShowRelationshipPicker(true);
-  }, [getNodes]);
+      const nodesById = new Map(current.map((n) => [n.id, n]));
+      const sourcePos = getNodeAbsolutePosition(connection.source, nodesById);
+      const targetPos = getNodeAbsolutePosition(connection.target, nodesById);
+      const direction = inferConnectionDirection({
+        sourcePos,
+        targetPos,
+        sourceHandle: connection.sourceHandle,
+        targetHandle: connection.targetHandle,
+      });
+      const choices = relationshipChoicesForDirection(direction);
 
-  const cancelConnection = useCallback(() => {
+      setPendingConnection(connection);
+      setConnectionDirection(direction);
+      setInferredChoices(choices);
+      setShowRelationshipPicker(true);
+    },
+    [getNodes],
+  );
+
+  const cancelRelationshipPicker = useCallback(() => {
     setPendingConnection(null);
+    setConnectionDirection(null);
+    setInferredChoices(null);
+    setEditingEdge(null);
     setShowRelationshipPicker(false);
   }, []);
+
+  const confirmEditEdge = useCallback(
+    async (relationshipType: RelationshipType) => {
+      if (!editingEdge || !circleId) {
+        cancelRelationshipPicker();
+        return;
+      }
+      try {
+        await applyEdgeUpdates([
+          { edgeId: editingEdge.id, relationship_type: relationshipType },
+        ]);
+      } catch {
+        toast({
+          title: "Could not update relationship",
+          variant: "destructive",
+        });
+      } finally {
+        cancelRelationshipPicker();
+      }
+    },
+    [editingEdge, circleId, applyEdgeUpdates, cancelRelationshipPicker, toast],
+  );
 
   const confirmConnection = useCallback(
     async (relationshipType: RelationshipType) => {
       if (!pendingConnection?.source || !pendingConnection?.target || !circleId) {
-        cancelConnection();
+        cancelRelationshipPicker();
         return;
       }
 
@@ -423,10 +631,10 @@ function FamilyTreeCanvasInner({
           variant: "destructive",
         });
       } finally {
-        cancelConnection();
+        cancelRelationshipPicker();
       }
     },
-    [pendingConnection, circleId, persistViaApi, cancelConnection, setEdges, nodes, toast],
+    [pendingConnection, circleId, persistViaApi, cancelRelationshipPicker, setEdges, nodes, toast],
   );
 
   const disconnectEdge = useCallback(
@@ -491,6 +699,33 @@ function FamilyTreeCanvasInner({
     setEdgeContextMenu({ x: event.clientX, y: event.clientY, edgeId: edge.id });
   }, []);
 
+  const onEdgeClick: EdgeMouseHandler = useCallback(
+    (event, edge) => {
+      if (!circleId) return;
+      const row = treeEdgeRows.find((r) => r.id === edge.id);
+      if (!row) return;
+      event.preventDefault();
+      setEdgeContextMenu(null);
+      setNodeContextMenu(null);
+      setPendingConnection(null);
+      setConnectionDirection(null);
+      setInferredChoices(null);
+      setEditingEdge(row);
+      setShowRelationshipPicker(true);
+    },
+    [circleId, treeEdgeRows],
+  );
+
+  const openEdgeEditor = useCallback(
+    (edgeId: string) => {
+      const row = treeEdgeRows.find((r) => r.id === edgeId);
+      if (!row) return;
+      setEditingEdge(row);
+      setShowRelationshipPicker(true);
+    },
+    [treeEdgeRows],
+  );
+
   const onNodeContextMenu: NodeMouseHandler<Node<FamilyTreeNodeData>> = useCallback((event, node) => {
     if (node.data.kind !== "person") return;
     event.preventDefault();
@@ -501,7 +736,41 @@ function FamilyTreeCanvasInner({
   const onPaneClick = useCallback(() => {
     setEdgeContextMenu(null);
     setNodeContextMenu(null);
+    setEditingEdge(null);
   }, []);
+
+  const handleAutoLayout = useCallback(
+    (direction: LayoutDirection) => {
+      const laid = autoLayoutTree(
+        nodes,
+        edges,
+        direction,
+        treeLeaderId,
+        people,
+      ) as Node<FamilyTreeNodeData>[];
+      setNodes(laid);
+      if (circleId) {
+        for (const n of laid) {
+          if (!isPersonFlowNodeType(n.type)) continue;
+          void savePersonCanvasPosition({
+            circleId,
+            personId: n.id,
+            x: n.position.x,
+            y: n.position.y,
+            useApi: persistViaApi,
+          });
+        }
+      }
+      window.requestAnimationFrame(() => {
+        if (treeLeaderId) {
+          void fitView({ padding: 0.22, duration: 350, nodes: [{ id: treeLeaderId }] });
+        } else {
+          void fitView({ padding: 0.18, duration: 350 });
+        }
+      });
+    },
+    [nodes, edges, setNodes, circleId, persistViaApi, fitView, treeLeaderId, people],
+  );
 
   const onNodeDragStop = useCallback(
     (_: React.MouseEvent, node: Node<FamilyTreeNodeData>) => {
@@ -511,7 +780,9 @@ function FamilyTreeCanvasInner({
       // Dragging a group moves children with it — refresh edges and persist all member positions.
       if (node.type === "group") {
         const nodesById = new Map(currentNodes.map((n) => [n.id, n]));
-        const members = currentNodes.filter((n) => n.parentId === node.id && n.type === "person");
+        const members = currentNodes.filter(
+          (n) => n.parentId === node.id && isPersonFlowNodeType(n.type),
+        );
 
         setPositionOverrides((prev) => {
           const next = new Map(prev);
@@ -618,14 +889,20 @@ function FamilyTreeCanvasInner({
 
   const showConnectHint = people.length > 0 && flowSnapshot.personEdgeCount === 0;
 
-  const pendingSourceName = pendingConnection?.source
-    ? (personNameById.get(pendingConnection.source) ?? "Person")
-    : "";
-  const pendingTargetName = pendingConnection?.target
-    ? (personNameById.get(pendingConnection.target) ?? "Person")
-    : "";
+  const pickerSourceName = editingEdge
+    ? (personNameById.get(editingEdge.source_person_id) ?? "Person")
+    : pendingConnection?.source
+      ? (personNameById.get(pendingConnection.source) ?? "Person")
+      : "";
+  const pickerTargetName = editingEdge
+    ? (personNameById.get(editingEdge.target_person_id) ?? "Person")
+    : pendingConnection?.target
+      ? (personNameById.get(pendingConnection.target) ?? "Person")
+      : "";
 
-  const selectedPersonCount = nodes.filter((n) => n.selected && n.type === "person").length;
+  const selectedPersonCount = nodes.filter(
+    (n) => n.selected && isPersonFlowNodeType(n.type),
+  ).length;
   const selectedGroupId = nodes.find((n) => n.selected && n.type === "group")?.id ?? null;
 
   return (
@@ -637,10 +914,15 @@ function FamilyTreeCanvasInner({
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
+        onNodeDragStart={onNodeDragStart}
+        onConnectStart={() => setIsConnecting(true)}
+        onConnectEnd={() => setIsConnecting(false)}
+        connectionRadius={50}
         onNodeDragStop={onNodeDragStop}
         onNodeClick={onNodeClick}
         onNodeContextMenu={onNodeContextMenu}
         onEdgeContextMenu={onEdgeContextMenu}
+        onEdgeClick={onEdgeClick}
         onEdgesDelete={onEdgesDelete}
         onPaneClick={onPaneClick}
         isValidConnection={isValidConnection}
@@ -654,18 +936,24 @@ function FamilyTreeCanvasInner({
         defaultEdgeOptions={TREE_DEFAULT_EDGE_OPTIONS}
         connectionLineStyle={{ stroke: "rgba(68, 102, 255, 0.5)", strokeWidth: 1.5 }}
         onInit={() => {
-          window.requestAnimationFrame(() => {
-            void fitView({ padding: 0.2, duration: 200 });
-          });
+          // fitView is called via the nodes-populated effect below
         }}
         proOptions={{ hideAttribution: true }}
         minZoom={0.1}
         maxZoom={2.5}
         style={{ width: "100vw", height: canvasHeight }}
-        className="family-tree-flow"
+        className={isConnecting ? "family-tree-flow connecting" : "family-tree-flow"}
       >
-        <Background variant={BackgroundVariant.Dots} gap={40} size={1} color="#1a1a1a" />
-        <TreeFlowControls onFullscreenChange={onFullscreenChange} />
+        <Background
+          variant={BackgroundVariant.Dots}
+          gap={40}
+          size={1}
+          color={isLight ? "#d4d3cb" : "#1a1a1a"}
+        />
+        <TreeFlowControls
+          onFullscreenChange={onFullscreenChange}
+          onAutoLayout={circleId ? handleAutoLayout : undefined}
+        />
       </ReactFlow>
 
       <TreeSelectionToolbar
@@ -679,6 +967,10 @@ function FamilyTreeCanvasInner({
         <TreeEdgeContextMenu
           x={edgeContextMenu.x}
           y={edgeContextMenu.y}
+          onEdit={() => {
+            openEdgeEditor(edgeContextMenu.edgeId);
+            setEdgeContextMenu(null);
+          }}
           onRemove={() => void disconnectEdge(edgeContextMenu.edgeId)}
           onClose={() => setEdgeContextMenu(null)}
         />
@@ -696,11 +988,15 @@ function FamilyTreeCanvasInner({
           careerPath={
             peopleWithPortraits.find((p) => p.id === nodeContextMenu.personId)?.career_path
           }
+          isTreeLeader={nodeContextMenu.personId === treeLeaderId}
+          onSetTreeLeader={
+            circleId ? () => void handleSetTreeLeader(nodeContextMenu.personId) : undefined
+          }
           onGenderChange={(g) => void handleGenderChange(nodeContextMenu.personId, g)}
           onCareerSave={(c) => void handleCareerSave(nodeContextMenu.personId, c)}
           onPhotoSelected={(file) => void handlePhotoUpload(nodeContextMenu.personId, file)}
           onDuplicate={() => void handleDuplicatePerson(nodeContextMenu.personId)}
-          onDisconnect={() => void disconnectAllEdgesForPerson(nodeContextMenu.personId)}
+          onDisconnect={() => setPendingDisconnectPersonId(nodeContextMenu.personId)}
           onClose={() => setNodeContextMenu(null)}
         />
       ) : null}
@@ -714,12 +1010,51 @@ function FamilyTreeCanvasInner({
         </p>
       ) : null}
 
+      <TreeAltDragHint />
+
+      <Dialog open={Boolean(pendingDisconnectPersonId)} onOpenChange={(o) => !o && setPendingDisconnectPersonId(null)}>
+        <DialogContent className="border-border bg-card text-foreground sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Remove all connections?</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Remove all connections for{" "}
+              {pendingDisconnectPersonId
+                ? (personNameById.get(pendingDisconnectPersonId) ?? "this person")
+                : "this person"}
+              ? The node will stay on the canvas.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={() => setPendingDisconnectPersonId(null)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                if (pendingDisconnectPersonId) {
+                  void disconnectAllEdgesForPerson(pendingDisconnectPersonId);
+                }
+                setPendingDisconnectPersonId(null);
+              }}
+            >
+              Remove connections
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <RelationshipPickerModal
         open={showRelationshipPicker}
-        sourceName={pendingSourceName}
-        targetName={pendingTargetName}
-        onConfirm={(type) => void confirmConnection(type)}
-        onCancel={cancelConnection}
+        mode={editingEdge ? "edit" : "create"}
+        currentRelationshipType={editingEdge?.relationship_type}
+        sourceName={pickerSourceName}
+        targetName={pickerTargetName}
+        connectionDirection={editingEdge ? null : connectionDirection}
+        inferredChoices={editingEdge ? null : inferredChoices}
+        onConfirm={(type) =>
+          void (editingEdge ? confirmEditEdge(type) : confirmConnection(type))
+        }
+        onCancel={cancelRelationshipPicker}
       />
     </div>
   );
