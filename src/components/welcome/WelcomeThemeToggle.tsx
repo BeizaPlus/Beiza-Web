@@ -1,6 +1,5 @@
 import { Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { legacyBody } from "@/lib/legacyLandingFonts";
 
 const STORAGE_KEY = "beiza-welcome-theme";
 
@@ -28,8 +27,7 @@ export function WelcomeThemeToggle({ theme, onThemeChange }: WelcomeThemeToggleP
       type="button"
       onClick={() => onThemeChange(isLight ? "dark" : "light")}
       className={cn(
-        legacyBody,
-        "flex h-10 w-10 items-center justify-center rounded-full border transition",
+        "font-sans flex h-10 w-10 items-center justify-center rounded-full border transition",
         isLight
           ? "border-black/15 bg-white text-black hover:bg-black/5"
           : "border-white/25 bg-white/5 text-white hover:bg-white/10",

@@ -45,6 +45,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<WelcomeGate />} />
+          <Route path="/welcome" element={<WelcomeGate />} />
           <Route path="/home" element={<Landing />} />
           <Route path="/education" element={<EducationPage />} />
           <Route path="/education/story-questions" element={<StoryQuestionsArticle />} />

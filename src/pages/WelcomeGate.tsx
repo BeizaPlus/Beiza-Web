@@ -6,9 +6,9 @@ import {
   WelcomeThemeToggle,
   type WelcomeTheme,
 } from "@/components/welcome/WelcomeThemeToggle";
-import { legacyBody, legacyDisplay } from "@/lib/legacyLandingFonts";
 import { cn } from "@/lib/utils";
 
+const BEIZA_LOGO = "/Beiza_White.svg";
 const LEGACY_CARD_IMAGE = "/assets/welcome-legacy-card.png";
 
 const PATHS = [
@@ -59,8 +59,7 @@ export default function WelcomeGate() {
   return (
     <div
       className={cn(
-        legacyBody,
-        "welcome-gate-page flex min-h-screen flex-col transition-colors duration-300",
+        "font-sans flex min-h-screen flex-col transition-colors duration-300",
         isLight ? "bg-[#f7f6f3] text-[#1a1816]" : "bg-black text-white",
       )}
     >
@@ -69,19 +68,14 @@ export default function WelcomeGate() {
       </div>
 
       <header className="flex flex-col items-center px-6 pb-4 pt-16 text-center sm:pt-20">
-        <h1
-          className={cn(
-            legacyDisplay,
-            "text-[2.5rem] font-light tracking-[0.12em] sm:text-[2.75rem]",
-            isLight ? "text-[#1a1816]" : "text-white",
-          )}
-        >
-          BEIZA
-        </h1>
+        <img
+          src={BEIZA_LOGO}
+          alt="Beiza"
+          className={cn("mx-auto mb-2 h-10 w-auto", isLight && "invert")}
+        />
         <p
           className={cn(
-            legacyBody,
-            "mt-3 text-[10px] font-light uppercase tracking-[0.32em]",
+            "text-[10px] font-medium uppercase tracking-[0.32em]",
             isLight ? "text-[#1a1816]/55" : "text-white/60",
           )}
         >
@@ -89,8 +83,7 @@ export default function WelcomeGate() {
         </p>
         <p
           className={cn(
-            legacyDisplay,
-            "mt-10 max-w-md text-lg italic font-light sm:text-xl",
+            "mt-10 max-w-md text-lg font-normal sm:text-xl",
             isLight ? "text-[#1a1816]/90" : "text-white/95",
           )}
         >

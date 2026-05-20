@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { legacyBody, legacyDisplay } from "@/lib/legacyLandingFonts";
 
 export type WelcomePathCardProps = {
   to: string;
@@ -31,8 +30,7 @@ export function WelcomePathCard({
     <Link
       to={to}
       className={cn(
-        legacyBody,
-        "group relative aspect-[2/3] w-full min-h-[320px] overflow-hidden rounded-[10px] border border-transparent",
+        "font-sans group relative aspect-[2/3] w-full min-h-[320px] overflow-hidden rounded-[10px] border border-transparent",
         "transition duration-300 hover:border-white sm:min-h-[380px] lg:min-h-[420px]",
       )}
     >
@@ -62,19 +60,14 @@ export function WelcomePathCard({
       </span>
 
       <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-5 pt-20 text-left sm:px-5 sm:pb-6">
-        <h2
-          className={cn(
-            legacyDisplay,
-            "text-[1.35rem] font-medium leading-tight text-white sm:text-[1.5rem] lg:text-[1.65rem]",
-          )}
-        >
+        <h2 className="font-sans text-[1.35rem] font-semibold leading-tight text-white sm:text-[1.5rem] lg:text-[1.65rem]">
           {title}
         </h2>
-        <p className="mt-2 text-[13px] font-light leading-snug text-white/90 sm:text-sm">
+        <p className="mt-2 text-[13px] font-normal leading-snug text-white/90 sm:text-sm">
           <span className="text-white/70">— </span>
           {subtitle}
         </p>
-        <p className="mt-3 text-[11px] font-light uppercase tracking-[0.12em] text-white/65">{meta}</p>
+        <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.12em] text-white/65">{meta}</p>
       </div>
     </Link>
   );
