@@ -25,13 +25,13 @@ Last updated: 20 May 2026 · branch `main`
 
 **Layout studio:** `?studio=1` on landing/heritage for hero framing edits.
 
-### Spec’d / not in repo yet
+### Recently shipped (apply migration `20260528T100000_billing_health_weekly.sql`)
 
 | Feature | Status |
 |---------|--------|
-| **Stripe Keeper checkout** | Not wired — needs currency + Price ID confirmation |
-| **Weekly health questions** | Architecture locked (52-week cycle, idempotent sends, HMAC opt-out) — **no migrations/API yet** |
-| **Patterns tab (full)** | UI exists; needs sustained health data + `health-patterns` API in prod |
+| **Stripe Keeper** | `POST /api/stripe/create-checkout-session`, webhook, billing portal, `GET /api/stripe/entitlement` — set `STRIPE_*` on Vercel |
+| **Weekly health questions** | 52-question bank seeded; cron `POST /api/cron/weekly-health-send` (Mondays 9:00 UTC); HMAC `/api/health/unsubscribe` |
+| **Health + Patterns tabs** | Person panel tabs; `person_health_conditions`; `POST /api/circle/health-patterns` (3+ members with health data) |
 
 ### Production deploy
 

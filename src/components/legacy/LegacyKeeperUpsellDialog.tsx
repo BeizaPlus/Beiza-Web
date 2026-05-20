@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 import {
   Dialog,
   DialogContent,
@@ -18,6 +18,7 @@ export function LegacyKeeperUpsellDialog({
   onOpenChange,
   reason = "delete",
 }: LegacyKeeperUpsellDialogProps) {
+  const { startKeeperCheckout, loading } = useStripeCheckout();
   const isDownload = reason === "download";
 
   return (
@@ -41,13 +42,17 @@ export function LegacyKeeperUpsellDialog({
             )}
           </DialogDescription>
         </DialogHeader>
-        <Link
-          to="/pricing"
-          onClick={() => onOpenChange(false)}
-          className="mt-4 block w-full rounded-full bg-primary py-3 text-center text-sm font-semibold text-primary-foreground hover:opacity-90"
+        <button
+          type="button"
+          disabled={loading}
+          onClick={() => {
+            onOpenChange(false);
+            void startKeeperCheckout();
+          }}
+          className="mt-4 block w-full rounded-full bg-primary py-3 text-center text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-60"
         >
-          Upgrade to Keeper — $4.99/mo
-        </Link>
+          {loading ? "Opening checkout…" : "Upgrade to Keeper — $4.99/mo"}
+        </button>
       </DialogContent>
     </Dialog>
   );

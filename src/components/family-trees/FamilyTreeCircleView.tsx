@@ -19,6 +19,7 @@ import type {
   FamilyPerson,
   FamilyPersonProfilePatch,
   LegacyRecording,
+  PersonHealthCondition,
   RecordingPersonLink,
 } from "@/lib/legacy/types";
 import { useToast } from "@/hooks/use-toast";
@@ -31,6 +32,7 @@ type FamilyTreeCircleViewProps = {
   links: RecordingPersonLink[];
   recordings: LegacyRecording[];
   treeEdges?: TreeEdgeRow[];
+  healthConditions?: PersonHealthCondition[];
   persistViaApi?: boolean;
   backHref?: string;
   showInviteBar?: boolean;
@@ -45,6 +47,7 @@ export function FamilyTreeCircleView({
   links,
   recordings,
   treeEdges = [],
+  healthConditions = [],
   persistViaApi = false,
   backHref = "/circle",
   showInviteBar,
@@ -228,6 +231,7 @@ export function FamilyTreeCircleView({
         onProfileSave={handleProfileSave}
         onSiblingOrdersSave={handleSiblingOrdersSave}
         onSetTreeLeader={handleSetTreeLeader}
+        healthConditions={healthConditions}
       />
       {persistViaApi ? <TreePersonaChat circleId={circleId} /> : null}
     </TreeAppShell>

@@ -12,11 +12,8 @@ import {
   useMyLegacyCircle,
   useUpdateLegacyRecordingTitle,
 } from "@/hooks/useLegacy";
-import {
-  canDeleteVaultMemories,
-  canDownloadRecordings,
-  getLegacyTier,
-} from "@/lib/legacy/tier";
+import { canDeleteVaultMemories, canDownloadRecordings } from "@/lib/legacy/tier";
+import { useLegacyEntitlement } from "@/hooks/useLegacyEntitlement";
 import { getMemoryShareUrl } from "@/lib/legacy/shareUrl";
 import {
   groupVaultRecordingsByCategory,
@@ -35,7 +32,7 @@ import {
 
 export default function LegacyVaultPage() {
   const { toast } = useToast();
-  const tier = getLegacyTier();
+  const { tier } = useLegacyEntitlement();
   const canDelete = canDeleteVaultMemories(tier);
   const canDownload = canDownloadRecordings(tier);
   const { data: circleCtx } = useMyLegacyCircle();

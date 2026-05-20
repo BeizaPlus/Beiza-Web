@@ -94,6 +94,7 @@ export default function FamilyTreeCanvasPage() {
       links={payload.links}
       recordings={payload.recordings}
       treeEdges={payload.treeEdges ?? []}
+      healthConditions={payload.healthConditions ?? []}
       persistViaApi
       backHref="/circle"
       showInviteBar

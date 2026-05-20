@@ -117,3 +117,33 @@ export type MemoryAboutChoice =
   | { type: "self" }
   | { type: "person"; personId: string }
   | { type: "new"; name: string };
+
+export type HealthConditionCategory =
+  | "cardiovascular"
+  | "metabolic"
+  | "neurological"
+  | "mental_health"
+  | "cancer"
+  | "autoimmune"
+  | "respiratory"
+  | "musculoskeletal"
+  | "hereditary"
+  | "addiction"
+  | "other";
+
+export interface PersonHealthCondition {
+  id: string;
+  circle_id: string;
+  person_id: string;
+  category: HealthConditionCategory;
+  condition: string;
+  age_of_onset: number | null;
+  still_active: boolean;
+  created_at?: string;
+}
+
+export interface HealthPatternInsight {
+  title: string;
+  body: string;
+  severity: "info" | "watch";
+}

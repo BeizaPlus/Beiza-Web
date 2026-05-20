@@ -17,6 +17,14 @@ const API_ROUTES: Record<string, string> = {
   "/api/heritage-inquiry": "/api/heritage-inquiry.ts",
   "/api/memory/public": "/api/memory/public.ts",
   "/api/circle/persona-chat": "/api/circle/persona-chat.ts",
+  "/api/circle/person-health": "/api/circle/person-health.ts",
+  "/api/circle/health-patterns": "/api/circle/health-patterns.ts",
+  "/api/stripe/create-checkout-session": "/api/stripe/create-checkout-session.ts",
+  "/api/stripe/billing-portal": "/api/stripe/billing-portal.ts",
+  "/api/stripe/entitlement": "/api/stripe/entitlement.ts",
+  "/api/stripe/webhook": "/api/stripe/webhook.ts",
+  "/api/cron/weekly-health-send": "/api/cron/weekly-health-send.ts",
+  "/api/health/unsubscribe": "/api/health/unsubscribe.ts",
 };
 
 function loadDevEnv() {

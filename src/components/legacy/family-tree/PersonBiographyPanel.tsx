@@ -21,6 +21,10 @@ import { PERSON_RELATION_LABELS } from "@/lib/legacy/personRelationLabels";
 import { getStoredCircleToken } from "@/lib/circleAccess";
 import { dispatchBeizaTreeUpdated } from "@/lib/legacy/personaEvents";
 import { SiblingOrderSection } from "@/components/legacy/family-tree/SiblingOrderSection";
+import { PersonHealthSection } from "@/components/legacy/family-tree/PersonHealthSection";
+import { PersonPatternsSection } from "@/components/legacy/family-tree/PersonPatternsSection";
+import { PersonPanelTabs, type PersonPanelTab } from "@/components/legacy/family-tree/PersonPanelTabs";
+import type { PersonHealthCondition } from "@/lib/legacy/types";
 import { savePersonPhoto } from "@/lib/legacy/treeCanvasPersistence";
 import { supabase } from "@/lib/supabaseClient";
 import { cn } from "@/lib/utils";
@@ -48,6 +52,7 @@ type PersonBiographyPanelProps = {
     updates: { personId: string; sibling_order: number }[],
   ) => Promise<void>;
   onSetTreeLeader?: (personId: string) => Promise<void>;
+  healthConditions?: PersonHealthCondition[];
 };
 
 const FIELD_INPUT_CLASS =
@@ -326,6 +331,9 @@ function PanelShell({
   recordHref,
   circlePeople,
   onSiblingOrdersSave,
+  activeTab,
+  onTabChange,
+  healthConditions,
 }: {
   editable: boolean;
   localPerson: FamilyPerson;
@@ -347,6 +355,9 @@ function PanelShell({
   onSiblingOrdersSave?: (
     updates: { personId: string; sibling_order: number }[],
   ) => Promise<void>;
+  activeTab: PersonPanelTab;
+  onTabChange: (tab: PersonPanelTab) => void;
+  healthConditions: PersonHealthCondition[];
 }) {
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [nameDraft, setNameDraft] = useState(localPerson.display_name);
@@ -472,7 +483,20 @@ function PanelShell({
         </div>
       </div>
 
+      <PersonPanelTabs active={activeTab} onChange={onTabChange} />
+
       <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-10">
+        {activeTab === "health" && (
+          <PersonHealthSection
+            circleId={circleId}
+            personId={localPerson.id}
+            editable={editable}
+            initial={healthConditions}
+          />
+        )}
+        {activeTab === "patterns" && <PersonPatternsSection circleId={circleId} />}
+        {activeTab === "profile" && (
+          <>
         <SectionHeader title="Identity" />
 
         <ProfileField label="Full name">
@@ -719,7 +743,11 @@ function PanelShell({
             </ProfileField>
           </div>
         ) : null}
+          </>
+        )}
 
+        {activeTab === "memories" && (
+          <>
         <SectionHeader title="Their story" />
 
         <div ref={fragmentsRef}>
@@ -781,6 +809,8 @@ function PanelShell({
             </button>
           ) : null}
         </div>
+          </>
+        )}
       </div>
     </div>
   );
@@ -794,6 +824,7 @@ export function PersonBiographyPanel({
   onProfileSave,
   onSiblingOrdersSave,
   onSetTreeLeader,
+  healthConditions = [],
 }: PersonBiographyPanelProps) {
   const editable = Boolean(onProfileSave);
   const useApi = editable;
@@ -803,6 +834,7 @@ export function PersonBiographyPanel({
 
   const [localPerson, setLocalPerson] = useState<FamilyPerson | null>(person);
   const [savedFlash, setSavedFlash] = useState(false);
+  const [activeTab, setActiveTab] = useState<PersonPanelTab>("profile");
   const [traitsOpen, setTraitsOpen] = useState(false);
   const [traits, setTraits] = useState<PersonTraits>({
     known_for: [],
@@ -885,6 +917,9 @@ export function PersonBiographyPanel({
       recordHref={useApi ? `/circle/${localPerson.circle_id}/record` : "/legacy/record"}
       circlePeople={circlePeople}
       onSiblingOrdersSave={onSiblingOrdersSave}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      healthConditions={healthConditions}
     />
   );
 
