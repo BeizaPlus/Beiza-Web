@@ -60,7 +60,7 @@ Production builds with `VITE_SUPABASE_*` set **do not** inject demo Monica/Ernes
 | Circle directory | RPC `list_public_family_circles` | |
 | Circle tree | `family_people`, `tree_edges`, recordings, health, traits | Per-circle |
 
-**Apply migrations through `20260530T100000_mass_adoption_cms.sql`** (and `20260529` Ernestina memoir sync) on production Supabase.
+**Production Supabase:** migrations applied through **`20260530T100000_mass_adoption_cms.sql`** (includes `20260528` billing/health, `20260529` Ernestina memoir sync).
 
 ---
 
@@ -96,7 +96,7 @@ Production builds with `VITE_SUPABASE_*` set **do not** inject demo Monica/Ernes
 - **Vercel env (circle + APIs):** `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
 - **Vercel env (Stripe):** `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_KEEPER_MONTHLY`, `CRON_SECRET`, `HEALTH_UNSUBSCRIBE_SECRET`
 - **Vercel env (client):** `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` — do **not** set `VITE_ALLOW_CONTENT_FALLBACK` on production
-- **Apply Supabase migrations** through **`20260530T100000_mass_adoption_cms.sql`** (includes billing `20260528`, Ernestina `20260529`, tree `20260527`, events `20260523`, recovery `20260524`)
+- **Supabase migrations** — applied on production through **`20260530`**
 
 ---
 
@@ -401,7 +401,7 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 ## Deploy checklist
 
 1. Push to `main` — Vercel auto-deploys  
-2. Run Supabase migrations through **`20260530`** (see table above)  
+2. **Supabase migrations** — done on production (through `20260530`)  
 3. Set `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` + client `VITE_SUPABASE_*` on Vercel  
 4. Stripe webhook → `/api/stripe/webhook`; price ID in `STRIPE_PRICE_KEEPER_MONTHLY`  
 5. Optional: `CIRCLE_ACCESS_SECRET`, `CRON_SECRET`, Resend for weekly health mail  
@@ -411,6 +411,7 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 
 ## Recent commits (reference)
 
+- `cef497f` — API `tsconfig` wired for Vercel; `853babd` API TypeScript fixes  
 - `16840cb` — CMS-first marketing, memoir-linked live events, Ernestina sync, footer/nav alignment, voices from Supabase  
 - `16a5cbd` — Stripe Keeper, health/patterns tabs, weekly health questions  
 - `a70e50a` — Summary + tree handle alignment  

@@ -9,6 +9,9 @@ lerna-debug.log*
 
 node_modules
 dist
+*.tsbuildinfo
+backup_before_migrations.sql
+supabase/migrations/combined.sql
 dist-ssr
 *.local
 
