@@ -31,7 +31,10 @@ export function useStripeCheckout() {
           cancel_url: `${window.location.origin}/pricing`,
         }),
       });
-      const body = (await res.json()) as { url?: string; error?: string };
+      const body = (await res.json()) as { url?: string; error?: string; deferred?: boolean };
+      if (res.status === 503 || body.deferred) {
+        throw new Error("Keeper billing is coming soon. Contact us to upgrade in the meantime.");
+      }
       if (!res.ok || !body.url) {
         throw new Error(body.error ?? "Checkout unavailable.");
       }

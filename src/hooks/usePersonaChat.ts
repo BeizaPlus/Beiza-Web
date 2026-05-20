@@ -48,8 +48,12 @@ export function usePersonaChat(circleId: string) {
           reply?: string;
           tree_updated?: boolean;
           error?: string;
+          deferred?: boolean;
         };
 
+        if (res.status === 503 || body.deferred) {
+          throw new Error("Tree guide is temporarily unavailable. Try again after the next update.");
+        }
         if (!res.ok) {
           throw new Error(body.error ?? "Could not reach the tree guide.");
         }

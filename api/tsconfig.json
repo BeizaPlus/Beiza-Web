@@ -15,5 +15,11 @@
     "isolatedModules": true,
     "types": ["node"]
   },
-  "include": ["./**/*.ts", "../server/vercel-handlers/**/*.ts"]
+  "include": ["./**/*.ts", "../server/vercel-handlers/**/*.ts"],
+  "exclude": [
+    "../server/vercel-handlers/stripe/**",
+    "../server/vercel-handlers/circle/health-patterns.ts",
+    "../server/vercel-handlers/circle/person-health.ts",
+    "../server/vercel-handlers/circle/persona-chat.ts"
+  ]
 }

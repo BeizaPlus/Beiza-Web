@@ -398,6 +398,20 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 
 ---
 
+## Ship-now deferrals (May 2026)
+
+Billing and health APIs are **stubbed** so Vercel can deploy without Stripe/health TypeScript surface. Toggle in `api/lib/deployDeferred.ts`:
+
+| Flag | Off (live) routes |
+|------|-------------------|
+| `DEFER_STRIPE` | `/api/stripe/*`, webhook |
+| `DEFER_HEALTH_BILLING` | `person-health`, `health-patterns`, weekly cron, health unsubscribe |
+| `DEFER_PERSONA_CHAT` | `/api/circle/persona-chat` |
+
+Re-enable: set flags to `false`, uncomment imports in `api/stripe/[path].ts`, `api/circle/[path].ts`, restore cron in `vercel.json`, remove `exclude` entries in `api/tsconfig.json`.
+
+---
+
 ## Deploy checklist
 
 1. Push to `main` — Vercel auto-deploys  

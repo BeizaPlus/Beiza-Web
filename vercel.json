@@ -1,10 +1,5 @@
 {
-  "crons": [
-    {
-      "path": "/api/cron/weekly-health-send",
-      "schedule": "0 9 * * 1"
-    }
-  ],
+  "crons": [],
   "redirects": [
     {
       "source": "/white-swan",

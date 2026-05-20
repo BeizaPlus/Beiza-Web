@@ -14,6 +14,7 @@ export async function fetchPersonHealth(
   const q = new URLSearchParams({ circle_id: circleId });
   if (personId) q.set("person_id", personId);
   const res = await fetch(`/api/circle/person-health?${q}`, { headers: authHeaders(circleId) });
+  if (res.status === 503) return [];
   if (!res.ok) {
     const body = (await res.json().catch(() => ({}))) as { error?: string };
     throw new Error(body.error ?? "Could not load health data.");
@@ -60,6 +61,13 @@ export async function fetchHealthPatterns(circleId: string) {
     headers: authHeaders(circleId),
     body: JSON.stringify({ circle_id: circleId }),
   });
+  if (res.status === 503) {
+    return {
+      unlocked: false,
+      message: "Health patterns are temporarily unavailable.",
+      patterns: [],
+    };
+  }
   if (!res.ok) {
     const body = (await res.json().catch(() => ({}))) as { error?: string };
     throw new Error(body.error ?? "Could not analyze patterns.");
