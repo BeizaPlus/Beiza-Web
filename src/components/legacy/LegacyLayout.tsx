@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { LegacyAuthGate } from "@/components/legacy/LegacyAuthGate";
-import { BeizaLogoLink } from "@/components/BeizaLogoLink";
+import { Navigation } from "@/components/Navigation";
 import { LegacyNavIcon, type LegacyNavIconName } from "@/components/legacy/LegacyNavIcon";
 import { cn } from "@/lib/utils";
 
@@ -31,21 +31,9 @@ export function LegacyLayout() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border/60 bg-[hsl(var(--surface))]/90 backdrop-blur-md">
-        <div className="mx-auto max-w-lg px-4 py-4">
-          <div className="flex items-center gap-3">
-            <BeizaLogoLink variant="mascot" />
-            <div>
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                Beiza Legacy
-              </p>
-              <h1 className="text-lg font-semibold text-primary">
-                Your Family&apos;s Legacy Vault
-              </h1>
-            </div>
-          </div>
-        </div>
-        <nav className="mx-auto flex max-w-lg gap-1 px-4 pb-3" aria-label="Legacy">
+      <Navigation />
+      <div className="border-b border-border/60 bg-background/90 backdrop-blur-md">
+        <nav className="mx-auto flex max-w-lg gap-1 px-4 py-2" aria-label="Legacy">
           {nav.map((item) => {
             const active = item.end
               ? location.pathname === item.href
@@ -71,7 +59,7 @@ export function LegacyLayout() {
             );
           })}
         </nav>
-      </header>
+      </div>
       <main className="mx-auto max-w-lg px-4 py-6">
         <LegacyAuthGate>
           <Outlet />

@@ -84,6 +84,8 @@ import {
   type InferredRelationshipChoice,
 } from "@/lib/legacy/treeConnectionInference";
 
+const EMPTY_PORTRAIT_POOL: ReturnType<typeof usePortraitPool>["data"] = [];
+
 const nodeTypes = {
   person: PersonFlowNode,
   circlePerson: CirclePersonFlowNode,
@@ -196,7 +198,8 @@ function FamilyTreeCanvasInner({
       .catch(() => setTreeEdgeRows(initialTreeEdges));
   }, [circleId, persistViaApi, initialTreeEdges]);
 
-  const { data: portraitPool = [] } = usePortraitPool();
+  const { data: portraitPoolData } = usePortraitPool();
+  const portraitPool = portraitPoolData ?? EMPTY_PORTRAIT_POOL;
 
   const peopleWithPortraits = useMemo(
     () =>
@@ -241,7 +244,6 @@ function FamilyTreeCanvasInner({
       treeEdges: treeEdgeRows,
       links,
       recordings,
-      selectedPersonId,
     });
     const validNodes = filterValidTreeNodes(built.nodes);
     return {
@@ -249,7 +251,7 @@ function FamilyTreeCanvasInner({
       edges: filterValidTreeEdges(built.edges, validNodes),
       personEdgeCount: built.personEdgeCount,
     };
-  }, [peopleWithPortraits, treeEdgeRows, links, recordings, selectedPersonId]);
+  }, [peopleWithPortraits, treeEdgeRows, links, recordings]);
 
   const [nodes, setNodes, onNodesChange] = useNodesState(flowSnapshot.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(flowSnapshot.edges);

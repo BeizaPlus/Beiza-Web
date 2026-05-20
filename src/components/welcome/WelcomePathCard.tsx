@@ -15,6 +15,10 @@ export type WelcomePathCardProps = {
   backgroundImageAlt?: string;
   backgroundGradient?: string;
   featured?: boolean;
+  imageZoom?: number;
+  imageOffsetX?: number;
+  imageOffsetY?: number;
+  iconOffsetY?: number;
 };
 
 const PHOTO_OVERLAY =
@@ -33,6 +37,10 @@ export function WelcomePathCard({
   backgroundImageAlt = "",
   backgroundGradient,
   featured = false,
+  imageZoom = 1,
+  imageOffsetX = 50,
+  imageOffsetY = 50,
+  iconOffsetY = 0,
 }: WelcomePathCardProps) {
   return (
     <Link
@@ -48,7 +56,12 @@ export function WelcomePathCard({
         <img
           src={backgroundImage}
           alt={backgroundImageAlt}
-          className="absolute inset-0 h-full w-full object-cover object-center"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{
+            objectPosition: `${imageOffsetX}% ${imageOffsetY}%`,
+            transform: `scale(${imageZoom})`,
+            transformOrigin: `${imageOffsetX}% ${imageOffsetY}%`,
+          }}
           loading="eager"
         />
       ) : (
@@ -65,12 +78,13 @@ export function WelcomePathCard({
         aria-hidden
       />
 
-<div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-5 pt-20 text-left sm:px-5 sm:pb-6">
+      <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-5 pt-20 text-left sm:px-5 sm:pb-6">
         <span
           className={cn(
             "mb-3 flex h-10 w-10 items-center justify-center rounded-full",
-            iconCircleClass,
+            featured ? "bg-primary text-primary-foreground" : iconCircleClass,
           )}
+          style={{ transform: `translateY(${-iconOffsetY}px)` }}
         >
           <Icon className={iconClass} aria-hidden />
         </span>
