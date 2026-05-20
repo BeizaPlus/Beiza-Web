@@ -151,7 +151,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
 
       // Return more detailed error information
-      const errorMessage = errorData.errors || shopifyResponse.statusText;
+      const errorPayload = errorData as { errors?: string };
+      const errorMessage = errorPayload.errors || shopifyResponse.statusText;
       const isInvalidToken = errorMessage?.includes('Invalid API key') || errorMessage?.includes('Invalid API key or access token');
 
       return res.status(shopifyResponse.status).json({

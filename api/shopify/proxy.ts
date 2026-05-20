@@ -118,7 +118,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const shopifyUrl = `https://${storeDomain}/admin/api/${apiVersion}${normalizedPath}`;
 
     // Prepare headers for Shopify API request
-    const headers: HeadersInit = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'X-Shopify-Access-Token': adminApiToken,
     };

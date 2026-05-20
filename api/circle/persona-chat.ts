@@ -1,5 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { verifyCircleSession } from "../lib/verifyCircleSession";
+import {
+  circleSessionFailure,
+  unwrapCircleSession,
+  verifyCircleSession,
+} from "../lib/verifyCircleSession";
 import { runPersonaAgenticChat, type PersonaChatMessage } from "../lib/personaAgent";
 
 type Body = {
@@ -32,11 +36,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const session = await verifyCircleSession(req, circleId);
-  if (!session.ok) {
-    return res.status(session.status).json({ error: session.error });
-  }
+  const authFail = circleSessionFailure(session);
+  if (authFail) return res.status(authFail.status).json({ error: authFail.error });
+  const { supabase } = unwrapCircleSession(session);
 
-  const { data: circle } = await session.supabase
+  const { data: circle } = await supabase
     .from("family_circles")
     .select("name")
     .eq("id", circleId)
@@ -48,7 +52,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const { reply, treeUpdated } = await runPersonaAgenticChat({
-      supabase: session.supabase,
+      supabase,
       circleId,
       circleName: circle.name,
       messages: messages.slice(-20),

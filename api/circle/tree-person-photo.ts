@@ -1,5 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { verifyCircleSession } from "../lib/verifyCircleSession";
+import {
+  circleSessionFailure,
+  unwrapCircleSession,
+  verifyCircleSession,
+} from "../lib/verifyCircleSession";
 
 const BUCKET = "family-people-photos";
 const MAX_BYTES = 5 * 1024 * 1024;
@@ -42,9 +46,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const session = await verifyCircleSession(req, circleId);
-  if (!session.ok) {
-    return res.status(session.status).json({ error: session.error });
-  }
+  const authFail = circleSessionFailure(session);
+  if (authFail) return res.status(authFail.status).json({ error: authFail.error });
+  const { supabase } = unwrapCircleSession(session);
 
   const supabaseUrl =
     process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? "";
@@ -64,7 +68,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       : "jpg";
   const objectPath = `${circleId}/${personId}/${Date.now()}.${ext}`;
 
-  const { error: uploadError } = await session.supabase.storage
+  const { error: uploadError } = await supabase.storage
     .from(BUCKET)
     .upload(objectPath, buffer, { contentType, upsert: true });
 
@@ -74,7 +78,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const photoUrl = publicObjectUrl(supabaseUrl, objectPath);
 
-  const { data: person, error: updateError } = await session.supabase
+  const { data: person, error: updateError } = await supabase
     .from("family_people")
     .update({ photo_url: photoUrl })
     .eq("id", personId)

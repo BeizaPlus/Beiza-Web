@@ -10,7 +10,8 @@ export type PersonaChatMessage = { role: "user" | "assistant"; content: string }
 
 type AnthropicContentBlock =
   | { type: "text"; text: string }
-  | { type: "tool_use"; id: string; name: string; input: Record<string, unknown> };
+  | { type: "tool_use"; id: string; name: string; input: Record<string, unknown> }
+  | { type: "tool_result"; tool_use_id: string; content: string };
 
 type AnthropicMessage = {
   role: "user" | "assistant";
@@ -153,11 +154,11 @@ async function runAnthropicAgenticLoop(params: {
       toolResults.push({
         type: "tool_result",
         tool_use_id: tool.id,
-        content: JSON.stringify(outcome.ok ? outcome.result : { error: outcome.error }),
+        content: JSON.stringify(outcome.ok === false ? { error: outcome.error } : outcome.result),
       });
     }
 
-    anthropicMessages.push({ role: "user", content: toolResults });
+    anthropicMessages.push({ role: "user", content: toolResults as AnthropicContentBlock[] });
   }
 
   return {
@@ -227,7 +228,10 @@ async function runOllamaAgenticLoop(params: {
         call.input ?? {},
       );
       if (outcome.ok) treeUpdated = true;
-      results.push({ tool: call.name, ...(outcome.ok ? outcome.result : { error: outcome.error }) });
+      results.push({
+        tool: call.name,
+        ...(outcome.ok === false ? { error: outcome.error } : outcome.result),
+      });
     }
 
     ollamaMessages.push({

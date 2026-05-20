@@ -1,5 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { verifyCircleSession } from "../lib/verifyCircleSession";
+import {
+  circleSessionFailure,
+  unwrapCircleSession,
+  verifyCircleSession,
+} from "../lib/verifyCircleSession";
 
 const CATEGORIES = new Set([
   "cardiovascular",
@@ -32,11 +36,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!circleId) return res.status(400).json({ error: "circle_id is required." });
 
   const session = await verifyCircleSession(req, circleId);
-  if (!session.ok) return res.status(session.status).json({ error: session.error });
+  const authFail = circleSessionFailure(session);
+  if (authFail) return res.status(authFail.status).json({ error: authFail.error });
+  const { supabase } = unwrapCircleSession(session);
 
   if (req.method === "GET") {
     const personId = (req.query.person_id as string)?.trim();
-    let q = session.supabase
+    let q = supabase
       .from("person_health_conditions")
       .select("*")
       .eq("circle_id", circleId);
@@ -66,7 +72,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: "Invalid category." });
     }
 
-    const { data, error } = await session.supabase
+    const { data, error } = await supabase
       .from("person_health_conditions")
       .upsert(
         {
@@ -89,7 +95,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "DELETE") {
     const id = (req.query.id as string)?.trim();
     if (!id) return res.status(400).json({ error: "id is required." });
-    const { error } = await session.supabase
+    const { error } = await supabase
       .from("person_health_conditions")
       .delete()
       .eq("id", id)

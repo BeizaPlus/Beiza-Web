@@ -1,11 +1,20 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { verifyCircleSession } from "../lib/verifyCircleSession";
+import {
+  circleSessionFailure,
+  unwrapCircleSession,
+  verifyCircleSession,
+} from "../lib/verifyCircleSession";
 
 type ConditionRow = {
   person_id: string;
   category: string;
   condition: string;
   still_active: boolean;
+};
+
+type PersonRow = {
+  id: string;
+  display_name: string | null;
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -23,14 +32,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!circleId) return res.status(400).json({ error: "circle_id is required." });
 
   const session = await verifyCircleSession(req, circleId);
-  if (!session.ok) return res.status(session.status).json({ error: session.error });
+  const authFail = circleSessionFailure(session);
+  if (authFail) return res.status(authFail.status).json({ error: authFail.error });
+  const { supabase } = unwrapCircleSession(session);
 
-  const { data: people } = await session.supabase
+  const { data: people } = await supabase
     .from("family_people")
     .select("id, display_name, relation_label, parent_id")
     .eq("circle_id", circleId);
 
-  const { data: conditions, error: condErr } = await session.supabase
+  const { data: conditions, error: condErr } = await supabase
     .from("person_health_conditions")
     .select("person_id, category, condition, still_active")
     .eq("circle_id", circleId);
@@ -49,7 +60,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  const nameById = new Map((people ?? []).map((p) => [p.id, p.display_name]));
+  const nameById = new Map(
+    ((people ?? []) as PersonRow[]).map((p) => [p.id, p.display_name ?? "Someone"] as const),
+  );
   const byCategory = new Map<string, { condition: string; names: string[] }[]>();
 
   for (const row of rows) {

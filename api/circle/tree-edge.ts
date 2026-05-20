@@ -1,5 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { verifyCircleSession } from "../lib/verifyCircleSession";
+import {
+  circleSessionFailure,
+  unwrapCircleSession,
+  verifyCircleSession,
+} from "../lib/verifyCircleSession";
 
 type Body = {
   circle_id?: string;
@@ -29,11 +33,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const session = await verifyCircleSession(req, circleId);
-    if (!session.ok) {
-      return res.status(session.status).json({ error: session.error });
-    }
+    const deleteAuthFail = circleSessionFailure(session);
+    if (deleteAuthFail) return res.status(deleteAuthFail.status).json({ error: deleteAuthFail.error });
+    const { supabase: deleteSupabase } = unwrapCircleSession(session);
 
-    const { error } = await session.supabase
+    const { error } = await deleteSupabase
       .from("tree_edges")
       .delete()
       .eq("id", edgeId)
@@ -60,11 +64,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const session = await verifyCircleSession(req, patchCircleId);
-    if (!session.ok) {
-      return res.status(session.status).json({ error: session.error });
-    }
+    const patchAuthFail = circleSessionFailure(session);
+    if (patchAuthFail) return res.status(patchAuthFail.status).json({ error: patchAuthFail.error });
+    const { supabase: patchSupabase } = unwrapCircleSession(session);
 
-    const { data: edge, error } = await session.supabase
+    const { data: edge, error } = await patchSupabase
       .from("tree_edges")
       .update({ relationship_type: relationshipType })
       .eq("id", edgeId)
@@ -99,11 +103,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const session = await verifyCircleSession(req, postCircleId);
-  if (!session.ok) {
-    return res.status(session.status).json({ error: session.error });
-  }
+  const postAuthFail = circleSessionFailure(session);
+  if (postAuthFail) return res.status(postAuthFail.status).json({ error: postAuthFail.error });
+  const { supabase: postSupabase } = unwrapCircleSession(session);
 
-  const { data: edge, error } = await session.supabase
+  const { data: edge, error } = await postSupabase
     .from("tree_edges")
     .insert({
       circle_id: postCircleId,

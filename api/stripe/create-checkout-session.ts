@@ -32,7 +32,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const supabase = getSupabaseAdmin();
   if (!supabase) return res.status(500).json({ error: "Server configuration missing." });
 
-  const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
+  const stripe = new Stripe(stripeKey, { apiVersion: "2025-02-24.acacia" });
 
   const { data: ent } = await supabase
     .from("legacy_entitlements")

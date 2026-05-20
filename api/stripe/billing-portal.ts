@@ -36,7 +36,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const appUrl = process.env.VITE_APP_URL ?? "http://localhost:8080";
   const returnUrl = body.return_url?.trim() || `${appUrl}/legacy/vault`;
 
-  const stripe = new Stripe(stripeKey, { apiVersion: "2023-10-16" });
+  const stripe = new Stripe(stripeKey, { apiVersion: "2025-02-24.acacia" });
   const portal = await stripe.billingPortal.sessions.create({
     customer: ent.stripe_customer_id,
     return_url: returnUrl,

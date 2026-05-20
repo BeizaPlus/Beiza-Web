@@ -6,6 +6,29 @@ export type CircleSessionAuth =
   | { ok: true; supabase: SupabaseClient; circleId: string }
   | { ok: false; status: number; error: string };
 
+export type CircleSessionContext = {
+  supabase: SupabaseClient;
+  circleId: string;
+};
+
+export function circleSessionFailure(
+  session: CircleSessionAuth,
+): { status: number; error: string } | null {
+  if (session.ok) {
+    return null;
+  }
+  const fail = session as Extract<CircleSessionAuth, { ok: false }>;
+  return { status: fail.status, error: fail.error };
+}
+
+/** Call only after `circleSessionFailure` returned null. */
+export function unwrapCircleSession(session: CircleSessionAuth): CircleSessionContext {
+  if (session.ok) {
+    return { supabase: session.supabase, circleId: session.circleId };
+  }
+  throw new Error("Unauthenticated circle session");
+}
+
 export async function verifyCircleSession(req: VercelRequest, circleId: string): Promise<CircleSessionAuth> {
   const auth = req.headers.authorization?.replace(/^Bearer\s+/i, "");
   if (!circleId || !auth) {

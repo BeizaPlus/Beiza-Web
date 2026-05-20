@@ -1,5 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { verifyCircleSession } from "../lib/verifyCircleSession";
+import {
+  circleSessionFailure,
+  unwrapCircleSession,
+  verifyCircleSession,
+} from "../lib/verifyCircleSession";
 
 type Body = {
   circle_id?: string;
@@ -31,11 +35,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const session = await verifyCircleSession(req, circleId);
-  if (!session.ok) {
-    return res.status(session.status).json({ error: session.error });
-  }
+  const authFail = circleSessionFailure(session);
+  if (authFail) return res.status(authFail.status).json({ error: authFail.error });
+  const { supabase } = unwrapCircleSession(session);
 
-  const { error } = await session.supabase
+  const { error } = await supabase
     .from("family_people")
     .update({ canvas_x: canvasX, canvas_y: canvasY })
     .eq("id", personId)

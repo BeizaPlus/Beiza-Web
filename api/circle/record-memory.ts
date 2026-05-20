@@ -1,5 +1,9 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { verifyCircleSession } from "../lib/verifyCircleSession";
+import {
+  circleSessionFailure,
+  unwrapCircleSession,
+  verifyCircleSession,
+} from "../lib/verifyCircleSession";
 import { applyMemoryAboutLinks } from "../lib/recordMemoryLinks";
 
 const BUCKET = "legacy-recordings";
@@ -54,9 +58,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const session = await verifyCircleSession(req, circleId);
-  if (!session.ok) {
-    return res.status(session.status).json({ error: session.error });
-  }
+  const authFail = circleSessionFailure(session);
+  if (authFail) return res.status(authFail.status).json({ error: authFail.error });
+  const { supabase } = unwrapCircleSession(session);
 
   const supabaseUrl =
     process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? "";
@@ -69,7 +73,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: "Recording exceeds vault storage limit (5 GB)." });
   }
 
-  const { data: circle, error: circleError } = await session.supabase
+  const { data: circle, error: circleError } = await supabase
     .from("family_circles")
     .select("created_by")
     .eq("id", circleId)
@@ -83,7 +87,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const ext = extensionForMime(contentType);
   const objectPath = `${circleId}/${recordingId}.${ext}`;
 
-  const { error: uploadError } = await session.supabase.storage
+  const { error: uploadError } = await supabase.storage
     .from(BUCKET)
     .upload(objectPath, buffer, { contentType, upsert: false });
 
@@ -93,7 +97,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const audioUrl = `${supabaseUrl.replace(/\/$/, "")}/storage/v1/object/public/${BUCKET}/${objectPath}`;
 
-  const { data: recording, error: insertError } = await session.supabase
+  const { data: recording, error: insertError } = await supabase
     .from("recordings")
     .insert({
       id: recordingId,
@@ -117,7 +121,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     await applyMemoryAboutLinks({
-      supabase: session.supabase,
+      supabase: supabase,
       circleId,
       recordingId,
       recordedByUserId: circle.created_by,
