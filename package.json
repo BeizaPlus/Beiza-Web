@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "typecheck:api": "tsc -p api/tsconfig.json --noEmit",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "font-audit": "node scripts/font-audit.mjs",
