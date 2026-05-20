@@ -41,7 +41,7 @@ export function WelcomePathCard({
         "font-sans group relative aspect-[2/3] w-full min-h-[320px] overflow-hidden rounded-[10px] border border-transparent",
         "transition duration-300 hover:border-white sm:min-h-[380px] lg:min-h-[420px]",
         featured &&
-          "z-10 scale-[1.02] border-primary/40 shadow-[0_0_0_1px_hsl(var(--primary)/0.45),0_0_28px_hsl(var(--primary)/0.22)] sm:scale-[1.04] lg:min-h-[400px] lg:scale-[1.05]",
+          "z-10 border-primary/40 shadow-[0_0_0_1px_hsl(var(--primary)/0.45),0_0_28px_hsl(var(--primary)/0.22)]",
       )}
     >
       {backgroundImage ? (
@@ -65,11 +65,7 @@ export function WelcomePathCard({
         aria-hidden
       />
 
-      <span className="absolute left-3 top-3 z-10 rounded-full bg-white px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-black">
-        {label}
-      </span>
-
-      <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-5 pt-20 text-left sm:px-5 sm:pb-6">
+<div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-5 pt-20 text-left sm:px-5 sm:pb-6">
         <span
           className={cn(
             "mb-3 flex h-10 w-10 items-center justify-center rounded-full",
@@ -81,7 +77,7 @@ export function WelcomePathCard({
         <h2 className="font-sans text-[1.35rem] font-semibold leading-tight text-white sm:text-[1.5rem] lg:text-[1.65rem]">
           {title}
         </h2>
-        <p className="mt-2 text-[13px] font-normal leading-snug text-white/90 sm:text-sm">{subtitle}</p>
+        <p className="mt-2 min-w-0 w-full text-[13px] font-normal leading-snug text-white/90 sm:text-sm">{subtitle}</p>
         <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.12em] text-white/65">{meta}</p>
       </div>
     </Link>

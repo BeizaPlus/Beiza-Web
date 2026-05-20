@@ -41,7 +41,7 @@ const subtitleVariants = {
 /** Left → center (featured) → right */
 const PATHS = [
   {
-    to: "/education",
+    to: "/home",
     label: "Education",
     title: "Learn your culture",
     subtitle:
@@ -52,7 +52,7 @@ const PATHS = [
     backgroundGradient: "linear-gradient(165deg, #3d3428 0%, #1a1612 55%, #0a0908 100%)",
   },
   {
-    to: "/heritage",
+    to: "/legacy/record",
     label: "Legacy",
     title: "Preserve a life story",
     subtitle:
@@ -94,7 +94,7 @@ export default function WelcomeGate() {
   return (
     <div
       className={cn(
-        "font-sans flex min-h-screen flex-col transition-colors duration-300",
+        "flex min-h-screen flex-col transition-colors duration-300",
         isLight ? "bg-[#f7f6f3] text-[#1a1816]" : "bg-black text-white",
       )}
     >
@@ -102,8 +102,9 @@ export default function WelcomeGate() {
         <WelcomeThemeToggle theme={theme} onThemeChange={handleThemeChange} />
       </div>
 
+      <div className="container relative z-10 mx-auto flex w-full flex-1 flex-col px-6 py-20">
       <motion.header
-        className="flex flex-col items-center px-6 pb-4 pt-16 text-center sm:pt-20"
+        className="mx-auto flex w-full max-w-4xl flex-col items-center text-center"
         initial="hidden"
         animate="show"
         variants={{ hidden: {}, show: {} }}
@@ -126,7 +127,7 @@ export default function WelcomeGate() {
         <motion.p
           variants={subtitleVariants}
           className={cn(
-            "mt-10 max-w-md text-lg italic font-normal sm:text-xl",
+            "mx-auto mt-10 max-w-2xl text-lg italic font-normal leading-relaxed sm:text-xl",
             isLight ? "text-[#1a1816]/90" : "text-white/95",
           )}
         >
@@ -134,20 +135,21 @@ export default function WelcomeGate() {
         </motion.p>
       </motion.header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-16 pt-6 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-24 lg:py-32">
         <motion.div
-          className="grid grid-cols-1 items-center gap-3 sm:grid-cols-3 sm:gap-4"
+          className="grid grid-cols-1 items-stretch gap-6 sm:grid-cols-3"
           variants={containerVariants}
           initial="hidden"
           animate="show"
         >
           {PATHS.map((path) => (
-            <motion.div key={path.to} variants={cardVariants} className="h-full">
+            <motion.div key={path.to} variants={cardVariants} className="flex h-full min-w-0 w-full">
               <WelcomePathCard {...path} />
             </motion.div>
           ))}
         </motion.div>
       </main>
+      </div>
     </div>
   );
 }
