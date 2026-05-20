@@ -4,28 +4,42 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import type { Plugin, ViteDevServer } from "vite";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-const API_ROUTES: Record<string, string> = {
-  "/api/circle/verify-code": "/api/circle/verify-code.ts",
-  "/api/circle/tree-data": "/api/circle/tree-data.ts",
-  "/api/circle/tree-edge": "/api/circle/tree-edge.ts",
-  "/api/circle/tree-position": "/api/circle/tree-position.ts",
-  "/api/circle/tree-person": "/api/circle/tree-person.ts",
-  "/api/circle/tree-person-photo": "/api/circle/tree-person-photo.ts",
-  "/api/circle/tree-person-duplicate": "/api/circle/tree-person-duplicate.ts",
-  "/api/circle/record-memory": "/api/circle/record-memory.ts",
-  "/api/recovery-request": "/api/recovery-request.ts",
-  "/api/heritage-inquiry": "/api/heritage-inquiry.ts",
-  "/api/memory/public": "/api/memory/public.ts",
-  "/api/circle/persona-chat": "/api/circle/persona-chat.ts",
-  "/api/circle/person-health": "/api/circle/person-health.ts",
-  "/api/circle/health-patterns": "/api/circle/health-patterns.ts",
-  "/api/stripe/create-checkout-session": "/api/stripe/create-checkout-session.ts",
-  "/api/stripe/billing-portal": "/api/stripe/billing-portal.ts",
-  "/api/stripe/entitlement": "/api/stripe/entitlement.ts",
-  "/api/stripe/webhook": "/api/stripe/webhook.ts",
-  "/api/cron/weekly-health-send": "/api/cron/weekly-health-send.ts",
-  "/api/health/unsubscribe": "/api/health/unsubscribe.ts",
+/** Static API entry files (relative to project root, leading slash stripped when resolving). */
+const API_STATIC_ROUTES: Record<string, string> = {
+  "/api/recovery-request": "api/recovery-request.ts",
+  "/api/heritage-inquiry": "api/heritage-inquiry.ts",
+  "/api/memory/public": "api/memory/public.ts",
+  "/api/stripe/webhook": "api/stripe/webhook.ts",
+  "/api/cron/weekly-health-send": "api/cron/weekly-health-send.ts",
+  "/api/health/unsubscribe": "api/health/unsubscribe.ts",
 };
+
+type ResolvedRoute = { moduleRel: string; pathParam?: string };
+
+function resolveApiRoute(pathname: string): ResolvedRoute | null {
+  if (API_STATIC_ROUTES[pathname]) {
+    return { moduleRel: API_STATIC_ROUTES[pathname] };
+  }
+  const circlePrefix = "/api/circle/";
+  if (pathname.startsWith(circlePrefix)) {
+    const rest = pathname.slice(circlePrefix.length).split("/")[0];
+    if (!rest) return null;
+    return { moduleRel: "api/circle/[path].ts", pathParam: rest };
+  }
+  const stripePrefix = "/api/stripe/";
+  if (pathname.startsWith(stripePrefix)) {
+    const rest = pathname.slice(stripePrefix.length).split("/")[0];
+    if (!rest || rest === "webhook") return null;
+    return { moduleRel: "api/stripe/[path].ts", pathParam: rest };
+  }
+  const shopifyPrefix = "/api/shopify/";
+  if (pathname.startsWith(shopifyPrefix)) {
+    const rest = pathname.slice(shopifyPrefix.length).split("/")[0];
+    if (!rest) return null;
+    return { moduleRel: "api/shopify/[path].ts", pathParam: rest };
+  }
+  return null;
+}
 
 function loadDevEnv() {
   const envPath = path.resolve(process.cwd(), ".env");
@@ -52,7 +66,12 @@ function readBody(req: IncomingMessage): Promise<string> {
   });
 }
 
-function toVercelRequest(req: IncomingMessage, pathname: string, rawBody: string): VercelRequest {
+function toVercelRequest(
+  req: IncomingMessage,
+  pathname: string,
+  rawBody: string,
+  pathParam?: string,
+): VercelRequest {
   const url = new URL(req.url ?? pathname, "http://localhost");
   const query: Record<string, string | string[]> = {};
   url.searchParams.forEach((value, key) => {
@@ -61,6 +80,9 @@ function toVercelRequest(req: IncomingMessage, pathname: string, rawBody: string
     else if (Array.isArray(existing)) existing.push(value);
     else query[key] = [existing, value];
   });
+  if (pathParam !== undefined) {
+    query.path = pathParam;
+  }
 
   let body: unknown = rawBody;
   if (rawBody && req.headers["content-type"]?.includes("application/json")) {
@@ -120,8 +142,8 @@ export function vercelApiDevPlugin(): Plugin {
         const pathname = (req.url ?? "").split("?")[0];
         if (!pathname.startsWith("/api/")) return next();
 
-        const moduleRel = API_ROUTES[pathname];
-        if (!moduleRel || !req.method) {
+        const resolved = resolveApiRoute(pathname);
+        if (!resolved || !req.method) {
           res.statusCode = 404;
           res.setHeader("Content-Type", "application/json");
           res.end(JSON.stringify({ error: "API route not found." }));
@@ -130,9 +152,9 @@ export function vercelApiDevPlugin(): Plugin {
 
         try {
           const rawBody = req.method === "GET" || req.method === "HEAD" ? "" : await readBody(req);
-          const mod = await server.ssrLoadModule(path.resolve(root, moduleRel.slice(1)));
+          const mod = await server.ssrLoadModule(path.resolve(root, resolved.moduleRel));
           const handler = mod.default as (req: VercelRequest, res: VercelResponse) => Promise<unknown>;
-          const vercelReq = toVercelRequest(req, pathname, rawBody);
+          const vercelReq = toVercelRequest(req, pathname, rawBody, resolved.pathParam);
           await handler(vercelReq, toVercelResponse(res));
         } catch (err) {
           console.error("[api-dev]", pathname, err);

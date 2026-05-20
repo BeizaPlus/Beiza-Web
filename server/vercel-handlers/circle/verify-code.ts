@@ -4,7 +4,7 @@ import {
   generateCircleAccessToken,
   hashCircleToken,
   signCircleSessionToken,
-} from "../lib/circleAccessToken";
+} from "../../../api/lib/circleAccessToken.js";
 
 type Body = {
   circle_id?: string;

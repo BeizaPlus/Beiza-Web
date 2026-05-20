@@ -4,18 +4,18 @@ import {
   formatTreeRosterForPrompt,
   PERSONA_TOOL_DEFINITIONS,
   type PersonaToolName,
-} from "./personaTools";
+} from "./personaTools.js";
 
 export type PersonaChatMessage = { role: "user" | "assistant"; content: string };
 
-type AnthropicContentBlock =
+type ClaudeMessageBlock =
   | { type: "text"; text: string }
   | { type: "tool_use"; id: string; name: string; input: Record<string, unknown> }
   | { type: "tool_result"; tool_use_id: string; content: string };
 
-type AnthropicMessage = {
+type ClaudeApiMessage = {
   role: "user" | "assistant";
-  content: string | AnthropicContentBlock[];
+  content: string | ClaudeMessageBlock[];
 };
 
 const MAX_TOOL_ROUNDS = 10;
@@ -70,7 +70,7 @@ async function loadVoiceContext(supabase: SupabaseClient, circleId: string) {
     .select("id, display_name")
     .eq("circle_id", circleId);
 
-  const nameById = new Map((people ?? []).map((p) => [p.id, p.display_name]));
+  const nameById = new Map((people ?? []).map((p) => [String(p.id), p.display_name]));
   const byLinks = (links ?? []).filter((l) => l.link_type === "by");
 
   const lines: string[] = [];
@@ -92,7 +92,7 @@ async function runAnthropicAgenticLoop(params: {
   supabase: SupabaseClient;
   circleId: string;
 }): Promise<{ reply: string; treeUpdated: boolean }> {
-  const anthropicMessages: AnthropicMessage[] = params.messages.map((m) => ({
+  const anthropicMessages: ClaudeApiMessage[] = params.messages.map((m) => ({
     role: m.role,
     content: m.content,
   }));
@@ -122,12 +122,12 @@ async function runAnthropicAgenticLoop(params: {
     }
 
     const body = (await res.json()) as {
-      content: AnthropicContentBlock[];
+      content: ClaudeMessageBlock[];
       stop_reason: string;
     };
 
     const toolUses = body.content.filter(
-      (b): b is Extract<AnthropicContentBlock, { type: "tool_use" }> => b.type === "tool_use",
+      (b): b is Extract<ClaudeMessageBlock, { type: "tool_use" }> => b.type === "tool_use",
     );
 
     anthropicMessages.push({ role: "assistant", content: body.content });
@@ -140,7 +140,7 @@ async function runAnthropicAgenticLoop(params: {
       };
     }
 
-    const toolResults: { type: "tool_result"; tool_use_id: string; content: string }[] = [];
+    const toolResults: ClaudeMessageBlock[] = [];
 
     for (const tool of toolUses) {
       const name = tool.name as PersonaToolName;
@@ -158,7 +158,7 @@ async function runAnthropicAgenticLoop(params: {
       });
     }
 
-    anthropicMessages.push({ role: "user", content: toolResults as AnthropicContentBlock[] });
+    anthropicMessages.push({ role: "user", content: toolResults });
   }
 
   return {

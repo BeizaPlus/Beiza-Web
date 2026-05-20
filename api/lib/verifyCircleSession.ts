@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { VercelRequest } from "@vercel/node";
-import { hashCircleToken, verifyCircleSessionToken } from "./circleAccessToken";
+import { hashCircleToken, verifyCircleSessionToken } from "./circleAccessToken.js";
 
 export type CircleSessionAuth =
   | { ok: true; supabase: SupabaseClient; circleId: string }

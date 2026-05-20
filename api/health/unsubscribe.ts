@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { getSupabaseAdmin } from "../lib/supabaseAdmin";
-import { verifyHealthUnsubscribe } from "../lib/healthUnsubscribe";
+import { getSupabaseAdmin } from "../lib/supabaseAdmin.js";
+import { verifyHealthUnsubscribe } from "../lib/healthUnsubscribe.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "GET") {

@@ -3,8 +3,8 @@ import {
   circleSessionFailure,
   unwrapCircleSession,
   verifyCircleSession,
-} from "../lib/verifyCircleSession";
-import { applyMemoryAboutLinks } from "../lib/recordMemoryLinks";
+} from "../../../api/lib/verifyCircleSession.js";
+import { applyMemoryAboutLinks } from "../../../api/lib/recordMemoryLinks.js";
 
 const BUCKET = "legacy-recordings";
 const MAX_BYTES = 5 * 1024 * 1024 * 1024; // 5 GB Circle vault limit

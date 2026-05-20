@@ -3,7 +3,7 @@ import {
   circleSessionFailure,
   unwrapCircleSession,
   verifyCircleSession,
-} from "../lib/verifyCircleSession";
+} from "../../../api/lib/verifyCircleSession.js";
 
 type Body = {
   circle_id?: string;

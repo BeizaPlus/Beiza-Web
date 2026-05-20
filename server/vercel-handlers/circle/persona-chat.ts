@@ -3,8 +3,8 @@ import {
   circleSessionFailure,
   unwrapCircleSession,
   verifyCircleSession,
-} from "../lib/verifyCircleSession";
-import { runPersonaAgenticChat, type PersonaChatMessage } from "../lib/personaAgent";
+} from "../../../api/lib/verifyCircleSession.js";
+import { runPersonaAgenticChat, type PersonaChatMessage } from "../../../api/lib/personaAgent.js";
 
 type Body = {
   circle_id?: string;

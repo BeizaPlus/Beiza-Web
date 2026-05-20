@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@supabase/supabase-js";
-import { hashCircleToken, verifyCircleSessionToken } from "../lib/circleAccessToken";
+import { hashCircleToken, verifyCircleSessionToken } from "../../../api/lib/circleAccessToken.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "OPTIONS") {

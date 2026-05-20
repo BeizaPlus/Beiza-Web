@@ -3,7 +3,7 @@ import {
   circleSessionFailure,
   unwrapCircleSession,
   verifyCircleSession,
-} from "../lib/verifyCircleSession";
+} from "../../../api/lib/verifyCircleSession.js";
 
 const BUCKET = "family-people-photos";
 const MAX_BYTES = 5 * 1024 * 1024;

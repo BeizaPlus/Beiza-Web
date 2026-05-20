@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { Resend } from "resend";
-import { getSupabaseAdmin } from "../lib/supabaseAdmin";
-import { signHealthUnsubscribe } from "../lib/healthUnsubscribe";
+import { getSupabaseAdmin } from "../lib/supabaseAdmin.js";
+import { signHealthUnsubscribe } from "../lib/healthUnsubscribe.js";
 
 /** Cron: advance weekly health question and queue per-recipient send logs. */
 export default async function handler(req: VercelRequest, res: VercelResponse) {

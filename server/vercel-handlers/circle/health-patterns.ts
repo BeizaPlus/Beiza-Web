@@ -3,7 +3,7 @@ import {
   circleSessionFailure,
   unwrapCircleSession,
   verifyCircleSession,
-} from "../lib/verifyCircleSession";
+} from "../../../api/lib/verifyCircleSession.js";
 
 type ConditionRow = {
   person_id: string;
@@ -60,8 +60,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
+  const peopleRows = (people ?? []) as PersonRow[];
   const nameById = new Map(
-    ((people ?? []) as PersonRow[]).map((p) => [p.id, p.display_name ?? "Someone"] as const),
+    peopleRows.map((p) => [String(p.id), p.display_name ?? "Someone"] as const),
   );
   const byCategory = new Map<string, { condition: string; names: string[] }[]>();
 

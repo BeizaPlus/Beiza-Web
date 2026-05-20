@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { getSupabaseAdmin } from "../lib/supabaseAdmin";
-import { verifySupabaseUser } from "../lib/verifySupabaseUser";
+import { getSupabaseAdmin } from "../../../api/lib/supabaseAdmin.js";
+import { verifySupabaseUser } from "../../../api/lib/verifySupabaseUser.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
