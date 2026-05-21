@@ -28,6 +28,8 @@ import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
 
 import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
 
+import { Accordion } from "@/components/ui/accordion";
+import { StudioAccordionSection, StudioToggleRow } from "@/components/dev/StudioAccordionSection";
 import { StudioCopyOffsetSliders } from "@/components/dev/StudioCopyOffsetSliders";
 import { StudioSlider } from "@/components/dev/StudioSlider";
 
@@ -46,6 +48,7 @@ import {
   DEFAULT_STUDIO_BY_LOCALE,
 
   DEFAULT_STUDIO_GLOBAL,
+  DEFAULT_LOCALE_RAIL_LAYOUT,
   DEFAULT_TOOLBAR_LAYOUT,
 
   loadWelcomeStudioStore,
@@ -62,6 +65,7 @@ import {
 
   studioStateForLocale,
 
+  type LocaleRailLayout,
   type ToolbarControlsLayout,
 
   type CardStudio,
@@ -96,6 +100,165 @@ const PATH_ICONS = {
 
 
 
+function LocaleRailLayoutSliders({
+  rail,
+  onChange,
+}: {
+  rail: LocaleRailLayout;
+  onChange: (partial: Partial<LocaleRailLayout>) => void;
+}) {
+  const patch = onChange;
+  return (
+    <>
+      <StudioSlider
+        compact
+        label="Inactive dot (px)"
+        value={rail.dotSizePx}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.dotSizePx}
+        min={6}
+        max={32}
+        step={1}
+        onChange={(v) => patch({ dotSizePx: v })}
+      />
+      <StudioSlider
+        compact
+        label="Active yellow dot (px)"
+        value={rail.activeDotSizePx}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.activeDotSizePx}
+        min={6}
+        max={40}
+        step={1}
+        onChange={(v) => patch({ activeDotSizePx: v })}
+      />
+      <StudioSlider
+        compact
+        label="Dot stack gap (px)"
+        value={rail.dotStackGapPx}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.dotStackGapPx}
+        min={0}
+        max={40}
+        step={1}
+        onChange={(v) => patch({ dotStackGapPx: v })}
+      />
+      <StudioSlider
+        compact
+        label="Label → yellow dot (px)"
+        value={rail.labelToDotGapPx}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.labelToDotGapPx}
+        min={0}
+        max={32}
+        step={1}
+        onChange={(v) => patch({ labelToDotGapPx: v })}
+      />
+      <StudioSlider
+        compact
+        label="Flag width (px)"
+        value={rail.flagWidthPx}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.flagWidthPx}
+        min={12}
+        max={32}
+        step={1}
+        onChange={(v) => patch({ flagWidthPx: v })}
+      />
+      <StudioSlider
+        compact
+        label="Flag height (px)"
+        value={rail.flagHeightPx}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.flagHeightPx}
+        min={8}
+        max={24}
+        step={1}
+        onChange={(v) => patch({ flagHeightPx: v })}
+      />
+      <StudioSlider
+        compact
+        label="Active code font (px)"
+        value={rail.labelFontPx}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.labelFontPx}
+        min={12}
+        max={28}
+        step={1}
+        onChange={(v) => patch({ labelFontPx: v })}
+      />
+      <StudioSlider
+        compact
+        label="Sun button (px)"
+        value={rail.sunSizePx}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.sunSizePx}
+        min={48}
+        max={120}
+        step={2}
+        onChange={(v) => patch({ sunSizePx: v })}
+      />
+      <StudioSlider
+        compact
+        label="Sun icon (px)"
+        value={rail.sunIconPx}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.sunIconPx}
+        min={16}
+        max={56}
+        step={1}
+        onChange={(v) => patch({ sunIconPx: v })}
+      />
+      <StudioSlider
+        compact
+        label="Auto-rotate (sec)"
+        value={rail.autoRotateSec}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.autoRotateSec}
+        min={1}
+        max={15}
+        step={0.5}
+        onChange={(v) => patch({ autoRotateSec: v })}
+      />
+      <StudioSlider
+        compact
+        label="Inactive code → dot (px)"
+        value={rail.inactiveLabelGapPx}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.inactiveLabelGapPx}
+        min={0}
+        max={24}
+        step={1}
+        onChange={(v) => patch({ inactiveLabelGapPx: v })}
+      />
+      <StudioSlider
+        compact
+        label="Rail nudge ← left / right → (rem)"
+        value={rail.railNudgeXRem}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.railNudgeXRem}
+        min={-4}
+        max={4}
+        step={0.125}
+        onChange={(v) => patch({ railNudgeXRem: v })}
+      />
+      <StudioSlider
+        compact
+        label="Labels nudge ← / → (rem)"
+        value={rail.labelNudgeXRem}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.labelNudgeXRem}
+        min={-4}
+        max={4}
+        step={0.125}
+        onChange={(v) => patch({ labelNudgeXRem: v })}
+      />
+      <StudioSlider
+        compact
+        label="Dot axis nudge ← / → (rem)"
+        value={rail.axisNudgeXRem}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.axisNudgeXRem}
+        min={-4}
+        max={4}
+        step={0.125}
+        onChange={(v) => patch({ axisNudgeXRem: v })}
+      />
+      <StudioToggleRow
+        label="Show codes on gray dots"
+        checked={rail.showInactiveCodes}
+        onChange={(v) => patch({ showInactiveCodes: v })}
+      />
+    </>
+  );
+}
+
 function ToolbarLayoutSliders({
   layout,
   onChange,
@@ -108,7 +271,7 @@ function ToolbarLayoutSliders({
     <>
       <StudioSlider
         compact
-        label="Rail from right (rem)"
+        label="From right edge (rem)"
         value={layout.railRightRem}
         defaultValue={DEFAULT_TOOLBAR_LAYOUT.railRightRem}
         min={0}
@@ -128,22 +291,12 @@ function ToolbarLayoutSliders({
       />
       <StudioSlider
         compact
-        label="Rail ↔ dots gap (px)"
-        value={layout.railDotsGapPx}
-        defaultValue={DEFAULT_TOOLBAR_LAYOUT.railDotsGapPx}
-        min={0}
-        max={24}
-        step={1}
-        onChange={(v) => patch({ railDotsGapPx: v })}
-      />
-      <StudioSlider
-        compact
-        label="Rail → pin gap (px)"
+        label="Dots → sun gap (px)"
         value={layout.controlsGapPx}
         defaultValue={DEFAULT_TOOLBAR_LAYOUT.controlsGapPx}
         min={0}
-        max={32}
-        step={1}
+        max={96}
+        step={2}
         onChange={(v) => patch({ controlsGapPx: v })}
       />
       <StudioSlider
@@ -300,283 +453,189 @@ function WelcomeStudioPanel({
       openButtonLabel="Welcome studio"
     >
 
-      <p className="mb-2 text-[9px] font-medium uppercase tracking-widest text-muted-foreground">
-
-        Region: {LOCALE_STUDIO_LABEL[locale]} · card crops saved per locale
-
+      <p className="mb-3 text-[9px] text-muted-foreground">
+        Region <span className="font-medium text-foreground">{LOCALE_STUDIO_LABEL[locale]}</span>
+        {" · "}
+        per-locale card crops
       </p>
-
-
 
       <StudioTextEditButton />
 
-
-
-      <div className="mb-4 space-y-3 border-b border-border pb-4">
-
-        <StudioSlider
-
-          compact
-
-          label="Logo scale"
-
-          value={studio.logoScale}
-
-          defaultValue={DEFAULT_STUDIO_GLOBAL.logoScale}
-
-          min={0.5}
-
-          max={3}
-
-          step={0.05}
-
-          onChange={(v) => patchGlobal({ logoScale: v })}
-
-        />
-
-        <StudioSlider
-
-          compact
-
-          label="All icons top → bottom (%)"
-
-          value={studio.iconOffsetY}
-
-          defaultValue={DEFAULT_STUDIO_GLOBAL.iconOffsetY}
-
-          min={0}
-
-          max={100}
-
-          step={1}
-
-          onChange={(v) => patchGlobal({ iconOffsetY: v })}
-
-        />
-
-        <StudioCopyOffsetSliders
-          frame={{
-            offsetX: studio.copyOffsetX,
-            offsetY: studio.copyOffsetY,
-            copyLift: studio.copyLift,
-          }}
-          defaults={{
-            offsetX: DEFAULT_STUDIO_GLOBAL.copyOffsetX,
-            offsetY: DEFAULT_STUDIO_GLOBAL.copyOffsetY,
-            copyLift: DEFAULT_STUDIO_GLOBAL.copyLift,
-          }}
-          onPatch={(partial) =>
-            patchGlobal({
-              ...(partial.offsetX !== undefined ? { copyOffsetX: partial.offsetX } : {}),
-              ...(partial.offsetY !== undefined ? { copyOffsetY: partial.offsetY } : {}),
-              ...(partial.copyLift !== undefined ? { copyLift: partial.copyLift } : {}),
-            })
-          }
-        />
-
-        <label className="flex cursor-pointer items-center justify-between text-[10px] text-muted-foreground">
-
-          Icon circle background
-
-          <input
-
-            type="checkbox"
-
+      <Accordion
+        type="multiple"
+        defaultValue={["layout", "rail", "cards"]}
+        className="mb-3 w-full"
+      >
+        <StudioAccordionSection value="layout" title="Page layout">
+          <StudioSlider
+            compact
+            label="Logo scale"
+            value={studio.logoScale}
+            defaultValue={DEFAULT_STUDIO_GLOBAL.logoScale}
+            min={0.5}
+            max={3}
+            step={0.05}
+            onChange={(v) => patchGlobal({ logoScale: v })}
+          />
+          <StudioSlider
+            compact
+            label="All icons top → bottom (%)"
+            value={studio.iconOffsetY}
+            defaultValue={DEFAULT_STUDIO_GLOBAL.iconOffsetY}
+            min={0}
+            max={100}
+            step={1}
+            onChange={(v) => patchGlobal({ iconOffsetY: v })}
+          />
+          <StudioCopyOffsetSliders
+            frame={{
+              offsetX: studio.copyOffsetX,
+              offsetY: studio.copyOffsetY,
+              copyLift: studio.copyLift,
+            }}
+            defaults={{
+              offsetX: DEFAULT_STUDIO_GLOBAL.copyOffsetX,
+              offsetY: DEFAULT_STUDIO_GLOBAL.copyOffsetY,
+              copyLift: DEFAULT_STUDIO_GLOBAL.copyLift,
+            }}
+            onPatch={(partial) =>
+              patchGlobal({
+                ...(partial.offsetX !== undefined ? { copyOffsetX: partial.offsetX } : {}),
+                ...(partial.offsetY !== undefined ? { copyOffsetY: partial.offsetY } : {}),
+                ...(partial.copyLift !== undefined ? { copyLift: partial.copyLift } : {}),
+              })
+            }
+          />
+          <StudioToggleRow
+            label="Icon circle background"
             checked={studio.showIconCircleBg}
-
-            onChange={(e) => patchGlobal({ showIconCircleBg: e.target.checked })}
-
-            className="accent-primary"
-
+            onChange={(v) => patchGlobal({ showIconCircleBg: v })}
           />
-
-        </label>
-
-        <label className="flex cursor-pointer items-center justify-between text-[10px] text-muted-foreground">
-
-          Use mascot head
-
-          <input
-
-            type="checkbox"
-
+          <StudioToggleRow
+            label="Use mascot head"
             checked={studio.useMascot}
-
-            onChange={(e) => patchGlobal({ useMascot: e.target.checked })}
-
-            className="accent-primary"
-
+            onChange={(v) => patchGlobal({ useMascot: v })}
           />
-
-        </label>
-
-        <label className="flex cursor-pointer items-center justify-between text-[10px] text-muted-foreground">
-
-          Lock cards (no navigation)
-
-          <input
-
-            type="checkbox"
-
+          <StudioToggleRow
+            label="Lock cards (no navigation)"
             checked={studio.lockCardLinks}
-
-            onChange={(e) => patchGlobal({ lockCardLinks: e.target.checked })}
-
-            className="accent-primary"
-
+            onChange={(v) => patchGlobal({ lockCardLinks: v })}
           />
+        </StudioAccordionSection>
 
-        </label>
-
-        <label className="flex cursor-pointer items-center justify-between text-[10px] text-muted-foreground">
-          Language rail background
-          <input
-            type="checkbox"
+        <StudioAccordionSection
+          value="rail"
+          title="Language rail"
+          hint="Wheel or click steps GH → EN → ES → FR → CN. Active row shows flag + code; gray dots are the other regions."
+        >
+          <StudioToggleRow
+            label="Rail background pill"
             checked={studio.showLocaleRailBg}
-            onChange={(e) => patchGlobal({ showLocaleRailBg: e.target.checked })}
-            className="accent-primary"
+            onChange={(v) => patchGlobal({ showLocaleRailBg: v })}
           />
-        </label>
+          <LocaleRailLayoutSliders
+            rail={studio.localeRail}
+            onChange={(partial) => {
+              const patch: Parameters<typeof patchStudioGlobal>[1] = { localeRail: partial };
+              if (partial.dotStackGapPx !== undefined) {
+                patch.toolbar = { railDotsGapPx: partial.dotStackGapPx };
+              }
+              patchGlobal(patch);
+            }}
+          />
+        </StudioAccordionSection>
 
-      </div>
-
-      <div className="mb-4 space-y-3 border-b border-border pb-4">
-        <p className="text-[9px] font-medium uppercase tracking-widest text-muted-foreground">
-          Pin & theme controls (right rail)
-        </p>
-        <ToolbarLayoutSliders
-          layout={studio.toolbar}
-          onChange={(partial) => patchGlobal({ toolbar: partial })}
-        />
-      </div>
-
-      <div className="mb-3 flex gap-1 rounded-lg bg-secondary p-1 text-[10px] font-medium uppercase">
-
-        {PATH_KEYS.map((k) => (
-
-          <button
-
-            key={k}
-
-            onClick={() => setCard(k)}
-
-            className={cn(
-
-              "flex-1 rounded-md py-1.5 transition-colors",
-
-              card === k ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
-
-            )}
-
-          >
-
-            {k === "education" ? "Edu" : k === "legacy" ? "Legacy" : "Farewell"}
-
-          </button>
-
-        ))}
-
-      </div>
-
-
-
-      <p className="mb-2 text-[9px] leading-snug text-muted-foreground">
-
-        Only the center Legacy photo changes per character (US/IN/LA/CN/BR). Tune Legacy per character, then Copy JSON.
-
-      </p>
-
-
-
-      <div className="space-y-3">
-
-        <StudioSlider
-
-          compact
-
-          label="Zoom"
-
-          value={s.imageZoom}
-
-          defaultValue={localeDefaults[card].imageZoom}
-
-          min={1}
-
-          max={2.5}
-
-          step={0.01}
-
-          onChange={(v) => patchCard({ imageZoom: v })}
-
-        />
-
-        <StudioSlider
-
-          compact
-
-          label="← Left / Right →"
-
-          value={s.imageOffsetX}
-
-          defaultValue={localeDefaults[card].imageOffsetX}
-
-          min={0}
-
-          max={100}
-
-          step={1}
-
-          onChange={(v) => patchCard({ imageOffsetX: v })}
-
-        />
-
-        <StudioSlider
-
-          compact
-
-          label="↑ Top / Bottom ↓"
-
-          value={s.imageOffsetY}
-
-          defaultValue={localeDefaults[card].imageOffsetY}
-
-          min={0}
-
-          max={100}
-
-          step={1}
-
-          onChange={(v) => patchCard({ imageOffsetY: v })}
-
-        />
-
-      </div>
-
-
-
-      <div className="mt-4 flex flex-col gap-2">
-        <button
-          type="button"
-          onClick={exportJson}
-          className="w-full rounded-md border border-border py-1.5 text-[10px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
+        <StudioAccordionSection
+          value="rail-pos"
+          title="Rail position"
+          hint="From right edge + nudge sliders align labels and dots with the sun centerline. Positive nudge = move left."
         >
-          Copy JSON (all regions)
-        </button>
-        <button
-          type="button"
-          onClick={importJson}
-          className="w-full rounded-md border border-primary/40 py-1.5 text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10"
+          <ToolbarLayoutSliders
+            layout={studio.toolbar}
+            onChange={(partial) => patchGlobal({ toolbar: partial })}
+          />
+        </StudioAccordionSection>
+
+        <StudioAccordionSection
+          value="cards"
+          title={`Card crops · ${LOCALE_STUDIO_LABEL[locale]}`}
+          hint="Center Legacy photo changes per character. Tune per region, then copy JSON."
         >
-          Import JSON
-        </button>
-        <button
-          type="button"
-          onClick={resetJson}
-          className="w-full rounded-md border border-border py-1.5 text-[10px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
-        >
-          Reset to code defaults
-        </button>
-      </div>
+          <div className="flex gap-1 rounded-lg bg-secondary p-1 text-[10px] font-medium uppercase">
+            {PATH_KEYS.map((k) => (
+              <button
+                key={k}
+                type="button"
+                onClick={() => setCard(k)}
+                className={cn(
+                  "flex-1 rounded-md py-1.5 transition-colors",
+                  card === k
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {k === "education" ? "Edu" : k === "legacy" ? "Legacy" : "Farewell"}
+              </button>
+            ))}
+          </div>
+          <StudioSlider
+            compact
+            label="Zoom"
+            value={s.imageZoom}
+            defaultValue={localeDefaults[card].imageZoom}
+            min={1}
+            max={2.5}
+            step={0.01}
+            onChange={(v) => patchCard({ imageZoom: v })}
+          />
+          <StudioSlider
+            compact
+            label="← Left / Right →"
+            value={s.imageOffsetX}
+            defaultValue={localeDefaults[card].imageOffsetX}
+            min={0}
+            max={100}
+            step={1}
+            onChange={(v) => patchCard({ imageOffsetX: v })}
+          />
+          <StudioSlider
+            compact
+            label="↑ Top / Bottom ↓"
+            value={s.imageOffsetY}
+            defaultValue={localeDefaults[card].imageOffsetY}
+            min={0}
+            max={100}
+            step={1}
+            onChange={(v) => patchCard({ imageOffsetY: v })}
+          />
+        </StudioAccordionSection>
+
+        <StudioAccordionSection value="data" title="Import & export">
+          <div className="flex flex-col gap-2">
+            <button
+              type="button"
+              onClick={exportJson}
+              className="w-full rounded-md border border-border py-1.5 text-[10px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
+            >
+              Copy JSON (all regions)
+            </button>
+            <button
+              type="button"
+              onClick={importJson}
+              className="w-full rounded-md border border-primary/40 py-1.5 text-[10px] uppercase tracking-widest text-primary hover:bg-primary/10"
+            >
+              Import JSON
+            </button>
+            <button
+              type="button"
+              onClick={resetJson}
+              className="w-full rounded-md border border-border py-1.5 text-[10px] uppercase tracking-widest text-muted-foreground hover:text-foreground"
+            >
+              Reset to code defaults
+            </button>
+          </div>
+        </StudioAccordionSection>
+      </Accordion>
 
     </FloatingStudioShell>
 
@@ -669,6 +728,7 @@ export default function WelcomeGate() {
         isLight={isLight}
         theme={theme}
         layout={studio.toolbar}
+        rail={studio.localeRail}
         showLocaleRailBg={studio.showLocaleRailBg}
         onThemeChange={(next) => {
           setTheme(next);

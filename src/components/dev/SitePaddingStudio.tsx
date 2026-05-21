@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { SiteIndentGuides } from "@/components/dev/SiteIndentGuides";
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
 import { StudioSlider } from "@/components/dev/StudioSlider";
+import { useLayoutStudio } from "@/context/LayoutStudioContext";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { cn } from "@/lib/utils";
 import {
@@ -26,7 +27,8 @@ export function SitePaddingStudioProvider({ children }: Props) {
   const [draftIndentRem, setDraftIndentRem] = useState(() => loadSitePaddingFrame().contentIndentRem);
   const [guidesLive, setGuidesLive] = useState(() => loadIndentGuidesLive());
   const studioOn = isLayoutStudioEnabled();
-  const showGuides = studioOn;
+  const { guidesVisible } = useLayoutStudio();
+  const showGuides = studioOn && guidesVisible;
   const showHudPanels = studioOn;
 
   useEffect(() => {

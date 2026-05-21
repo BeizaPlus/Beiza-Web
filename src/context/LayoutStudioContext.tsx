@@ -11,6 +11,7 @@ import {
 import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
+import { loadSiteGuidesVisible, saveSiteGuidesVisible } from "@/lib/sitePaddingStudio";
 import { cn } from "@/lib/utils";
 
 export const LAYOUT_STUDIO_MASTER_OPEN_EVENT = "beiza:layout-studio-master-open";
@@ -29,6 +30,10 @@ type LayoutStudioContextValue = {
   masterOpen: boolean;
   setMasterOpen: (open: boolean) => void;
   toggleMaster: () => void;
+  /** Yellow/cyan site guides preview */
+  guidesVisible: boolean;
+  setGuidesVisible: (visible: boolean) => void;
+  toggleGuides: () => void;
   registerStudioPanel: (entry: StudioPanelEntry) => void;
   unregisterStudioPanel: (id: string) => void;
   dockAllPanels: () => void;
@@ -54,6 +59,7 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
   const onAdmin = pathname.startsWith("/admin");
   const enabled = isLayoutStudioEnabled() && !onAdmin;
   const [masterOpen, setMasterOpenState] = useState(readMasterOpen);
+  const [guidesVisible, setGuidesVisibleState] = useState(loadSiteGuidesVisible);
   const [studioPanels, setStudioPanels] = useState<StudioPanelEntry[]>([]);
   const panelsRef = useRef<Map<string, StudioPanelEntry>>(new Map());
 
@@ -114,15 +120,28 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const setGuidesVisible = useCallback((visible: boolean) => {
+    setGuidesVisibleState(visible);
+    saveSiteGuidesVisible(visible);
+  }, []);
+
+  const toggleGuides = useCallback(() => {
+    setGuidesVisibleState((prev) => {
+      const next = !prev;
+      saveSiteGuidesVisible(next);
+      return next;
+    });
+  }, []);
+
   useEffect(() => {
     if (!enabled) return;
     const html = document.documentElement;
-    html.classList.add("site-padding-guides");
+    html.classList.toggle("site-padding-guides", guidesVisible);
     html.classList.toggle("layout-studio-master-off", !masterOpen);
     return () => {
       html.classList.remove("site-padding-guides", "layout-studio-master-off");
     };
-  }, [enabled, masterOpen]);
+  }, [enabled, masterOpen, guidesVisible]);
 
   const value = useMemo(
     () => ({
@@ -130,6 +149,9 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
       masterOpen,
       setMasterOpen,
       toggleMaster,
+      guidesVisible,
+      setGuidesVisible,
+      toggleGuides,
       registerStudioPanel,
       unregisterStudioPanel,
       dockAllPanels,
@@ -139,6 +161,9 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
       masterOpen,
       setMasterOpen,
       toggleMaster,
+      guidesVisible,
+      setGuidesVisible,
+      toggleGuides,
       registerStudioPanel,
       unregisterStudioPanel,
       dockAllPanels,
@@ -164,7 +189,7 @@ function LayoutStudioControls({
   masterOpen: boolean;
   setMasterOpen: (open: boolean) => void;
 }) {
-  const { toggleMaster, dockAllPanels } = useLayoutStudio();
+  const { toggleMaster, dockAllPanels, guidesVisible, toggleGuides } = useLayoutStudio();
 
   const ensureMasterOpen = useCallback(() => {
     if (!masterOpen) setMasterOpen(true);
@@ -224,24 +249,45 @@ function LayoutStudioControls({
         </div>
       ) : null}
 
-      <button
-        type="button"
-        data-beiza-layout-studio-master
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleMaster();
-        }}
-        className={cn(
-          "rounded-full px-4 py-2.5 text-xs font-semibold tracking-wide shadow-lg transition",
-          masterOpen
-            ? "bg-[#f5c518] text-[#0a0a0a] ring-2 ring-white/90 ring-offset-2 ring-offset-black"
-            : "bg-[#E6A817] text-[#0a0a0a] hover:bg-[#f5c518]",
-        )}
-        aria-pressed={masterOpen}
-        aria-label={masterOpen ? "Hide all layout studio panels" : "Show layout studio panels"}
-      >
-        Layout studio
-      </button>
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          data-beiza-layout-studio-guides-toggle
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleGuides();
+          }}
+          className={cn(
+            "rounded-full px-3 py-2 text-[11px] font-semibold tracking-wide shadow-lg transition",
+            guidesVisible
+              ? "bg-cyan-500/25 text-cyan-100 ring-2 ring-cyan-400/70 ring-offset-2 ring-offset-black"
+              : "border border-white/20 bg-black/80 text-white/55 hover:text-white/80",
+          )}
+          aria-pressed={guidesVisible}
+          aria-label={guidesVisible ? "Hide site guides" : "Show site guides"}
+          title="Yellow site bounds + cyan indent rulers"
+        >
+          Guides
+        </button>
+        <button
+          type="button"
+          data-beiza-layout-studio-master
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleMaster();
+          }}
+          className={cn(
+            "rounded-full px-4 py-2.5 text-xs font-semibold tracking-wide shadow-lg transition",
+            masterOpen
+              ? "bg-[#f5c518] text-[#0a0a0a] ring-2 ring-white/90 ring-offset-2 ring-offset-black"
+              : "bg-[#E6A817] text-[#0a0a0a] hover:bg-[#f5c518]",
+          )}
+          aria-pressed={masterOpen}
+          aria-label={masterOpen ? "Hide all layout studio panels" : "Show layout studio panels"}
+        >
+          Layout studio
+        </button>
+      </div>
     </div>
   );
 
@@ -257,6 +303,9 @@ export function useLayoutStudio(): LayoutStudioContextValue {
       masterOpen: false,
       setMasterOpen: () => {},
       toggleMaster: () => {},
+      guidesVisible: false,
+      setGuidesVisible: () => {},
+      toggleGuides: () => {},
       registerStudioPanel: () => {},
       unregisterStudioPanel: () => {},
       dockAllPanels: () => {},

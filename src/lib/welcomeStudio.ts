@@ -12,15 +12,44 @@ export type LocaleCardStudio = {
   farewell: CardStudio;
 };
 
+/** Vertical language rail — dots, active label row, sun button */
+export type LocaleRailLayout = {
+  /** Inactive gray dot diameter (px) */
+  dotSizePx: number;
+  /** Active yellow dot diameter (px) — center stays on the vertical rail */
+  activeDotSizePx: number;
+  /** Space between inactive dot rows (px) */
+  dotStackGapPx: number;
+  /** Gap between flag/code block and yellow dot (px) */
+  labelToDotGapPx: number;
+  flagWidthPx: number;
+  flagHeightPx: number;
+  labelFontPx: number;
+  sunSizePx: number;
+  sunIconPx: number;
+  /** Auto-advance interval when locale is not pinned (seconds) */
+  autoRotateSec: number;
+  /** Studio aid: show GH/EN/… beside gray dots (off in production handoff) */
+  showInactiveCodes: boolean;
+  /** Shift whole rail cluster left (+) or right (-) from right anchor (rem) */
+  railNudgeXRem: number;
+  /** Shift labels/flags left (+) or right (-) relative to dot axis (rem) */
+  labelNudgeXRem: number;
+  /** Shift dot column + sun vertical axis left (+) or right (-) (rem) */
+  axisNudgeXRem: number;
+  /** Gap between inactive code and gray dot (px) */
+  inactiveLabelGapPx: number;
+};
+
 /** Pin + theme stack beside the vertical language rail */
 export type ToolbarControlsLayout = {
   /** Distance from viewport right edge (rem) */
   railRightRem: number;
   /** Vertical anchor for the rail cluster (% from top, 50 = centered) */
   railTopPct: number;
-  /** Gap between language pill column and position dots (px) */
+  /** @deprecated use localeRail.dotStackGapPx — kept for JSON paste compat */
   railDotsGapPx: number;
-  /** Gap between rail and pin/theme stack (px) */
+  /** Gap between dot column and sun button (px) */
   controlsGapPx: number;
   /** Nudge pin/theme block horizontally from rail (rem, positive = left) */
   controlsOffsetXRem: number;
@@ -42,6 +71,7 @@ export type StudioGlobal = {
   lockCardLinks: boolean;
   /** Dark pill track behind the vertical language column */
   showLocaleRailBg: boolean;
+  localeRail: LocaleRailLayout;
   toolbar: ToolbarControlsLayout;
 };
 
@@ -53,26 +83,45 @@ export type WelcomeStudioStore = {
 
 export type StudioState = LocaleCardStudio & StudioGlobal;
 
+export const DEFAULT_LOCALE_RAIL_LAYOUT: LocaleRailLayout = {
+  dotSizePx: 12,
+  activeDotSizePx: 16,
+  dotStackGapPx: 6,
+  labelToDotGapPx: 12,
+  flagWidthPx: 17,
+  flagHeightPx: 13,
+  labelFontPx: 14,
+  sunSizePx: 62,
+  sunIconPx: 28,
+  autoRotateSec: 5,
+  showInactiveCodes: false,
+  railNudgeXRem: 0,
+  labelNudgeXRem: 0,
+  axisNudgeXRem: 0,
+  inactiveLabelGapPx: 8,
+};
+
 export const DEFAULT_TOOLBAR_LAYOUT: ToolbarControlsLayout = {
-  railRightRem: 1,
+  railRightRem: 1.75,
   railTopPct: 50,
-  railDotsGapPx: 8,
-  controlsGapPx: 8,
+  railDotsGapPx: 6,
+  controlsGapPx: 0,
   controlsOffsetXRem: 0,
   controlsOffsetYPx: 0,
   controlsButtonGapPx: 6,
 };
 
 export const DEFAULT_STUDIO_GLOBAL: StudioGlobal = {
-  iconOffsetY: 92,
+  iconOffsetY: 6,
   copyOffsetX: 0,
   copyOffsetY: 0,
-  copyLift: 3.8,
+  copyLift: 3,
   showIconCircleBg: false,
   logoScale: 2.25,
   useMascot: true,
-  lockCardLinks: true,
-  showLocaleRailBg: true,
+  lockCardLinks: false,
+  showLocaleRailBg: false,
+  localeRail: DEFAULT_LOCALE_RAIL_LAYOUT,
   toolbar: DEFAULT_TOOLBAR_LAYOUT,
 };
 
@@ -233,8 +282,23 @@ function normalizeToolbarLayout(raw: Partial<ToolbarControlsLayout> | undefined)
   return { ...DEFAULT_TOOLBAR_LAYOUT, ...raw };
 }
 
+function normalizeLocaleRailLayout(
+  raw: Partial<LocaleRailLayout> | undefined,
+  toolbar?: Partial<ToolbarControlsLayout>,
+): LocaleRailLayout {
+  const base = { ...DEFAULT_LOCALE_RAIL_LAYOUT, ...raw };
+  if (typeof toolbar?.railDotsGapPx === "number" && raw?.dotStackGapPx === undefined) {
+    base.dotStackGapPx = toolbar.railDotsGapPx;
+  }
+  if (raw?.activeDotSizePx === undefined) {
+    base.activeDotSizePx = Math.max(base.dotSizePx + 4, Math.round(base.dotSizePx * 1.33));
+  }
+  return base;
+}
+
 function normalizeGlobal(raw: Partial<StudioGlobal> | undefined): StudioGlobal {
-  const { toolbar: toolbarRaw, ...rest } = raw ?? {};
+  const { toolbar: toolbarRaw, localeRail: localeRailRaw, ...rest } = raw ?? {};
+  const toolbar = normalizeToolbarLayout(toolbarRaw);
   const migrated = migrateCopyOffsetFields({
     offsetX: rest.copyOffsetX,
     offsetY: rest.copyOffsetY,
@@ -252,7 +316,8 @@ function normalizeGlobal(raw: Partial<StudioGlobal> | undefined): StudioGlobal {
     copyOffsetX: rest.copyOffsetX ?? migrated.offsetX ?? 0,
     copyOffsetY: rest.copyOffsetY ?? migrated.offsetY ?? 0,
     copyLift,
-    toolbar: normalizeToolbarLayout(toolbarRaw),
+    toolbar,
+    localeRail: normalizeLocaleRailLayout(localeRailRaw, toolbarRaw),
   };
 }
 
@@ -374,7 +439,7 @@ export function patchStudioGlobal(
   store: WelcomeStudioStore,
   partial: Partial<StudioGlobal>,
 ): WelcomeStudioStore {
-  const { toolbar: toolbarPartial, ...rest } = partial;
+  const { toolbar: toolbarPartial, localeRail: localeRailPartial, ...rest } = partial;
   return {
     ...store,
     global: {
@@ -383,6 +448,9 @@ export function patchStudioGlobal(
       toolbar: toolbarPartial
         ? { ...store.global.toolbar, ...toolbarPartial }
         : store.global.toolbar,
+      localeRail: localeRailPartial
+        ? { ...store.global.localeRail, ...localeRailPartial }
+        : store.global.localeRail,
     },
   };
 }

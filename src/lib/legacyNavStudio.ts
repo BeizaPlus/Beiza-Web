@@ -27,8 +27,8 @@ export type LegacyNavStudioFrame = {
 };
 
 export const LEGACY_NAV_STUDIO_DEFAULTS: LegacyNavStudioFrame = {
-  offsetXPercent: 94,
-  offsetYPercent: 50,
+  offsetXPercent: 79,
+  offsetYPercent: 55,
   offsetXVw: 0,
   offsetYVh: 0,
   tabShiftXPercent: 0,
