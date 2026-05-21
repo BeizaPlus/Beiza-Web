@@ -237,7 +237,10 @@ export function WelcomeLocaleRail({
 
   return (
     <aside
-      className="pointer-events-none fixed z-40 flex flex-col items-center"
+      className={cn(
+        "pointer-events-none fixed z-40 flex origin-right flex-col items-center",
+        "max-sm:!right-3 max-sm:!top-[40%] max-sm:scale-[0.88]",
+      )}
       style={asidePosition}
       aria-label="Language"
     >

@@ -1,4 +1,5 @@
 import { BRAND_IMAGES } from "@/lib/brandImages";
+import { FRENCH_LOCALE_IMAGE, isFrenchEntryLocale } from "@/lib/locale/frenchEntry";
 import { GHANA_MARMAH_IMAGE, isGhanaEntryLocale } from "@/lib/locale/ghanaEntry";
 import type { BeizaLocale } from "@/lib/locale/types";
 
@@ -28,12 +29,19 @@ const STUDIO_RECORD_HERO_FALLBACK: RecordStationHeroImage = {
   objectPosition: "center 38%",
 };
 
+const FRENCH_RECORD_HERO: RecordStationHeroImage = {
+  src: FRENCH_LOCALE_IMAGE.src,
+  alt: FRENCH_LOCALE_IMAGE.alt,
+  objectPosition: FRENCH_LOCALE_IMAGE.objectPosition,
+};
+
 /**
  * Record hero image by locale. Personas differ in translation + portrait only;
  * recording UI is identical (`RecordMemoryView`).
  */
 export function getRecordStationHeroImage(locale: BeizaLocale): RecordStationHeroImage {
   if (isGhanaEntryLocale(locale)) return GHANA_RECORD_HERO;
+  if (isFrenchEntryLocale(locale)) return FRENCH_RECORD_HERO;
   return STUDIO_RECORD_HERO;
 }
 
@@ -44,6 +52,9 @@ export function getRecordStationHeroSources(locale: BeizaLocale): {
 } {
   if (isGhanaEntryLocale(locale)) {
     return { primary: GHANA_RECORD_HERO, fallback: STUDIO_RECORD_HERO_FALLBACK };
+  }
+  if (isFrenchEntryLocale(locale)) {
+    return { primary: FRENCH_RECORD_HERO, fallback: STUDIO_RECORD_HERO_FALLBACK };
   }
   return { primary: STUDIO_RECORD_HERO, fallback: STUDIO_RECORD_HERO_FALLBACK };
 }

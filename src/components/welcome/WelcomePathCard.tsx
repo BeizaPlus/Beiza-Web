@@ -44,7 +44,7 @@ const PHOTO_OVERLAY =
   "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0.82) 78%, rgba(0,0,0,0.95) 100%)";
 
 const CARD_SURFACE_GRID =
-  "group relative aspect-[2/3] w-full min-h-[280px] min-w-0 overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 sm:min-h-[340px] lg:min-h-[380px] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
+  "group relative aspect-[2/3] w-full min-h-[min(220px,38dvh)] max-h-[min(46dvh,400px)] min-w-0 overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 sm:min-h-[280px] sm:max-h-none md:min-h-[340px] lg:min-h-[380px] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
 
 const CARD_SURFACE_SCROLL =
   "group relative h-full min-h-0 w-full max-w-lg overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
@@ -263,7 +263,7 @@ export function WelcomePathCard({
         )}
         style={copyOffsetStyle({ offsetX: copyOffsetX, offsetY: copyOffsetY, copyLift })}
       >
-        <h2 className="text-[1.35rem] font-semibold leading-tight text-white sm:text-[1.5rem] lg:text-[1.65rem]">
+        <h2 className="text-[1.15rem] font-semibold leading-tight text-white sm:text-[1.35rem] md:text-[1.5rem] lg:text-[1.65rem]">
           {title}
         </h2>
         <p className="mt-2 min-w-0 w-full break-words text-[13px] font-normal leading-snug text-white/90 sm:text-sm">

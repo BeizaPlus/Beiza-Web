@@ -18,7 +18,7 @@ export function CulturalImmersionHero({ locale = "black-american", className }: 
       )}
       aria-label="Cultural immersion"
     >
-      <div className="relative aspect-video w-full max-h-[min(56vh,520px)] bg-black">
+      <div className="relative aspect-[4/3] w-full max-h-[min(52vh,480px)] bg-black sm:aspect-video sm:max-h-[min(56vh,520px)]">
         {immersion.videoSrc ? (
           <video
             className="h-full w-full object-cover"
@@ -47,11 +47,11 @@ export function CulturalImmersionHero({ locale = "black-american", className }: 
           </>
         )}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 px-5 pb-8 pt-16 sm:px-8 sm:pb-10">
-          <p className="font-manrope text-xs uppercase tracking-[0.3em] text-[#E6A817]">
+        <div className="absolute inset-x-0 bottom-0 px-[var(--beiza-site-padding-x,1.25rem)] pb-6 pt-12 sm:pb-10 sm:pt-16">
+          <p className="font-manrope text-[10px] uppercase tracking-[0.28em] text-[#E6A817] sm:text-xs sm:tracking-[0.3em]">
             {immersion.eyebrow}
           </p>
-          <h1 className="legacy-display mt-2 text-2xl font-light sm:text-4xl">{immersion.title}</h1>
+          <h1 className="legacy-display mt-2 text-xl font-light sm:text-3xl md:text-4xl">{immersion.title}</h1>
           <p className="mt-3 max-w-2xl font-manrope text-sm leading-relaxed text-white/85 sm:text-base">
             {immersion.subtitle}
           </p>

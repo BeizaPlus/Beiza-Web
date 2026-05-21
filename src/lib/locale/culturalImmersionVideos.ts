@@ -1,4 +1,5 @@
 import type { BeizaLocale } from "@/lib/locale/types";
+import { FRENCH_LOCALE_IMAGE, isFrenchEntryLocale } from "@/lib/locale/frenchEntry";
 import { getWelcomeCardImage } from "@/lib/locale/welcomeImages";
 
 export type CulturalImmersionVideo = {
@@ -59,7 +60,9 @@ const COPY: Record<
 };
 
 export function getCulturalImmersionVideo(locale: BeizaLocale): CulturalImmersionVideo {
-  const poster = getWelcomeCardImage(locale, "education");
+  const poster = isFrenchEntryLocale(locale)
+    ? { src: FRENCH_LOCALE_IMAGE.welcomeSrc, alt: FRENCH_LOCALE_IMAGE.alt }
+    : getWelcomeCardImage(locale, "education");
   const text = COPY[locale] ?? COPY["black-american"];
   return {
     ...text,

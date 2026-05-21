@@ -1,4 +1,5 @@
 import { BRAND_IMAGES } from "@/lib/brandImages";
+import { FRENCH_LOCALE_IMAGE } from "@/lib/locale/frenchEntry";
 import { GHANA_MARMAH_IMAGE } from "@/lib/locale/ghanaEntry";
 import type { BeizaCharacterLocale, BeizaLocale, WelcomePathKey } from "@/lib/locale/types";
 
@@ -46,7 +47,10 @@ const WELCOME_LEGACY_IMAGE_BY_LOCALE: Record<BeizaLocale, { src: string; alt: st
     src: GHANA_MARMAH_IMAGE.welcomeSrc,
     alt: GHANA_MARMAH_IMAGE.alt,
   },
-  fr: WELCOME_LEGACY_CHARACTER_IMAGES["black-american"],
+  fr: {
+    src: FRENCH_LOCALE_IMAGE.welcomeSrc,
+    alt: FRENCH_LOCALE_IMAGE.alt,
+  },
 };
 
 export function getWelcomeLegacyImage(locale: BeizaLocale) {

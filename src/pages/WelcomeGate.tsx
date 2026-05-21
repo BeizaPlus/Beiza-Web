@@ -755,7 +755,7 @@ export default function WelcomeGate() {
         }}
       />
 
-      <div className={cn("relative z-10 mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col siteBounds pb-6 pt-2")}>
+      <div className={cn("relative z-10 mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col siteBounds pb-4 pt-2 sm:pb-6 max-sm:pr-[calc(var(--beiza-site-padding-x,1.25rem)+3.5rem)]")}>
         <motion.div
           key={locale}
           className="flex min-h-0 flex-1 flex-col"
@@ -798,7 +798,7 @@ export default function WelcomeGate() {
           <motion.p
             variants={subtitleVariants}
             className={cn(
-              "mx-auto mt-4 max-w-2xl font-serif text-lg font-normal italic leading-relaxed sm:mt-6 sm:text-xl",
+              "mx-auto mt-3 max-w-2xl px-1 font-serif text-base font-normal italic leading-relaxed sm:mt-6 sm:text-lg md:text-xl",
               isLight ? "text-[#1a1816]/90" : "text-white/95",
             )}
           >
@@ -806,9 +806,9 @@ export default function WelcomeGate() {
           </motion.p>
         </motion.header>
 
-        <main className="mx-auto flex min-h-0 w-full flex-1 flex-col justify-center px-4 py-6 sm:py-8">
+        <main className="mx-auto flex min-h-0 w-full flex-1 flex-col justify-center overflow-y-auto overscroll-contain px-2 py-4 sm:overflow-visible sm:px-4 sm:py-8">
           <motion.div
-            className="grid min-h-0 flex-1 grid-cols-1 items-stretch gap-6 sm:grid-cols-3"
+            className="grid min-h-0 flex-1 grid-cols-1 items-stretch gap-4 sm:grid-cols-3 sm:gap-6"
             variants={containerVariants}
             initial="hidden"
             animate="show"

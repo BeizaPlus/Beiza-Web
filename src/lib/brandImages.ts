@@ -20,6 +20,8 @@ export const BRAND_IMAGES = {
   /** Ghana (GH) default — Marmah story (record hero + welcome Legacy card) */
   legacyRecordAfrica: "/images/beiza-legacy-record-africa.png",
   welcomeLegacyAfrica: "/images/beiza-welcome-legacy-africa.png",
+  /** French (FR) welcome Legacy + record hero */
+  frenchBase: "/images/beiza-french-base.png",
 } as const;
 
 /** Shared left-to-right hero overlay (homepage, Events, Heritage). */
@@ -28,7 +30,7 @@ export const HERO_OVERLAY_GRADIENT =
 
 /** Matches `Hero` header shell — full viewport width, no card radius. */
 export const HERO_SHELL_CLASS =
-  "relative -mt-24 flex w-full min-h-[calc(100vh+6rem)] items-stretch justify-center overflow-hidden";
+  "relative -mt-20 flex w-full min-h-[calc(100dvh+5rem)] items-stretch justify-center overflow-hidden sm:-mt-24 sm:min-h-[calc(100vh+6rem)]";
 
 export const HERO_CONTENT_CLASS =
   "relative z-10 mx-auto flex w-full max-w-6xl min-w-0 flex-1 items-end pt-28 md:pt-32 pl-[var(--beiza-site-padding-x,1.25rem)] pr-[var(--beiza-site-padding-x,1.25rem)]";
