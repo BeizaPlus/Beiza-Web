@@ -45,19 +45,19 @@ type StudioState = {
 
 const DEFAULT_STUDIO: StudioState = {
   legacy: {
-    imageZoom: 1.59,
-    imageOffsetX: 35.27901785714286,
-    imageOffsetY: 18.06791125541125,
+    imageZoom: 1.73,
+    imageOffsetX: 35.27901785714287,
+    imageOffsetY: 23.1409632034632,
   },
   education: {
-    imageZoom: 1.92,
-    imageOffsetX: 42.545948616600796,
-    imageOffsetY: 39.01103425559947,
+    imageZoom: 2.25,
+    imageOffsetX: 24.955212734541828,
+    imageOffsetY: 34.49371431708387,
   },
   farewell: {
-    imageZoom: 2.3,
-    imageOffsetX: 51.12274459031535,
-    imageOffsetY: 44.711538461538446,
+    imageZoom: 1.87,
+    imageOffsetX: 55.04626360004125,
+    imageOffsetY: 26.061007957559674,
   },
   iconOffsetY: 92,
   copyLift: 38,
