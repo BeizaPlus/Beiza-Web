@@ -139,7 +139,7 @@ const Landing = () => {
           headline={hero.heading}
           paragraph={hero.subheading ?? ""}
           ctaText={hero.ctaLabel ?? "Start Your Legacy"}
-          ctaLink={hero.ctaHref ?? "/legacy"}
+          ctaLink={hero.ctaHref ?? BEIZA_LINKS.legacy.app}
           reviews={hero.reviews ?? undefined}
           backgroundImage={hero.backgroundMedia?.src ?? BRAND_IMAGES.homepageHero}
           backgroundPosition={`${studioState.hero.posX}% ${studioState.hero.posY}%`}

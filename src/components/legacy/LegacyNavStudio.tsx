@@ -2,6 +2,11 @@ import { useState, type CSSProperties, type ReactNode } from "react";
 
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
 
+import {
+  StudioAccordionPanels,
+  StudioAccordionSection,
+} from "@/components/dev/StudioAccordionSection";
+
 import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
 
 import { StudioSlider } from "@/components/dev/StudioSlider";
@@ -104,36 +109,19 @@ export function LegacyNavStudio({ children, className, recordOverlay = false }: 
 
         >
 
-          <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-
-            {recordOverlay ? "Record nav rail" : "Legacy tab bar"}
-
+          <p className="mb-3 text-[9px] leading-snug text-muted-foreground">
+            {recordOverlay
+              ? "← / → and ↑ / ↓ are % of the viewport (0–100). Fine offset adds vw/vh on top."
+              : "Fine-tune the tab row within site bounds. Shifts use % of the bar size."}
           </p>
-
-          {recordOverlay ? (
-
-            <p className="mb-3 text-[9px] leading-snug text-muted-foreground">
-
-              ← / → and ↑ / ↓ are % of the viewport (0–100). Fine offset adds vw/vh on top of that anchor.
-
-            </p>
-
-          ) : (
-
-            <p className="mb-3 text-[9px] leading-snug text-muted-foreground">
-
-              Fine-tune the tab row within the site bounds. Shifts use % of the bar size.
-
-            </p>
-
-          )}
 
           <StudioTextEditButton />
 
-
-
-          <div className="space-y-3">
-
+          <StudioAccordionPanels defaultValue={["position"]}>
+            <StudioAccordionSection
+              value="position"
+              title={recordOverlay ? "Rail position" : "Tab bar position"}
+            >
             {recordOverlay ? (
 
               <>
@@ -279,7 +267,9 @@ export function LegacyNavStudio({ children, className, recordOverlay = false }: 
               </>
 
             )}
+            </StudioAccordionSection>
 
+            <StudioAccordionSection value="size" title="Labels & width">
             <StudioSlider
 
               compact
@@ -321,11 +311,9 @@ export function LegacyNavStudio({ children, className, recordOverlay = false }: 
               onChange={(v) => patch({ maxWidthRem: v })}
 
             />
+            </StudioAccordionSection>
 
-          </div>
-
-
-
+            <StudioAccordionSection value="data" title="Import & export">
           <button
 
             type="button"
@@ -360,7 +348,7 @@ export function LegacyNavStudio({ children, className, recordOverlay = false }: 
 
             }
 
-            className="mt-3 w-full rounded-md bg-primary/15 py-2 text-[10px] font-semibold uppercase tracking-widest text-primary hover:bg-primary/25"
+            className="w-full rounded-md bg-primary/15 py-2 text-[10px] font-semibold uppercase tracking-widest text-primary hover:bg-primary/25"
 
           >
 
@@ -368,9 +356,7 @@ export function LegacyNavStudio({ children, className, recordOverlay = false }: 
 
           </button>
 
-
-
-          <div className="mt-4 flex gap-2">
+          <div className="flex gap-2">
 
             <button
 
@@ -413,6 +399,8 @@ export function LegacyNavStudio({ children, className, recordOverlay = false }: 
             </button>
 
           </div>
+            </StudioAccordionSection>
+          </StudioAccordionPanels>
 
         </FloatingStudioShell>
 

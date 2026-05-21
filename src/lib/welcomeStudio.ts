@@ -35,8 +35,12 @@ export type LocaleRailLayout = {
   railNudgeXRem: number;
   /** Shift labels/flags left (+) or right (-) relative to dot axis (rem) */
   labelNudgeXRem: number;
-  /** Shift dot column + sun vertical axis left (+) or right (-) (rem) */
+  /** Shift dot column left (+) or right (-) — does not move the sun (rem) */
   axisNudgeXRem: number;
+  /** Shift sun only — horizontal, positive = left (rem) */
+  sunAxisNudgeXRem: number;
+  /** Shift sun only — vertical separation from dots, positive = down (rem) */
+  sunAxisNudgeYRem: number;
   /** Gap between inactive code and gray dot (px) */
   inactiveLabelGapPx: number;
 };
@@ -98,6 +102,8 @@ export const DEFAULT_LOCALE_RAIL_LAYOUT: LocaleRailLayout = {
   railNudgeXRem: 0,
   labelNudgeXRem: 0,
   axisNudgeXRem: 0,
+  sunAxisNudgeXRem: 0,
+  sunAxisNudgeYRem: 0,
   inactiveLabelGapPx: 8,
 };
 

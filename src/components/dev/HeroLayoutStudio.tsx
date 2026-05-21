@@ -14,6 +14,10 @@ import {
 } from "./heroLayoutStudioState";
 import { HeritageHeroStudioControls } from "./HeritageHeroStudioControls";
 import { FloatingStudioShell } from "./FloatingStudioShell";
+import {
+  StudioAccordionPanels,
+  StudioAccordionSection,
+} from "@/components/dev/StudioAccordionSection";
 import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
 import { StudioCopyOffsetSliders } from "@/components/dev/StudioCopyOffsetSliders";
 import { StudioSlider } from "./StudioSlider";
@@ -40,10 +44,6 @@ export function HeroLayoutStudioPanel(props: PanelProps) {
   const { page, frame, onChange } = props;
   const [open, setOpen] = useState(true);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"heritage" | "events">(
-    page === "heritage" ? "heritage" : "events",
-  );
-
   const patchEvents = (partial: Partial<HeroFrame>) => {
     if (page !== "events") return;
     const next = { ...frame, ...partial };
@@ -78,64 +78,50 @@ export function HeroLayoutStudioPanel(props: PanelProps) {
       openButtonLabel={page === "heritage" ? "Heritage hero" : "Events hero"}
     >
       <StudioTextEditButton />
-      <div className="mb-3 flex flex-wrap gap-1">
-        {page === "heritage" ? (
-          <Button
-            type="button"
-            size="sm"
-            variant={activeTab === "heritage" ? "default" : "outline"}
-            className="h-7 px-2 text-[10px]"
-            onClick={() => setActiveTab("heritage")}
-          >
-            Heritage Hero
-          </Button>
-        ) : (
-          <Button
-            type="button"
-            size="sm"
-            variant={activeTab === "events" ? "default" : "outline"}
-            className="h-7 px-2 text-[10px]"
-            onClick={() => setActiveTab("events")}
-          >
-            Events hero
-          </Button>
-        )}
-      </div>
 
-      {page === "heritage" && activeTab === "heritage" ? (
-        <HeritageHeroStudioControls frame={frame} onPatch={patchHeritage} />
-      ) : page === "events" ? (
-        <EventsControls frame={frame} onPatch={patchEvents} />
-      ) : null}
+      <StudioAccordionPanels defaultValue={["hero"]}>
+        <StudioAccordionSection
+          value="hero"
+          title={page === "heritage" ? "Heritage hero" : "Events hero"}
+        >
+          {page === "heritage" ? (
+            <HeritageHeroStudioControls frame={frame} onPatch={patchHeritage} />
+          ) : (
+            <EventsControls frame={frame} onPatch={patchEvents} />
+          )}
+        </StudioAccordionSection>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        <Button type="button" size="sm" variant="outline" className="h-8 text-xs" onClick={() => exportJson()}>
-          Copy JSON
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          className="h-8 text-xs"
-          onClick={() => downloadHeroStudioJson(page, frame)}
-        >
-          Save file
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="ghost"
-          className="h-8 text-xs"
-          onClick={() =>
-            page === "heritage"
-              ? patchHeritage({ ...HERITAGE_HERO_DEFAULTS })
-              : patchEvents({ ...HERO_STUDIO_DEFAULTS.events })
-          }
-        >
-          Reset
-        </Button>
-      </div>
-      {saveStatus ? <p className="mt-2 text-[10px] text-primary">{saveStatus}</p> : null}
+        <StudioAccordionSection value="data" title="Import & export">
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" size="sm" variant="outline" className="h-8 text-xs" onClick={() => exportJson()}>
+              Copy JSON
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="h-8 text-xs"
+              onClick={() => downloadHeroStudioJson(page, frame)}
+            >
+              Save file
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="ghost"
+              className="h-8 text-xs"
+              onClick={() =>
+                page === "heritage"
+                  ? patchHeritage({ ...HERITAGE_HERO_DEFAULTS })
+                  : patchEvents({ ...HERO_STUDIO_DEFAULTS.events })
+              }
+            >
+              Reset
+            </Button>
+          </div>
+          {saveStatus ? <p className="mt-2 text-[10px] text-primary">{saveStatus}</p> : null}
+        </StudioAccordionSection>
+      </StudioAccordionPanels>
     </FloatingStudioShell>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { PRODUCT_NAV_LINKS, type ProductNavLink } from "@/config/productNav";
@@ -9,29 +9,12 @@ import {
   isFarewellPath,
   isHeritageMarketingPath,
 } from "@/lib/beizaMasterLinks";
-import { allowStaticContentFallback } from "@/lib/contentPolicy";
-import { useNavigationLinks } from "@/hooks/usePublicContent";
 import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import { Button } from "./ui/button";
 import { sitePaddingX } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
 
 const CTA = { label: "Contact", href: BEIZA_LINKS.marketing.contact };
-
-function navIdFromHref(href: string): string {
-  if (href === BEIZA_REDIRECTS.vault.from || href.startsWith(BEIZA_LINKS.legacy.vault)) return "vault";
-  if (href === BEIZA_LINKS.circle.directory || href.startsWith(BEIZA_LINKS.circle.directory)) {
-    return "circle";
-  }
-  if (
-    href === BEIZA_LINKS.legacy.heritage ||
-    href === BEIZA_LINKS.farewell.heritage ||
-    href.startsWith(BEIZA_LINKS.farewell.whiteSwanRedirect)
-  ) {
-    return "heritage";
-  }
-  return href.replace(/^\//, "").replace(/\//g, "-") || "nav";
-}
 
 function isActiveNavPath(pathname: string, href: string): boolean {
   if (href === BEIZA_REDIRECTS.vault.from) {
@@ -88,21 +71,13 @@ type NavigationProps = {
   variant?: "default" | "recordOverlay";
 };
 
+/** Locked product header — Vault · Circle · Heritage (CMS rows must not replace this). */
+const HEADER_NAV_LINKS: ProductNavLink[] = PRODUCT_NAV_LINKS;
+
 export const Navigation = ({ variant = "default" }: NavigationProps) => {
   const recordOverlay = variant === "recordOverlay";
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { data: navFromDb = [] } = useNavigationLinks("primary");
-
-  const navLinks: ProductNavLink[] = useMemo(() => {
-    if (navFromDb.length > 0) {
-      return navFromDb.map((link) => ({
-        id: navIdFromHref(link.href),
-        label: link.label,
-        href: link.href,
-      }));
-    }
-    return allowStaticContentFallback() ? PRODUCT_NAV_LINKS : [];
-  }, [navFromDb]);
+  const navLinks = HEADER_NAV_LINKS;
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? "hidden" : "";
@@ -122,19 +97,19 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
             : "sticky top-0 z-40 w-full border-b border-white/5 bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20",
         )}
       >
-        <div className={cn("w-full", recordOverlay ? "py-3" : "py-6", sitePaddingX)}>
-          <div className="flex items-center justify-between">
+        <div className={cn("w-full", recordOverlay ? "py-3" : "py-4 sm:py-6", sitePaddingX)}>
+          <div className="flex min-w-0 items-center justify-between gap-3">
             <BeizaLogoLink />
 
-            <div className="hidden items-center gap-10 md:flex">
+            <div className="hidden min-w-0 items-center gap-6 lg:flex lg:gap-10">
               {navLinks.map((link) => (
                 <NavItem key={link.id} link={link} />
               ))}
             </div>
 
-            <div className="hidden md:block">
+            <div className="hidden shrink-0 lg:block">
               <Link to={CTA.href}>
-                <Button className="rounded-full bg-white px-6 py-3 font-manrope text-sm font-medium text-black hover:bg-white/90">
+                <Button className="rounded-full bg-white px-5 py-2.5 font-manrope text-sm font-medium text-black hover:bg-white/90 sm:px-6 sm:py-3">
                   {CTA.label}
                 </Button>
               </Link>
@@ -142,7 +117,7 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
 
             <button
               type="button"
-              className="text-white md:hidden"
+              className="shrink-0 text-white lg:hidden"
               aria-label={drawerOpen ? "Close menu" : "Open menu"}
               onClick={() => setDrawerOpen((o) => !o)}
             >
@@ -153,7 +128,7 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
       </nav>
 
       {drawerOpen ? (
-        <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
           <button
             type="button"
             className="absolute inset-0 bg-black/80"
@@ -178,7 +153,7 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
                   key={link.id}
                   link={link}
                   onNavigate={closeDrawer}
-                  className="font-manrope text-4xl font-medium leading-tight tracking-tight"
+                  className="font-manrope text-3xl font-medium leading-tight tracking-tight sm:text-4xl"
                 />
               ))}
             </nav>

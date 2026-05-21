@@ -28,8 +28,11 @@ import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
 
 import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
 
-import { Accordion } from "@/components/ui/accordion";
-import { StudioAccordionSection, StudioToggleRow } from "@/components/dev/StudioAccordionSection";
+import {
+  StudioAccordionPanels,
+  StudioAccordionSection,
+  StudioToggleRow,
+} from "@/components/dev/StudioAccordionSection";
 import { StudioCopyOffsetSliders } from "@/components/dev/StudioCopyOffsetSliders";
 import { StudioSlider } from "@/components/dev/StudioSlider";
 
@@ -250,6 +253,26 @@ function LocaleRailLayoutSliders({
         step={0.125}
         onChange={(v) => patch({ axisNudgeXRem: v })}
       />
+      <StudioSlider
+        compact
+        label="Sun axis ← / → (rem)"
+        value={rail.sunAxisNudgeXRem}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.sunAxisNudgeXRem}
+        min={-4}
+        max={4}
+        step={0.125}
+        onChange={(v) => patch({ sunAxisNudgeXRem: v })}
+      />
+      <StudioSlider
+        compact
+        label="Sun axis ↓ separation (rem)"
+        value={rail.sunAxisNudgeYRem}
+        defaultValue={DEFAULT_LOCALE_RAIL_LAYOUT.sunAxisNudgeYRem}
+        min={-2}
+        max={6}
+        step={0.125}
+        onChange={(v) => patch({ sunAxisNudgeYRem: v })}
+      />
       <StudioToggleRow
         label="Show codes on gray dots"
         checked={rail.showInactiveCodes}
@@ -461,11 +484,7 @@ function WelcomeStudioPanel({
 
       <StudioTextEditButton />
 
-      <Accordion
-        type="multiple"
-        defaultValue={["layout", "rail", "cards"]}
-        className="mb-3 w-full"
-      >
+      <StudioAccordionPanels defaultValue={["layout", "rail", "cards"]} className="mb-3">
         <StudioAccordionSection value="layout" title="Page layout">
           <StudioSlider
             compact
@@ -635,7 +654,7 @@ function WelcomeStudioPanel({
             </button>
           </div>
         </StudioAccordionSection>
-      </Accordion>
+      </StudioAccordionPanels>
 
     </FloatingStudioShell>
 

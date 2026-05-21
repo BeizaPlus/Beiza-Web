@@ -17,12 +17,42 @@ const app = readFileSync(appPath, "utf8");
 
 const failures = [];
 
+/** docs/LINK-MASTERSHEET.md — welcome toolbar card hrefs (Education · Legacy · Farewell) */
+const WELCOME_TOOLBAR_MATRIX = {
+  GH: ["/home", "/legacy/record", "/af/farewell"],
+  EN: ["/home", "/legacy/record", "/farewell"],
+  ES: ["/home", "/legacy/record", "/la/farewell"],
+  FR: ["/home", "/legacy/record", "/fr/farewell"],
+  CN: ["/home", "/legacy/record", "/zh/farewell"],
+};
+
+const REGIONAL_ROUTE_PATHS = [
+  "in/heritage",
+  "in/farewell",
+  "in/education",
+  "la/heritage",
+  "la/farewell",
+  "la/education",
+  "zh/heritage",
+  "zh/farewell",
+  "zh/education",
+  "br/heritage",
+  "br/farewell",
+  "br/education",
+  "af/heritage",
+  "af/farewell",
+  "af/education",
+  "fr/heritage",
+  "fr/farewell",
+  "fr/education",
+];
+
 function assert(condition, message) {
   if (!condition) failures.push(message);
 }
 
 // Source file contains locked paths
-assert(master.includes('intentionalLegacy: "/home"'), "BEIZA_LINKS.home.intentionalLegacy must be /home");
+assert(master.includes('educationHome: "/home"'), "BEIZA_LINKS.home.educationHome must be /home");
 assert(master.includes('recordStation: "/legacy/record"'), "BEIZA_LINKS.legacy.recordStation must be /legacy/record");
 assert(
   master.includes("education: regionalEducationWrapperPath(locale)"),
@@ -65,8 +95,37 @@ assert(
 );
 
 // Smoke expectations documented in mastersheet
-const expectedEn = "/education,/legacy/record,/farewell";
-assert(master.includes('hub: "/education"'), "Mastersheet documents /education hub");
+const expectedEn = "/home,/legacy/record,/farewell";
+assert(
+  master.includes('education: BEIZA_LINKS.home.educationHome'),
+  "WELCOME_CARD_TARGETS.education must point at education home",
+);
+assert(
+  master.includes('culturalImmersion: "/education"'),
+  "Legacy /education URL must redirect to education home",
+);
+
+// Regional URL prefixes (see REGIONAL_PREFIX in beizaMasterLinks.ts)
+for (const prefix of ["/in", "/la", "/zh", "/br", "/af", "/fr"]) {
+  assert(master.includes(prefix), `REGIONAL_PREFIX must include prefix ${prefix}`);
+}
+assert(
+  app.includes("regionalAppRoutePath") && app.includes("REGIONAL_PREFIX_LOCALES"),
+  "App.tsx must register regional routes from beizaMasterLinks",
+);
+assert(
+  master.includes("WELCOME_TOOLBAR_LINK_TABLE"),
+  "Publish welcome toolbar link table in beizaMasterLinks.ts",
+);
+
+assert(
+  app.includes("educationCulturalImmersion") && app.includes("regionalEducationCulturalImmersionPath"),
+  "App.tsx must redirect legacy /education URLs to education home",
+);
+assert(
+  !welcome.includes('to: "/home"') && !welcome.includes("to: '/home'"),
+  "WelcomeGate must not hardcode /home on cards — use getWelcomeCardHref",
+);
 
 console.log("Link mastersheet validation");
 console.log(`  file: ${masterPath}`);
@@ -74,6 +133,9 @@ console.log(`  file: ${masterPath}`);
 if (failures.length === 0) {
   console.log(`  ✓ All invariant groups passed`);
   console.log(`  ✓ Expected EN welcome hrefs: ${expectedEn}`);
+  for (const [code, hrefs] of Object.entries(WELCOME_TOOLBAR_MATRIX)) {
+    console.log(`  ✓ ${code} cards: ${hrefs.join(", ")}`);
+  }
   process.exit(0);
 }
 

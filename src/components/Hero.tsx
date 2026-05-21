@@ -76,10 +76,10 @@ export const Hero = ({
       )}
 
       <div
-        className="relative z-10 flex w-full flex-1 items-end px-6 pt-28 md:px-12 md:pt-32"
+        className="relative z-10 flex w-full min-w-0 flex-1 items-end pt-24 sm:pt-28 md:pt-32 pl-[var(--beiza-site-padding-x,1.25rem)] pr-[var(--beiza-site-padding-x,1.25rem)]"
         style={HERO_CONTENT_BOTTOM_STYLE}
       >
-        <div className="max-w-[680px] text-left md:pl-20" style={copyOffsetStyle}>
+        <div className="max-w-[680px] min-w-0 text-left sm:pl-4 md:pl-12 lg:pl-20" style={copyOffsetStyle}>
           <motion.h1
             initial={{ opacity: 0, filter: "blur(16px)", scale: 1.12 }}
             animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}

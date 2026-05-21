@@ -2,6 +2,10 @@ import { useState } from "react";
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
 import { HeritageHeroStudioControls } from "@/components/dev/HeritageHeroStudioControls";
 import { StudioJsonCopyBlock } from "@/components/dev/StudioJsonCopyBlock";
+import {
+  StudioAccordionPanels,
+  StudioAccordionSection,
+} from "@/components/dev/StudioAccordionSection";
 import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
 import { StudioCopyOffsetSliders } from "@/components/dev/StudioCopyOffsetSliders";
 import { StudioSlider } from "@/components/dev/StudioSlider";
@@ -39,81 +43,75 @@ export function RecordPageStudioPanel({ frame, onChange }: Props) {
       onClose={() => setOpen(false)}
       openButtonLabel="Record page"
     >
-      <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-        Record page
-      </p>
       <p className="mb-3 text-[9px] leading-snug text-muted-foreground">
         Copy column, email width, inner indent, and hero image — live on /legacy/record.
       </p>
 
       <StudioTextEditButton />
 
-      <p className="mb-2 mt-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/90">
-        Copy & sign-in
-      </p>
-      <div className="space-y-3">
-        <StudioCopyOffsetSliders frame={frame} defaults={defaults} onPatch={patch} />
-        <StudioSlider
-          compact
-          label="Column width (rem)"
-          value={frame.columnMaxWidthRem}
-          defaultValue={defaults.columnMaxWidthRem}
-          min={16}
-          max={52}
-          step={0.25}
-          displayValue={`${frame.columnMaxWidthRem}rem`}
-          onChange={(columnMaxWidthRem) => patch({ columnMaxWidthRem })}
-        />
-        <StudioSlider
-          compact
-          label="Inner indent (rem)"
-          value={frame.contentIndentRem}
-          defaultValue={defaults.contentIndentRem}
-          min={0}
-          max={20}
-          step={0.25}
-          displayValue={`${frame.contentIndentRem}rem`}
-          onChange={(contentIndentRem) => patch({ contentIndentRem })}
-        />
-        <StudioSlider
-          compact
-          label="Email field width (rem)"
-          value={frame.emailMaxWidthRem}
-          defaultValue={defaults.emailMaxWidthRem}
-          min={8}
-          max={40}
-          step={0.25}
-          displayValue={`${frame.emailMaxWidthRem}rem`}
-          onChange={(emailMaxWidthRem) => patch({ emailMaxWidthRem })}
-        />
-        <StudioSlider
-          compact
-          label="Subtitle width (rem)"
-          value={frame.subtitleMaxWidthRem}
-          defaultValue={defaults.subtitleMaxWidthRem}
-          min={12}
-          max={40}
-          step={0.25}
-          displayValue={`${frame.subtitleMaxWidthRem}rem`}
-          onChange={(subtitleMaxWidthRem) => patch({ subtitleMaxWidthRem })}
-        />
-      </div>
+      <StudioAccordionPanels defaultValue={["copy", "hero"]}>
+        <StudioAccordionSection value="copy" title="Copy & sign-in">
+          <StudioCopyOffsetSliders frame={frame} defaults={defaults} onPatch={patch} />
+          <StudioSlider
+            compact
+            label="Column width (rem)"
+            value={frame.columnMaxWidthRem}
+            defaultValue={defaults.columnMaxWidthRem}
+            min={16}
+            max={52}
+            step={0.25}
+            displayValue={`${frame.columnMaxWidthRem}rem`}
+            onChange={(columnMaxWidthRem) => patch({ columnMaxWidthRem })}
+          />
+          <StudioSlider
+            compact
+            label="Inner indent (rem)"
+            value={frame.contentIndentRem}
+            defaultValue={defaults.contentIndentRem}
+            min={0}
+            max={20}
+            step={0.25}
+            displayValue={`${frame.contentIndentRem}rem`}
+            onChange={(contentIndentRem) => patch({ contentIndentRem })}
+          />
+          <StudioSlider
+            compact
+            label="Email field width (rem)"
+            value={frame.emailMaxWidthRem}
+            defaultValue={defaults.emailMaxWidthRem}
+            min={8}
+            max={40}
+            step={0.25}
+            displayValue={`${frame.emailMaxWidthRem}rem`}
+            onChange={(emailMaxWidthRem) => patch({ emailMaxWidthRem })}
+          />
+          <StudioSlider
+            compact
+            label="Subtitle width (rem)"
+            value={frame.subtitleMaxWidthRem}
+            defaultValue={defaults.subtitleMaxWidthRem}
+            min={12}
+            max={40}
+            step={0.25}
+            displayValue={`${frame.subtitleMaxWidthRem}rem`}
+            onChange={(subtitleMaxWidthRem) => patch({ subtitleMaxWidthRem })}
+          />
+        </StudioAccordionSection>
 
-      <p className="mb-2 mt-4 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/90">
-        Hero image
-      </p>
-      <HeritageHeroStudioControls
-        frame={frame}
-        onPatch={(partial) => patch(partial)}
-      />
+        <StudioAccordionSection value="hero" title="Hero image">
+          <HeritageHeroStudioControls frame={frame} onPatch={(partial) => patch(partial)} />
+        </StudioAccordionSection>
 
-      <StudioJsonCopyBlock
-        getJson={() => recordPageStudioToJson(frame)}
-        onReset={() => {
-          onChange({ ...RECORD_PAGE_STUDIO_DEFAULTS });
-          saveRecordPageStudioFrame(RECORD_PAGE_STUDIO_DEFAULTS);
-        }}
-      />
+        <StudioAccordionSection value="data" title="Import & export">
+          <StudioJsonCopyBlock
+            getJson={() => recordPageStudioToJson(frame)}
+            onReset={() => {
+              onChange({ ...RECORD_PAGE_STUDIO_DEFAULTS });
+              saveRecordPageStudioFrame(RECORD_PAGE_STUDIO_DEFAULTS);
+            }}
+          />
+        </StudioAccordionSection>
+      </StudioAccordionPanels>
     </FloatingStudioShell>
   );
 }

@@ -8,7 +8,7 @@
 | `docs/LINK-MASTERSHEET.md` | This spreadsheet (human) |
 | `npm run links:check` | Fails CI/dev if invariants break |
 
-Production reference: welcome **Education** card → locale cultural immersion (`/education`, `/af/education`, …).
+Production reference: welcome **Education** card → **education home** at `/home` (`Landing.tsx` — Build Intentional Legacy).
 
 ---
 
@@ -16,11 +16,11 @@ Production reference: welcome **Education** card → locale cultural immersion (
 
 | Rule | Path | Why |
 |------|------|-----|
-| Welcome **Education** card | Locale education wrapper (see below) | Cultural immersion films + symbols |
+| Welcome **Education** card | `/home` (all locales) | Education home — intentional legacy landing |
 | Welcome **Legacy** card | `/legacy/record` | Record tab (landscape hero + station below) |
 | Welcome **Farewell** card | Locale farewell (see below) | Memorial / White Swan heritage |
-| Marketing home | `/home` | Build Intentional Legacy — nav/CTAs, not welcome Education |
-| Same product all regions | Only Legacy **photo** + education **copy** change | US/IN/LA/CN/BR toggle |
+| Legacy cultural immersion URL | `/education`, `/af/education`, … | **Redirects** to `/home` (bookmarks) |
+| Same product all regions | Only Legacy **photo** + farewell **copy** change | US/IN/LA/CN/BR toggle |
 
 ---
 
@@ -30,13 +30,13 @@ DOM order: **Education · Legacy · Farewell**
 
 | Card | EN title | Href (EN) | Page |
 |------|----------|-----------|------|
-| Education | Learn your culture | `/education` | `Education.tsx` + immersion hero |
+| Education | Learn your culture | `/home` | `Landing.tsx` — education home |
 | Legacy | Preserve a life story | `/legacy/record` | `legacy/record.tsx` |
 | Farewell | Craft a memorial | See regional table | `Heritage.tsx` |
 
 ```ts
 import { getWelcomeCardHref, WELCOME_CARD_TARGETS } from "@/lib/beizaMasterLinks";
-// education → getWelcomeRoute(locale, "education")  (/education, /af/education, …)
+// education → regionalEducationWrapperPath(locale)  (always /home)
 // legacy    → WELCOME_CARD_TARGETS.legacy           (/legacy/record)
 ```
 
@@ -56,13 +56,7 @@ import { getWelcomeCardHref, WELCOME_CARD_TARGETS } from "@/lib/beizaMasterLinks
 
 | Locale | Education href |
 |--------|----------------|
-| black-american | `/education` |
-| indian | `/in/education` |
-| latina | `/la/education` |
-| chinese | `/zh/education` |
-| brazilian | `/br/education` |
-| africa | `/af/education` |
-| french | `/fr/education` |
+| All (GH, EN, ES, FR, CN, …) | `/home` |
 
 **Region toggle** — language/copy switches with US/IN/LA/CN/BR (native tongue in `welcomeCopy.ts`). **Pin** (`beiza-locale-pinned`): locks language on reload; unpinned uses browser detection. Legacy photo still follows selected region. Pin does not block live toggle switches.
 
@@ -72,10 +66,9 @@ import { getWelcomeCardHref, WELCOME_CARD_TARGETS } from "@/lib/beizaMasterLinks
 
 | Step | Path | Component | Notes |
 |------|------|-----------|-------|
-| Welcome card | `/education`, `/af/education`, … | `Education.tsx` | Cultural immersion video hero (per locale) |
-| Symbols | same page (below hero) | `Education.tsx` | Adinkra grid |
-| Story questions | `/education/story-questions` | `StoryQuestionsArticle.tsx` | SEO article |
-| Marketing home | `/home` | `Landing.tsx` | Intentional legacy — separate from welcome Education |
+| Welcome card | `/home` | `Landing.tsx` | **Education home** — Build Intentional Legacy |
+| Story questions | `/education/story-questions` | `StoryQuestionsArticle.tsx` | SEO article; back link → `/home` |
+| Legacy cultural immersion | `/education`, `/af/education`, … | redirect → `/home` | Old URLs only |
 
 ---
 
@@ -99,6 +92,8 @@ import { getWelcomeCardHref, WELCOME_CARD_TARGETS } from "@/lib/beizaMasterLinks
 |------|--------|-------|
 | `/farewell` | `Heritage.tsx` | Farewell heritage |
 | `/white-swan` | redirect → `/farewell` | Legacy URL |
+| `/education` | redirect → `/home` | Legacy cultural immersion |
+| `/af/education`, `/in/education`, … | redirect → `/home` | Regional legacy URLs |
 | `/gallery` | redirect → `/circle` | Nav label “Gallery” |
 | `/vault` | redirect → `/legacy/vault` | |
 | `/family-trees` | redirect → `/circle` | Alias |
@@ -137,30 +132,31 @@ import { getWelcomeCardHref, WELCOME_CARD_TARGETS } from "@/lib/beizaMasterLinks
 
 ## Regional wrappers (`RegionalRoutePage`)
 
-| Prefix | Locales | Heritage | Farewell | Education wrapper |
-|--------|---------|----------|----------|-------------------|
-| (none) | US | `/heritage` | `/farewell` | `/education` |
-| `/in` | indian | `/in/heritage` | `/in/farewell` | `/in/education` |
-| `/la` | latina | `/la/heritage` | `/la/farewell` | `/la/education` |
-| `/zh` | chinese | `/zh/heritage` | `/zh/farewell` | `/zh/education` |
-| `/br` | brazilian | `/br/heritage` | `/br/farewell` | `/br/education` |
-| `/af` | africa | `/af/heritage` | `/af/farewell` | `/af/education` |
-| `/fr` | fr | `/fr/heritage` | `/fr/farewell` | `/fr/education` |
+| Prefix | Locales | Heritage | Farewell |
+|--------|---------|----------|----------|
+| (none) | US | `/heritage` | `/farewell` |
+| `/in` | indian | `/in/heritage` | `/in/farewell` |
+| `/la` | latina | `/la/heritage` | `/la/farewell` |
+| `/zh` | chinese | `/zh/heritage` | `/zh/farewell` |
+| `/br` | brazilian | `/br/heritage` | `/br/farewell` |
+| `/af` | africa | `/af/heritage` | `/af/farewell` |
+| `/fr` | fr | `/fr/heritage` | `/fr/farewell` |
+
+Education regional paths (`/af/education`, etc.) redirect to `/home` — not rendered by `RegionalRoutePage`.
 
 ---
 
-## Fallback nav (when CMS empty)
+## Header nav (locked)
 
-Defined in `src/lib/fallbackContent.ts` using `BEIZA_LINKS`:
+`Navigation.tsx` always uses `PRODUCT_NAV_LINKS` from `src/config/productNav.ts` — CMS `navigation_links` rows do **not** replace the header (prevents Vault/Circle/Heritage flash).
 
 | Label | Path |
 |-------|------|
-| Live Now | `/` (welcome gate) |
-| Events | `/events` |
-| Gallery | `/gallery` → redirects to `/circle` |
-| Legacy | `/legacy` |
-| Blog | `/blog` |
-| Contact | `/contact` |
+| Vault | `/vault` → redirects to `/legacy/vault` |
+| Circle | `/circle` |
+| Heritage | `/heritage` |
+
+Contact CTA: pill button → `/contact`.
 
 Hero CTA on `/home`: **Start Your Legacy** → `/legacy` (fallback settings).
 
@@ -191,7 +187,7 @@ Hero CTA on `/home`: **Start Your Legacy** → `/legacy` (fallback settings).
 
 - `src/pages/WelcomeGate.tsx` — `getWelcomeCardHref`
 - `src/App.tsx` — redirects
-- `src/pages/Education.tsx`
+- `src/pages/Landing.tsx` — education home
 - `src/lib/fallbackContent.ts`
 - `src/lib/educationStoryQuestionsContent.ts`
 - `src/pages/RecordRedirect.tsx`

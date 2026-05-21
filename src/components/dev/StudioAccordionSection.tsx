@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 
 type StudioAccordionSectionProps = {
@@ -35,6 +35,23 @@ export function StudioAccordionSection({
         <div className="space-y-2.5">{children}</div>
       </AccordionContent>
     </AccordionItem>
+  );
+}
+
+/** Collapsible multi-section wrapper for layout studio panels */
+export function StudioAccordionPanels({
+  children,
+  defaultValue = [],
+  className,
+}: {
+  children: ReactNode;
+  defaultValue?: string[];
+  className?: string;
+}) {
+  return (
+    <Accordion type="multiple" defaultValue={defaultValue} className={cn("w-full", className)}>
+      {children}
+    </Accordion>
   );
 }
 

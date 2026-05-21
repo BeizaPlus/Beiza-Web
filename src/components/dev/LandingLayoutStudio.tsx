@@ -17,18 +17,11 @@ import {
 } from "./heroLayoutStudioState";
 import { HeritageHeroStudioControls } from "./HeritageHeroStudioControls";
 import { FloatingStudioShell } from "./FloatingStudioShell";
+import { StudioAccordionSection } from "@/components/dev/StudioAccordionSection";
 import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
 import { StudioCopyOffsetSliders } from "@/components/dev/StudioCopyOffsetSliders";
 import { StudioSlider } from "./StudioSlider";
-
-const FOCUS_LABELS: { id: StudioFocus; label: string }[] = [
-  { id: "hero", label: "1. Hero" },
-  { id: "heritageHero", label: "Heritage Hero" },
-  { id: "offerings", label: "2. What we do" },
-  { id: "faq", label: "3. FAQ" },
-  { id: "pricing", label: "4. Billing" },
-  { id: "outro", label: "5. Outro" },
-];
+import { Accordion } from "@/components/ui/accordion";
 
 type Props = {
   state: LandingLayoutStudioState;
@@ -63,6 +56,7 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
     patch({ outro: { ...state.outro, ...outro } });
 
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
+  const [openSections, setOpenSections] = useState<string[]>([state.focus]);
 
   const exportJson = async () => {
     const text = studioStateToJson(state);
@@ -91,33 +85,21 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
       openButtonLabel="Landing studio"
     >
       <StudioTextEditButton />
-      <div className="mb-4 flex flex-wrap gap-1">
-        {FOCUS_LABELS.map(({ id, label }) => (
-          <Button
-            key={id}
-            type="button"
-            size="sm"
-            variant={state.focus === id ? "default" : "outline"}
-            className="h-7 px-2 text-[10px]"
-            onClick={() => patch({ focus: id })}
-          >
-            {label}
-          </Button>
-        ))}
-      </div>
+      <p className="mb-3 text-[9px] leading-snug text-muted-foreground">
+        Open a section to preview that block on the page. Multiple sections can stay open.
+      </p>
 
-      {state.focus === "heritageHero" ? (
-        <HeritageHeroStudioControls
-          frame={heritageFrame}
-          onPatch={(partial) => {
-            const next = { ...heritageFrame, ...partial };
-            setHeritageFrame(next);
-            saveHeroStudioFrame("heritage", next);
-          }}
-        />
-      ) : null}
-
-      {state.focus === "hero" ? (
+      <Accordion
+        type="multiple"
+        value={openSections}
+        onValueChange={(open) => {
+          setOpenSections(open);
+          const last = open[open.length - 1] as StudioFocus | undefined;
+          if (last) patch({ focus: last });
+        }}
+        className="w-full"
+      >
+        <StudioAccordionSection value="hero" title="1. Hero">
         <div className="space-y-3">
           <p className="text-[11px] text-muted-foreground">
             Pan the portrait (X/Y). Zoom out to see more of the frame; zoom in to tighten on the
@@ -174,9 +156,20 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
             }
           />
         </div>
-      ) : null}
+        </StudioAccordionSection>
 
-      {state.focus === "offerings" ? (
+        <StudioAccordionSection value="heritageHero" title="Heritage hero">
+        <HeritageHeroStudioControls
+          frame={heritageFrame}
+          onPatch={(partial) => {
+            const next = { ...heritageFrame, ...partial };
+            setHeritageFrame(next);
+            saveHeroStudioFrame("heritage", next);
+          }}
+        />
+        </StudioAccordionSection>
+
+        <StudioAccordionSection value="offerings" title="2. What we do">
         <div className="space-y-3">
           <StudioSlider
             label="Section move up"
@@ -195,9 +188,9 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
             onChange={(paddingTop) => patchOfferings({ paddingTop })}
           />
         </div>
-      ) : null}
+        </StudioAccordionSection>
 
-      {state.focus === "faq" ? (
+        <StudioAccordionSection value="faq" title="3. FAQ">
         <div className="space-y-3">
           <StudioSlider
             label="Section move up"
@@ -216,9 +209,9 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
             onChange={(paddingTop) => patchFaq({ paddingTop })}
           />
         </div>
-      ) : null}
+        </StudioAccordionSection>
 
-      {state.focus === "pricing" ? (
+        <StudioAccordionSection value="pricing" title="4. Billing">
         <div className="space-y-3">
           <p className="text-[10px] leading-snug text-muted-foreground">
             Click any text on the billing cards to edit. Sliders only move the section — card layout stays fixed.
@@ -240,9 +233,9 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
             onChange={(paddingTop) => patchPricing({ paddingTop })}
           />
         </div>
-      ) : null}
+        </StudioAccordionSection>
 
-      {state.focus === "outro" ? (
+        <StudioAccordionSection value="outro" title="5. Outro">
         <div className="space-y-3">
           <StudioSlider
             label="Section move up"
@@ -261,29 +254,32 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
             onChange={(paddingTop) => patchOutro({ paddingTop })}
           />
         </div>
-      ) : null}
+        </StudioAccordionSection>
 
-      <div className="mt-4 flex flex-wrap gap-2">
-        <Button type="button" size="sm" variant="secondary" className="h-7 text-[10px]" onClick={() => void exportJson()}>
-          Copy JSON
-        </Button>
-        <Button type="button" size="sm" variant="secondary" className="h-7 text-[10px]" onClick={saveJsonFile}>
-          Save JSON
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="outline"
-          className="h-7 text-[10px]"
-          onClick={() => {
-            onChange(DEFAULT_STUDIO_STATE);
-            saveStudioState(DEFAULT_STUDIO_STATE);
-          }}
-        >
-          Reset
-        </Button>
-      </div>
-      {saveStatus ? <p className="mt-2 text-[10px] text-primary">{saveStatus}</p> : null}
+        <StudioAccordionSection value="data" title="Import & export">
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" size="sm" variant="secondary" className="h-7 text-[10px]" onClick={() => void exportJson()}>
+              Copy JSON
+            </Button>
+            <Button type="button" size="sm" variant="secondary" className="h-7 text-[10px]" onClick={saveJsonFile}>
+              Save JSON
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="h-7 text-[10px]"
+              onClick={() => {
+                onChange(DEFAULT_STUDIO_STATE);
+                saveStudioState(DEFAULT_STUDIO_STATE);
+              }}
+            >
+              Reset
+            </Button>
+          </div>
+          {saveStatus ? <p className="mt-2 text-[10px] text-primary">{saveStatus}</p> : null}
+        </StudioAccordionSection>
+      </Accordion>
     </FloatingStudioShell>
   );
 }

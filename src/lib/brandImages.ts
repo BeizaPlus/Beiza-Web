@@ -31,7 +31,7 @@ export const HERO_SHELL_CLASS =
   "relative -mt-24 flex w-full min-h-[calc(100vh+6rem)] items-stretch justify-center overflow-hidden";
 
 export const HERO_CONTENT_CLASS =
-  "relative z-10 mx-auto flex w-full max-w-6xl min-w-0 flex-1 items-end pt-28 md:pt-32 pl-[var(--beiza-site-padding-x,6.75rem)] pr-[var(--beiza-site-padding-x,6.75rem)]";
+  "relative z-10 mx-auto flex w-full max-w-6xl min-w-0 flex-1 items-end pt-28 md:pt-32 pl-[var(--beiza-site-padding-x,1.25rem)] pr-[var(--beiza-site-padding-x,1.25rem)]";
 
 /** Bottom padding for hero copy — always % of viewport height (see --hero-copy-raise). */
 export const HERO_CONTENT_BOTTOM_STYLE = {

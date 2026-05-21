@@ -4,7 +4,7 @@ import { siteBoundedContainer, siteBounds, sitePaddingX } from "@/lib/siteLayout
 export { siteBounds, siteBoundedContainer, sitePaddingX, siteContentIndentX, siteHeroContentRow } from "@/lib/siteLayout";
 
 /** Shared layout shells for public marketing pages. */
-export const marketingSection = "bg-background py-24 text-foreground lg:py-32";
+export const marketingSection = "bg-background py-16 text-foreground sm:py-20 lg:py-32";
 
 /** Centered column with boundary padding (for pages without a siteBounds section wrapper) */
 export const marketingContainer = cn(siteBoundedContainer, sitePaddingX);

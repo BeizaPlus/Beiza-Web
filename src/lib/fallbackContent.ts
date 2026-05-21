@@ -1,14 +1,11 @@
 import type { NavigationLink, FooterLink } from "@/hooks/usePublicContent";
 import { BEIZA_LINKS, BEIZA_REDIRECTS } from "@/lib/beizaMasterLinks";
 
+/** Matches `PRODUCT_NAV_LINKS` — header uses product nav, not CMS primary rows. */
 export const FALLBACK_NAVIGATION_LINKS: NavigationLink[] = [
-  { id: "fallback-nav-live", label: "Live Now", href: BEIZA_LINKS.welcome.gate, location: "primary", displayOrder: 1 },
-  { id: "fallback-nav-events", label: "Events", href: BEIZA_LINKS.marketing.events, location: "primary", displayOrder: 2 },
-  { id: "fallback-nav-gallery", label: "Gallery", href: BEIZA_REDIRECTS.gallery.from, location: "primary", displayOrder: 3 },
-  { id: "fallback-nav-legacy", label: "Legacy", href: BEIZA_LINKS.legacy.app, location: "primary", displayOrder: 4 },
-  // { id: "fallback-nav-memoirs", label: "Memoirs", href: BEIZA_LINKS.marketing.memoirs, location: "primary", displayOrder: 5 },
-  { id: "fallback-nav-blog", label: "Blog", href: BEIZA_LINKS.marketing.blog, location: "primary", displayOrder: 5 },
-  { id: "fallback-nav-contact", label: "Contact", href: BEIZA_LINKS.marketing.contact, location: "primary", displayOrder: 5, isCta: true },
+  { id: "fallback-nav-vault", label: "Vault", href: BEIZA_REDIRECTS.vault.from, location: "primary", displayOrder: 1 },
+  { id: "fallback-nav-circle", label: "Circle", href: BEIZA_LINKS.circle.directory, location: "primary", displayOrder: 2 },
+  { id: "fallback-nav-heritage", label: "Heritage", href: BEIZA_LINKS.legacy.heritage, location: "primary", displayOrder: 3 },
 ];
 
 export const FALLBACK_FOOTER_LINKS: FooterLink[] = [

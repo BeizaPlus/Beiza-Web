@@ -11,7 +11,6 @@ import { SeoManager } from "@/components/seo/SeoManager";
 import RegionalRoutePage from "@/pages/regional/RegionalRoutePage";
 import Landing from "./pages/Landing";
 import WelcomeGate from "./pages/WelcomeGate";
-import EducationPage from "./pages/Education";
 import Contact from "./pages/Contact";
 import TributePage from "./pages/TributePage";
 import Events from "./pages/Events";
@@ -46,6 +45,7 @@ import {
   REGIONAL_PREFIX_LOCALES,
   REGIONAL_ROUTE_VARIANTS,
   regionalAppRoutePath,
+  regionalEducationCulturalImmersionPath,
   routerPath,
 } from "@/lib/beizaMasterLinks";
 
@@ -68,8 +68,18 @@ const App = () => (
           <Routes>
           <Route path="/" element={<WelcomeGate />} />
           <Route path={routerPath(BEIZA_LINKS.welcome.alias)} element={<WelcomeGate />} />
-          <Route path={routerPath(BEIZA_LINKS.home.intentionalLegacy)} element={<Landing />} />
-          <Route path={routerPath(BEIZA_LINKS.education.hub)} element={<EducationPage />} />
+          <Route path={routerPath(BEIZA_LINKS.home.educationHome)} element={<Landing />} />
+          <Route
+            path={routerPath(BEIZA_REDIRECTS.educationCulturalImmersion.from)}
+            element={<Navigate to={BEIZA_REDIRECTS.educationCulturalImmersion.to} replace />}
+          />
+          {REGIONAL_PREFIX_LOCALES.map((locale) => (
+            <Route
+              key={`${locale}-education-redirect`}
+              path={routerPath(regionalEducationCulturalImmersionPath(locale))}
+              element={<Navigate to={BEIZA_LINKS.home.educationHome} replace />}
+            />
+          ))}
           <Route path={routerPath(BEIZA_LINKS.education.storyQuestions)} element={<StoryQuestionsArticle />} />
           <Route path={routerPath(BEIZA_REDIRECTS.gallery.from)} element={<Navigate to={BEIZA_REDIRECTS.gallery.to} replace />} />
           <Route path={routerPath(BEIZA_REDIRECTS.vault.from)} element={<Navigate to={BEIZA_REDIRECTS.vault.to} replace />} />

@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
  */
 
 export const sitePaddingX =
-  "pl-[var(--beiza-site-padding-x,6.75rem)] pr-[var(--beiza-site-padding-x,6.75rem)]";
+  "pl-[var(--beiza-site-padding-x,1.25rem)] pr-[var(--beiza-site-padding-x,1.25rem)]";
 
 export const siteContentIndentX =
   "pl-[var(--beiza-content-indent,0rem)] pr-[var(--beiza-content-indent,0rem)]";

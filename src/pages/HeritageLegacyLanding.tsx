@@ -337,7 +337,7 @@ export default function HeritageLegacyLanding() {
             Plan a farewell
           </Link>
           {" · "}
-          <Link to={BEIZA_LINKS.education.hub} className="underline underline-offset-2 hover:text-white">
+          <Link to={BEIZA_LINKS.home.educationHome} className="underline underline-offset-2 hover:text-white">
             Education
           </Link>
         </p>

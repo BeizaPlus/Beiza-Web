@@ -65,7 +65,7 @@ export default function StoryQuestionsArticle() {
           <Link to={BEIZA_LINKS.welcome.gate} className={cn(legacyDisplay, "text-lg tracking-[0.15em]")}>
             BEIZA
           </Link>
-          <Link to={BEIZA_LINKS.education.hub} className={cn("text-sm font-light", MUTED)}>
+          <Link to={BEIZA_LINKS.home.educationHome} className={cn("text-sm font-light", MUTED)}>
             Education
           </Link>
         </div>

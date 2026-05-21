@@ -53,7 +53,13 @@ export function WelcomeLocaleRail({
   const clusterWidthPx = rail.sunSizePx;
   const dotTrackPx = Math.max(rail.dotSizePx, rail.activeDotSizePx);
 
-  const nudgeLeft = (rem: number) => (rem !== 0 ? { transform: `translateX(${-rem}rem)` } : undefined);
+  const nudgeX = (xRem: number, yRem = 0) => {
+    if (xRem === 0 && yRem === 0) return undefined;
+    const parts: string[] = [];
+    if (xRem !== 0) parts.push(`translateX(${-xRem}rem)`);
+    if (yRem !== 0) parts.push(`translateY(${yRem}rem)`);
+    return { transform: parts.join(" ") };
+  };
 
   const selectOption = useCallback(
     (option: WelcomeLanguageOption) => {
@@ -162,7 +168,7 @@ export function WelcomeLocaleRail({
         className="absolute top-1/2 flex -translate-y-1/2 items-center justify-end"
         style={{
           right: `calc(50% + ${dotTrackPx / 2}px + ${active ? rail.labelToDotGapPx : rail.inactiveLabelGapPx}px)`,
-          ...nudgeLeft(rail.labelNudgeXRem),
+          ...nudgeX(rail.labelNudgeXRem),
         }}
       >
         {active ? (
@@ -212,7 +218,7 @@ export function WelcomeLocaleRail({
 
       <div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={nudgeLeft(rail.axisNudgeXRem)}
+        style={nudgeX(rail.axisNudgeXRem)}
       >
         <RailDotSlot
           size={active ? rail.activeDotSizePx : rail.dotSizePx}
@@ -267,7 +273,10 @@ export function WelcomeLocaleRail({
           {welcomeToolbarCode(locale)}
         </p>
 
-        <div className="flex justify-center" style={nudgeLeft(rail.axisNudgeXRem)}>
+        <div
+          className="flex justify-center"
+          style={nudgeX(rail.sunAxisNudgeXRem, rail.sunAxisNudgeYRem)}
+        >
           <button
             type="button"
             className={cn(

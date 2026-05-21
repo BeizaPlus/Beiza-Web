@@ -71,25 +71,13 @@ async function auditWelcome(page, route) {
     pass(`${route} region hint copy removed`);
   } else fail(`${route} region hint should be removed`);
 
-  const expectedGh = "/af/education,/legacy/record,/af/farewell";
+  const expectedGh = "/home,/legacy/record,/af/farewell";
   if (hrefs.join(",") === expectedGh) pass(`${route} GH default card hrefs (${expectedGh})`);
   else fail(`${route} GH default card hrefs`, hrefs.join(" | "));
-
-  await page.getByRole("button", { name: "EN — English" }).click();
-  await page.waitForTimeout(400);
-  const enHrefs = await cards.evaluateAll((els) => els.map((a) => a.getAttribute("href")));
-  const expectedEn = "/education,/legacy/record,/farewell";
-  if (enHrefs.join(",") === expectedEn) pass(`${route} EN card hrefs (${expectedEn})`);
-  else fail(`${route} EN card hrefs`, enHrefs.join(" | "));
 
   const count = await cards.count();
   if (count === 3) pass(`${route} three path cards`);
   else fail(`${route} card count`, String(count));
-
-  const titles = await cards.locator("h2").allTextContents();
-  const enOrder = ["Learn your culture", "Preserve a life story", "Craft a memorial"];
-  if (titles.join("|") === enOrder.join("|")) pass(`${route} card order (Education · Legacy · Farewell)`);
-  else fail(`${route} card order`, titles.join(" | "));
 
   const iconCount = await page.locator("[data-welcome-path] a span.rounded-full:has(svg)").count();
   if (iconCount >= 3) pass(`${route} icon circles present (${iconCount})`);
@@ -112,19 +100,43 @@ async function auditWelcome(page, route) {
   else fail(`${route} Legacy card photo missing`);
 
   const themeToggle = page.getByRole("button", {
-    name: /Switch to (black|white) background|light mode|dark mode/i,
+    name: /Switch to (dark|light) background|light mode|dark mode/i,
   });
   if ((await themeToggle.count()) > 0) pass(`${route} theme toggle`);
   else fail(`${route} theme toggle missing`);
+}
 
-  await page.getByRole("button", { name: "ES — Spanish" }).click();
-  await page.waitForTimeout(400);
-  if ((await page.getByRole("heading", { name: "Preserva una vida" }).count()) > 0) {
+/** Click locale on vertical rail (label button or dot-only option). */
+async function selectWelcomeLocale(page, labelPattern) {
+  const option = page.getByRole("option", { name: labelPattern }).first();
+  await option.click();
+  await page.waitForTimeout(450);
+}
+
+async function auditWelcomeLocales(page, route) {
+  const cards = page.locator("[data-welcome-path] a").filter({ has: page.locator("h2") });
+
+  await selectWelcomeLocale(page, /EN — English/i);
+  const enHrefs = await cards.evaluateAll((els) => els.map((a) => a.getAttribute("href")));
+  const expectedEn = "/home,/legacy/record,/farewell";
+  if (enHrefs.join(",") === expectedEn) pass(`${route} EN card hrefs (${expectedEn})`);
+  else fail(`${route} EN card hrefs`, enHrefs.join(" | "));
+
+  const enTitles = await cards.locator("h2").allTextContents();
+  const enOrder = ["Learn your culture", "Preserve a life story", "Craft a memorial"];
+  if (enTitles.join("|") === enOrder.join("|")) pass(`${route} EN card order`);
+  else fail(`${route} EN card order`, enTitles.join(" | "));
+
+  await selectWelcomeLocale(page, /ES — Spanish/i);
+  if ((await page.getByRole("heading", { name: /Preserva una vida/i }).count()) > 0) {
     pass(`${route} ES toggle switches language`);
   } else fail(`${route} ES toggle language`, "Spanish heading not found");
 
-  await page.getByRole("button", { name: /GH — Ghana/i }).click();
-  await page.waitForTimeout(400);
+  await selectWelcomeLocale(page, /GH — Ghana/i);
+  const ghHrefs = await cards.evaluateAll((els) => els.map((a) => a.getAttribute("href")));
+  const expectedGh = "/home,/legacy/record,/af/farewell";
+  if (ghHrefs.join(",") === expectedGh) pass(`${route} GH card hrefs after switch (${expectedGh})`);
+  else fail(`${route} GH card hrefs after switch`, ghHrefs.join(" | "));
 }
 
 async function main() {
@@ -144,6 +156,7 @@ async function main() {
     for (const route of ["/", "/welcome"]) {
       try {
         await auditWelcome(page, route);
+        await auditWelcomeLocales(page, route);
       } catch (e) {
         fail(`${route} page load`, e.message);
       }
