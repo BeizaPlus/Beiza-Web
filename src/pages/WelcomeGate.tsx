@@ -55,8 +55,8 @@ const DEFAULT_STUDIO: StudioState = {
     imageOffsetY: 34.49371431708387,
   },
   farewell: {
-    imageZoom: 1.87,
-    imageOffsetX: 55.04626360004125,
+    imageZoom: 1.71,
+    imageOffsetX: 54.882992962632684,
     imageOffsetY: 26.061007957559674,
   },
   iconOffsetY: 92,
