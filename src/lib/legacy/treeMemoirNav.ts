@@ -1,3 +1,5 @@
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
+
 /** Query params when opening a memoir from the family tree canvas. */
 export const TREE_MEMOIR_FROM = "tree";
 
@@ -13,7 +15,7 @@ export function treeMemoirSearchParams(circleId: string, treeBackHref: string): 
 export function memoirHrefFromTree(memoirSlug: string, circleId: string, treeBackHref: string): string {
   const slug = memoirSlug.trim();
   const params = treeMemoirSearchParams(circleId, treeBackHref);
-  return `/memoirs/${encodeURIComponent(slug)}?${params.toString()}`;
+  return `${BEIZA_LINKS.marketing.memoirs}/${encodeURIComponent(slug)}?${params.toString()}`;
 }
 
 export function treeHrefWithFit(treeBackHref: string): string {
@@ -40,7 +42,7 @@ export function familyTreeBackHref(
     return treeHrefWithFit(parsed.treeBackHref);
   }
   if (parsed.circleId) {
-    return treeHrefWithFit(`/circle/${parsed.circleId}/tree`);
+    return treeHrefWithFit(BEIZA_LINKS.circle.tree(parsed.circleId));
   }
-  return "/circle";
+  return BEIZA_LINKS.circle.directory;
 }

@@ -8,6 +8,7 @@ import {
   type ReactNode,
 } from "react";
 import { useLocation } from "react-router-dom";
+import { useLayoutStudio } from "@/context/LayoutStudioContext";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 
 type StudioTextEditContextValue = {
@@ -29,6 +30,7 @@ function applyDesignMode(on: boolean) {
 export function StudioTextEditProvider({ children }: { children: ReactNode }) {
   const location = useLocation();
   const studioEnabled = isLayoutStudioEnabled();
+  const { enabled: layoutStudioOn, masterOpen } = useLayoutStudio();
   const [active, setActive] = useState(false);
 
   const onAdmin = location.pathname.startsWith("/admin");
@@ -39,6 +41,13 @@ export function StudioTextEditProvider({ children }: { children: ReactNode }) {
       applyDesignMode(false);
     }
   }, [studioEnabled, onAdmin, location.pathname]);
+
+  useEffect(() => {
+    if (layoutStudioOn && !masterOpen) {
+      setActive(false);
+      applyDesignMode(false);
+    }
+  }, [layoutStudioOn, masterOpen]);
 
   useEffect(() => {
     if (!studioEnabled || onAdmin) return;

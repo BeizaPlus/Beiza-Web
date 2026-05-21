@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
+import { copyOffsetStyle } from "@/lib/copyLayoutOffset";
 import { cn } from "@/lib/utils";
 import { welcomePathIconIdleClass } from "@/lib/welcomePathIconStyles";
 import {
@@ -27,6 +28,8 @@ export type WelcomePathCardProps = {
   imageOffsetX?: number;
   imageOffsetY?: number;
   iconOffsetY?: number;
+  copyOffsetX?: number;
+  copyOffsetY?: number;
   copyLift?: number;
   showIconCircleBg?: boolean;
   disableNavigation?: boolean;
@@ -68,6 +71,8 @@ export function WelcomePathCard({
   imageOffsetX = 50,
   imageOffsetY = 50,
   iconOffsetY = 8,
+  copyOffsetX = 0,
+  copyOffsetY = 0,
   copyLift = 0,
   showIconCircleBg = true,
   disableNavigation = false,
@@ -256,7 +261,7 @@ export function WelcomePathCard({
           "absolute inset-x-0 bottom-0 z-20 px-4 pb-5 pt-16 text-left sm:px-5 sm:pb-6",
           studioImageDrag && "pointer-events-none",
         )}
-        style={copyLift > 0 ? { transform: `translateY(-${copyLift}px)` } : undefined}
+        style={copyOffsetStyle({ offsetX: copyOffsetX, offsetY: copyOffsetY, copyLift })}
       >
         <h2 className="text-[1.35rem] font-semibold leading-tight text-white sm:text-[1.5rem] lg:text-[1.65rem]">
           {title}

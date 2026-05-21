@@ -128,6 +128,6 @@ export const ARTICLE_FAQ = [
 export const RELATED_ARTICLES = [
   { title: "Build intentional legacy", href: BEIZA_LINKS.home.intentionalLegacy },
   { title: "What is an Adinkra symbol?", href: BEIZA_LINKS.education.hub },
-  { title: "How to record your parent's life story", href: BEIZA_LINKS.legacy.heritage },
+  { title: "How to record your parent's life story", href: BEIZA_LINKS.legacy.recordStation },
   { title: "The families history never wrote down", href: BEIZA_LINKS.marketing.events },
 ];

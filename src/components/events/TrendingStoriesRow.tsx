@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { carouselControlButton } from "@/lib/brandUi";
 import type { EventStory } from "@/hooks/usePublicContent";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { cn } from "@/lib/utils";
 
 const CARD_WIDTH = 200;
@@ -102,7 +103,7 @@ export function TrendingStoriesRow({ stories, className }: TrendingStoriesRowPro
       <div className="mb-6 flex items-end justify-between gap-4">
         <div>
           <h2 className="text-2xl font-semibold text-white md:text-3xl">Trending</h2>
-          <Link to="/memoirs" className="mt-1 inline-block text-sm text-white/50 hover:text-white">
+          <Link to={BEIZA_LINKS.marketing.memoirs} className="mt-1 inline-block text-sm text-white/50 hover:text-white">
             See all
           </Link>
         </div>

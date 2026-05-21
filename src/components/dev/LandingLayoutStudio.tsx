@@ -18,6 +18,7 @@ import {
 import { HeritageHeroStudioControls } from "./HeritageHeroStudioControls";
 import { FloatingStudioShell } from "./FloatingStudioShell";
 import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
+import { StudioCopyOffsetSliders } from "@/components/dev/StudioCopyOffsetSliders";
 import { StudioSlider } from "./StudioSlider";
 
 const FOCUS_LABELS: { id: StudioFocus; label: string }[] = [
@@ -87,6 +88,7 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
       open={open}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
+      openButtonLabel="Landing studio"
     >
       <StudioTextEditButton />
       <div className="mb-4 flex flex-wrap gap-1">
@@ -143,12 +145,33 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
             onChange={(scale) => patchHero({ scale })}
           />
           <StudioSlider
-            label="Copy raise (% viewport height)"
+            label="Copy raise from bottom (vh)"
             value={state.hero.copyBottomVh}
             defaultValue={DEFAULT_STUDIO_STATE.hero.copyBottomVh}
             min={8}
             max={52}
+            displayValue={`${state.hero.copyBottomVh}vh`}
             onChange={(copyBottomVh) => patchHero({ copyBottomVh })}
+          />
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/90">
+            Copy position
+          </p>
+          <StudioCopyOffsetSliders
+            frame={{
+              offsetX: state.hero.copyOffsetX,
+              offsetY: state.hero.copyOffsetY,
+            }}
+            defaults={{
+              offsetX: DEFAULT_STUDIO_STATE.hero.copyOffsetX,
+              offsetY: DEFAULT_STUDIO_STATE.hero.copyOffsetY,
+            }}
+            showLift={false}
+            onPatch={(partial) =>
+              patchHero({
+                ...(partial.offsetX !== undefined ? { copyOffsetX: partial.offsetX } : {}),
+                ...(partial.offsetY !== undefined ? { copyOffsetY: partial.offsetY } : {}),
+              })
+            }
           />
         </div>
       ) : null}

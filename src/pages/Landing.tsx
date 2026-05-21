@@ -9,9 +9,11 @@ import {
   LandingLayoutStudioPanel,
   useLandingLayoutStudio,
 } from "@/components/dev/LandingLayoutStudio";
+import { copyOffsetStyle } from "@/lib/copyLayoutOffset";
 import { useHeroLayoutStudio } from "@/components/dev/HeroLayoutStudio";
 import { heroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { saveStudioState, studioCssVars } from "@/components/dev/landingLayoutStudioState";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FullBleedHero } from "@/components/FullBleedHero";
@@ -143,6 +145,10 @@ const Landing = () => {
           backgroundPosition={`${studioState.hero.posX}% ${studioState.hero.posY}%`}
           backgroundScale={studioState.hero.scale}
           overlayStyle={{ background: HERO_OVERLAY_GRADIENT }}
+          copyOffsetStyle={copyOffsetStyle({
+            offsetX: studioState.hero.copyOffsetX,
+            offsetY: studioState.hero.copyOffsetY,
+          })}
         />
       ) : null}
 
@@ -218,7 +224,7 @@ const Landing = () => {
               />
               {SHOW_FEATURED_EVENT_EXPERIENCE_CTA ? (
                 <div className="mt-8">
-                  <CTAButton to="/memoirs" label="Experience" />
+                  <CTAButton to={BEIZA_LINKS.marketing.memoirs} label="Experience" />
                 </div>
               ) : null}
             </div>

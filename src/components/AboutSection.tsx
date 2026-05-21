@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 export const AboutSection = () => {
   return (
@@ -43,7 +44,7 @@ export const AboutSection = () => {
           </p>
 
           {/* CTA Button */}
-          <Link to="/contact">
+          <Link to={BEIZA_LINKS.marketing.contact}>
             <Button className="bg-black text-white hover:bg-gray-900 rounded-full px-8 py-4 text-lg font-manrope font-medium h-auto border-0">
               <span>Let's Talk</span>
               <div className="ml-3 w-8 h-8 rounded-full bg-white flex items-center justify-center">

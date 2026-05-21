@@ -1,4 +1,6 @@
 import type { BeizaLocale } from "@/lib/locale/types";
+import { migrateCopyOffsetFields } from "@/lib/copyLayoutOffset";
+import { looksLikePxOffset, pxToVh } from "@/lib/layoutOffsetUnits";
 
 export const STUDIO_KEY = "welcome-gate-studio";
 
@@ -30,6 +32,9 @@ export type ToolbarControlsLayout = {
 
 export type StudioGlobal = {
   iconOffsetY: number;
+  /** Copy shift vw / vh on welcome cards */
+  copyOffsetX: number;
+  copyOffsetY: number;
   copyLift: number;
   showIconCircleBg: boolean;
   logoScale: number;
@@ -60,7 +65,9 @@ export const DEFAULT_TOOLBAR_LAYOUT: ToolbarControlsLayout = {
 
 export const DEFAULT_STUDIO_GLOBAL: StudioGlobal = {
   iconOffsetY: 92,
-  copyLift: 38,
+  copyOffsetX: 0,
+  copyOffsetY: 0,
+  copyLift: 3.8,
   showIconCircleBg: false,
   logoScale: 2.25,
   useMascot: true,
@@ -228,9 +235,23 @@ function normalizeToolbarLayout(raw: Partial<ToolbarControlsLayout> | undefined)
 
 function normalizeGlobal(raw: Partial<StudioGlobal> | undefined): StudioGlobal {
   const { toolbar: toolbarRaw, ...rest } = raw ?? {};
+  const migrated = migrateCopyOffsetFields({
+    offsetX: rest.copyOffsetX,
+    offsetY: rest.copyOffsetY,
+    copyLift: rest.copyLift,
+  });
+  const copyLift =
+    typeof migrated.copyLift === "number"
+      ? migrated.copyLift
+      : typeof rest.copyLift === "number" && looksLikePxOffset(rest.copyLift)
+        ? pxToVh(rest.copyLift)
+        : DEFAULT_STUDIO_GLOBAL.copyLift;
   return {
     ...DEFAULT_STUDIO_GLOBAL,
     ...rest,
+    copyOffsetX: rest.copyOffsetX ?? migrated.offsetX ?? 0,
+    copyOffsetY: rest.copyOffsetY ?? migrated.offsetY ?? 0,
+    copyLift,
     toolbar: normalizeToolbarLayout(toolbarRaw),
   };
 }

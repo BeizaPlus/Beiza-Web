@@ -15,11 +15,17 @@ const GHANA_RECORD_HERO: RecordStationHeroImage = {
   objectPosition: GHANA_MARMAH_IMAGE.objectPosition,
 };
 
-/** Other locales — same record tool, studio portrait */
+/** Other locales — same record tool, studio portrait (fallback if landscape asset missing) */
 const STUDIO_RECORD_HERO: RecordStationHeroImage = {
   src: BRAND_IMAGES.legacyRecordTabLandscape,
   alt: "Recording studio — central framing",
   objectPosition: "center 42%",
+};
+
+const STUDIO_RECORD_HERO_FALLBACK: RecordStationHeroImage = {
+  src: BRAND_IMAGES.welcomeLegacyBlackAmerican,
+  alt: "Preserve a life story",
+  objectPosition: "center 38%",
 };
 
 /**
@@ -27,7 +33,19 @@ const STUDIO_RECORD_HERO: RecordStationHeroImage = {
  * recording UI is identical (`RecordMemoryView`).
  */
 export function getRecordStationHeroImage(locale: BeizaLocale): RecordStationHeroImage {
-  return isGhanaEntryLocale(locale) ? GHANA_RECORD_HERO : STUDIO_RECORD_HERO;
+  if (isGhanaEntryLocale(locale)) return GHANA_RECORD_HERO;
+  return STUDIO_RECORD_HERO;
+}
+
+/** Primary + fallback src for <img> onerror */
+export function getRecordStationHeroSources(locale: BeizaLocale): {
+  primary: RecordStationHeroImage;
+  fallback: RecordStationHeroImage;
+} {
+  if (isGhanaEntryLocale(locale)) {
+    return { primary: GHANA_RECORD_HERO, fallback: STUDIO_RECORD_HERO_FALLBACK };
+  }
+  return { primary: STUDIO_RECORD_HERO, fallback: STUDIO_RECORD_HERO_FALLBACK };
 }
 
 /** Default when locale is GH / africa (site default entry). */

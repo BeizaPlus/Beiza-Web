@@ -2,6 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { PRODUCT_NAV_LINKS, type ProductNavLink } from "@/config/productNav";
+import {
+  BEIZA_LINKS,
+  BEIZA_REDIRECTS,
+  isCirclePath,
+  isFarewellPath,
+  isHeritageMarketingPath,
+} from "@/lib/beizaMasterLinks";
 import { allowStaticContentFallback } from "@/lib/contentPolicy";
 import { useNavigationLinks } from "@/hooks/usePublicContent";
 import { BeizaLogoLink } from "@/components/BeizaLogoLink";
@@ -9,37 +16,32 @@ import { Button } from "./ui/button";
 import { sitePaddingX } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
 
-const CTA = { label: "Contact", href: "/contact" };
+const CTA = { label: "Contact", href: BEIZA_LINKS.marketing.contact };
 
 function navIdFromHref(href: string): string {
-  if (href === "/vault" || href.startsWith("/legacy/vault")) return "vault";
-  if (href === "/circle" || href.startsWith("/circle") || href.startsWith("/family-trees")) {
+  if (href === BEIZA_REDIRECTS.vault.from || href.startsWith(BEIZA_LINKS.legacy.vault)) return "vault";
+  if (href === BEIZA_LINKS.circle.directory || href.startsWith(BEIZA_LINKS.circle.directory)) {
     return "circle";
   }
-  if (href === "/heritage" || href === "/farewell" || href.startsWith("/white-swan")) {
+  if (
+    href === BEIZA_LINKS.legacy.heritage ||
+    href === BEIZA_LINKS.farewell.heritage ||
+    href.startsWith(BEIZA_LINKS.farewell.whiteSwanRedirect)
+  ) {
     return "heritage";
   }
   return href.replace(/^\//, "").replace(/\//g, "-") || "nav";
 }
 
 function isActiveNavPath(pathname: string, href: string): boolean {
-  if (href === "/vault") {
-    return pathname === "/vault" || pathname.startsWith("/legacy/vault");
+  if (href === BEIZA_REDIRECTS.vault.from) {
+    return pathname === BEIZA_REDIRECTS.vault.from || pathname.startsWith(BEIZA_LINKS.legacy.vault);
   }
-  if (href === "/circle") {
-    return (
-      pathname === "/circle" ||
-      pathname.startsWith("/circle/") ||
-      pathname.startsWith("/family-trees") ||
-      pathname.startsWith("/legacy/circle")
-    );
+  if (href === BEIZA_LINKS.circle.directory) {
+    return isCirclePath(pathname);
   }
-  if (href === "/heritage") {
-    return (
-      pathname === "/heritage" ||
-      pathname === "/farewell" ||
-      pathname.startsWith("/white-swan")
-    );
+  if (href === BEIZA_LINKS.legacy.heritage) {
+    return isHeritageMarketingPath(pathname) || isFarewellPath(pathname);
   }
   return pathname === href;
 }
@@ -183,14 +185,14 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
 
             <div className="mt-auto space-y-4 border-t border-[#1a1a1a] pt-8">
               <Link
-                to="/record"
+                to={BEIZA_LINKS.record.alias}
                 onClick={closeDrawer}
                 className="flex w-full items-center justify-center rounded-full bg-[#E6A817] py-4 text-sm font-medium text-[#0a0a0a] transition hover:bg-[#E6A817]/90"
               >
                 + Start recording →
               </Link>
               <Link
-                to="/pricing"
+                to={BEIZA_LINKS.marketing.pricing}
                 onClick={closeDrawer}
                 className="block text-center text-sm text-[#555555] hover:text-[#888888]"
               >

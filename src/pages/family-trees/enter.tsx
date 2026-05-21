@@ -13,6 +13,7 @@ import {
   verifyCircleAccessCode,
 } from "@/hooks/useFamilyTreesDirectory";
 import { AdinkraCircleIdentity } from "@/components/family-trees/AdinkraCircleIdentity";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { hasStoredCircleToken, storeCircleToken } from "@/lib/circleAccess";
 
 export default function FamilyTreeEnterPage() {
@@ -152,13 +153,13 @@ export default function FamilyTreeEnterPage() {
 
             <p className="mt-10 text-[13px] text-[#555555]">
               Lost someone and need to recover their recordings?{" "}
-              <Link to="/recover" className="hover:text-primary">
+              <Link to={BEIZA_LINKS.marketing.recover} className="hover:text-primary">
                 → Recover a voice
               </Link>
             </p>
 
             <Link
-              to="/circle"
+              to={BEIZA_LINKS.circle.directory}
               className="mt-8 inline-block text-xs text-[#444444] hover:text-[#888888]"
             >
               ← All circles

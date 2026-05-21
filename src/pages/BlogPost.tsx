@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { Navigation } from "@/components/Navigation";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { useBlogPost } from "@/hooks/usePublicContent";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 const formatDisplayDate = (value?: string | null) => {
   if (!value) return undefined;
@@ -27,11 +28,11 @@ const BlogPost = () => {
   }, [blogPost?.title]);
 
   if (!slug) {
-    return <Navigate to="/blog" replace />;
+    return <Navigate to={BEIZA_LINKS.marketing.blog} replace />;
   }
 
   if (isError || (!isLoading && !blogPost)) {
-    return <Navigate to="/blog" replace />;
+    return <Navigate to={BEIZA_LINKS.marketing.blog} replace />;
   }
 
   if (isLoading || !blogPost) {
@@ -58,7 +59,7 @@ const BlogPost = () => {
         <section className="mx-auto w-full max-w-4xl px-6">
           <div className="flex items-center justify-between gap-4 py-8">
             <Link
-              to="/blog"
+              to={BEIZA_LINKS.marketing.blog}
               className="inline-flex items-center gap-2 text-sm font-medium text-subtle transition-colors hover:text-white"
             >
               <span aria-hidden>←</span>
@@ -101,7 +102,7 @@ const BlogPost = () => {
         <section className="mx-auto w-full max-w-4xl px-6 py-12">
           <div className="flex items-center justify-center">
             <Link
-              to="/blog"
+              to={BEIZA_LINKS.marketing.blog}
               className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-white/10"
             >
               <span aria-hidden>←</span>

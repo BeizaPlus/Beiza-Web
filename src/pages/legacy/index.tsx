@@ -7,6 +7,7 @@ import { useFamilyPeople, useRecordingPersonLinks } from "@/hooks/useFamilyTree"
 import { FamilyTreeMobileFocus } from "@/components/legacy/family-tree/FamilyTreeMobileFocus";
 import { Mic, Users } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 export default function LegacyHomePage() {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ export default function LegacyHomePage() {
           </p>
         </div>
         <Button asChild className="w-full">
-          <Link to="/legacy/family">Create or join your Legacy Circle</Link>
+          <Link to={BEIZA_LINKS.legacy.family}>Create or join your Legacy Circle</Link>
         </Button>
       </div>
     );
@@ -67,7 +68,7 @@ export default function LegacyHomePage() {
         <section className="rounded-xl border border-border bg-[#0a0a0a] p-4">
           <div className="mb-3 flex items-center justify-between gap-2">
             <p className="text-sm font-medium text-white">Your family tree</p>
-            <Link to="/legacy/circle" className="text-xs text-primary hover:underline">
+            <Link to={BEIZA_LINKS.legacy.circle} className="text-xs text-primary hover:underline">
               Open full tree
             </Link>
           </div>
@@ -76,22 +77,22 @@ export default function LegacyHomePage() {
             links={links}
             currentUserId={userId}
             selectedPersonId={null}
-            onSelectPerson={() => navigate("/legacy/circle")}
+            onSelectPerson={() => navigate(BEIZA_LINKS.legacy.circle)}
             fullTreeMode={false}
-            onViewFullTree={() => navigate("/legacy/circle")}
+            onViewFullTree={() => navigate(BEIZA_LINKS.legacy.circle)}
           />
         </section>
       ) : null}
 
       <div className="grid gap-3">
         <Button asChild size="lg" className="h-14 w-full gap-2 text-base">
-          <Link to="/legacy/record">
+          <Link to={BEIZA_LINKS.legacy.recordStation}>
             <Mic className="h-5 w-5" />
             Record a memory
           </Link>
         </Button>
         <Button asChild variant="secondary" size="lg" className="h-12 w-full gap-2">
-          <Link to="/legacy/circle">
+          <Link to={BEIZA_LINKS.legacy.circle}>
             <Users className="h-5 w-5" />
             Family tree
           </Link>
@@ -104,7 +105,7 @@ export default function LegacyHomePage() {
 
       <p className="text-center text-[13px] text-[#555555]">
         Lost someone and need to recover their recordings?{" "}
-        <Link to="/recover" className="text-primary hover:underline">
+        <Link to={BEIZA_LINKS.marketing.recover} className="text-primary hover:underline">
           Recover a voice →
         </Link>
       </p>

@@ -19,6 +19,8 @@ interface HeroProps {
   showReviews?: boolean;
   /** When set, replaces default hero-overlay (e.g. Heritage Gye Nyame gradient). */
   overlayStyle?: React.CSSProperties;
+  /** vw/vh copy shift from layout studio */
+  copyOffsetStyle?: React.CSSProperties;
 }
 
 export const Hero = ({
@@ -36,6 +38,7 @@ export const Hero = ({
   backgroundScale = 100,
   showReviews = true,
   overlayStyle,
+  copyOffsetStyle,
 }: HeroProps) => {
   const heroTitle = title ?? headline ?? FALLBACK_SITE_SETTINGS.heroHeading;
   const heroDescription =
@@ -76,7 +79,7 @@ export const Hero = ({
         className="relative z-10 flex w-full flex-1 items-end px-6 pt-28 md:px-12 md:pt-32"
         style={HERO_CONTENT_BOTTOM_STYLE}
       >
-        <div className="max-w-[680px] text-left md:pl-20">
+        <div className="max-w-[680px] text-left md:pl-20" style={copyOffsetStyle}>
           <motion.h1
             initial={{ opacity: 0, filter: "blur(16px)", scale: 1.12 }}
             animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}

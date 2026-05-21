@@ -5,6 +5,7 @@ import { PersonBiographyPanel } from "@/components/legacy/family-tree/PersonBiog
 import { TreeAppShell } from "@/components/family-trees/TreeAppShell";
 import { TreeThemeProvider } from "@/components/legacy/family-tree/TreeThemeProvider";
 import { TreePersonaChat } from "@/components/family-trees/TreePersonaChat";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { familyTitle } from "@/lib/legacy/displayCircleName";
 import { resolveTreeLeader } from "@/lib/legacy/treeLeader";
 import { computeLeaderCenteredPositions } from "@/lib/legacy/leaderCenteredLayout";
@@ -53,7 +54,7 @@ export function FamilyTreeCircleView({
   treeEdges = [],
   healthConditions = [],
   persistViaApi = false,
-  backHref = "/circle",
+  backHref = BEIZA_LINKS.circle.directory,
   treeHref,
   showInviteBar,
   onCopyAccessCode,

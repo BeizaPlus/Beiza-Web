@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { BookOpen, Mail, Mic, Sparkles, Star } from "lucide-react";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { cn } from "@/lib/utils";
 import { legacyBody, legacyDisplay } from "@/lib/legacyLandingFonts";
 import {
@@ -68,14 +69,14 @@ export default function HeritageLegacyLanding() {
     <div className={cn("heritage-legacy-page min-h-screen", CREAM, legacyBody)}>
       <header className="border-b border-[#e8e2d8]/80">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <Link to="/" className={cn(legacyDisplay, "text-xl tracking-[0.2em] text-[#2c2824]")}>
+          <Link to={BEIZA_LINKS.welcome.gate} className={cn(legacyDisplay, "text-xl tracking-[0.2em] text-[#2c2824]")}>
             BEIZA
           </Link>
           <nav className={cn(legacyBody, "flex gap-6 text-sm font-light", MUTED)}>
-            <Link to="/education/story-questions" className="hover:text-[#2c2824]">
+            <Link to={BEIZA_LINKS.education.storyQuestions} className="hover:text-[#2c2824]">
               Questions
             </Link>
-            <Link to="/pricing" className="hover:text-[#2c2824]">
+            <Link to={BEIZA_LINKS.marketing.pricing} className="hover:text-[#2c2824]">
               Pricing
             </Link>
             <Link
@@ -283,7 +284,7 @@ export default function HeritageLegacyLanding() {
           ))}
         </div>
         <Link
-          to="/education/story-questions"
+          to={BEIZA_LINKS.education.storyQuestions}
           className={cn(legacyDisplay, "mt-8 inline-block text-lg italic underline underline-offset-4")}
         >
           Learn how it works →
@@ -328,15 +329,15 @@ export default function HeritageLegacyLanding() {
           </SolidCta>
         </div>
         <p className={cn(legacyBody, "mt-12 text-xs font-light text-[#8a847c]")}>
-          <Link to="/" className="underline underline-offset-2 hover:text-white">
+          <Link to={BEIZA_LINKS.welcome.gate} className="underline underline-offset-2 hover:text-white">
             Welcome gate
           </Link>
           {" · "}
-          <Link to="/farewell" className="underline underline-offset-2 hover:text-white">
+          <Link to={BEIZA_LINKS.farewell.heritage} className="underline underline-offset-2 hover:text-white">
             Plan a farewell
           </Link>
           {" · "}
-          <Link to="/education" className="underline underline-offset-2 hover:text-white">
+          <Link to={BEIZA_LINKS.education.hub} className="underline underline-offset-2 hover:text-white">
             Education
           </Link>
         </p>

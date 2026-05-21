@@ -9,6 +9,7 @@ import {
 } from "@/hooks/useLegacy";
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Shield } from "lucide-react";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 export default function LegacyFamilyPage() {
   const { toast } = useToast();
@@ -41,7 +42,7 @@ export default function LegacyFamilyPage() {
           <h2 className="text-xl font-semibold">Your Legacy Circle</h2>
           <p className="mt-1 text-sm text-muted-foreground">{circle.name}</p>
           <Link
-            to="/legacy/circle"
+            to={BEIZA_LINKS.legacy.circle}
             className="mt-3 inline-block text-sm text-primary hover:underline"
           >
             View family tree →

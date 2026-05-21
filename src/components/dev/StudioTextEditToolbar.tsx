@@ -1,3 +1,4 @@
+import { useLayoutStudio } from "@/context/LayoutStudioContext";
 import { useStudioTextEdit } from "@/context/StudioTextEditContext";
 import { cn } from "@/lib/utils";
 
@@ -6,9 +7,10 @@ import { cn } from "@/lib/utils";
  * Toggle once, then click any headline, label, or paragraph on the page.
  */
 export function StudioTextEditToolbar() {
+  const { enabled: layoutStudioOn, masterOpen } = useLayoutStudio();
   const { studioEnabled, active, toggle } = useStudioTextEdit();
 
-  if (!studioEnabled) return null;
+  if (!studioEnabled || !layoutStudioOn || !masterOpen) return null;
 
   return (
     <div

@@ -1,10 +1,21 @@
-import { useCallback, useEffect, useRef, useState, type PointerEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode, type PointerEvent as ReactPointerEvent } from "react";
+import { createPortal } from "react-dom";
 import { GripVertical } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useLayoutStudio } from "@/context/LayoutStudioContext";
 
 const STORAGE_PREFIX = "beiza-studio-panel-pos:";
+const PANEL_W = 352;
+const PANEL_MIN_TOP = 48;
 
-const DEFAULT_POS = { x: 16, y: 88 };
+/** Default panel anchor — right side, staggered vertically */
+function defaultPanelPos(panelId: string): { x: number; y: number } {
+  const w = typeof window !== "undefined" ? window.innerWidth : 1200;
+  const x = Math.max(16, w - PANEL_W - 16);
+  let hash = 0;
+  for (let i = 0; i < panelId.length; i++) hash += panelId.charCodeAt(i);
+  const y = PANEL_MIN_TOP + (hash % 5) * 48;
+  return { x, y };
+}
 
 type Props = {
   panelId: string;
@@ -12,8 +23,6 @@ type Props = {
   onOpen: () => void;
   onClose: () => void;
   children: ReactNode;
-  /** Offset the reopen chip when multiple studios are on one page */
-  openButtonClassName?: string;
   openButtonLabel?: string;
 };
 
@@ -23,13 +32,17 @@ export function FloatingStudioShell({
   onOpen,
   onClose,
   children,
-  openButtonClassName,
-  openButtonLabel = "Layout studio",
+  openButtonLabel = "Panel",
 }: Props) {
-  const [pos, setPos] = useState(DEFAULT_POS);
+  const { enabled: masterMode, masterOpen, registerStudioPanel, unregisterStudioPanel } =
+    useLayoutStudio();
+  const [pos, setPos] = useState(() => defaultPanelPos(panelId));
+  const posRef = useRef(pos);
   const dragRef = useRef<{ startX: number; startY: number; originX: number; originY: number } | null>(
     null,
   );
+
+  posRef.current = pos;
 
   useEffect(() => {
     try {
@@ -53,59 +66,82 @@ export function FloatingStudioShell({
     [panelId],
   );
 
-  const onDragStart = (e: PointerEvent<HTMLDivElement>) => {
-    e.currentTarget.setPointerCapture(e.pointerId);
-    dragRef.current = { startX: e.clientX, startY: e.clientY, originX: pos.x, originY: pos.y };
-  };
+  const clampPos = useCallback((x: number, y: number) => {
+    const maxY =
+      typeof window !== "undefined"
+        ? Math.max(PANEL_MIN_TOP, window.innerHeight - 120)
+        : y;
+    return {
+      x: Math.max(8, Math.min((window.innerWidth ?? 1200) - PANEL_W - 8, x)),
+      y: Math.max(PANEL_MIN_TOP, Math.min(maxY, y)),
+    };
+  }, []);
 
-  const onDragMove = (e: PointerEvent<HTMLDivElement>) => {
+  useEffect(() => {
+    if (!masterMode) return;
+    registerStudioPanel({ id: panelId, label: openButtonLabel, open, onOpen, onClose });
+    return () => unregisterStudioPanel(panelId);
+  }, [
+    masterMode,
+    panelId,
+    openButtonLabel,
+    open,
+    onOpen,
+    onClose,
+    registerStudioPanel,
+    unregisterStudioPanel,
+  ]);
+
+  const onWindowPointerMoveRef = useRef<(e: PointerEvent) => void>(() => {});
+  const endDragRef = useRef(() => {});
+
+  onWindowPointerMoveRef.current = (e: PointerEvent) => {
     if (!dragRef.current) return;
-    const panelW = 352;
-    const panelH = 120;
     const dx = e.clientX - dragRef.current.startX;
     const dy = e.clientY - dragRef.current.startY;
-    persistPos({
-      x: Math.max(8, Math.min(window.innerWidth - panelW, dragRef.current.originX + dx)),
-      y: Math.max(8, Math.min(window.innerHeight - panelH, dragRef.current.originY + dy)),
-    });
+    persistPos(clampPos(dragRef.current.originX + dx, dragRef.current.originY + dy));
   };
 
-  const onDragEnd = () => {
+  endDragRef.current = () => {
     dragRef.current = null;
+    window.removeEventListener("pointermove", onWindowPointerMoveRef.current);
+    window.removeEventListener("pointerup", endDragRef.current);
+    window.removeEventListener("pointercancel", endDragRef.current);
   };
 
-  if (!open) {
-    return (
-      <button
-        type="button"
-        onClick={onOpen}
-        className={cn(
-          "fixed bottom-4 left-4 z-[200] rounded-full bg-[#E6A817] px-4 py-2 text-xs font-semibold text-[#0a0a0a] shadow-lg",
-          openButtonClassName,
-        )}
-      >
-        {openButtonLabel}
-      </button>
-    );
-  }
+  const onDragStart = (e: ReactPointerEvent<HTMLElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      originX: posRef.current.x,
+      originY: posRef.current.y,
+    };
+    window.addEventListener("pointermove", onWindowPointerMoveRef.current);
+    window.addEventListener("pointerup", endDragRef.current);
+    window.addEventListener("pointercancel", endDragRef.current);
+  };
 
-  return (
+  useEffect(() => () => endDragRef.current(), []);
+
+  if (masterMode && !masterOpen) return null;
+  if (!open) return null;
+
+  const panel = (
     <aside
       data-beiza-studio-panel
-      className="fixed z-[200] w-[min(100vw-2rem,22rem)] max-h-[min(85vh,calc(100vh-2rem))] overflow-y-auto rounded-xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur-md"
+      className="pointer-events-auto fixed z-[10050] w-[min(100vw-2rem,22rem)] max-h-[min(85vh,calc(100vh-2rem))] overflow-y-auto rounded-xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur-md"
       style={{ left: pos.x, top: pos.y }}
     >
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <div
-          className="flex min-w-0 flex-1 cursor-grab select-none items-center gap-1.5 active:cursor-grabbing"
-          onPointerDown={onDragStart}
-          onPointerMove={onDragMove}
-          onPointerUp={onDragEnd}
-          onPointerCancel={onDragEnd}
-        >
+      <div
+        className="mb-3 flex cursor-grab touch-none select-none items-center justify-between gap-2 active:cursor-grabbing"
+        onPointerDown={onDragStart}
+      >
+        <div className="flex min-w-0 flex-1 items-center gap-1.5">
           <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Layout studio (local) · drag to move
+            {openButtonLabel} · drag to move
           </p>
         </div>
         <button
@@ -115,15 +151,18 @@ export function FloatingStudioShell({
             e.stopPropagation();
             onClose();
           }}
-          className="shrink-0 rounded px-1 text-xs text-muted-foreground hover:text-foreground"
+          className="shrink-0 rounded px-2 py-0.5 text-xs text-muted-foreground hover:bg-white/10 hover:text-foreground"
         >
           Hide
         </button>
       </div>
       <p className="mb-3 text-[9px] text-muted-foreground/80">
-        Click the number to type a value. Double-click a slider to reset.
+        Drag the header bar to move. Click numbers to type; double-click sliders to reset.
       </p>
       {children}
     </aside>
   );
+
+  if (typeof document === "undefined") return panel;
+  return createPortal(panel, document.body);
 }

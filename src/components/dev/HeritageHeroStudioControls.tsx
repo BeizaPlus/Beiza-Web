@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { StudioCopyOffsetSliders } from "@/components/dev/StudioCopyOffsetSliders";
 import { StudioSlider } from "./StudioSlider";
 import { HERITAGE_HERO_DEFAULTS, type HeritageHeroFrame } from "./heroLayoutStudioState";
 
@@ -65,13 +66,22 @@ export function HeritageHeroStudioControls({ frame, onPatch }: Props) {
         displayValue={`${Math.round(frame.overlayStrength)}%`}
         onChange={(overlayStrength) => onPatch({ overlayStrength })}
       />
-      <StudioSlider
-        label="Copy raise (% viewport height)"
-        value={frame.copyRaiseVh}
-        defaultValue={HERITAGE_HERO_DEFAULTS.copyRaiseVh}
-        min={0}
-        max={40}
-        onChange={(copyRaiseVh) => onPatch({ copyRaiseVh })}
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/90">
+        Copy position
+      </p>
+      <StudioCopyOffsetSliders
+        frame={{ offsetX: frame.copyOffsetX, offsetY: frame.copyOffsetY }}
+        defaults={{
+          offsetX: HERITAGE_HERO_DEFAULTS.copyOffsetX,
+          offsetY: HERITAGE_HERO_DEFAULTS.copyOffsetY,
+        }}
+        showLift={false}
+        onPatch={(partial) =>
+          onPatch({
+            ...(partial.offsetX !== undefined ? { copyOffsetX: partial.offsetX } : {}),
+            ...(partial.offsetY !== undefined ? { copyOffsetY: partial.offsetY } : {}),
+          })
+        }
       />
     </div>
   );

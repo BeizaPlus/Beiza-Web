@@ -1,9 +1,11 @@
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
+
 export const LEGACY_HERO = {
   headline: "Reminisce now. Treasure forever.",
   subtext:
     "Preserve a life story in a beautiful book — yours or someone you love. Celebrate a loved one's legacy for generations to come.",
   cta: "Get started",
-  ctaHref: "/legacy/family",
+  ctaHref: BEIZA_LINKS.legacy.family,
   image: "/assets/legacy-hero.jpg",
   imageAlt: "Hands holding a My Life Story memoir book",
 };
@@ -89,7 +91,7 @@ export const LEGACY_PRICING = [
     price: "$4.99/mo",
     body: "Unlimited storage, memoir compilation, downloadable and printed book.",
     cta: "Upgrade",
-    href: "/pricing",
+    href: BEIZA_LINKS.marketing.pricing,
     featured: true,
   },
   {
@@ -98,6 +100,6 @@ export const LEGACY_PRICING = [
     price: "Custom",
     body: "Visual ancestry scene, legacy vessel, statue, white glove service.",
     cta: "Plan with us",
-    href: "/farewell",
+    href: BEIZA_LINKS.farewell.heritage,
   },
 ];

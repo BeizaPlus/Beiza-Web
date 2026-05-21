@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { LegacyNavIcon, type LegacyNavIconName } from "@/components/legacy/LegacyNavIcon";
 import { LegacyNavStudio } from "@/components/legacy/LegacyNavStudio";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { siteBounds } from "@/lib/siteLayout";
 import { cn } from "@/lib/utils";
 
@@ -11,11 +12,11 @@ export const LEGACY_TAB_ITEMS: {
   icon: LegacyNavIconName;
   end?: boolean;
 }[] = [
-  { href: "/legacy", label: "Home", icon: "home", end: true },
-  { href: "/legacy/circle", label: "Tree", icon: "family" },
-  { href: "/legacy/record", label: "Record", icon: "record" },
-  { href: "/legacy/vault", label: "Vault", icon: "vault" },
-  { href: "/legacy/family", label: "Invite", icon: "well" },
+  { href: BEIZA_LINKS.legacy.app, label: "Home", icon: "home", end: true },
+  { href: BEIZA_LINKS.legacy.circle, label: "Tree", icon: "family" },
+  { href: BEIZA_LINKS.legacy.recordStation, label: "Record", icon: "record" },
+  { href: BEIZA_LINKS.legacy.vault, label: "Vault", icon: "vault" },
+  { href: BEIZA_LINKS.legacy.family, label: "Invite", icon: "well" },
 ];
 
 const TAB_ACTIVE =
@@ -42,7 +43,7 @@ export function LegacyTabBar({ placement = "stacked" }: LegacyTabBarProps) {
       )}
     >
       <LegacyNavStudio
-        disableTransform={overlay}
+        recordOverlay={overlay}
         className={cn(
           "w-full max-w-none",
           overlay

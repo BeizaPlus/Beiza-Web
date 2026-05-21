@@ -1,4 +1,5 @@
 import { CTAButton } from "@/components/framer/CTAButton";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 export function LegacyOutro() {
   return (
@@ -13,8 +14,8 @@ export function LegacyOutro() {
           <p className="mt-0">Free to begin, built to last for generations.</p>
         </div>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <CTAButton to="/legacy/family" label="Start your circle — free" />
-          <CTAButton to="/vault/explore" label="Explore the vault" className="bg-secondary text-foreground" />
+          <CTAButton to={BEIZA_LINKS.legacy.family} label="Start your circle — free" />
+          <CTAButton to={BEIZA_LINKS.marketing.vaultExplore} label="Explore the vault" className="bg-secondary text-foreground" />
         </div>
       </div>
     </section>

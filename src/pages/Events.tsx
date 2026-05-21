@@ -7,7 +7,7 @@ import {
   HeroLayoutStudioPanel,
   useHeroLayoutStudio,
 } from "@/components/dev/HeroLayoutStudio";
-import { heroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
+import { heroCopyOffsetStyle, heroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
 import { usePublishedEventStories, useLiveEvents, useHeroSection } from "@/hooks/usePublicContent";
 import { FullBleedHero } from "@/components/FullBleedHero";
 import { BRAND_IMAGES } from "@/lib/brandImages";
@@ -54,7 +54,7 @@ const Events = () => {
         imageAlt={heroImageAlt}
         frame={heroFrame}
       >
-        <div className="max-w-xl text-left">
+        <div className="max-w-xl text-left" style={heroCopyOffsetStyle(heroFrame)}>
           <SectionHeader
             eyebrow="Events"
             title={heroTitle}

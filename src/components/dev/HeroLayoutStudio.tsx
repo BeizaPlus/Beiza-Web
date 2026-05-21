@@ -15,6 +15,7 @@ import {
 import { HeritageHeroStudioControls } from "./HeritageHeroStudioControls";
 import { FloatingStudioShell } from "./FloatingStudioShell";
 import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
+import { StudioCopyOffsetSliders } from "@/components/dev/StudioCopyOffsetSliders";
 import { StudioSlider } from "./StudioSlider";
 
 const EVENTS_ZOOM_MIN = 70;
@@ -74,6 +75,7 @@ export function HeroLayoutStudioPanel(props: PanelProps) {
       open={open}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
+      openButtonLabel={page === "heritage" ? "Heritage hero" : "Events hero"}
     >
       <StudioTextEditButton />
       <div className="mb-3 flex flex-wrap gap-1">
@@ -174,12 +176,33 @@ function EventsControls({
         onChange={(scale) => onPatch({ scale })}
       />
       <StudioSlider
-        label="Copy raise (% viewport height)"
+        label="Copy raise from bottom (vh)"
         value={frame.copyBottomVh}
         defaultValue={HERO_STUDIO_DEFAULTS.events.copyBottomVh}
         min={8}
         max={52}
+        displayValue={`${frame.copyBottomVh}vh`}
         onChange={(copyBottomVh) => onPatch({ copyBottomVh })}
+      />
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/90">
+        Copy position
+      </p>
+      <StudioCopyOffsetSliders
+        frame={{
+          offsetX: frame.copyOffsetX,
+          offsetY: frame.copyOffsetY,
+        }}
+        defaults={{
+          offsetX: HERO_STUDIO_DEFAULTS.events.copyOffsetX,
+          offsetY: HERO_STUDIO_DEFAULTS.events.copyOffsetY,
+        }}
+        showLift={false}
+        onPatch={(partial) =>
+          onPatch({
+            ...(partial.offsetX !== undefined ? { copyOffsetX: partial.offsetX } : {}),
+            ...(partial.offsetY !== undefined ? { copyOffsetY: partial.offsetY } : {}),
+          })
+        }
       />
     </div>
   );

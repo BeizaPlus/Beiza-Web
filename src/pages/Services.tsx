@@ -7,6 +7,7 @@ import { TestimonialsCarousel } from "@/components/framer/TestimonialsCarousel";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { useTestimonials } from "@/hooks/usePublicContent";
 import { Archive, BookHeart, Box, Calendar, Camera, Monitor, Video } from "lucide-react";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 const services = [
   {
@@ -97,7 +98,7 @@ const Services = () => {
                 title="How we bring stories to life"
                 description="A collaborative journey led by producers, designers, and storytellers dedicated to translating love into ceremony."
               />
-              <CTAButton to="/contact#hero" label="Start planning" icon={<Video className="h-4 w-4" />} />
+              <CTAButton to={BEIZA_LINKS.marketing.contactHero} label="Start planning" icon={<Video className="h-4 w-4" />} />
             </div>
             <div className="grid gap-6 md:grid-cols-2">
               {processSteps.map((step) => (

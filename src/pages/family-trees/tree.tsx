@@ -9,6 +9,7 @@ import { fetchCircleTreeData, type CircleTreePayload } from "@/hooks/useFamilyTr
 import { clearCircleToken, getStoredCircleToken } from "@/lib/circleAccess";
 import { BEIZA_TREE_UPDATED, type BeizaTreeUpdatedDetail } from "@/lib/legacy/personaEvents";
 import { useToast } from "@/hooks/use-toast";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 export default function FamilyTreeCanvasPage() {
   const { id: circleId } = useParams<{ id: string }>();
@@ -96,7 +97,7 @@ export default function FamilyTreeCanvasPage() {
       treeEdges={payload.treeEdges ?? []}
       healthConditions={payload.healthConditions ?? []}
       persistViaApi
-      backHref="/circle"
+      backHref={BEIZA_LINKS.circle.directory}
       showInviteBar
       accessCode={payload.circle.access_code}
       onCopyAccessCode={() => void copyCode()}

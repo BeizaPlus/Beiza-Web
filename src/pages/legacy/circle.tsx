@@ -10,6 +10,7 @@ import {
   useSyncCirclePeople,
   useTreeEdges,
 } from "@/hooks/useFamilyTree";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 export default function LegacyCirclePage() {
   const { data: circleCtx, isLoading: circleLoading } = useMyLegacyCircle();
@@ -42,7 +43,7 @@ export default function LegacyCirclePage() {
       <div className="tree-shell fixed inset-0 flex flex-col items-center justify-center bg-[#080808] px-6 text-center">
         <p className="text-sm text-[#666666]">Start a Legacy Circle to grow your family tree.</p>
         <Button asChild className="mt-4">
-          <Link to="/legacy/family">Create or join</Link>
+          <Link to={BEIZA_LINKS.legacy.family}>Create or join</Link>
         </Button>
       </div>
     );
@@ -78,8 +79,8 @@ export default function LegacyCirclePage() {
       links={links}
       recordings={recordings}
       treeEdges={treeEdges}
-      backHref="/legacy"
-      treeHref="/legacy/circle"
+      backHref={BEIZA_LINKS.legacy.app}
+      treeHref={BEIZA_LINKS.legacy.circle}
     />
   );
 }

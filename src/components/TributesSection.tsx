@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 export const TributesSection = () => {
   return (
@@ -33,7 +34,7 @@ export const TributesSection = () => {
           </p>
 
           {/* CTA Button */}
-          <Link to="/legacy">
+          <Link to={BEIZA_LINKS.legacy.app}>
             <Button className="bg-white text-black hover:bg-white/90 rounded-full px-8 py-4 text-lg font-manrope font-medium h-auto border-0 shadow-lg flex items-center gap-3 mx-auto">
               <span>Open Legacy Vault</span>
               <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center">

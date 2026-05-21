@@ -22,9 +22,10 @@ import type { MemoirSummary, MemoirHighlight } from "@/types/memoir";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { ProductsPanel } from "@/components/shopify/ProductsPanel";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 const CTA_LABEL = "Commission a memoir";
-const CTA_HREF = "/contact";
+const CTA_HREF = BEIZA_LINKS.marketing.contact;
 
 const formatDisplayDate = (value?: string) => {
   if (!value) return undefined;
@@ -293,11 +294,11 @@ const MemoirDetailView = ({ slug }: { slug: string }) => {
   {
     if (isError)
     {
-      return <Navigate to="/memoirs" replace />;
+      return <Navigate to={BEIZA_LINKS.marketing.memoirs} replace />;
     }
     if (!detailLoading)
     {
-      return <Navigate to="/memoirs" replace />;
+      return <Navigate to={BEIZA_LINKS.marketing.memoirs} replace />;
     }
   }
 
@@ -673,7 +674,7 @@ const MemoirDetailView = ({ slug }: { slug: string }) => {
 
         <div className="flex items-center justify-center gap-4 py-8">
           <Link
-            to="/memoirs"
+            to={BEIZA_LINKS.marketing.memoirs}
             className="button-pill text-black inline-flex items-center gap-2 text-sm font-medium text-subtle transition-colors hover:text-white outline outline-1 outline-white/10"
           >
             Back to memoirs

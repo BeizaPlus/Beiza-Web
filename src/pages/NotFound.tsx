@@ -4,6 +4,7 @@ import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { Home, ArrowLeft } from "lucide-react";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 const NotFound = () => {
   const location = useLocation();
@@ -28,9 +29,9 @@ const NotFound = () => {
           </div>
 
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <CTAButton to="/" label="Return Home" icon={<Home className="h-4 w-4" />} className="bg-white text-black hover:bg-white/90" />
+            <CTAButton to={BEIZA_LINKS.welcome.gate} label="Return Home" icon={<Home className="h-4 w-4" />} className="bg-white text-black hover:bg-white/90" />
             <CTAButton
-              to="/memoirs"
+              to={BEIZA_LINKS.marketing.memoirs}
               label="Browse Memoirs"
               icon={<ArrowLeft className="h-4 w-4" />}
               className="bg-white/15 text-white hover:bg-white/25"

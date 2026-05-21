@@ -6,6 +6,7 @@ import { CircleCardVisual } from "@/components/family-trees/CircleCardVisual";
 import { usePublicFamilyCircles } from "@/hooks/useFamilyTreesDirectory";
 import { useMyLegacyCircle } from "@/hooks/useLegacy";
 import { marketingContainer, marketingSection } from "@/lib/brandUi";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { Loader2 } from "lucide-react";
 
 export default function FamilyTreesDirectoryPage() {
@@ -30,7 +31,7 @@ export default function FamilyTreesDirectoryPage() {
 
           <p className="mt-6 text-[13px] text-[#555555]">
             Lost someone and need to recover their recordings?{" "}
-            <Link to="/recover" className="text-[#888888] hover:text-primary">
+            <Link to={BEIZA_LINKS.marketing.recover} className="text-[#888888] hover:text-primary">
               → Recover a voice
             </Link>
           </p>
@@ -48,7 +49,7 @@ export default function FamilyTreesDirectoryPage() {
           ) : circles.length === 0 ? (
             <p className="mt-12 text-sm text-[#666666]">
               No family circles yet.{" "}
-              <Link to="/legacy/family" className="text-primary hover:underline">
+              <Link to={BEIZA_LINKS.legacy.family} className="text-primary hover:underline">
                 Start yours →
               </Link>
             </p>

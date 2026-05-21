@@ -4,6 +4,7 @@ import { RecordingButton } from "@/components/legacy/RecordingButton";
 import { useLegacyMagicLinkSignIn } from "@/components/legacy/useLegacyMagicLinkSignIn";
 import { useRecordFlowOptional } from "@/components/legacy/recordFlowContext";
 import { useLegacySession, useMyLegacyCircle } from "@/hooks/useLegacy";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { cn } from "@/lib/utils";
 
 type RecordHeroCtaProps = {
@@ -13,7 +14,7 @@ type RecordHeroCtaProps = {
 /**
  * Hero CTA slot — sign-in (Heritage-style) then swaps to record controls once authenticated.
  */
-export function RecordHeroCta({ textAlign = "right" }: RecordHeroCtaProps) {
+export function RecordHeroCta({ textAlign = "left" }: RecordHeroCtaProps) {
   const { data: session, isLoading, refetch } = useLegacySession();
   const { data: circleCtx } = useMyLegacyCircle();
   const circle = circleCtx?.circle;
@@ -52,7 +53,7 @@ export function RecordHeroCta({ textAlign = "right" }: RecordHeroCtaProps) {
             placeholder="you@family.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-11 min-w-0 flex-1 rounded-full border border-white/25 bg-white/10 px-5 text-sm text-white placeholder:text-white/45 backdrop-blur-sm focus:border-white/50 focus:outline-none focus:ring-1 focus:ring-white/30 sm:max-w-[280px]"
+            className="h-11 min-w-0 flex-1 rounded-full border border-white/25 bg-white/10 px-5 text-sm text-white placeholder:text-white/45 backdrop-blur-sm focus:border-white/50 focus:outline-none focus:ring-1 focus:ring-white/30 sm:max-w-[var(--record-email-max,17.5rem)]"
           />
           <button
             type="submit"
@@ -84,7 +85,7 @@ export function RecordHeroCta({ textAlign = "right" }: RecordHeroCtaProps) {
       <div className={cn("mt-3 space-y-2", alignEnd && "text-right")}>
         <p className="text-sm text-white/80">Join a Legacy Circle before you record.</p>
         <Link
-          to="/legacy/family"
+          to={BEIZA_LINKS.legacy.family}
           className="inline-block rounded-full bg-white px-6 py-3 text-[13px] font-medium text-background transition hover:bg-white/90"
         >
           Set up your circle →

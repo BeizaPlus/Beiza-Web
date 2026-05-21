@@ -9,7 +9,7 @@ export type SitePaddingFrame = {
 
 export const SITE_PADDING_DEFAULTS: SitePaddingFrame = {
   paddingXRem: 6.75,
-  contentIndentRem: 1,
+  contentIndentRem: 11.28,
 };
 
 const STORAGE_KEY = "beiza-site-padding-studio";
@@ -49,4 +49,22 @@ export function sitePaddingPx(frame: SitePaddingFrame): number {
 
 export function siteContentIndentPx(frame: SitePaddingFrame): number {
   return Math.round(frame.contentIndentRem * 16);
+}
+
+const GUIDES_LIVE_KEY = "beiza-indent-guides-live";
+
+/** false = cyan lines measure only; true = drag pushes copy live */
+export function loadIndentGuidesLive(): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    const raw = localStorage.getItem(GUIDES_LIVE_KEY);
+    if (raw === null) return true;
+    return raw === "1";
+  } catch {
+    return true;
+  }
+}
+
+export function saveIndentGuidesLive(live: boolean) {
+  localStorage.setItem(GUIDES_LIVE_KEY, live ? "1" : "0");
 }

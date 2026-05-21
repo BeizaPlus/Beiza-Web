@@ -13,6 +13,7 @@ import {
   useUpdateLegacyRecordingTitle,
 } from "@/hooks/useLegacy";
 import { canDeleteVaultMemories, canDownloadRecordings } from "@/lib/legacy/tier";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { useLegacyEntitlement } from "@/hooks/useLegacyEntitlement";
 import { getMemoryShareUrl } from "@/lib/legacy/shareUrl";
 import {
@@ -144,7 +145,7 @@ export default function LegacyVaultPage() {
       <div className="space-y-4 text-center">
         <p className="text-muted-foreground">Your vault opens once you join a Legacy Circle.</p>
         <Button asChild>
-          <Link to="/legacy/family">Your Legacy Circle</Link>
+          <Link to={BEIZA_LINKS.legacy.family}>Your Legacy Circle</Link>
         </Button>
       </div>
     );
@@ -167,7 +168,7 @@ export default function LegacyVaultPage() {
         <div className="rounded-xl border border-dashed border-[#2a2a2a] bg-[#1a1a1a] p-8 text-center">
           <p className="text-[#888]">No memories yet.</p>
           <Button asChild className="mt-4">
-            <Link to="/legacy/record">Record a memory</Link>
+            <Link to={BEIZA_LINKS.legacy.recordStation}>Record a memory</Link>
           </Button>
         </div>
       )}

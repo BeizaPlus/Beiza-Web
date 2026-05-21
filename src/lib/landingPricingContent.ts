@@ -1,3 +1,5 @@
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
+
 export type PricingTierContent = {
   id: string;
   name: string;
@@ -108,9 +110,9 @@ export function mergePricingContent(
 }
 
 export const TIER_HREFS: Record<string, string> = {
-  circle: "/legacy/family",
-  keeper: "/pricing",
-  heritage: "/farewell",
+  circle: BEIZA_LINKS.legacy.family,
+  keeper: BEIZA_LINKS.marketing.pricing,
+  heritage: BEIZA_LINKS.farewell.heritage,
 };
 
 export function tierFlags(tierId: string) {

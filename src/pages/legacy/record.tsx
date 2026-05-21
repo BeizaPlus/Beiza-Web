@@ -1,14 +1,31 @@
 import { RecordMemoryView } from "@/components/legacy/RecordMemoryView";
 import { useMyLegacyCircle } from "@/hooks/useLegacy";
 import { useFamilyPeople } from "@/hooks/useFamilyTree";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
-/** In-viewport station panel — hero holds sign-in / mic; this handles seal steps only. */
+/** In-viewport station panel — hero holds sign-in / mic; upload + seal steps below. */
 export default function LegacyRecordPage() {
-  const { data: circleCtx } = useMyLegacyCircle();
+  const { data: circleCtx, isLoading } = useMyLegacyCircle();
   const circle = circleCtx?.circle;
   const { data: people = [] } = useFamilyPeople(circle?.id);
 
-  if (!circle) return null;
+  if (isLoading) {
+    return (
+      <p className="text-center text-sm text-white/60">Loading your Legacy Circle…</p>
+    );
+  }
+
+  if (!circle) {
+    return (
+      <p className="text-center text-sm text-white/70">
+        Join a Legacy Circle to save recordings — use Invite in the rail, or{" "}
+        <a href={BEIZA_LINKS.legacy.family} className="text-primary underline underline-offset-2">
+          set up your circle
+        </a>
+        .
+      </p>
+    );
+  }
 
   return (
     <RecordMemoryView
@@ -16,8 +33,8 @@ export default function LegacyRecordPage() {
       circleLabel={circle.name}
       people={people}
       persistViaApi={false}
-      treeHref="/legacy/circle"
-      vaultHref="/legacy/vault"
+      treeHref={BEIZA_LINKS.legacy.circle}
+      vaultHref={BEIZA_LINKS.legacy.vault}
       belowHero
       viewportCompact
     />

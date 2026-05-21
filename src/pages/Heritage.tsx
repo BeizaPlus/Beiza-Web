@@ -17,6 +17,7 @@ import {
 } from "@/components/dev/HeroLayoutStudio";
 import {
   HERITAGE_HERO_DEFAULTS,
+  heritageHeroCopyStyle,
   heritageHeroStudioCssVars,
 } from "@/components/dev/heroLayoutStudioState";
 import { BRAND_IMAGES } from "@/lib/brandImages";
@@ -34,6 +35,7 @@ import {
 } from "@/lib/brandUi";
 import { isWhiteSwanIncludedForUser } from "@/lib/legacy/heritage";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 const FEATURES = [
   {
@@ -170,7 +172,7 @@ export default function HeritagePage() {
               heroFrame.textSide === "right" ? "text-right md:ml-auto" : "text-left md:mr-auto",
               "md:py-20",
             )}
-            style={{ paddingTop: `calc(${heroFrame.copyRaiseVh} * 1vh)` }}
+            style={heritageHeroCopyStyle(heroFrame)}
           >
             <p className="text-eyebrow text-primary">Beiza Legacy · Heritage</p>
             <h1 className="mt-4 text-display-xl text-white">
@@ -199,7 +201,7 @@ export default function HeritagePage() {
             <p className="mt-3 text-[11px] text-subtle">Or call us — we answer.</p>
             <p className="mt-6 text-[13px] text-[#555555]">
               Already lost someone?{" "}
-              <Link to="/recover" className="text-[#888888] hover:text-primary">
+              <Link to={BEIZA_LINKS.marketing.recover} className="text-[#888888] hover:text-primary">
                 Recover a voice →
               </Link>
             </p>
@@ -317,7 +319,7 @@ export default function HeritagePage() {
             </button>
             <p className="mt-2.5 text-center text-[11px] text-muted-foreground">
               Or include it free with Heritage —{" "}
-              <Link to="/pricing" className="underline hover:text-muted-foreground">
+              <Link to={BEIZA_LINKS.marketing.pricing} className="underline hover:text-muted-foreground">
                 $200/yr
               </Link>
             </p>
@@ -352,7 +354,7 @@ export default function HeritagePage() {
               ))}
             </ul>
             <Link
-              to="/pricing#legacy-curation"
+              to={BEIZA_LINKS.marketing.pricingLegacyCuration}
               className="mt-6 flex w-full items-center justify-center rounded-full bg-white py-3 text-center text-sm font-medium text-background"
             >
               Start Heritage →

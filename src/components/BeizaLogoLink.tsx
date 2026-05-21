@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { cn } from "@/lib/utils";
 
 type BeizaLogoLinkProps = {
@@ -23,7 +24,7 @@ export function BeizaLogoLink({
 
   return (
     <Link
-      to="/"
+      to={BEIZA_LINKS.welcome.gate}
       onClick={onClick}
       className={cn("inline-flex items-center gap-3", className)}
       aria-label="Beiza home"

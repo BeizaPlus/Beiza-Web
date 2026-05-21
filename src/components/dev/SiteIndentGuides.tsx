@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   siteContentIndentPx,
@@ -8,43 +8,69 @@ import {
 
 type Props = {
   frame: SitePaddingFrame;
-  onChange: (frame: SitePaddingFrame) => void;
+  /** Preview position when guides are measure-only */
+  draftIndentRem: number;
+  /** true = drag updates live copy; false = measure only until Apply */
+  live: boolean;
+  onDraftIndentChange: (rem: number) => void;
+  onApplyIndent: () => void;
   visible: boolean;
 };
 
+function indentRemFromPointer(clientX: number, side: "left" | "right", boundaryPx: number): number {
+  const maxIndentPx = Math.max(0, window.innerWidth / 2 - boundaryPx - 24);
+  let nextIndentPx =
+    side === "left" ? clientX - boundaryPx : window.innerWidth - clientX - boundaryPx;
+  nextIndentPx = Math.min(maxIndentPx, Math.max(0, nextIndentPx));
+  return Math.round((nextIndentPx / 16) * 100) / 100;
+}
+
 /** Draggable inner indent guides (inside the yellow boundary lines). */
-export function SiteIndentGuides({ frame, onChange, visible }: Props) {
+export function SiteIndentGuides({
+  frame,
+  draftIndentRem,
+  live,
+  onDraftIndentChange,
+  onApplyIndent,
+  visible,
+}: Props) {
   const boundaryPx = sitePaddingPx(frame);
-  const indentPx = siteContentIndentPx(frame);
-  const leftGuidePx = boundaryPx + indentPx;
-  const rightGuidePx = boundaryPx + indentPx;
-  const dragRef = useRef<{ side: "left" | "right"; startX: number; startIndentRem: number } | null>(null);
+  const appliedRem = frame.contentIndentRem;
+  const displayRem = live ? appliedRem : draftIndentRem;
+  const [dragging, setDragging] = useState(false);
+  const dragSide = useRef<"left" | "right">("left");
+
+  useEffect(() => {
+    if (!live) onDraftIndentChange(appliedRem);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [appliedRem, live]);
+
+  const displayPx = siteContentIndentPx({ ...frame, contentIndentRem: displayRem });
+  const leftGuidePx = boundaryPx + displayPx;
+  const rightGuidePx = boundaryPx + displayPx;
+  const dirty = !live && Math.abs(draftIndentRem - appliedRem) > 0.01;
 
   const setIndentFromPointer = useCallback(
     (clientX: number, side: "left" | "right") => {
-      const maxIndentPx = Math.max(0, window.innerWidth / 2 - boundaryPx - 24);
-      let nextIndentPx =
-        side === "left" ? clientX - boundaryPx : window.innerWidth - clientX - boundaryPx;
-      nextIndentPx = Math.min(maxIndentPx, Math.max(0, nextIndentPx));
-      const nextRem = Math.round((nextIndentPx / 16) * 100) / 100;
-      onChange({ ...frame, contentIndentRem: nextRem });
+      onDraftIndentChange(indentRemFromPointer(clientX, side, boundaryPx));
     },
-    [boundaryPx, frame, onChange],
+    [boundaryPx, onDraftIndentChange],
   );
 
   const onPointerDown = (side: "left" | "right") => (e: React.PointerEvent) => {
     e.preventDefault();
-    dragRef.current = { side, startX: e.clientX, startIndentRem: frame.contentIndentRem };
+    dragSide.current = side;
+    setDragging(true);
     (e.target as HTMLElement).setPointerCapture(e.pointerId);
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
-    if (!dragRef.current) return;
-    setIndentFromPointer(e.clientX, dragRef.current.side);
+    if (!dragging) return;
+    setIndentFromPointer(e.clientX, dragSide.current);
   };
 
   const onPointerUp = (e: React.PointerEvent) => {
-    dragRef.current = null;
+    setDragging(false);
     try {
       (e.target as HTMLElement).releasePointerCapture(e.pointerId);
     } catch {
@@ -64,10 +90,11 @@ export function SiteIndentGuides({ frame, onChange, visible }: Props) {
 
       <button
         type="button"
-        aria-label="Drag left indent guide"
+        aria-label={live ? "Drag indent guide (live)" : "Drag indent guide (measure only)"}
         className={cn(
           "fixed z-[9999] h-14 w-3 -translate-x-1/2 cursor-ew-resize rounded-full",
           "border border-cyan-400/80 bg-cyan-400/25 hover:bg-cyan-400/40",
+          !live && "ring-1 ring-cyan-300/50",
         )}
         style={{ left: leftGuidePx, top: "42%" }}
         onPointerDown={onPointerDown("left")}
@@ -77,10 +104,11 @@ export function SiteIndentGuides({ frame, onChange, visible }: Props) {
       />
       <button
         type="button"
-        aria-label="Drag right indent guide"
+        aria-label={live ? "Drag indent guide (live)" : "Drag indent guide (measure only)"}
         className={cn(
           "fixed z-[9999] h-14 w-3 translate-x-1/2 cursor-ew-resize rounded-full",
           "border border-cyan-400/80 bg-cyan-400/25 hover:bg-cyan-400/40",
+          !live && "ring-1 ring-cyan-300/50",
         )}
         style={{ right: rightGuidePx, top: "42%" }}
         onPointerDown={onPointerDown("right")}
@@ -89,11 +117,25 @@ export function SiteIndentGuides({ frame, onChange, visible }: Props) {
         onPointerCancel={onPointerUp}
       />
 
-      <div
-        className="pointer-events-none fixed left-1/2 top-2 z-[9999] -translate-x-1/2 rounded-md bg-black/80 px-2 py-1 font-mono text-[9px] text-cyan-200"
-        aria-live="polite"
-      >
-        Inner indent: {frame.contentIndentRem}rem ({indentPx * 2}px total)
+      <div className="pointer-events-auto fixed left-1/2 top-2 z-[9999] flex -translate-x-1/2 flex-col items-center gap-1.5">
+        <div className="rounded-md bg-black/90 px-3 py-1.5 font-mono text-[10px] text-cyan-200">
+          {live ? "Live" : "Measure"}: {displayRem}rem ({displayPx * 2}px total)
+          {!live && dirty ? " · not applied" : !live ? " · matches page" : ""}
+        </div>
+        {!live && dirty ? (
+          <button
+            type="button"
+            onClick={onApplyIndent}
+            className="rounded-full bg-cyan-500/90 px-3 py-1 text-[10px] font-semibold text-black hover:bg-cyan-400"
+          >
+            Apply indent to site
+          </button>
+        ) : null}
+        <p className="max-w-[300px] text-center text-[9px] text-white/50">
+          {live
+            ? "Cyan lines push copy as you drag."
+            : "Cyan lines are rulers only — page copy moves when you Apply or switch to Live push."}
+        </p>
       </div>
     </>
   );

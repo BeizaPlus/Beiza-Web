@@ -891,7 +891,7 @@
 
 /* Legacy layout studio — tab label lift */
 .legacy-nav-studio .legacy-nav-tab-label {
-  transform: translateY(calc(-1 * var(--legacy-nav-label-lift, 0px)));
+  transform: translateY(calc(-1 * var(--legacy-nav-label-lift, 0vh)));
 }
 
 /* /legacy/record — one viewport, no document scroll */
@@ -933,4 +933,17 @@ html.site-padding-guides body::before {
 }
 html.site-padding-guides body::after {
   right: var(--beiza-site-padding-x);
+}
+
+/* Master layout-studio toggle off — hide floating HUD panels only (yellow/cyan guides stay) */
+html.layout-studio-master-off [data-beiza-studio-panel] {
+  display: none !important;
+}
+html.layout-studio-master-off [data-beiza-studio-panel-reopen] {
+  display: none !important;
+}
+
+/* Master pill always on top — never covered by studio panels */
+[data-beiza-layout-studio-master] {
+  pointer-events: auto;
 }

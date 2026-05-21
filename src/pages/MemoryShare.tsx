@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Pause, Play } from "lucide-react";
 import { BeizaCircleMark } from "@/components/family-trees/BeizaCircleMark";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { cn } from "@/lib/utils";
 
 type SharedMemory = {
@@ -118,7 +119,7 @@ export default function MemorySharePage() {
 
       <footer className="px-6 pb-12 pt-4 text-center">
         <Link
-          to="/"
+          to={BEIZA_LINKS.welcome.gate}
           className="inline-flex items-center gap-1 text-sm font-semibold text-[#E6A817] hover:underline"
         >
           Preserve your family&apos;s voices — free →

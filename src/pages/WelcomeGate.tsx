@@ -28,6 +28,7 @@ import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
 
 import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
 
+import { StudioCopyOffsetSliders } from "@/components/dev/StudioCopyOffsetSliders";
 import { StudioSlider } from "@/components/dev/StudioSlider";
 
 import { welcomeCopyForLocale } from "@/lib/locale/welcomeCopy";
@@ -291,7 +292,13 @@ function WelcomeStudioPanel({
 
   return (
 
-    <FloatingStudioShell panelId="welcome-gate" open={open} onOpen={() => setOpen(true)} onClose={() => setOpen(false)}>
+    <FloatingStudioShell
+      panelId="welcome-gate"
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
+      openButtonLabel="Welcome studio"
+    >
 
       <p className="mb-2 text-[9px] font-medium uppercase tracking-widest text-muted-foreground">
 
@@ -347,24 +354,24 @@ function WelcomeStudioPanel({
 
         />
 
-        <StudioSlider
-
-          compact
-
-          label="Lift copy ↑ (px)"
-
-          value={studio.copyLift}
-
-          defaultValue={DEFAULT_STUDIO_GLOBAL.copyLift}
-
-          min={0}
-
-          max={80}
-
-          step={1}
-
-          onChange={(v) => patchGlobal({ copyLift: v })}
-
+        <StudioCopyOffsetSliders
+          frame={{
+            offsetX: studio.copyOffsetX,
+            offsetY: studio.copyOffsetY,
+            copyLift: studio.copyLift,
+          }}
+          defaults={{
+            offsetX: DEFAULT_STUDIO_GLOBAL.copyOffsetX,
+            offsetY: DEFAULT_STUDIO_GLOBAL.copyOffsetY,
+            copyLift: DEFAULT_STUDIO_GLOBAL.copyLift,
+          }}
+          onPatch={(partial) =>
+            patchGlobal({
+              ...(partial.offsetX !== undefined ? { copyOffsetX: partial.offsetX } : {}),
+              ...(partial.offsetY !== undefined ? { copyOffsetY: partial.offsetY } : {}),
+              ...(partial.copyLift !== undefined ? { copyLift: partial.copyLift } : {}),
+            })
+          }
         />
 
         <label className="flex cursor-pointer items-center justify-between text-[10px] text-muted-foreground">
@@ -756,6 +763,8 @@ export default function WelcomeGate() {
                     imageOffsetX={s.imageOffsetX}
                     imageOffsetY={s.imageOffsetY}
                     iconOffsetY={studio.iconOffsetY}
+                    copyOffsetX={studio.copyOffsetX}
+                    copyOffsetY={studio.copyOffsetY}
                     copyLift={studio.copyLift}
                     showIconCircleBg={studio.showIconCircleBg}
                     disableNavigation={studioEnabled && studio.lockCardLinks}

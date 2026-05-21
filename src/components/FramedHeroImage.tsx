@@ -9,10 +9,12 @@ type FramedHeroImageProps = {
   alt: string;
   frame: HeroImageFrame;
   className?: string;
+  /** Swap to this asset if primary fails to load */
+  onErrorSrc?: string;
 };
 
 /** Full-bleed hero photo with position + zoom from layout studio. */
-export function FramedHeroImage({ src, alt, frame, className }: FramedHeroImageProps) {
+export function FramedHeroImage({ src, alt, frame, className, onErrorSrc }: FramedHeroImageProps) {
   return (
     <img
       src={src}
@@ -20,6 +22,10 @@ export function FramedHeroImage({ src, alt, frame, className }: FramedHeroImageP
       className={cn("absolute inset-0 h-full w-full object-cover", className)}
       style={heroFrameToImageStyle(frame)}
       loading="eager"
+      onError={(e) => {
+        if (!onErrorSrc || e.currentTarget.src.endsWith(onErrorSrc)) return;
+        e.currentTarget.src = onErrorSrc;
+      }}
     />
   );
 }

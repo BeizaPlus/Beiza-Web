@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
+import { copyOffsetStyle } from "@/lib/copyLayoutOffset";
 import {
   hasDedicatedLayoutStudio,
   loadPageLayoutFrame,
@@ -34,16 +35,19 @@ export function PageLayoutStudioZone({
     setFrame(loadPageLayoutFrame(pageId));
   }, [pageId]);
 
-  const areaStyle = pageLayoutFrameStyle(frame, { applyMaxWidth });
-  const copyLiftStyle =
-    frame.copyLift > 0 && copyLiftTarget === "children"
-      ? { transform: `translateY(-${frame.copyLift}px)` }
+  const areaStyle = pageLayoutFrameStyle(
+    copyLiftTarget === "children" ? { ...frame, copyLift: 0 } : frame,
+    { applyMaxWidth },
+  );
+  const innerStyle =
+    copyLiftTarget === "children" && (frame.copyLift ?? 0) > 0
+      ? copyOffsetStyle({ offsetX: 0, offsetY: 0, copyLift: frame.copyLift })
       : undefined;
 
   return (
     <>
       <div className={cn("mx-auto w-full", className)} style={areaStyle}>
-        <div style={copyLiftStyle}>{children}</div>
+        <div style={innerStyle}>{children}</div>
       </div>
       {showPanel && <PageLayoutStudioPanel pageId={pageId} frame={frame} onChange={setFrame} />}
     </>

@@ -1,14 +1,14 @@
 import type { CSSProperties } from "react";
+import {
+  clampCopyOffsetFields,
+  copyOffsetStyle,
+  migrateCopyOffsetFields,
+  type CopyOffsetFields,
+} from "@/lib/copyLayoutOffset";
 
 /** Per-page content area positioning — localStorage, dev / ?studio=1 */
 
-export type PageLayoutFrame = {
-  /** Shift content left (negative) / right (positive), px */
-  offsetX: number;
-  /** Shift content up (negative) / down (positive), px */
-  offsetY: number;
-  /** Lift bottom copy block upward, px */
-  copyLift: number;
+export type PageLayoutFrame = CopyOffsetFields & {
   /** Main column max width, rem */
   maxWidthRem: number;
 };
@@ -27,7 +27,7 @@ export const LEGACY_AUTH_PAGE_STUDIO_ID = "legacy-auth";
 export const PAGE_LAYOUT_PAGE_DEFAULTS: Record<string, PageLayoutFrame> = {
   [LEGACY_AUTH_PAGE_STUDIO_ID]: {
     offsetX: 0,
-    offsetY: 101,
+    offsetY: 11,
     copyLift: 0,
     maxWidthRem: 23,
   },
@@ -53,7 +53,10 @@ export function loadPageLayoutFrame(pageId: string): PageLayoutFrame {
   try {
     const raw = localStorage.getItem(pageLayoutStorageKey(pageId));
     if (!raw) return { ...defaults };
-    return { ...defaults, ...(JSON.parse(raw) as Partial<PageLayoutFrame>) };
+    return clampCopyOffsetFields({
+      ...defaults,
+      ...migrateCopyOffsetFields(JSON.parse(raw) as Partial<PageLayoutFrame>),
+    });
   } catch {
     return { ...defaults };
   }
@@ -67,13 +70,9 @@ export function pageLayoutFrameStyle(
   frame: PageLayoutFrame,
   options?: { applyMaxWidth?: boolean },
 ): CSSProperties {
-  const transform =
-    frame.offsetX !== 0 || frame.offsetY !== 0
-      ? `translate(${frame.offsetX}px, ${frame.offsetY}px)`
-      : undefined;
   return {
     ...(options?.applyMaxWidth !== false ? { maxWidth: `${frame.maxWidthRem}rem` } : {}),
-    transform,
+    ...copyOffsetStyle(frame),
   };
 }
 
@@ -109,7 +108,14 @@ export function pageLayoutStudioLabel(pageId: string): string {
 
 /** Routes that already ship a dedicated layout studio — hide generic panel */
 export function hasDedicatedLayoutStudio(pageId: string): boolean {
-  return pageId === "welcome" || pageId === "home" || pageId === "events" || pageId === "heritage" || pageId === "farewell";
+  return (
+    pageId === "welcome" ||
+    pageId === "home" ||
+    pageId === "events" ||
+    pageId === "heritage" ||
+    pageId === "farewell" ||
+    pageId === "legacy-record"
+  );
 }
 
 /** Map pathname → studio page id (generic pages) */

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { marketingContainer, marketingSection } from "@/lib/brandUi";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 type FormState = {
   deceasedName: string;
@@ -203,7 +204,7 @@ export default function RecoverPage() {
 
           <p className="mt-12 text-sm text-[#555555]">
             No Beiza account required.{" "}
-            <Link to="/farewell" className="text-[#888888] hover:text-white">
+            <Link to={BEIZA_LINKS.farewell.heritage} className="text-[#888888] hover:text-white">
               Learn about Heritage →
             </Link>
           </p>

@@ -3,12 +3,20 @@ import {
   mergePricingContent,
   type PricingSectionContent,
 } from "@/lib/landingPricingContent";
+import { migrateCopyOffsetFields } from "@/lib/copyLayoutOffset";
 
 export type StudioFocus = "hero" | "heritageHero" | "offerings" | "faq" | "pricing" | "outro";
 
 export type LandingLayoutStudioState = {
   focus: StudioFocus;
-  hero: { posX: number; posY: number; scale: number; copyBottomVh: number };
+  hero: {
+    posX: number;
+    posY: number;
+    scale: number;
+    copyBottomVh: number;
+    copyOffsetX: number;
+    copyOffsetY: number;
+  };
   offerings: { offsetY: number; paddingTop: number };
   faq: { offsetY: number; paddingTop: number };
   pricing: { offsetY: number; paddingTop: number };
@@ -19,7 +27,7 @@ export type LandingLayoutStudioState = {
 /** Canonical homepage layout — exported from Layout Studio 2026-05-19. */
 export const DEFAULT_STUDIO_STATE: LandingLayoutStudioState = {
   focus: "hero",
-  hero: { posX: 18, posY: 84, scale: 106, copyBottomVh: 18 },
+  hero: { posX: 18, posY: 84, scale: 106, copyBottomVh: 18, copyOffsetX: 0, copyOffsetY: 0 },
   offerings: { offsetY: -32, paddingTop: 80 },
   faq: { offsetY: -48, paddingTop: 72 },
   pricing: { offsetY: 0, paddingTop: 96 },
@@ -33,7 +41,12 @@ export function mergeStudioState(partial: Partial<LandingLayoutStudioState>): La
   return {
     ...DEFAULT_STUDIO_STATE,
     ...partial,
-    hero: { ...DEFAULT_STUDIO_STATE.hero, ...partial.hero },
+    hero: {
+      ...DEFAULT_STUDIO_STATE.hero,
+      ...migrateCopyOffsetFields(partial.hero ?? {}),
+      copyOffsetX: partial.hero?.copyOffsetX ?? DEFAULT_STUDIO_STATE.hero.copyOffsetX,
+      copyOffsetY: partial.hero?.copyOffsetY ?? DEFAULT_STUDIO_STATE.hero.copyOffsetY,
+    },
     offerings: { ...DEFAULT_STUDIO_STATE.offerings, ...partial.offerings },
     faq: { ...DEFAULT_STUDIO_STATE.faq, ...partial.faq },
     pricing: { ...DEFAULT_STUDIO_STATE.pricing, ...partial.pricing },

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { legacySurface, marketingContainer } from "@/lib/brandUi";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { cn } from "@/lib/utils";
 
 const SEED_VAULTS = [
@@ -65,7 +66,7 @@ export default function VaultExplore() {
 
         <p className="mt-12 text-center text-sm text-muted-foreground">
           <Link
-            to="/legacy/family"
+            to={BEIZA_LINKS.legacy.family}
             className="underline decoration-border underline-offset-4 hover:text-primary"
           >
             Start your family&apos;s circle — free

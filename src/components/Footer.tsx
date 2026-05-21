@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import { useMemo } from "react";
-import { FOOTER_PRICING_LINK } from "@/config/productNav";
+import { FOOTER_PRICING_LINK, FOOTER_STORIES_LINK } from "@/config/productNav";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { useFooterLinks, useSiteSettings } from "@/hooks/usePublicContent";
 import { sitePaddingX } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
@@ -70,7 +71,7 @@ export const Footer = () => {
             </p>
             <p className="text-subtle text-sm">
               <Link
-                to="/farewell"
+                to={BEIZA_LINKS.farewell.heritage}
                 className="text-muted-foreground transition-colors hover:text-subtle"
               >
                 Planning a farewell? →
@@ -78,7 +79,7 @@ export const Footer = () => {
             </p>
             <p className="text-subtle text-sm">
               <Link
-                to="/recover"
+                to={BEIZA_LINKS.marketing.recover}
                 className="text-muted-foreground transition-colors hover:text-subtle"
               >
                 Recover a voice →
@@ -86,10 +87,10 @@ export const Footer = () => {
             </p>
             <p className="text-subtle text-sm">
               <Link
-                to="/events"
+                to={FOOTER_STORIES_LINK.href}
                 className="text-muted-foreground transition-colors hover:text-subtle"
               >
-                Stories →
+                {FOOTER_STORIES_LINK.label} →
               </Link>
             </p>
             <p className="text-subtle text-xs uppercase tracking-[0.3em]">

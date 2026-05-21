@@ -1,4 +1,5 @@
 import type { LandingLayoutStudioState } from "./landingLayoutStudioState";
+import { migrateCopyOffsetFields } from "@/lib/copyLayoutOffset";
 
 export type HeroFrame = LandingLayoutStudioState["hero"];
 
@@ -8,13 +9,17 @@ export type HeritageHeroFrame = {
   scale: number;
   textSide: "left" | "right";
   overlayStrength: number;
-  copyRaiseVh: number;
+  /** @deprecated migrated to copyOffsetY — kept for load migration */
+  copyRaiseVh?: number;
+  /** Copy block shift (vw / vh) */
+  copyOffsetX: number;
+  copyOffsetY: number;
 };
 
 export type HeroStudioPage = "events" | "heritage";
 
 export const HERO_STUDIO_DEFAULTS: Record<"events", HeroFrame> = {
-  events: { posX: 50, posY: 22, scale: 100, copyBottomVh: 38 },
+  events: { posX: 50, posY: 22, scale: 100, copyBottomVh: 38, copyOffsetX: 0, copyOffsetY: 0 },
 };
 
 /** Canonical Heritage hero — exported from Layout Studio 2026-05-19. */
@@ -24,7 +29,8 @@ export const HERITAGE_HERO_DEFAULTS: HeritageHeroFrame = {
   scale: 111,
   textSide: "right",
   overlayStrength: 71,
-  copyRaiseVh: 0,
+  copyOffsetX: 0,
+  copyOffsetY: 0,
 };
 
 function storageKey(page: HeroStudioPage) {
@@ -41,7 +47,29 @@ export function loadHeroStudioFrame(page: HeroStudioPage): HeroFrame | HeritageH
     const raw = localStorage.getItem(storageKey(page));
     const defaults = page === "heritage" ? HERITAGE_HERO_DEFAULTS : HERO_STUDIO_DEFAULTS.events;
     if (!raw) return defaults;
-    return { ...defaults, ...(JSON.parse(raw) as Partial<HeroFrame & HeritageHeroFrame>) };
+    const parsed = JSON.parse(raw) as Partial<HeroFrame & HeritageHeroFrame>;
+    if (page === "heritage") {
+      const heritageParsed = parsed as Partial<HeritageHeroFrame>;
+      const copyOffsetY =
+        heritageParsed.copyOffsetY ??
+        (typeof heritageParsed.copyRaiseVh === "number" ? heritageParsed.copyRaiseVh : undefined);
+      return {
+        ...HERITAGE_HERO_DEFAULTS,
+        ...migrateCopyOffsetFields({
+          ...heritageParsed,
+          copyOffsetX: heritageParsed.copyOffsetX ?? 0,
+          copyOffsetY: copyOffsetY ?? 0,
+        }),
+      };
+    }
+    return {
+      ...defaults,
+      ...migrateCopyOffsetFields({
+        ...parsed,
+        copyOffsetX: parsed.copyOffsetX ?? 0,
+        copyOffsetY: parsed.copyOffsetY ?? 0,
+      }),
+    };
   } catch {
     return page === "heritage" ? HERITAGE_HERO_DEFAULTS : HERO_STUDIO_DEFAULTS.events;
   }
@@ -76,6 +104,24 @@ export function heritageHeroStudioCssVars(frame: HeritageHeroFrame): Record<stri
     "--heritage-overlay-md": desktop,
     "--heritage-overlay-mobile":
       "linear-gradient(to top, rgba(0,0,0,0.9) 50%, rgba(0,0,0,0.1) 100%)",
+  };
+}
+
+export function heritageHeroCopyStyle(frame: HeritageHeroFrame) {
+  return {
+    transform:
+      frame.copyOffsetX !== 0 || frame.copyOffsetY !== 0
+        ? `translate(${frame.copyOffsetX}vw, ${frame.copyOffsetY}vh)`
+        : undefined,
+  };
+}
+
+export function heroCopyOffsetStyle(frame: Pick<HeroFrame, "copyOffsetX" | "copyOffsetY">) {
+  return {
+    transform:
+      frame.copyOffsetX !== 0 || frame.copyOffsetY !== 0
+        ? `translate(${frame.copyOffsetX}vw, ${frame.copyOffsetY}vh)`
+        : undefined,
   };
 }
 

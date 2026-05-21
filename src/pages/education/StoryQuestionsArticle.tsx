@@ -14,6 +14,7 @@ import {
   RELATED_ARTICLES,
   STORY_QUESTIONS_SEO,
 } from "@/lib/educationStoryQuestionsContent";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { cn } from "@/lib/utils";
 
 const MUTED = "text-[#6b6560]";
@@ -61,10 +62,10 @@ export default function StoryQuestionsArticle() {
       <FaqJsonLd />
       <header className="border-b border-[#e8e2d8]">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-5">
-          <Link to="/" className={cn(legacyDisplay, "text-lg tracking-[0.15em]")}>
+          <Link to={BEIZA_LINKS.welcome.gate} className={cn(legacyDisplay, "text-lg tracking-[0.15em]")}>
             BEIZA
           </Link>
-          <Link to="/education" className={cn("text-sm font-light", MUTED)}>
+          <Link to={BEIZA_LINKS.education.hub} className={cn("text-sm font-light", MUTED)}>
             Education
           </Link>
         </div>
@@ -148,7 +149,7 @@ export default function StoryQuestionsArticle() {
         <section className="mt-14 rounded-2xl border border-[#e8e2d8] bg-white/70 p-10 text-center">
           <h2 className={cn(legacyDisplay, "text-2xl font-light")}>Start with one question this week.</h2>
           <Link
-            to="/heritage"
+            to={BEIZA_LINKS.legacy.heritage}
             className={cn(
               legacyBody,
               "mt-6 inline-block rounded-full bg-[#2c2824] px-8 py-3 text-sm font-light text-[#f7f4ef] transition hover:bg-[#3d3834]",
