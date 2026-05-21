@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { motion } from "framer-motion";
 
@@ -6,7 +6,6 @@ import { BookOpen, Feather, GraduationCap } from "lucide-react";
 
 import { WelcomePathCard } from "@/components/welcome/WelcomePathCard";
 
-import { WelcomeGateToolbar } from "@/components/welcome/WelcomeGateToolbar";
 import { WelcomeLocaleRail } from "@/components/welcome/WelcomeLocaleRail";
 
 import { welcomePathIconHoverBgClass, welcomePathIconHoverFgClass } from "@/lib/welcomePathIconStyles";
@@ -32,6 +31,7 @@ import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
 import { StudioSlider } from "@/components/dev/StudioSlider";
 
 import { welcomeCopyForLocale } from "@/lib/locale/welcomeCopy";
+import { useWelcomeLocaleSceneWheel } from "@/hooks/useWelcomeLocaleSceneWheel";
 import { siteBounds } from "@/lib/siteLayout";
 
 import { getWelcomeCardImage } from "@/lib/locale/welcomeImages";
@@ -421,6 +421,16 @@ function WelcomeStudioPanel({
 
         </label>
 
+        <label className="flex cursor-pointer items-center justify-between text-[10px] text-muted-foreground">
+          Language rail background
+          <input
+            type="checkbox"
+            checked={studio.showLocaleRailBg}
+            onChange={(e) => patchGlobal({ showLocaleRailBg: e.target.checked })}
+            className="accent-primary"
+          />
+        </label>
+
       </div>
 
       <div className="mb-4 space-y-3 border-b border-border pb-4">
@@ -584,10 +594,13 @@ const subtitleVariants = {
 };
 
 export default function WelcomeGate() {
+  const welcomeRootRef = useRef<HTMLDivElement>(null);
   const { locale, ready } = useLocaleContext();
   const [theme, setTheme] = useState<WelcomeTheme>("dark");
   const [store, setStore] = useState<WelcomeStudioStore>(() => loadWelcomeStudioStore());
   const studioEnabled = isLayoutStudioEnabled();
+
+  useWelcomeLocaleSceneWheel(welcomeRootRef, ready);
 
   useEffect(() => {
     setTheme(getStoredWelcomeTheme());
@@ -639,6 +652,7 @@ export default function WelcomeGate() {
 
   return (
     <div
+      ref={welcomeRootRef}
       className={cn(
         "flex h-[100dvh] max-h-[100dvh] min-h-0 flex-col overflow-hidden transition-colors duration-300",
         isLight ? "bg-[#f7f6f3] text-[#1a1816]" : "bg-black text-white",
@@ -648,23 +662,21 @@ export default function WelcomeGate() {
         isLight={isLight}
         theme={theme}
         layout={studio.toolbar}
+        showLocaleRailBg={studio.showLocaleRailBg}
         onThemeChange={(next) => {
           setTheme(next);
           storeWelcomeTheme(next);
         }}
       />
 
-      <div className={cn("pointer-events-none absolute right-0 top-0 z-20 flex justify-end py-5 sm:py-6", siteBounds)}>
-        <div className="pointer-events-auto pr-20 sm:pr-24">
-          <WelcomeGateToolbar
-            isLight={isLight}
-            regionToggleHint={copy.regionToggleHint}
-            regionToggleSubhint={copy.regionToggleSubhint}
-          />
-        </div>
-      </div>
-
       <div className={cn("relative z-10 mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col siteBounds pb-6 pt-2")}>
+        <motion.div
+          key={locale}
+          className="flex min-h-0 flex-1 flex-col"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.38, ease: "easeOut" }}
+        >
         <motion.header
           className="mx-auto flex w-full max-w-4xl shrink-0 flex-col items-center px-4 text-center"
           initial="hidden"
@@ -766,6 +778,7 @@ export default function WelcomeGate() {
             })}
           </motion.div>
         </main>
+        </motion.div>
       </div>
 
       {studioEnabled && (

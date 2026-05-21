@@ -91,6 +91,7 @@ export function FloatingStudioShell({
 
   return (
     <aside
+      data-beiza-studio-panel
       className="fixed z-[200] w-[min(100vw-2rem,22rem)] max-h-[min(85vh,calc(100vh-2rem))] overflow-y-auto rounded-xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur-md"
       style={{ left: pos.x, top: pos.y }}
     >

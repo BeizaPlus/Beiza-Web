@@ -20,9 +20,15 @@ type WelcomeThemeToggleProps = {
   theme: WelcomeTheme;
   onThemeChange: (theme: WelcomeTheme) => void;
   compact?: boolean;
+  className?: string;
 };
 
-export function WelcomeThemeToggle({ theme, onThemeChange, compact = false }: WelcomeThemeToggleProps) {
+export function WelcomeThemeToggle({
+  theme,
+  onThemeChange,
+  compact = false,
+  className,
+}: WelcomeThemeToggleProps) {
   const isLight = theme === "light";
 
   return (
@@ -32,6 +38,7 @@ export function WelcomeThemeToggle({ theme, onThemeChange, compact = false }: We
       className={cn(
         "font-sans flex items-center justify-center rounded-full border transition",
         compact ? "h-7 w-7" : "h-10 w-10",
+        className,
         isLight
           ? "border-black/15 bg-white text-black hover:bg-black/5"
           : "border-white/25 bg-white/5 text-white hover:bg-white/10",

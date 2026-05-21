@@ -9,6 +9,8 @@ export const BRAND_IMAGES = {
   welcomeLegacyBrazilian: "/images/beiza-welcome-legacy-brazilian.png",
   /** Heritage / White Swan only — elder + Gye Nyame */
   heritageHero: "/images/beiza-elder-gye-nyame-hero.png",
+  /** Heritage White Swan section — custom poster before YouTube plays */
+  whiteSwanFilmPoster: "/images/beiza-white-swan-film-poster.png",
   /** Events + Stories — Ernestina B&W portrait */
   eventsStoriesHero: "/images/beiza-ernestina-portrait-bw.png",
   /** Homepage default when CMS has no hero */

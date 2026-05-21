@@ -20,6 +20,7 @@ import {
   heritageHeroStudioCssVars,
 } from "@/components/dev/heroLayoutStudioState";
 import { BRAND_IMAGES } from "@/lib/brandImages";
+import { WhiteSwanFilmEmbed } from "@/components/heritage/WhiteSwanFilmEmbed";
 import { CasketIcon } from "@/components/icons/CasketIcon";
 import { cn } from "@/lib/utils";
 import {
@@ -246,9 +247,11 @@ export default function HeritagePage() {
         </div>
       </section>
 
-      {/* 3. White Swan callout */}
+      {/* 3. White Swan callout + film */}
       <section className={cn("border-y border-border bg-secondary/30", marketingSection, siteBounds)}>
-        <div className={cn(siteBoundedContainer, "grid gap-12 lg:grid-cols-2 lg:gap-16")}>
+        <div className={siteBoundedContainer}>
+          <WhiteSwanFilmEmbed className="mb-10 sm:mb-12" />
+          <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
             <div className="flex items-center gap-2.5">
               <CasketIcon size={24}  />
@@ -318,6 +321,7 @@ export default function HeritagePage() {
                 $200/yr
               </Link>
             </p>
+          </div>
           </div>
         </div>
       </section>

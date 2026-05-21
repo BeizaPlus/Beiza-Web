@@ -7,6 +7,7 @@ import { heritageHeroStudioCssVars } from "@/components/dev/heroLayoutStudioStat
 import { getRecordStationHeroImage } from "@/lib/locale/recordHeroImages";
 import { isGhanaEntryLocale } from "@/lib/locale/ghanaEntry";
 import { RECORD_HERO_GHANA_DEFAULTS, RECORD_HERO_STUDIO_DEFAULTS } from "@/lib/legacy/recordHeroFrame";
+import { siteContentIndentX, siteHeroContentRow } from "@/lib/siteLayout";
 import { cn } from "@/lib/utils";
 
 type RecordStationViewportProps = {
@@ -47,13 +48,15 @@ export function RecordStationViewport({ circleLabel, station }: RecordStationVie
       <div
         className={cn(
           "relative z-10 flex h-full min-h-0 w-full",
+          siteHeroContentRow,
           textRight ? "md:justify-end" : "md:justify-start",
         )}
       >
         <div
           className={cn(
-            "flex h-full min-h-0 w-full max-w-lg flex-col justify-center gap-3 overflow-hidden px-5 py-4 sm:px-8 sm:py-5",
-            textRight ? "md:ml-auto md:items-end md:pr-12 md:text-right" : "md:mr-auto md:pl-12 md:text-left",
+            "flex h-full min-h-0 w-full max-w-lg flex-col justify-center gap-3 overflow-hidden py-4 sm:py-5",
+            siteContentIndentX,
+            textRight ? "md:ml-auto md:items-end md:text-right" : "md:mr-auto md:text-left",
           )}
         >
           <div className="shrink-0">

@@ -67,9 +67,9 @@ async function auditWelcome(page, route) {
     pass(`${route} vertical language rail`);
   } else fail(`${route} locale rail missing`);
 
-  if ((await page.locator("#welcome-region-hint").count()) > 0) {
-    pass(`${route} region hint copy`);
-  } else fail(`${route} region hint missing`);
+  if ((await page.locator("#welcome-region-hint").count()) === 0) {
+    pass(`${route} region hint copy removed`);
+  } else fail(`${route} region hint should be removed`);
 
   const expectedGh = "/af/education,/legacy/record,/af/farewell";
   if (hrefs.join(",") === expectedGh) pass(`${route} GH default card hrefs (${expectedGh})`);

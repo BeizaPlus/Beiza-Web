@@ -39,7 +39,7 @@ export function LegacyNavStudio({ children, className, disableTransform = false 
         className={cn("legacy-nav-studio mx-auto w-full", className)}
         style={
           disableTransform
-            ? { ...labelLiftStyle }
+            ? { maxWidth: "100%", ...labelLiftStyle }
             : { ...legacyNavStudioStyle(frame), ...labelLiftStyle }
         }
       >

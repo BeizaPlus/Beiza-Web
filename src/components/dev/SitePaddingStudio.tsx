@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
+import { SiteIndentGuides } from "@/components/dev/SiteIndentGuides";
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
 import { StudioSlider } from "@/components/dev/StudioSlider";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
@@ -35,7 +36,12 @@ export function SitePaddingStudioProvider({ children }: Props) {
   return (
     <>
       {children}
-      {studioOn ? <SitePaddingStudioPanel frame={frame} onChange={setFrame} /> : null}
+      {studioOn ? (
+        <>
+          <SiteIndentGuides frame={frame} onChange={setFrame} visible />
+          <SitePaddingStudioPanel frame={frame} onChange={setFrame} />
+        </>
+      ) : null}
     </>
   );
 }
@@ -70,8 +76,8 @@ function SitePaddingStudioPanel({
         Site bounds (global)
       </p>
       <p className="mb-3 text-[9px] leading-snug text-muted-foreground">
-        Sets the left/right boundary for the whole site. Nav, footer, legacy tab bar, and hero copy
-        cannot go past the yellow guides. Reference page: Heritage (/farewell).
+        Yellow lines = site boundary. Cyan handles = inner indent (drag to set copy alignment site-wide).
+        Reference: Heritage (/farewell).
       </p>
 
       <StudioSlider

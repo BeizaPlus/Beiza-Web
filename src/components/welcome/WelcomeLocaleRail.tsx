@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef } from "react";
-import { Pin, PinOff } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { MoreHorizontal, Pin, PinOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocaleContext } from "@/context/LocaleContext";
 import { WelcomeLocaleFlag } from "@/components/welcome/WelcomeLocaleFlag";
@@ -11,6 +11,7 @@ import {
   type WelcomeLanguageOption,
 } from "@/lib/locale/welcomeLanguageOptions";
 import type { ToolbarControlsLayout } from "@/lib/welcomeStudio";
+import { WELCOME_SCENE_STEP_EVENT } from "@/lib/welcomeSceneWheel";
 
 const AUTO_MS = 3000;
 const PILL_H = 44;
@@ -20,6 +21,8 @@ type WelcomeLocaleRailProps = {
   theme: WelcomeTheme;
   onThemeChange: (theme: WelcomeTheme) => void;
   layout?: ToolbarControlsLayout;
+  /** Show dark rounded track behind language pills (studio toggle) */
+  showLocaleRailBg?: boolean;
 };
 
 export function WelcomeLocaleRail({
@@ -27,12 +30,36 @@ export function WelcomeLocaleRail({
   theme,
   onThemeChange,
   layout,
+  showLocaleRailBg = true,
 }: WelcomeLocaleRailProps) {
   const toolbar = layout;
+  const [utilityOpen, setUtilityOpen] = useState(true);
   const { locale, setLocale, localePinned, setLocalePinned } = useLocaleContext();
   const scrollRef = useRef<HTMLDivElement>(null);
   const pauseAutoRef = useRef(false);
   const userScrollRef = useRef(false);
+  const holdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearHold = () => {
+    if (holdRef.current) {
+      clearTimeout(holdRef.current);
+      holdRef.current = null;
+    }
+  };
+
+  const bindHoldAction = (action: () => void) => ({
+    onPointerDown: () => {
+      clearHold();
+      holdRef.current = setTimeout(action, 420);
+    },
+    onPointerUp: clearHold,
+    onPointerLeave: clearHold,
+    onPointerCancel: clearHold,
+    onClick: () => {
+      clearHold();
+      setUtilityOpen(false);
+    },
+  });
 
   const activeIndex = Math.max(
     0,
@@ -63,6 +90,17 @@ export function WelcomeLocaleRail({
     if (userScrollRef.current) return;
     scrollToIndex(activeIndex, "auto");
   }, [activeIndex, scrollToIndex]);
+
+  useEffect(() => {
+    const pause = () => {
+      pauseAutoRef.current = true;
+      window.setTimeout(() => {
+        pauseAutoRef.current = false;
+      }, 6000);
+    };
+    window.addEventListener(WELCOME_SCENE_STEP_EVENT, pause);
+    return () => window.removeEventListener(WELCOME_SCENE_STEP_EVENT, pause);
+  }, []);
 
   useEffect(() => {
     if (localePinned) return;
@@ -119,8 +157,12 @@ export function WelcomeLocaleRail({
           style={{ height: PILL_H }}
           className={cn(
             "snap-y snap-mandatory overflow-y-auto overscroll-y-contain scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-            "rounded-full border",
-            isLight ? "border-black/15 bg-white/90" : "border-white/15 bg-[#141414]/90",
+            "rounded-full",
+            showLocaleRailBg &&
+              cn(
+                "border",
+                isLight ? "border-black/15 bg-white/90" : "border-white/15 bg-[#141414]/90",
+              ),
           )}
           role="listbox"
           aria-label="Region & language"
@@ -189,43 +231,70 @@ export function WelcomeLocaleRail({
         </nav>
       </div>
 
-      <div
-        className="pointer-events-auto flex flex-col"
-        style={
-          toolbar
-            ? {
-                marginTop: toolbar.controlsOffsetYPx,
-                marginRight: `${toolbar.controlsOffsetXRem}rem`,
-                gap: toolbar.controlsButtonGapPx,
-              }
-            : { gap: 6 }
-        }
-      >
+      {utilityOpen ? (
+        <div
+          className="pointer-events-auto flex flex-col"
+          style={
+            toolbar
+              ? {
+                  marginTop: toolbar.controlsOffsetYPx,
+                  marginRight: `${toolbar.controlsOffsetXRem}rem`,
+                  gap: toolbar.controlsButtonGapPx,
+                }
+              : { gap: 6 }
+          }
+        >
+          <button
+            type="button"
+            {...bindHoldAction(() => setLocalePinned(!localePinned))}
+            className={cn(
+              "flex h-8 w-8 items-center justify-center rounded-full border transition",
+              isLight
+                ? localePinned
+                  ? "border-black/25 bg-black/10 text-black"
+                  : "border-black/15 text-black/40 hover:bg-black/5"
+                : localePinned
+                  ? "border-white/35 bg-white/15 text-white"
+                  : "border-white/20 text-white/45 hover:bg-white/10",
+            )}
+            aria-pressed={localePinned}
+            aria-label={localePinned ? pinCopy.unpinLabel : pinCopy.pinLabel}
+            title={`${localePinned ? pinCopy.unpinLabel : pinCopy.pinLabel} · tap to hide · hold to pin`}
+          >
+            {localePinned ? (
+              <Pin className="h-3.5 w-3.5" strokeWidth={1.75} />
+            ) : (
+              <PinOff className="h-3.5 w-3.5" strokeWidth={1.75} />
+            )}
+          </button>
+          <div
+            {...bindHoldAction(() => onThemeChange(isLight ? "dark" : "light"))}
+            title="Tap to hide · hold to switch theme"
+          >
+            <WelcomeThemeToggle
+              theme={theme}
+              onThemeChange={() => {}}
+              compact
+              className="pointer-events-none"
+            />
+          </div>
+        </div>
+      ) : (
         <button
           type="button"
-          onClick={() => setLocalePinned(!localePinned)}
+          onClick={() => setUtilityOpen(true)}
           className={cn(
-            "flex h-8 w-8 items-center justify-center rounded-full border transition",
+            "pointer-events-auto flex h-8 w-8 items-center justify-center rounded-full border transition",
             isLight
-              ? localePinned
-                ? "border-black/25 bg-black/10 text-black"
-                : "border-black/15 text-black/40 hover:bg-black/5"
-              : localePinned
-                ? "border-white/35 bg-white/15 text-white"
-                : "border-white/20 text-white/45 hover:bg-white/10",
+              ? "border-black/15 text-black/50 hover:bg-black/5"
+              : "border-white/20 text-white/45 hover:bg-white/10",
           )}
-          aria-pressed={localePinned}
-          aria-label={localePinned ? pinCopy.unpinLabel : pinCopy.pinLabel}
-          title={localePinned ? pinCopy.unpinLabel : pinCopy.pinLabel}
+          aria-label="Show pin and theme controls"
+          title="Show controls"
         >
-          {localePinned ? (
-            <Pin className="h-3.5 w-3.5" strokeWidth={1.75} />
-          ) : (
-            <PinOff className="h-3.5 w-3.5" strokeWidth={1.75} />
-          )}
+          <MoreHorizontal className="h-4 w-4" strokeWidth={1.75} />
         </button>
-        <WelcomeThemeToggle theme={theme} onThemeChange={onThemeChange} compact />
-      </div>
+      )}
 
     </aside>
   );

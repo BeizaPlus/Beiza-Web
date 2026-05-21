@@ -35,6 +35,8 @@ export type StudioGlobal = {
   logoScale: number;
   useMascot: boolean;
   lockCardLinks: boolean;
+  /** Dark pill track behind the vertical language column */
+  showLocaleRailBg: boolean;
   toolbar: ToolbarControlsLayout;
 };
 
@@ -63,6 +65,7 @@ export const DEFAULT_STUDIO_GLOBAL: StudioGlobal = {
   logoScale: 2.25,
   useMascot: true,
   lockCardLinks: true,
+  showLocaleRailBg: true,
   toolbar: DEFAULT_TOOLBAR_LAYOUT,
 };
 

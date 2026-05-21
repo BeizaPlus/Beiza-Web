@@ -29,4 +29,8 @@ Use this pattern for all brand assets:
 
 - `beiza-family-tree-node-mobile.svg` — family tree graphic
 - `beiza-white-swan-hero-dark.png` — optional alternate White Swan hero
+
+| `beiza-white-swan-film-poster.png` | **Heritage `/farewell`** — White Swan video poster (click → YouTube `u5uQZ5AKO5Q`) |
+
+**White Swan film:** `src/lib/heritageWhiteSwan.ts` → https://youtu.be/u5uQZ5AKO5Q
 - `beiza-vault-cover-placeholder.png` — `/vault/explore` grid placeholder
