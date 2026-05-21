@@ -249,7 +249,7 @@ const PATHS = [
 ] as const;
 
 export default function WelcomeGate() {
-  const [theme, setTheme] = useState<WelcomeTheme>("light");
+  const [theme, setTheme] = useState<WelcomeTheme>("dark");
   const [studio, setStudio] = useState<StudioState>(DEFAULT_STUDIO);
   const studioEnabled = isLayoutStudioEnabled();
 

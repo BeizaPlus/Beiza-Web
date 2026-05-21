@@ -6,10 +6,10 @@ const STORAGE_KEY = "beiza-welcome-theme";
 export type WelcomeTheme = "dark" | "light";
 
 export function getStoredWelcomeTheme(): WelcomeTheme {
-  if (typeof window === "undefined") return "light";
+  if (typeof window === "undefined") return "dark";
   const stored = localStorage.getItem(STORAGE_KEY);
   if (stored === "dark" || stored === "light") return stored;
-  return "light";
+  return "dark";
 }
 
 export function storeWelcomeTheme(theme: WelcomeTheme) {
