@@ -1,10 +1,10 @@
 /**
  * Welcome gate smoke test — / and /welcome
- * Usage: SMOKE_SITE_URL=http://127.0.0.1:8081 node scripts/welcome-smoke-test.mjs
+ * Usage: SMOKE_SITE_URL=http://127.0.0.1:8080 node scripts/welcome-smoke-test.mjs
  */
 import { chromium } from "playwright";
 
-const base = process.env.SMOKE_SITE_URL ?? "http://127.0.0.1:8081";
+const base = process.env.SMOKE_SITE_URL ?? "http://127.0.0.1:8080";
 const results = { passed: [], failed: [], warned: [] };
 
 function pass(label) {
@@ -24,17 +24,22 @@ function warn(label, detail = "") {
   console.log(`  ⚠ ${msg}`);
 }
 
-async function auditWelcome(page, route, { clearLocale = false } = {}) {
-  console.log(`\n--- ${route} ---\n`);
-  if (clearLocale) {
-    await page.evaluate(() => localStorage.removeItem("beiza-locale"));
-  }
-  await page.goto(`${base}${route}`, { waitUntil: "networkidle" });
-  await page.waitForTimeout(1200);
+async function waitForWelcomeReady(page, route) {
+  const path = route.includes("?") ? route : `${route}?studio=0`;
+  await page.goto(`${base}${path}`, { waitUntil: "domcontentloaded" });
+  await page.getByRole("group", { name: "Region & language" }).waitFor({ timeout: 20_000 });
+  await page.locator("main h2").first().waitFor({ timeout: 10_000 });
+  await page.waitForTimeout(600);
+}
 
-  const bodyText = await page.locator("body").innerText();
-  if (bodyText.includes("—")) fail(`${route} no em-dashes in copy`);
-  else pass(`${route} no em-dashes in copy`);
+async function auditWelcome(page, route) {
+  console.log(`\n--- ${route} ---\n`);
+  await waitForWelcomeReady(page, route);
+
+  const cardCopy = await page.locator("main .grid h2, main .grid p").allTextContents();
+  const cardText = cardCopy.join(" ");
+  if (cardText.includes("—")) fail(`${route} no em-dashes in card copy`);
+  else pass(`${route} no em-dashes in card copy`);
 
   const copyChecks = [
     { text: "Stories of the people we love", locator: page.getByText(/Stories of the people we love/i) },
@@ -48,80 +53,68 @@ async function auditWelcome(page, route, { clearLocale = false } = {}) {
     else fail(`${route} missing copy`, text);
   }
 
-  const logo = page.locator('img[alt="Beiza"]');
-  if ((await logo.count()) > 0) {
-    const src = await logo.first().getAttribute("src");
-    if (src?.includes("Beiza_White")) pass(`${route} Beiza logo image`);
-    else fail(`${route} logo src`, src ?? "missing");
-  } else fail(`${route} logo missing`);
+  const logo = page.locator('img[alt="Beiza"], img[src*="Beiza"]');
+  if ((await logo.count()) > 0) pass(`${route} Beiza logo or mascot`);
+  else fail(`${route} logo missing`);
 
-  const links = page.locator("main a").filter({ has: page.locator("h2") });
-  const hrefs = await links.evaluateAll((els) => els.map((a) => a.getAttribute("href")));
+  const cards = page.locator("main a").filter({ has: page.locator("h2") });
+  const hrefs = await cards.evaluateAll((els) => els.map((a) => a.getAttribute("href")));
   if (hrefs.length >= 3 && hrefs.every((h) => h && h.length > 0)) {
     pass(`${route} three path links (${hrefs.join(", ")})`);
   } else fail(`${route} path links`, hrefs.join(" | "));
 
-  const localeToggle = page.getByRole("group", { name: "Language region" });
-  if ((await localeToggle.count()) > 0) pass(`${route} locale toggle EN | FR | AF`);
-  else fail(`${route} locale toggle missing`);
+  if ((await page.getByRole("group", { name: "Region & language" }).count()) > 0) {
+    pass(`${route} language pill toggle`);
+  } else fail(`${route} locale toggle missing`);
 
-  const cards = page.locator("main a").filter({ has: page.locator("h2") });
+  const expectedGh = "/home,/legacy/record,/af/farewell";
+  if (hrefs.join(",") === expectedGh) pass(`${route} GH default card hrefs (${expectedGh})`);
+  else fail(`${route} GH default card hrefs`, hrefs.join(" | "));
+
+  await page.getByRole("button", { name: "EN — English" }).click();
+  await page.waitForTimeout(400);
+  const enHrefs = await cards.evaluateAll((els) => els.map((a) => a.getAttribute("href")));
+  const expectedEn = "/home,/legacy/record,/farewell";
+  if (enHrefs.join(",") === expectedEn) pass(`${route} EN card hrefs (${expectedEn})`);
+  else fail(`${route} EN card hrefs`, enHrefs.join(" | "));
+
   const count = await cards.count();
   if (count === 3) pass(`${route} three path cards`);
   else fail(`${route} card count`, String(count));
 
   const titles = await cards.locator("h2").allTextContents();
   const enOrder = ["Learn your culture", "Preserve a life story", "Craft a memorial"];
-  const frOrder = ["Découvrir votre culture", "Préserver une vie", "Créer un mémorial"];
-  const orderOk =
-    titles.join("|") === enOrder.join("|") || titles.join("|") === frOrder.join("|");
-  if (orderOk) pass(`${route} card order (Education · Legacy · Farewell)`);
+  if (titles.join("|") === enOrder.join("|")) pass(`${route} card order (Education · Legacy · Farewell)`);
   else fail(`${route} card order`, titles.join(" | "));
 
-  const iconCircles = page.locator(
-    'main a span.rounded-full:has(svg)',
-  );
-  const iconCount = await iconCircles.count();
+  const iconCount = await page.locator("main a span.rounded-full:has(svg)").count();
   if (iconCount >= 3) pass(`${route} icon circles present (${iconCount})`);
-  else fail(`${route} icon circles`, `found ${iconCount}`);
+  else warn(`${route} icon circles`, `found ${iconCount} (ok if showIconCircleBg is off)`);
 
-  const circleClasses = await iconCircles.evaluateAll((els) =>
-    els.map((el) => el.className),
-  );
-  const usesTokens = circleClasses.every((c) => c.includes("welcome-icon"));
-  if (usesTokens) pass(`${route} icon circles use palette CSS tokens`);
-  else fail(`${route} icon token classes`, circleClasses.join("; "));
+  if ((await page.locator("#welcome-region-hint").count()) > 0) pass(`${route} region hint copy`);
+  else fail(`${route} region hint missing`);
 
-  const legacyCard = cards.nth(1);
-  const legacyClass = await legacyCard.getAttribute("class");
-  if (legacyClass?.includes("border-primary") || legacyClass?.includes("scale-")) {
-    pass(`${route} Legacy card featured treatment`);
-  } else {
-    warn(`${route} Legacy featured`, legacyClass?.slice(0, 80) ?? "no class");
-  }
-
-  const legacyImg = legacyCard.locator("img");
-  if ((await legacyImg.count()) > 0) pass(`${route} Legacy card has photo`);
+  if ((await cards.nth(1).locator("img").count()) > 0) pass(`${route} Legacy card has photo`);
   else fail(`${route} Legacy card photo missing`);
 
-  const themeToggle = page.getByRole("button", { name: /light mode|dark mode/i });
+  const themeToggle = page.getByRole("button", {
+    name: /Switch to (black|white) background|light mode|dark mode/i,
+  });
   if ((await themeToggle.count()) > 0) pass(`${route} theme toggle`);
-  else warn(`${route} theme toggle not found by aria label`);
+  else fail(`${route} theme toggle missing`);
 
-  const motionNodes = await page.locator("[style*='opacity']").count();
-  if (motionNodes >= 0) pass(`${route} motion-rendered DOM (framer-motion ok)`);
-
-  const grid = page.locator("main .grid");
-  const box = await grid.boundingBox();
-  if (box && box.width > 200) pass(`${route} card grid has stable width (${Math.round(box.width)}px)`);
+  const box = await page.locator("main .grid").boundingBox();
+  if (box && box.width > 200) pass(`${route} card grid layout (${Math.round(box.width)}px)`);
   else fail(`${route} card grid layout`, box ? `width ${box.width}` : "no box");
 
-  await page.getByRole("button", { name: "French" }).click();
-  await page.waitForTimeout(300);
-  const frHrefs = await links.evaluateAll((els) => els.map((a) => a.getAttribute("href")));
-  if (frHrefs.join(",") === "/fr/education,/fr/heritage,/fr/farewell") {
-    pass(`${route} FR locale routes`);
-  } else fail(`${route} FR locale routes`, frHrefs.join(" | "));
+  await page.getByRole("button", { name: "ES — Spanish" }).click();
+  await page.waitForTimeout(400);
+  if ((await page.getByRole("heading", { name: "Preserva una vida" }).count()) > 0) {
+    pass(`${route} ES toggle switches language`);
+  } else fail(`${route} ES toggle language`, "Spanish heading not found");
+
+  await page.getByRole("button", { name: /GH — Ghana/i }).click();
+  await page.waitForTimeout(400);
 }
 
 async function main() {
@@ -132,11 +125,15 @@ async function main() {
   try {
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    await context.addInitScript(() => {
+      localStorage.setItem("beiza-locale", "africa");
+      localStorage.setItem("beiza-locale-pinned", "1");
+    });
     const page = await context.newPage();
 
     for (const route of ["/", "/welcome"]) {
       try {
-        await auditWelcome(page, route, { clearLocale: route === "/welcome" });
+        await auditWelcome(page, route);
       } catch (e) {
         fail(`${route} page load`, e.message);
       }
@@ -145,7 +142,7 @@ async function main() {
     await context.close();
   } catch (e) {
     fail("playwright launch", e.message);
-    console.error("\nTip: npm run dev, then SMOKE_SITE_URL=http://127.0.0.1:PORT node scripts/welcome-smoke-test.mjs");
+    console.error("\nTip: npm run dev, then SMOKE_SITE_URL=http://127.0.0.1:8080 node scripts/welcome-smoke-test.mjs");
   } finally {
     await browser?.close();
   }

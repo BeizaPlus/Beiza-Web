@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useRecordFlowOptional } from "@/components/legacy/recordFlowContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { RecordingButton } from "@/components/legacy/RecordingButton";
@@ -19,6 +20,7 @@ import {
 } from "@/lib/prompts";
 import { Loader2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
 const MIN_RECORD_SECONDS = 0;
 
@@ -35,6 +37,10 @@ export type RecordMemoryViewProps = {
   persistViaApi: boolean;
   treeHref: string;
   vaultHref?: string;
+  /** Hero above — hide duplicate page title */
+  belowHero?: boolean;
+  /** Single viewport layout — compact panels, no duplicate prompt */
+  viewportCompact?: boolean;
 };
 
 export function RecordMemoryView({
@@ -44,6 +50,8 @@ export function RecordMemoryView({
   persistViaApi,
   treeHref,
   vaultHref,
+  belowHero = false,
+  viewportCompact = false,
 }: RecordMemoryViewProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -209,6 +217,34 @@ export function RecordMemoryView({
     void startRecording();
   };
 
+  const recordFlow = useRecordFlowOptional();
+
+  useEffect(() => {
+    if (!belowHero || !recordFlow) return;
+    recordFlow.registerBridge({
+      getSnapshot: () => ({
+        phase,
+        isRequestingMic,
+        elapsedSeconds,
+        promptText: prompt.text,
+      }),
+      handleRecordTap,
+    });
+    return () => recordFlow.registerBridge(null);
+  }, [
+    belowHero,
+    recordFlow,
+    phase,
+    isRequestingMic,
+    elapsedSeconds,
+    prompt.text,
+    handleRecordTap,
+  ]);
+
+  useEffect(() => {
+    if (belowHero && recordFlow) recordFlow.syncSnapshot();
+  }, [belowHero, recordFlow, phase, isRequestingMic, elapsedSeconds, prompt.text]);
+
   const resetForAnother = () => {
     blobRef.current = null;
     if (recordedUri) URL.revokeObjectURL(recordedUri);
@@ -277,28 +313,36 @@ export function RecordMemoryView({
 
   const isHoldPhase = phase === "prepare" || phase === "recording";
 
-  return (
-    <div className="space-y-8">
-      <div className="text-center">
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">
-          {phase === "prepare" && "Prepare"}
-          {phase === "recording" && "Recording"}
-          {phase === "upload" && "Upload"}
-          {phase === "seal" && "Sealed"}
-        </p>
-        <h2 className="mt-2 text-xl font-semibold text-white">Record a memory</h2>
-        {circleLabel ? (
-          <p className="mt-1 font-manrope text-xs text-[#666666]">{circleLabel}</p>
-        ) : null}
-      </div>
+  const compact = belowHero || viewportCompact;
 
-      {phase !== "seal" && <LegacyRecordPrompt prompt={prompt.text} />}
+  return (
+    <div
+      className={cn(
+        compact ? "record-memory-viewport flex min-h-0 flex-col gap-2 overflow-y-auto" : "space-y-8",
+      )}
+    >
+      {!compact ? (
+        <div className="text-center">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground">
+            {phase === "prepare" && "Prepare"}
+            {phase === "recording" && "Recording"}
+            {phase === "upload" && "Upload"}
+            {phase === "seal" && "Sealed"}
+          </p>
+          <h2 className="mt-2 text-xl font-semibold text-white">Record a memory</h2>
+          {circleLabel ? (
+            <p className="mt-1 font-manrope text-xs text-[#666666]">{circleLabel}</p>
+          ) : null}
+        </div>
+      ) : null}
+
+      {phase !== "seal" && !compact ? <LegacyRecordPrompt prompt={prompt.text} /> : null}
 
       {phase === "upload" && recordedUri ? (
         <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
       ) : null}
 
-      {isHoldPhase && (
+      {isHoldPhase && !compact ? (
         <div className="flex flex-col items-center gap-4">
           <RecordingButton
             isRecording={phase === "recording"}
@@ -325,11 +369,28 @@ export function RecordMemoryView({
             </Button>
           ) : null}
         </div>
-      )}
+      ) : null}
+
+      {compact && phase === "prepare" ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          className={cn("h-8 gap-1.5 text-[11px] text-white/60 hover:text-white", "self-end")}
+          disabled={loadingPrompts || isRequestingMic}
+          onClick={() => setPrompt(pickRandomStoryPrompt(prompt.id))}
+        >
+          {loadingPrompts ? (
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            <Sparkles className="h-3.5 w-3.5" />
+          )}
+          New prompt
+        </Button>
+      ) : null}
 
       {phase === "upload" && (
-        <div className="space-y-4">
-          <p className="text-center text-sm text-[#666666]">
+        <div className={cn(compact ? "space-y-2 rounded-xl border border-white/15 bg-black/50 p-3 backdrop-blur-sm" : "space-y-4")}>
+          <p className={cn("text-[#666666]", compact ? "text-xs text-white/70" : "text-center text-sm")}>
             {durationSeconds}s captured — ready to preserve
           </p>
           <Input
@@ -350,8 +411,13 @@ export function RecordMemoryView({
       )}
 
       {phase === "seal" && (
-        <div className="space-y-6 text-center">
-          <div className="rounded-xl border border-[#E6A817]/40 bg-[#1e1800]/50 p-6">
+        <div className={cn(compact ? "space-y-2 text-center" : "space-y-6 text-center")}>
+          <div
+            className={cn(
+              "rounded-xl border border-[#E6A817]/40 bg-[#1e1800]/50",
+              compact ? "p-3" : "p-6",
+            )}
+          >
             <h3 className="text-lg font-semibold text-[#E6A817]">Memory preserved</h3>
             <p className="mt-2 text-sm text-[#666666]">
               Keep their voice forever. This fragment is now part of their tree biography.

@@ -16,7 +16,9 @@
     "smoke:full": "node scripts/full-smoke-test.mjs",
     "smoke:legacy": "node scripts/legacy-smoke-test.mjs",
     "smoke:screenshots": "node scripts/capture-smoke-family-tree.mjs",
-    "smoke:tree-connect": "node scripts/capture-tree-connect-smoke.mjs"
+    "smoke:tree-connect": "node scripts/capture-tree-connect-smoke.mjs",
+    "links:check": "node scripts/validate-link-mastersheet.mjs",
+    "smoke:record": "node scripts/capture-record-area-smoke.mjs"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.0.0",

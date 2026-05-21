@@ -5,11 +5,13 @@ type RecordingButtonProps = {
   isRecording: boolean;
   disabled?: boolean;
   onPress: () => void;
+  /** Tighter control for viewport-fitted record station */
+  compact?: boolean;
 };
 
-export function RecordingButton({ isRecording, disabled, onPress }: RecordingButtonProps) {
+export function RecordingButton({ isRecording, disabled, onPress, compact = false }: RecordingButtonProps) {
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className={cn("flex flex-col items-center", compact ? "gap-1.5" : "gap-3")}>
       <button
         type="button"
         disabled={disabled}
@@ -17,7 +19,8 @@ export function RecordingButton({ isRecording, disabled, onPress }: RecordingBut
         aria-label={isRecording ? "Stop recording" : "Tap to record a memory"}
         aria-pressed={isRecording}
         className={cn(
-          "relative flex h-28 w-28 items-center justify-center rounded-full border-4 transition-all",
+          "relative flex items-center justify-center rounded-full border-4 transition-all",
+          compact ? "h-20 w-20 border-[3px]" : "h-28 w-28",
           disabled && "cursor-not-allowed opacity-50",
           isRecording
             ? "border-red-500/60 bg-[#1a0000] text-red-400 ring-4 ring-red-500/40 animate-pulse"
@@ -25,12 +28,18 @@ export function RecordingButton({ isRecording, disabled, onPress }: RecordingBut
         )}
       >
         {isRecording ? (
-          <Square className="h-9 w-9 fill-current pointer-events-none" strokeWidth={0} />
+          <Square
+            className={cn("fill-current pointer-events-none", compact ? "h-7 w-7" : "h-9 w-9")}
+            strokeWidth={0}
+          />
         ) : (
-          <Mic className="h-10 w-10 pointer-events-none" strokeWidth={1.5} />
+          <Mic
+            className={cn("pointer-events-none", compact ? "h-8 w-8" : "h-10 w-10")}
+            strokeWidth={1.5}
+          />
         )}
       </button>
-      <p className="text-center text-sm text-muted-foreground">
+      <p className={cn("text-center text-muted-foreground", compact ? "text-[11px]" : "text-sm")}>
         {disabled && !isRecording
           ? "Starting microphone…"
           : isRecording

@@ -94,14 +94,14 @@ export function FloatingStudioShell({
       className="fixed z-[200] w-[min(100vw-2rem,22rem)] max-h-[min(85vh,calc(100vh-2rem))] overflow-y-auto rounded-xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur-md"
       style={{ left: pos.x, top: pos.y }}
     >
-      <div
-        className="mb-3 flex cursor-grab select-none items-center justify-between gap-2 active:cursor-grabbing"
-        onPointerDown={onDragStart}
-        onPointerMove={onDragMove}
-        onPointerUp={onDragEnd}
-        onPointerCancel={onDragEnd}
-      >
-        <div className="flex min-w-0 items-center gap-1.5">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <div
+          className="flex min-w-0 flex-1 cursor-grab select-none items-center gap-1.5 active:cursor-grabbing"
+          onPointerDown={onDragStart}
+          onPointerMove={onDragMove}
+          onPointerUp={onDragEnd}
+          onPointerCancel={onDragEnd}
+        >
           <GripVertical className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Layout studio (local) · drag to move
@@ -109,8 +109,12 @@ export function FloatingStudioShell({
         </div>
         <button
           type="button"
-          onClick={onClose}
-          className="shrink-0 text-xs text-muted-foreground hover:text-foreground"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          className="shrink-0 rounded px-1 text-xs text-muted-foreground hover:text-foreground"
         >
           Hide
         </button>

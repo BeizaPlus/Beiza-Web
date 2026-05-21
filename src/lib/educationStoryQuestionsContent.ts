@@ -1,8 +1,10 @@
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
+
 export const STORY_QUESTIONS_SEO = {
   title: "52 Questions to Unlock Your Family's Story | Beiza",
   description:
     "The stories your family carries are irreplaceable. These 52 questions help you capture them before they're gone.",
-  canonical: "https://www.beizaplus.com/education/story-questions",
+  canonical: `https://www.beizaplus.com${BEIZA_LINKS.education.storyQuestions}`,
   ogImage: "/assets/legacy-hero.jpg",
 };
 
@@ -124,7 +126,8 @@ export const ARTICLE_FAQ = [
 ];
 
 export const RELATED_ARTICLES = [
-  { title: "What is an Adinkra symbol?", href: "/education" },
-  { title: "How to record your parent's life story", href: "/heritage" },
-  { title: "The families history never wrote down", href: "/events" },
+  { title: "Build intentional legacy", href: BEIZA_LINKS.home.intentionalLegacy },
+  { title: "What is an Adinkra symbol?", href: BEIZA_LINKS.education.hub },
+  { title: "How to record your parent's life story", href: BEIZA_LINKS.legacy.heritage },
+  { title: "The families history never wrote down", href: BEIZA_LINKS.marketing.events },
 ];

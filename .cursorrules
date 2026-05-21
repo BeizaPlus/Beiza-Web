@@ -127,3 +127,8 @@ Three distinct layers; the Patterns tab synthesizes across all of them:
 - Full bleed (100vw) — no max-width on the outer hero shell
 - Nav: 100% width, padding 0 48px (`px-12`), no max-width wrapper
 - Hero copy block: max-width 680px, left-aligned, `md:pl-20` — do not change hero image asset or studio frame values
+
+### Link mastersheet (product routes)
+- **Source of truth:** `src/lib/beizaMasterLinks.ts` + `docs/LINK-MASTERSHEET.md`
+- **Never stray:** Welcome Education card → `/home` (Build Intentional Legacy). Welcome Legacy card → `/legacy/record`. Farewell → locale path from mastersheet.
+- Import `BEIZA_LINKS` / `getWelcomeCardHref` for new links; run `npm run links:check` after route changes.

@@ -1,23 +1,24 @@
 import type { NavigationLink, FooterLink } from "@/hooks/usePublicContent";
+import { BEIZA_LINKS, BEIZA_REDIRECTS } from "@/lib/beizaMasterLinks";
 
 export const FALLBACK_NAVIGATION_LINKS: NavigationLink[] = [
-  { id: "fallback-nav-live", label: "Live Now", href: "/", location: "primary", displayOrder: 1 },
-  { id: "fallback-nav-events", label: "Events", href: "/events", location: "primary", displayOrder: 2 },
-  { id: "fallback-nav-gallery", label: "Gallery", href: "/gallery", location: "primary", displayOrder: 3 },
-  { id: "fallback-nav-legacy", label: "Legacy", href: "/legacy", location: "primary", displayOrder: 4 },
-  // { id: "fallback-nav-memoirs", label: "Memoirs", href: "/memoirs", location: "primary", displayOrder: 5 },
-  { id: "fallback-nav-blog", label: "Blog", href: "/blog", location: "primary", displayOrder: 5 },
-  { id: "fallback-nav-contact", label: "Contact", href: "/contact", location: "primary", displayOrder: 5, isCta: true },
+  { id: "fallback-nav-live", label: "Live Now", href: BEIZA_LINKS.welcome.gate, location: "primary", displayOrder: 1 },
+  { id: "fallback-nav-events", label: "Events", href: BEIZA_LINKS.marketing.events, location: "primary", displayOrder: 2 },
+  { id: "fallback-nav-gallery", label: "Gallery", href: BEIZA_REDIRECTS.gallery.from, location: "primary", displayOrder: 3 },
+  { id: "fallback-nav-legacy", label: "Legacy", href: BEIZA_LINKS.legacy.app, location: "primary", displayOrder: 4 },
+  // { id: "fallback-nav-memoirs", label: "Memoirs", href: BEIZA_LINKS.marketing.memoirs, location: "primary", displayOrder: 5 },
+  { id: "fallback-nav-blog", label: "Blog", href: BEIZA_LINKS.marketing.blog, location: "primary", displayOrder: 5 },
+  { id: "fallback-nav-contact", label: "Contact", href: BEIZA_LINKS.marketing.contact, location: "primary", displayOrder: 5, isCta: true },
 ];
 
 export const FALLBACK_FOOTER_LINKS: FooterLink[] = [
   { id: "fallback-footer-about", label: "About Us", href: "/#about", groupLabel: "Sections", displayOrder: 1 },
-  { id: "fallback-footer-events", label: "Events", href: "/events", groupLabel: "Sections", displayOrder: 2 },
-  { id: "fallback-footer-gallery", label: "Gallery", href: "/gallery", groupLabel: "Sections", displayOrder: 3 },
-  { id: "fallback-footer-legacy", label: "Legacy Vault", href: "/legacy", groupLabel: "Sections", displayOrder: 4 },
-  { id: "fallback-footer-memoirs", label: "Memoirs", href: "/memoirs", groupLabel: "Sections", displayOrder: 5 },
-  { id: "fallback-footer-blog", label: "Blog", href: "/blog", groupLabel: "Sections", displayOrder: 6 },
-  { id: "fallback-footer-contact", label: "Contact", href: "/contact#hero", groupLabel: "Sections", displayOrder: 7 },
+  { id: "fallback-footer-events", label: "Events", href: BEIZA_LINKS.marketing.events, groupLabel: "Sections", displayOrder: 2 },
+  { id: "fallback-footer-gallery", label: "Gallery", href: BEIZA_REDIRECTS.gallery.from, groupLabel: "Sections", displayOrder: 3 },
+  { id: "fallback-footer-legacy", label: "Legacy Vault", href: BEIZA_LINKS.legacy.app, groupLabel: "Sections", displayOrder: 4 },
+  { id: "fallback-footer-memoirs", label: "Memoirs", href: BEIZA_LINKS.marketing.memoirs, groupLabel: "Sections", displayOrder: 5 },
+  { id: "fallback-footer-blog", label: "Blog", href: BEIZA_LINKS.marketing.blog, groupLabel: "Sections", displayOrder: 6 },
+  { id: "fallback-footer-contact", label: "Contact", href: BEIZA_LINKS.marketing.contactHero, groupLabel: "Sections", displayOrder: 7 },
 ];
 
 export const FALLBACK_SITE_SETTINGS = {
@@ -29,7 +30,7 @@ export const FALLBACK_SITE_SETTINGS = {
   heroSubheading:
     "It has never been about loss — it has always been about legacy. Every story, every voice, every design is our way of saying: their story, kept forever.",
   heroCtaLabel: "Start Your Legacy",
-  heroCtaHref: "/legacy",
+  heroCtaHref: BEIZA_LINKS.legacy.app,
   heroBackgroundImage: "/images/adinkra-hands-hero.png",
   heroBackgroundAlt: "Adinkra heritage — hands holding legacy",
   heroReviews: "100+ Families Preserved",

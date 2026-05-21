@@ -27,7 +27,7 @@ type LegacyNavIconProps = {
   className?: string;
 };
 
-/** Phosphor icons matching sun-stories tab/sidebar nav (House, Microphone, Vault, CardsThree, UsersThree). */
+/** Phosphor SVG icons for the signature Legacy tab bar */
 export function LegacyNavIcon({ name, active = false, className }: LegacyNavIconProps) {
   const markup = active ? ICONS[name].duotone : ICONS[name].regular;
 
@@ -35,7 +35,7 @@ export function LegacyNavIcon({ name, active = false, className }: LegacyNavIcon
     <span
       className={cn(
         "inline-flex h-6 w-6 shrink-0 [&>svg]:h-full [&>svg]:w-full",
-        active ? "text-primary" : "text-muted-foreground",
+        active ? "text-black" : "text-white/55",
         className,
       )}
       aria-hidden

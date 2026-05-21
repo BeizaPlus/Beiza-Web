@@ -58,6 +58,52 @@ export function FlagIcon({ country, size = 20, className }: FlagIconProps) {
       </svg>
     ),
 
+    EN: (
+      <svg
+        width={size}
+        height={size * 0.667}
+        viewBox="0 0 30 20"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="United States flag"
+        className={className}
+      >
+        <rect width="30" height="20" fill="#B22234" />
+        {[0, 2, 4, 6, 8, 10, 12].map((y) => (
+          <rect key={y} width="30" height="1.54" y={y * 1.54} fill="#fff" />
+        ))}
+        <rect width="12" height="10.8" fill="#3C3B6E" />
+      </svg>
+    ),
+
+    CN: (
+      <svg
+        width={size}
+        height={size * 0.667}
+        viewBox="0 0 30 20"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="China flag"
+        className={className}
+      >
+        <rect width="30" height="20" fill="#DE2910" />
+        <polygon
+          points="8,4 9.2,7.4 12.8,7.4 9.8,9.5 11,13 8,10.8 5,13 6.2,9.5 3.2,7.4 6.8,7.4"
+          fill="#FFDE00"
+        />
+        {[
+          [14, 2],
+          [16, 4],
+          [16, 7],
+          [14, 9],
+        ].map(([cx, cy], i) => (
+          <polygon
+            key={i}
+            points={`${cx},${cy} ${cx + 0.6},${cy + 1.1} ${cx + 1.4},${cy + 1.1} ${cx + 0.8},${cy + 1.7} ${cx + 1},${cy + 2.6} ${cx},${cy + 2.1} ${cx - 1},${cy + 2.6} ${cx - 0.8},${cy + 1.7} ${cx - 1.4},${cy + 1.1} ${cx - 0.6},${cy + 1.1}`}
+            fill="#FFDE00"
+          />
+        ))}
+      </svg>
+    ),
+
     GLOBAL: (
       <svg
         width={size}
