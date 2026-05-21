@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, Feather, GraduationCap } from "lucide-react";
 import { WelcomePathCard } from "@/components/welcome/WelcomePathCard";
-import { welcomePathIconCircleClass } from "@/lib/welcomePathIconStyles";
+import { welcomePathIconHoverBgClass, welcomePathIconHoverFgClass } from "@/lib/welcomePathIconStyles";
 import {
   getStoredWelcomeTheme,
   storeWelcomeTheme,
@@ -11,53 +11,104 @@ import {
 } from "@/components/welcome/WelcomeThemeToggle";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
+import { StudioSlider } from "@/components/dev/StudioSlider";
+import { BRAND_IMAGES } from "@/lib/brandImages";
 import { cn } from "@/lib/utils";
 
 const BEIZA_LOGO = "/Beiza_White.svg";
-const BEIZA_MASCOT = "/Beiza_Mascot.svg";
-const LEGACY_CARD_IMAGE = "/assets/welcome-legacy-card.png";
+/** Same mascot head as legacy nav (`BeizaLogoLink`, `LegacyBeizaMascot`) */
+const BEIZA_MASCOT = "/Beiza-head.png";
+const LEGACY_CARD_IMAGE = BRAND_IMAGES.welcomeLegacyLifeStory;
+/** Same hero as https://www.beizaplus.com/home */
+const HOME_HERO_IMAGE = BRAND_IMAGES.homepageHero;
+/** Same hero as https://www.beizaplus.com/farewell */
+const FAREWELL_HERO_IMAGE = BRAND_IMAGES.heritageHero;
 
 /* ── Studio persistence ── */
 const STUDIO_KEY = "welcome-gate-studio";
 
-type CardStudio = { imageZoom: number; imageOffsetX: number; imageOffsetY: number; iconOffsetY: number };
+type CardStudio = { imageZoom: number; imageOffsetX: number; imageOffsetY: number };
 type StudioState = {
   legacy: CardStudio;
   education: CardStudio;
   farewell: CardStudio;
+  /** Shared vertical position for all card icons (0–100%, top → bottom) */
+  iconOffsetY: number;
+  /** Lift bottom title/copy block upward (px) */
+  copyLift: number;
+  showIconCircleBg: boolean;
   logoScale: number;
   useMascot: boolean;
+  /** Studio: cards are not links — safe for drag-to-pan */
+  lockCardLinks: boolean;
 };
 
 const DEFAULT_STUDIO: StudioState = {
-  legacy:    { imageZoom: 1.36, imageOffsetX: 58, imageOffsetY: 100, iconOffsetY: 200 },
-  education: { imageZoom: 1,    imageOffsetX: 50, imageOffsetY: 50,  iconOffsetY: 0   },
-  farewell:  { imageZoom: 1,    imageOffsetX: 50, imageOffsetY: 50,  iconOffsetY: 0   },
-  logoScale: 2.05,
-  useMascot: false,
+  legacy: {
+    imageZoom: 1.59,
+    imageOffsetX: 35.27901785714286,
+    imageOffsetY: 18.06791125541125,
+  },
+  education: {
+    imageZoom: 1.92,
+    imageOffsetX: 42.545948616600796,
+    imageOffsetY: 39.01103425559947,
+  },
+  farewell: {
+    imageZoom: 2.3,
+    imageOffsetX: 51.12274459031535,
+    imageOffsetY: 44.711538461538446,
+  },
+  iconOffsetY: 92,
+  copyLift: 38,
+  showIconCircleBg: false,
+  logoScale: 2.25,
+  useMascot: true,
+  lockCardLinks: true,
 };
 
+/** Old studio stored iconOffsetY as px (0–200); map to 0–100% */
+function migrateIconOffsetY(value: number): number {
+  if (value > 100) return Math.min(100, Math.round((value / 200) * 100));
+  if (value < 0) return Math.max(0, Math.round(((value + 200) / 400) * 100));
+  return value;
+}
+
+function normalizeCardStudio(
+  card: (Partial<CardStudio> & { iconOffsetY?: number }) | undefined,
+  fallback: CardStudio,
+): CardStudio {
+  const { iconOffsetY: _drop, ...rest } = card ?? {};
+  return { ...fallback, ...rest };
+}
+
 function loadStudio(): StudioState {
-  try { return { ...DEFAULT_STUDIO, ...JSON.parse(localStorage.getItem(STUDIO_KEY) ?? "{}") }; }
-  catch { return DEFAULT_STUDIO; }
+  try {
+    const raw = JSON.parse(localStorage.getItem(STUDIO_KEY) ?? "{}") as Partial<StudioState> & {
+      legacy?: Partial<CardStudio> & { iconOffsetY?: number };
+      education?: Partial<CardStudio> & { iconOffsetY?: number };
+      farewell?: Partial<CardStudio> & { iconOffsetY?: number };
+    };
+    const legacyIcon = raw.legacy?.iconOffsetY;
+    const iconOffsetY = migrateIconOffsetY(
+      raw.iconOffsetY ?? legacyIcon ?? raw.education?.iconOffsetY ?? raw.farewell?.iconOffsetY ?? DEFAULT_STUDIO.iconOffsetY,
+    );
+    return {
+      ...DEFAULT_STUDIO,
+      ...raw,
+      iconOffsetY,
+      copyLift: typeof raw.copyLift === "number" ? raw.copyLift : DEFAULT_STUDIO.copyLift,
+      showIconCircleBg: raw.showIconCircleBg ?? DEFAULT_STUDIO.showIconCircleBg,
+      lockCardLinks: raw.lockCardLinks ?? DEFAULT_STUDIO.lockCardLinks,
+      legacy: normalizeCardStudio(raw.legacy, DEFAULT_STUDIO.legacy),
+      education: normalizeCardStudio(raw.education, DEFAULT_STUDIO.education),
+      farewell: normalizeCardStudio(raw.farewell, DEFAULT_STUDIO.farewell),
+    };
+  } catch {
+    return DEFAULT_STUDIO;
+  }
 }
 function saveStudio(s: StudioState) { localStorage.setItem(STUDIO_KEY, JSON.stringify(s)); }
-
-/* ── Slider ── */
-function Slider({ label, value, min, max, step = 0.01, onChange }: {
-  label: string; value: number; min: number; max: number; step?: number; onChange: (v: number) => void;
-}) {
-  return (
-    <div className="space-y-1">
-      <div className="flex justify-between text-[10px] text-muted-foreground">
-        <span>{label}</span><span>{Number(value).toFixed(step < 1 ? 2 : 0)}</span>
-      </div>
-      <input type="range" min={min} max={max} step={step} value={value}
-        onChange={e => onChange(Number(e.target.value))}
-        className="w-full accent-primary" />
-    </div>
-  );
-}
 
 /* ── Studio panel ── */
 function WelcomeStudioPanel({ studio, onChange }: { studio: StudioState; onChange: (s: StudioState) => void }) {
@@ -96,12 +147,27 @@ function WelcomeStudioPanel({ studio, onChange }: { studio: StudioState; onChang
         {editText ? "✎ Click any text to edit" : "Edit text"}
       </button>
 
-      {/* Global: logo */}
+      {/* Global: logo + all icons */}
       <div className="mb-4 space-y-3 border-b border-border pb-4">
-        <Slider label="Logo scale" value={studio.logoScale} min={0.5} max={3} step={0.05} onChange={v => patchGlobal({ logoScale: v })} />
+        <StudioSlider compact label="Logo scale" value={studio.logoScale} defaultValue={DEFAULT_STUDIO.logoScale}
+          min={0.5} max={3} step={0.05} onChange={v => patchGlobal({ logoScale: v })} />
+        <StudioSlider compact label="All icons top → bottom (%)" value={studio.iconOffsetY} defaultValue={DEFAULT_STUDIO.iconOffsetY}
+          min={0} max={100} step={1} onChange={v => patchGlobal({ iconOffsetY: v })} />
+        <StudioSlider compact label="Lift copy ↑ (px)" value={studio.copyLift} defaultValue={DEFAULT_STUDIO.copyLift}
+          min={0} max={80} step={1} onChange={v => patchGlobal({ copyLift: v })} />
+        <label className="flex cursor-pointer items-center justify-between text-[10px] text-muted-foreground">
+          Icon circle background
+          <input type="checkbox" checked={studio.showIconCircleBg}
+            onChange={e => patchGlobal({ showIconCircleBg: e.target.checked })} className="accent-primary" />
+        </label>
         <label className="flex cursor-pointer items-center justify-between text-[10px] text-muted-foreground">
           Use mascot head
           <input type="checkbox" checked={studio.useMascot} onChange={e => patchGlobal({ useMascot: e.target.checked })} className="accent-primary" />
+        </label>
+        <label className="flex cursor-pointer items-center justify-between text-[10px] text-muted-foreground">
+          Lock cards (no navigation)
+          <input type="checkbox" checked={studio.lockCardLinks}
+            onChange={e => patchGlobal({ lockCardLinks: e.target.checked })} className="accent-primary" />
         </label>
       </div>
 
@@ -116,11 +182,17 @@ function WelcomeStudioPanel({ studio, onChange }: { studio: StudioState; onChang
         ))}
       </div>
 
+      <p className="mb-2 text-[9px] leading-snug text-muted-foreground">
+        Drag any card photo to pan (sliders stay in sync). Lock cards stops navigation only.
+      </p>
+
       <div className="space-y-3">
-        <Slider label="Zoom" value={s.imageZoom} min={1} max={2.5} step={0.01} onChange={v => patchCard({ imageZoom: v })} />
-        <Slider label="← Left / Right →" value={s.imageOffsetX} min={0} max={100} step={1} onChange={v => patchCard({ imageOffsetX: v })} />
-        <Slider label="↑ Top / Bottom ↓" value={s.imageOffsetY} min={0} max={100} step={1} onChange={v => patchCard({ imageOffsetY: v })} />
-        <Slider label="Icon ↑ up / down ↓" value={s.iconOffsetY} min={-200} max={200} step={1} onChange={v => patchCard({ iconOffsetY: v })} />
+        <StudioSlider compact label="Zoom" value={s.imageZoom} defaultValue={DEFAULT_STUDIO[card].imageZoom}
+          min={1} max={2.5} step={0.01} onChange={v => patchCard({ imageZoom: v })} />
+        <StudioSlider compact label="← Left / Right →" value={s.imageOffsetX} defaultValue={DEFAULT_STUDIO[card].imageOffsetX}
+          min={0} max={100} step={1} onChange={v => patchCard({ imageOffsetX: v })} />
+        <StudioSlider compact label="↑ Top / Bottom ↓" value={s.imageOffsetY} defaultValue={DEFAULT_STUDIO[card].imageOffsetY}
+          min={0} max={100} step={1} onChange={v => patchCard({ imageOffsetY: v })} />
       </div>
 
       <button onClick={exportJson}
@@ -139,14 +211,16 @@ const subtitleVariants = { hidden: { opacity: 0 }, show: { opacity: 1, transitio
 
 const PATHS = [
   {
-    to: "/home",
+    to: "/education",
     label: "Education",
     title: "Learn your culture",
     subtitle: "Discover Adinkra symbols and the living wisdom your people carried across generations.",
     meta: "Explore",
     icon: GraduationCap,
-    iconCircleClass: welcomePathIconCircleClass.education,
-    backgroundGradient: "linear-gradient(165deg, #3d3428 0%, #1a1612 55%, #0a0908 100%)",
+    iconHoverFgClass: welcomePathIconHoverFgClass.education,
+    iconHoverBgClass: welcomePathIconHoverBgClass.education,
+    backgroundImage: HOME_HERO_IMAGE,
+    backgroundImageAlt: "Hands holding Adinkra symbol blocks",
   },
   {
     to: "/legacy/record",
@@ -155,10 +229,10 @@ const PATHS = [
     subtitle: "Capture voices, build your family tree, and turn memories into a memoir that lasts forever.",
     meta: "Start here",
     icon: BookOpen,
-    iconCircleClass: welcomePathIconCircleClass.legacy,
+    iconHoverFgClass: welcomePathIconHoverFgClass.legacy,
+    iconHoverBgClass: welcomePathIconHoverBgClass.legacy,
     backgroundImage: LEGACY_CARD_IMAGE,
     backgroundImageAlt: "Hands holding a My Life Story memoir book",
-    featured: true,
   },
   {
     to: "/farewell",
@@ -167,23 +241,25 @@ const PATHS = [
     subtitle: "Memorial art, legacy vessels, and caskets crafted to honor a life with dignity and beauty.",
     meta: "Learn more",
     icon: Feather,
-    iconCircleClass: welcomePathIconCircleClass.farewell,
-    backgroundGradient: "linear-gradient(165deg, #1e2838 0%, #0c1018 55%, #050608 100%)",
+    iconHoverFgClass: welcomePathIconHoverFgClass.farewell,
+    iconHoverBgClass: welcomePathIconHoverBgClass.farewell,
+    backgroundImage: FAREWELL_HERO_IMAGE,
+    backgroundImageAlt: "Elder in red kente before Gye Nyame carving",
   },
 ] as const;
 
 export default function WelcomeGate() {
-  const [theme, setTheme] = useState<WelcomeTheme>("dark");
+  const [theme, setTheme] = useState<WelcomeTheme>("light");
   const [studio, setStudio] = useState<StudioState>(DEFAULT_STUDIO);
   const studioEnabled = isLayoutStudioEnabled();
 
   useEffect(() => {
     setTheme(getStoredWelcomeTheme());
-    if (studioEnabled) setStudio(loadStudio());
-  }, [studioEnabled]);
+    setStudio(loadStudio());
+  }, []);
 
   const isLight = theme === "light";
-  const logoSrc = studio.useMascot ? BEIZA_MASCOT : BEIZA_LOGO;
+  const logoHeightRem = 2.5 * studio.logoScale;
 
   return (
     <div className={cn("flex min-h-screen flex-col transition-colors duration-300",
@@ -196,12 +272,22 @@ export default function WelcomeGate() {
         <motion.header className="mx-auto flex w-full max-w-4xl flex-col items-center text-center"
           initial="hidden" animate="show" variants={{ hidden: {}, show: {} }}>
           <motion.div variants={heroVariants} className="flex flex-col items-center">
-            <img
-              src={logoSrc}
-              alt="Beiza"
-              className={cn("mx-auto mb-2 w-auto", isLight && "invert")}
-              style={{ height: `${2.5 * studio.logoScale}rem` }}
-            />
+            {studio.useMascot ? (
+              <img
+                src={BEIZA_MASCOT}
+                alt=""
+                aria-hidden
+                className="mx-auto mb-2 object-contain"
+                style={{ height: `${logoHeightRem}rem`, width: `${logoHeightRem}rem` }}
+              />
+            ) : (
+              <img
+                src={BEIZA_LOGO}
+                alt="Beiza"
+                className={cn("mx-auto mb-2 w-auto", isLight && "invert")}
+                style={{ height: `${logoHeightRem}rem` }}
+              />
+            )}
             <p className={cn("text-[10px] font-medium uppercase tracking-[0.32em]",
               isLight ? "text-[#1a1816]/55" : "text-white/60")}>
               Stories of the people we love
@@ -221,13 +307,33 @@ export default function WelcomeGate() {
             {PATHS.map((path) => {
               const cardKey = path.label.toLowerCase() as "education" | "legacy" | "farewell";
               const s = studio[cardKey] ?? DEFAULT_STUDIO.legacy;
+              const patchCardImage = (partial: Partial<CardStudio>, persist = true) => {
+                const next = { ...studio, [cardKey]: { ...studio[cardKey], ...partial } };
+                setStudio(next);
+                if (persist) saveStudio(next);
+              };
               return (
                 <motion.div key={path.to} variants={cardVariants} className="flex h-full min-w-0 w-full">
                   <WelcomePathCard {...path}
                     imageZoom={s.imageZoom}
                     imageOffsetX={s.imageOffsetX}
                     imageOffsetY={s.imageOffsetY}
-                    iconOffsetY={s.iconOffsetY}
+                    iconOffsetY={studio.iconOffsetY}
+                    copyLift={studio.copyLift}
+                    showIconCircleBg={studio.showIconCircleBg}
+                    disableNavigation={studioEnabled && studio.lockCardLinks}
+                    studioImageDrag={studioEnabled}
+                    onImagePositionLive={
+                      studioEnabled
+                        ? ({ imageOffsetX, imageOffsetY }) =>
+                            patchCardImage({ imageOffsetX, imageOffsetY }, false)
+                        : undefined
+                    }
+                    onImagePositionCommit={
+                      studioEnabled
+                        ? ({ imageOffsetX, imageOffsetY }) => patchCardImage({ imageOffsetX, imageOffsetY })
+                        : undefined
+                    }
                   />
                 </motion.div>
               );

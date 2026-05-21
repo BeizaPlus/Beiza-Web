@@ -4,11 +4,13 @@ import { Footer } from "@/components/Footer";
 import { ADINKRA_SYMBOLS } from "@/lib/adinkra";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { marketingContainer, marketingSection } from "@/lib/brandUi";
+import { PageLayoutStudioZone } from "@/components/dev/PageLayoutStudioZone";
 
 export default function EducationPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navigation />
+      <PageLayoutStudioZone pageId="education" applyMaxWidth={false} copyLiftTarget="children">
       <main>
         <section className={marketingSection}>
           <div className={`${marketingContainer} space-y-6 text-center`}>
@@ -66,6 +68,7 @@ export default function EducationPage() {
           </p>
         </section>
       </main>
+      </PageLayoutStudioZone>
       <Footer />
     </div>
   );

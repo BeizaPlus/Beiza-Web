@@ -6,8 +6,10 @@ const STORAGE_KEY = "beiza-welcome-theme";
 export type WelcomeTheme = "dark" | "light";
 
 export function getStoredWelcomeTheme(): WelcomeTheme {
-  if (typeof window === "undefined") return "dark";
-  return localStorage.getItem(STORAGE_KEY) === "light" ? "light" : "dark";
+  if (typeof window === "undefined") return "light";
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored === "dark" || stored === "light") return stored;
+  return "light";
 }
 
 export function storeWelcomeTheme(theme: WelcomeTheme) {
@@ -32,7 +34,8 @@ export function WelcomeThemeToggle({ theme, onThemeChange }: WelcomeThemeToggleP
           ? "border-black/15 bg-white text-black hover:bg-black/5"
           : "border-white/25 bg-white/5 text-white hover:bg-white/10",
       )}
-      aria-label={isLight ? "Switch to dark mode" : "Switch to light mode"}
+      aria-label={isLight ? "Switch to black background" : "Switch to white background"}
+      title={isLight ? "Black background" : "White background"}
     >
       {isLight ? <Moon className="h-4 w-4" strokeWidth={1.5} /> : <Sun className="h-4 w-4" strokeWidth={1.5} />}
     </button>

@@ -141,6 +141,7 @@ function FamilyTreeCanvasInner({
 }: FamilyTreeCanvasProps) {
   const { fitView, getNodes } = useReactFlow();
   const { isLight } = useTreeTheme();
+  const treeDotColor = isLight ? "#d4d3cb" : "#383838";
   const { toast } = useToast();
   const [treeEdgeRows, setTreeEdgeRows] = useState<TreeEdgeRow[]>(initialTreeEdges);
   const [positionOverrides, setPositionOverrides] = useState<Map<string, { x: number; y: number }>>(
@@ -1001,14 +1002,18 @@ function FamilyTreeCanvasInner({
         proOptions={{ hideAttribution: true }}
         minZoom={0.1}
         maxZoom={2.5}
-        style={{ width: "100vw", height: canvasHeight }}
+        style={{
+          width: "100vw",
+          height: canvasHeight,
+          ["--xy-background-pattern-dots-color" as string]: treeDotColor,
+        }}
         className={isConnecting ? "family-tree-flow connecting" : "family-tree-flow"}
       >
         <Background
           variant={BackgroundVariant.Dots}
-          gap={40}
-          size={1}
-          color={isLight ? "#d4d3cb" : "#1a1a1a"}
+          gap={28}
+          size={1.25}
+          color={treeDotColor}
         />
         <TreeFlowControls
           onFullscreenChange={onFullscreenChange}

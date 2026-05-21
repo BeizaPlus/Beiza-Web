@@ -46,12 +46,12 @@
     --accent-mint: 129 6.9% 37.1%;
 
     /* Welcome gate path icon circles (derived from palette above) */
-    --welcome-icon-legacy-bg: var(--accent-mint) / 0.22;
-    --welcome-icon-legacy-fg: var(--accent-mint);
+    --welcome-icon-legacy-bg: var(--primary) / 0.22;
+    --welcome-icon-legacy-fg: var(--primary);
     --welcome-icon-education-bg: var(--primary) / 0.22;
     --welcome-icon-education-fg: var(--primary);
-    --welcome-icon-farewell-bg: var(--secondary-foreground) / 0.16;
-    --welcome-icon-farewell-fg: var(--muted-foreground);
+    --welcome-icon-farewell-bg: var(--primary) / 0.22;
+    --welcome-icon-farewell-fg: var(--primary);
 
     --text-subtle: 0 0% 88.2%;
     --glass-border: 0 0% 18.4%;
@@ -389,7 +389,7 @@
     --tree-text-subtle: #555555;
     --tree-text-faint: #666666;
     --tree-header-bg: rgba(10, 10, 10, 0.92);
-    --tree-dot: #1a1a1a;
+    --tree-dot: #383838;
     --tree-control-bg: #111111;
     --tree-control-btn: #1a1a1a;
     --tree-control-btn-hover: #222222;
@@ -534,6 +534,14 @@
 
   .family-tree-flow .react-flow__background {
     background-color: var(--tree-canvas, #080808);
+  }
+
+  .tree-theme-dark .family-tree-flow {
+    --xy-background-pattern-dots-color: var(--tree-dot, #383838);
+  }
+
+  .tree-theme-light .family-tree-flow {
+    --xy-background-pattern-dots-color: var(--tree-dot, #d4d3cb);
   }
 
   .family-tree-flow .react-flow__controls-button {
@@ -876,4 +884,9 @@
   [data-draggable].is-dragging * {
     pointer-events: none;
   }
+}
+
+/* Legacy layout studio — tab label lift */
+.legacy-nav-studio .legacy-nav-tab-label {
+  transform: translateY(calc(-1 * var(--legacy-nav-label-lift, 0px)));
 }

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowRight, Mail, Phone } from "lucide-react";
 import { useContactChannels, usePricingTiers, useTestimonials, useSiteSettings } from "@/hooks/usePublicContent";
+import { PageLayoutStudioZone } from "@/components/dev/PageLayoutStudioZone";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -69,6 +70,7 @@ const ContactPage = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navigation />
+      <PageLayoutStudioZone pageId="contact" applyMaxWidth={false} copyLiftTarget="children">
       <main className="space-y-24 pb-24 pt-32 lg:space-y-32 lg:pb-32">
         <section className="mx-auto max-w-6xl px-6">
           <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr]">
@@ -218,6 +220,7 @@ const ContactPage = () => {
           <TestimonialsCarousel testimonials={testimonialsList} className="mt-12" />
         </section>
       </main>
+      </PageLayoutStudioZone>
       <Footer />
     </div>
   );

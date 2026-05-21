@@ -14,6 +14,7 @@ import {
 } from "./heroLayoutStudioState";
 import { HeritageHeroStudioControls } from "./HeritageHeroStudioControls";
 import { FloatingStudioShell } from "./FloatingStudioShell";
+import { StudioSlider } from "./StudioSlider";
 
 const EVENTS_ZOOM_MIN = 70;
 const EVENTS_ZOOM_MAX = 160;
@@ -147,17 +148,33 @@ function EventsControls({
       <p className="text-[11px] text-muted-foreground">
         Pan the portrait (X/Y). Zoom 70–160% to frame the subject.
       </p>
-      <SliderRow label="Background X" value={frame.posX} min={0} max={100} onChange={(posX) => onPatch({ posX })} />
-      <SliderRow label="Background Y" value={frame.posY} min={0} max={100} onChange={(posY) => onPatch({ posY })} />
+      <StudioSlider
+        label="Background X"
+        value={frame.posX}
+        defaultValue={HERO_STUDIO_DEFAULTS.events.posX}
+        min={0}
+        max={100}
+        onChange={(posX) => onPatch({ posX })}
+      />
+      <StudioSlider
+        label="Background Y"
+        value={frame.posY}
+        defaultValue={HERO_STUDIO_DEFAULTS.events.posY}
+        min={0}
+        max={100}
+        onChange={(posY) => onPatch({ posY })}
+      />
       <ZoomControls
         value={frame.scale}
+        defaultValue={HERO_STUDIO_DEFAULTS.events.scale}
         min={EVENTS_ZOOM_MIN}
         max={EVENTS_ZOOM_MAX}
         onChange={(scale) => onPatch({ scale })}
       />
-      <SliderRow
+      <StudioSlider
         label="Copy raise (% viewport height)"
         value={frame.copyBottomVh}
+        defaultValue={HERO_STUDIO_DEFAULTS.events.copyBottomVh}
         min={8}
         max={52}
         onChange={(copyBottomVh) => onPatch({ copyBottomVh })}
@@ -186,11 +203,13 @@ export function useHeroLayoutStudio(page: HeroStudioPage) {
 
 function ZoomControls({
   value,
+  defaultValue,
   min,
   max,
   onChange,
 }: {
   value: number;
+  defaultValue: number;
   min: number;
   max: number;
   onChange: (scale: number) => void;
@@ -229,48 +248,14 @@ function ZoomControls({
       </div>
       <input
         type="range"
-        className="w-full accent-primary"
+        className="w-full cursor-pointer accent-primary"
         value={value}
         min={min}
         max={max}
         step={1}
         onChange={(e) => onChange(clamp(Number(e.target.value)))}
-      />
-    </div>
-  );
-}
-
-function SliderRow({
-  label,
-  value,
-  min,
-  max,
-  displayValue,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  displayValue?: string;
-  onChange: (v: number) => void;
-}) {
-  return (
-    <div className="space-y-1">
-      <div className="flex justify-between text-[11px]">
-        <Label>{label}</Label>
-        <span className="tabular-nums text-muted-foreground">
-          {displayValue ?? Math.round(value)}
-        </span>
-      </div>
-      <input
-        type="range"
-        className="w-full accent-primary"
-        value={value}
-        min={min}
-        max={max}
-        step={1}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onDoubleClick={() => onChange(clamp(defaultValue))}
+        title="Double-click to reset"
       />
     </div>
   );

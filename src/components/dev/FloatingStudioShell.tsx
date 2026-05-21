@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, type PointerEvent, type ReactNode } from "react";
 import { GripVertical } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const STORAGE_PREFIX = "beiza-studio-panel-pos:";
 
@@ -11,9 +12,20 @@ type Props = {
   onOpen: () => void;
   onClose: () => void;
   children: ReactNode;
+  /** Offset the reopen chip when multiple studios are on one page */
+  openButtonClassName?: string;
+  openButtonLabel?: string;
 };
 
-export function FloatingStudioShell({ panelId, open, onOpen, onClose, children }: Props) {
+export function FloatingStudioShell({
+  panelId,
+  open,
+  onOpen,
+  onClose,
+  children,
+  openButtonClassName,
+  openButtonLabel = "Layout studio",
+}: Props) {
   const [pos, setPos] = useState(DEFAULT_POS);
   const dragRef = useRef<{ startX: number; startY: number; originX: number; originY: number } | null>(
     null,
@@ -67,9 +79,12 @@ export function FloatingStudioShell({ panelId, open, onOpen, onClose, children }
       <button
         type="button"
         onClick={onOpen}
-        className="fixed bottom-4 left-4 z-[200] rounded-full bg-[#E6A817] px-4 py-2 text-xs font-semibold text-[#0a0a0a] shadow-lg"
+        className={cn(
+          "fixed bottom-4 left-4 z-[200] rounded-full bg-[#E6A817] px-4 py-2 text-xs font-semibold text-[#0a0a0a] shadow-lg",
+          openButtonClassName,
+        )}
       >
-        Layout studio
+        {openButtonLabel}
       </button>
     );
   }
@@ -100,6 +115,9 @@ export function FloatingStudioShell({ panelId, open, onOpen, onClose, children }
           Hide
         </button>
       </div>
+      <p className="mb-3 text-[9px] text-muted-foreground/80">
+        Click the number to type a value. Double-click a slider to reset.
+      </p>
       {children}
     </aside>
   );

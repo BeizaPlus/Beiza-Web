@@ -17,6 +17,7 @@ import {
 } from "./heroLayoutStudioState";
 import { HeritageHeroStudioControls } from "./HeritageHeroStudioControls";
 import { FloatingStudioShell } from "./FloatingStudioShell";
+import { StudioSlider } from "./StudioSlider";
 
 const FOCUS_LABELS: { id: StudioFocus; label: string }[] = [
   { id: "hero", label: "1. Hero" },
@@ -118,27 +119,31 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
             Pan the portrait (X/Y). Zoom out to see more of the frame; zoom in to tighten on the
             subject.
           </p>
-          <SliderRow
+          <StudioSlider
             label="Background X"
             value={state.hero.posX}
+            defaultValue={DEFAULT_STUDIO_STATE.hero.posX}
             min={0}
             max={100}
             onChange={(posX) => patchHero({ posX })}
           />
-          <SliderRow
+          <StudioSlider
             label="Background Y"
             value={state.hero.posY}
+            defaultValue={DEFAULT_STUDIO_STATE.hero.posY}
             min={0}
             max={100}
             onChange={(posY) => patchHero({ posY })}
           />
           <ZoomControls
             value={state.hero.scale}
+            defaultValue={DEFAULT_STUDIO_STATE.hero.scale}
             onChange={(scale) => patchHero({ scale })}
           />
-          <SliderRow
+          <StudioSlider
             label="Copy raise (% viewport height)"
             value={state.hero.copyBottomVh}
+            defaultValue={DEFAULT_STUDIO_STATE.hero.copyBottomVh}
             min={8}
             max={52}
             onChange={(copyBottomVh) => patchHero({ copyBottomVh })}
@@ -148,16 +153,18 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
 
       {state.focus === "offerings" ? (
         <div className="space-y-3">
-          <SliderRow
+          <StudioSlider
             label="Section move up"
             value={-state.offerings.offsetY}
+            defaultValue={-DEFAULT_STUDIO_STATE.offerings.offsetY}
             min={-120}
             max={120}
             onChange={(v) => patchOfferings({ offsetY: -v })}
           />
-          <SliderRow
+          <StudioSlider
             label="Top padding"
             value={state.offerings.paddingTop}
+            defaultValue={DEFAULT_STUDIO_STATE.offerings.paddingTop}
             min={0}
             max={200}
             onChange={(paddingTop) => patchOfferings({ paddingTop })}
@@ -167,16 +174,18 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
 
       {state.focus === "faq" ? (
         <div className="space-y-3">
-          <SliderRow
+          <StudioSlider
             label="Section move up"
             value={-state.faq.offsetY}
+            defaultValue={-DEFAULT_STUDIO_STATE.faq.offsetY}
             min={-120}
             max={120}
             onChange={(v) => patchFaq({ offsetY: -v })}
           />
-          <SliderRow
+          <StudioSlider
             label="Top padding"
             value={state.faq.paddingTop}
+            defaultValue={DEFAULT_STUDIO_STATE.faq.paddingTop}
             min={0}
             max={200}
             onChange={(paddingTop) => patchFaq({ paddingTop })}
@@ -189,16 +198,18 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
           <p className="text-[10px] leading-snug text-muted-foreground">
             Click any text on the billing cards to edit. Sliders only move the section — card layout stays fixed.
           </p>
-          <SliderRow
+          <StudioSlider
             label="Section move up"
             value={-state.pricing.offsetY}
+            defaultValue={-DEFAULT_STUDIO_STATE.pricing.offsetY}
             min={-120}
             max={120}
             onChange={(v) => patchPricing({ offsetY: -v })}
           />
-          <SliderRow
+          <StudioSlider
             label="Top padding"
             value={state.pricing.paddingTop}
+            defaultValue={DEFAULT_STUDIO_STATE.pricing.paddingTop}
             min={0}
             max={200}
             onChange={(paddingTop) => patchPricing({ paddingTop })}
@@ -208,16 +219,18 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
 
       {state.focus === "outro" ? (
         <div className="space-y-3">
-          <SliderRow
+          <StudioSlider
             label="Section move up"
             value={-state.outro.offsetY}
+            defaultValue={-DEFAULT_STUDIO_STATE.outro.offsetY}
             min={-120}
             max={120}
             onChange={(v) => patchOutro({ offsetY: -v })}
           />
-          <SliderRow
+          <StudioSlider
             label="Top padding"
             value={state.outro.paddingTop}
+            defaultValue={DEFAULT_STUDIO_STATE.outro.paddingTop}
             min={0}
             max={200}
             onChange={(paddingTop) => patchOutro({ paddingTop })}
@@ -256,9 +269,11 @@ const HERO_ZOOM_STEP = 2;
 
 function ZoomControls({
   value,
+  defaultValue,
   onChange,
 }: {
   value: number;
+  defaultValue: number;
   onChange: (scale: number) => void;
 }) {
   const clamp = (n: number) =>
@@ -296,44 +311,14 @@ function ZoomControls({
       </div>
       <input
         type="range"
-        className="w-full accent-primary"
+        className="w-full cursor-pointer accent-primary"
         value={value}
         min={HERO_ZOOM_MIN}
         max={HERO_ZOOM_MAX}
         step={1}
         onChange={(e) => onChange(clamp(Number(e.target.value)))}
-      />
-    </div>
-  );
-}
-
-function SliderRow({
-  label,
-  value,
-  min,
-  max,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  min: number;
-  max: number;
-  onChange: (v: number) => void;
-}) {
-  return (
-    <div className="space-y-1">
-      <div className="flex justify-between text-[11px]">
-        <Label>{label}</Label>
-        <span className="tabular-nums text-muted-foreground">{Math.round(value)}</span>
-      </div>
-      <input
-        type="range"
-        className="w-full accent-primary"
-        value={value}
-        min={min}
-        max={max}
-        step={1}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onDoubleClick={() => onChange(clamp(defaultValue))}
+        title="Double-click to reset"
       />
     </div>
   );
