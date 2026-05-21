@@ -15,7 +15,7 @@ type RecordStationViewportProps = {
 };
 
 /**
- * One-screen record station — fills viewport below nav + tab bar (no page scroll).
+ * One-screen record station — hero is full viewport; site nav + tab bar overlay on top.
  */
 export function RecordStationViewport({ circleLabel, station }: RecordStationViewportProps) {
   const { locale } = useLocaleContext();
@@ -26,7 +26,7 @@ export function RecordStationViewport({ circleLabel, station }: RecordStationVie
 
   return (
     <section
-      className="record-station-viewport relative min-h-0 flex-1 overflow-hidden"
+      className="record-station-viewport absolute inset-0 z-0 h-full w-full overflow-hidden pb-[var(--record-tab-bar-h,4.25rem)] pt-[var(--record-site-nav-h,4.5rem)]"
       style={cssVars}
       aria-label="Recording station"
     >

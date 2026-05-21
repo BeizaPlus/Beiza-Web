@@ -17,6 +17,7 @@ import {
 } from "./heroLayoutStudioState";
 import { HeritageHeroStudioControls } from "./HeritageHeroStudioControls";
 import { FloatingStudioShell } from "./FloatingStudioShell";
+import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
 import { StudioSlider } from "./StudioSlider";
 
 const FOCUS_LABELS: { id: StudioFocus; label: string }[] = [
@@ -87,6 +88,7 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
     >
+      <StudioTextEditButton />
       <div className="mb-4 flex flex-wrap gap-1">
         {FOCUS_LABELS.map(({ id, label }) => (
           <Button

@@ -10,6 +10,24 @@ export type LocaleCardStudio = {
   farewell: CardStudio;
 };
 
+/** Pin + theme stack beside the vertical language rail */
+export type ToolbarControlsLayout = {
+  /** Distance from viewport right edge (rem) */
+  railRightRem: number;
+  /** Vertical anchor for the rail cluster (% from top, 50 = centered) */
+  railTopPct: number;
+  /** Gap between language pill column and position dots (px) */
+  railDotsGapPx: number;
+  /** Gap between rail and pin/theme stack (px) */
+  controlsGapPx: number;
+  /** Nudge pin/theme block horizontally from rail (rem, positive = left) */
+  controlsOffsetXRem: number;
+  /** Extra space below the rail before pin/theme (px) */
+  controlsOffsetYPx: number;
+  /** Gap between pin and theme buttons (px) */
+  controlsButtonGapPx: number;
+};
+
 export type StudioGlobal = {
   iconOffsetY: number;
   copyLift: number;
@@ -17,6 +35,7 @@ export type StudioGlobal = {
   logoScale: number;
   useMascot: boolean;
   lockCardLinks: boolean;
+  toolbar: ToolbarControlsLayout;
 };
 
 /** Per-locale card crops + shared global layout controls */
@@ -27,6 +46,16 @@ export type WelcomeStudioStore = {
 
 export type StudioState = LocaleCardStudio & StudioGlobal;
 
+export const DEFAULT_TOOLBAR_LAYOUT: ToolbarControlsLayout = {
+  railRightRem: 1,
+  railTopPct: 50,
+  railDotsGapPx: 8,
+  controlsGapPx: 8,
+  controlsOffsetXRem: 0,
+  controlsOffsetYPx: 0,
+  controlsButtonGapPx: 6,
+};
+
 export const DEFAULT_STUDIO_GLOBAL: StudioGlobal = {
   iconOffsetY: 92,
   copyLift: 38,
@@ -34,6 +63,7 @@ export const DEFAULT_STUDIO_GLOBAL: StudioGlobal = {
   logoScale: 2.25,
   useMascot: true,
   lockCardLinks: true,
+  toolbar: DEFAULT_TOOLBAR_LAYOUT,
 };
 
 /** Production defaults — tuned per character (welcome gate center card) */
@@ -75,8 +105,8 @@ export const DEFAULT_STUDIO_BY_LOCALE: Record<BeizaLocale, LocaleCardStudio> = {
   latina: {
     legacy: {
       imageZoom: 1.73,
-      imageOffsetX: 58.4459550865801,
-      imageOffsetY: 18.518849206349202,
+      imageOffsetX: 56.92403950216452,
+      imageOffsetY: 15.587752525252526,
     },
     education: {
       imageZoom: 2.25,
@@ -92,13 +122,13 @@ export const DEFAULT_STUDIO_BY_LOCALE: Record<BeizaLocale, LocaleCardStudio> = {
   chinese: {
     legacy: {
       imageZoom: 1.73,
-      imageOffsetX: 18.707048160173173,
-      imageOffsetY: 15.13681457431457,
+      imageOffsetX: 65.88643127705629,
+      imageOffsetY: 29.11589105339105,
     },
     education: {
       imageZoom: 2.25,
-      imageOffsetX: 24.955212734541828,
-      imageOffsetY: 34.49371431708387,
+      imageOffsetX: 24.7279400072691,
+      imageOffsetY: 32.29674462011417,
     },
     farewell: {
       imageZoom: 1.71,
@@ -126,8 +156,8 @@ export const DEFAULT_STUDIO_BY_LOCALE: Record<BeizaLocale, LocaleCardStudio> = {
   africa: {
     legacy: {
       imageZoom: 1.73,
-      imageOffsetX: 35.27901785714287,
-      imageOffsetY: 23.1409632034632,
+      imageOffsetX: 74.17241612554112,
+      imageOffsetY: 21.337211399711396,
     },
     education: {
       imageZoom: 2.25,
@@ -142,9 +172,9 @@ export const DEFAULT_STUDIO_BY_LOCALE: Record<BeizaLocale, LocaleCardStudio> = {
   },
   fr: {
     legacy: {
-      imageZoom: 1.73,
-      imageOffsetX: 35.27901785714287,
-      imageOffsetY: 23.1409632034632,
+      imageZoom: 2.11,
+      imageOffsetX: 51.309862012987026,
+      imageOffsetY: 40.028589466089464,
     },
     education: {
       imageZoom: 2.25,
@@ -153,8 +183,8 @@ export const DEFAULT_STUDIO_BY_LOCALE: Record<BeizaLocale, LocaleCardStudio> = {
     },
     farewell: {
       imageZoom: 1.71,
-      imageOffsetX: 54.882992962632684,
-      imageOffsetY: 26.061007957559674,
+      imageOffsetX: 56.23580681544654,
+      imageOffsetY: 22.566238837790554,
     },
   },
 };
@@ -189,8 +219,39 @@ function normalizeLocaleCards(
   };
 }
 
-/** Old flat single-locale blob → assign to `en` only */
+function normalizeToolbarLayout(raw: Partial<ToolbarControlsLayout> | undefined): ToolbarControlsLayout {
+  return { ...DEFAULT_TOOLBAR_LAYOUT, ...raw };
+}
+
+function normalizeGlobal(raw: Partial<StudioGlobal> | undefined): StudioGlobal {
+  const { toolbar: toolbarRaw, ...rest } = raw ?? {};
+  return {
+    ...DEFAULT_STUDIO_GLOBAL,
+    ...rest,
+    toolbar: normalizeToolbarLayout(toolbarRaw),
+  };
+}
+
+function normalizeFullStore(raw: Record<string, unknown>): WelcomeStudioStore {
+  const globalRaw = raw.global as Partial<StudioGlobal> | undefined;
+  const localesRaw = remapStudioLocaleKeys(
+    raw.locales as Partial<Record<string, Partial<LocaleCardStudio>>> | undefined,
+  );
+
+  const locales = { ...DEFAULT_STUDIO_BY_LOCALE };
+  (Object.keys(DEFAULT_STUDIO_BY_LOCALE) as BeizaLocale[]).forEach((locale) => {
+    locales[locale] = normalizeLocaleCards(localesRaw?.[locale], DEFAULT_STUDIO_BY_LOCALE[locale]);
+  });
+
+  return {
+    global: normalizeGlobal(globalRaw),
+    locales,
+  };
+}
+
+/** Old flat single-locale blob → assign to `black-american` only */
 function migrateFlatStudio(raw: Record<string, unknown>): WelcomeStudioStore | null {
+  if (raw.global && raw.locales) return null;
   if (!raw.legacy && !raw.education && !raw.farewell) return null;
   const legacyIcon = (raw.legacy as { iconOffsetY?: number } | undefined)?.iconOffsetY;
   const iconOffsetY = migrateIconOffsetY(
@@ -199,8 +260,7 @@ function migrateFlatStudio(raw: Record<string, unknown>): WelcomeStudioStore | n
       DEFAULT_STUDIO_GLOBAL.iconOffsetY,
   );
   return {
-    global: {
-      ...DEFAULT_STUDIO_GLOBAL,
+    global: normalizeGlobal({
       iconOffsetY,
       copyLift: typeof raw.copyLift === "number" ? raw.copyLift : DEFAULT_STUDIO_GLOBAL.copyLift,
       showIconCircleBg:
@@ -211,7 +271,8 @@ function migrateFlatStudio(raw: Record<string, unknown>): WelcomeStudioStore | n
       useMascot: typeof raw.useMascot === "boolean" ? raw.useMascot : DEFAULT_STUDIO_GLOBAL.useMascot,
       lockCardLinks:
         typeof raw.lockCardLinks === "boolean" ? raw.lockCardLinks : DEFAULT_STUDIO_GLOBAL.lockCardLinks,
-    },
+      toolbar: raw.toolbar as Partial<ToolbarControlsLayout> | undefined,
+    }),
     locales: {
       ...DEFAULT_STUDIO_BY_LOCALE,
       "black-american": normalizeLocaleCards(
@@ -236,39 +297,27 @@ function remapStudioLocaleKeys(
   return out;
 }
 
+export function parseWelcomeStudioJson(text: string): WelcomeStudioStore {
+  const raw = JSON.parse(text) as Record<string, unknown>;
+  if (raw.global && raw.locales) return normalizeFullStore(raw);
+  const flat = migrateFlatStudio(raw);
+  if (flat) return flat;
+  throw new Error("JSON must include { global, locales } or legacy/education/farewell card keys.");
+}
+
 export function loadWelcomeStudioStore(): WelcomeStudioStore {
   try {
-    const raw = JSON.parse(localStorage.getItem(STUDIO_KEY) ?? "{}") as Record<string, unknown>;
-
-    const flat = migrateFlatStudio(raw);
-    if (flat) return flat;
-
-    const globalRaw = raw.global as Partial<StudioGlobal> | undefined;
-    const localesRaw = remapStudioLocaleKeys(
-      raw.locales as Partial<Record<string, Partial<LocaleCardStudio>>> | undefined,
-    );
-
-    const legacyIcon = localesRaw?.["black-american"]?.legacy as { iconOffsetY?: number } | undefined;
-    const iconOffsetY = migrateIconOffsetY(
-      globalRaw?.iconOffsetY ?? legacyIcon?.iconOffsetY ?? DEFAULT_STUDIO_GLOBAL.iconOffsetY,
-    );
-
-    const locales = { ...DEFAULT_STUDIO_BY_LOCALE };
-    (Object.keys(DEFAULT_STUDIO_BY_LOCALE) as BeizaLocale[]).forEach((locale) => {
-      locales[locale] = normalizeLocaleCards(localesRaw?.[locale], DEFAULT_STUDIO_BY_LOCALE[locale]);
-    });
-
-    return {
-      global: {
-        ...DEFAULT_STUDIO_GLOBAL,
-        ...globalRaw,
-        iconOffsetY,
-      },
-      locales,
-    };
+    const stored = localStorage.getItem(STUDIO_KEY);
+    if (!stored) return DEFAULT_STUDIO_STORE;
+    return parseWelcomeStudioJson(stored);
   } catch {
     return DEFAULT_STUDIO_STORE;
   }
+}
+
+export function resetWelcomeStudioStore(): WelcomeStudioStore {
+  localStorage.removeItem(STUDIO_KEY);
+  return DEFAULT_STUDIO_STORE;
 }
 
 export function saveWelcomeStudioStore(store: WelcomeStudioStore) {
@@ -301,5 +350,15 @@ export function patchStudioGlobal(
   store: WelcomeStudioStore,
   partial: Partial<StudioGlobal>,
 ): WelcomeStudioStore {
-  return { ...store, global: { ...store.global, ...partial } };
+  const { toolbar: toolbarPartial, ...rest } = partial;
+  return {
+    ...store,
+    global: {
+      ...store.global,
+      ...rest,
+      toolbar: toolbarPartial
+        ? { ...store.global.toolbar, ...toolbarPartial }
+        : store.global.toolbar,
+    },
+  };
 }

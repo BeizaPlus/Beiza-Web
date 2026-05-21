@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
+import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
 import { StudioSlider } from "@/components/dev/StudioSlider";
 import {
   pageLayoutDefaultsFor,
@@ -44,6 +45,8 @@ export function PageLayoutStudioPanel({ pageId, frame, onChange }: Props) {
       <p className="mb-3 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
         {pageLayoutStudioLabel(pageId)}
       </p>
+
+      <StudioTextEditButton />
 
       <div className="space-y-3">
         <StudioSlider

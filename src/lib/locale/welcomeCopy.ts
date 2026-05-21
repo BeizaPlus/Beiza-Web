@@ -120,9 +120,9 @@ const IN_COPY: WelcomeCopy = {
 
       title: "अपनी संस्कृति जानें",
 
-      subtitle: "अपनी पीढ़ियों की जीवित बुद्धि और परंपरा की चिह्नवली खोजें।",
+      subtitle: "छोटी फ़िल्में जो आपको अपनी संस्कृति के अंदर ले जाती हैं — फिर प्रतीक और कहानियाँ।",
 
-      meta: "खोजें",
+      meta: "देखें",
 
     },
 
@@ -180,9 +180,9 @@ const LA_COPY: WelcomeCopy = {
 
       title: "Conoce tu cultura",
 
-      subtitle: "Símbolos, proverbios y la sabiduría viva de tu gente.",
+      subtitle: "Cortos que te meten en tu cultura — luego símbolos y historias de familia.",
 
-      meta: "Explorar",
+      meta: "Ver",
 
     },
 
@@ -238,9 +238,9 @@ const ZH_COPY: WelcomeCopy = {
 
       title: "了解您的文化",
 
-      subtitle: "符号、谚语与世代相传的智慧。",
+      subtitle: "短片带您走进文化现场，再探索符号与家族故事。",
 
-      meta: "探索",
+      meta: "观看",
 
     },
 
@@ -298,9 +298,9 @@ const BR_COPY: WelcomeCopy = {
 
       title: "Conheça sua cultura",
 
-      subtitle: "Símbolos, provérbios e a sabedoria viva do seu povo.",
+      subtitle: "Filmes curtos que colocam você dentro da sua cultura — depois símbolos e histórias.",
 
-      meta: "Explorar",
+      meta: "Assistir",
 
     },
 
@@ -382,9 +382,9 @@ export const WELCOME_COPY: Record<BeizaLocale, WelcomeCopy> = {
 
         subtitle:
 
-          "Symboles Adinkra et sagesse vivante transmise de génération en génération.",
+          "Courts métrages qui vous plongent dans votre culture — puis symboles et histoires.",
 
-        meta: "Explorer",
+        meta: "Voir",
 
       },
 
@@ -444,9 +444,9 @@ export const WELCOME_COPY: Record<BeizaLocale, WelcomeCopy> = {
 
         subtitle:
 
-          "Adinkra symbols, Akan wisdom, and cultural prompts in Twi, Yoruba, and Swahili.",
+          "Films that take you into African life: Adinkra, drum, and voices across the continent.",
 
-        meta: "Explore",
+        meta: "Watch",
 
       },
 

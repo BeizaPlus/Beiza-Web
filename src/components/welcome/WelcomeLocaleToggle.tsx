@@ -10,36 +10,37 @@ import {
 
 type WelcomeLocaleToggleProps = {
   isLight?: boolean;
+  compact?: boolean;
 };
 
-export function WelcomeLocaleToggle({ isLight = false }: WelcomeLocaleToggleProps) {
+export function WelcomeLocaleToggle({ isLight = false, compact = false }: WelcomeLocaleToggleProps) {
   const { locale, setLocale, localePinned, setLocalePinned } = useLocaleContext();
   const activeCode = welcomeToolbarCode(locale);
   const pinCopy = welcomeCopyForLocale(locale);
 
   return (
-    <div className="flex flex-col items-end gap-1">
-      <div className="flex flex-nowrap items-center gap-1.5">
-        <div
-          className={cn(
-            "flex shrink-0 flex-nowrap items-center gap-0.5 rounded-full border px-1 py-1",
-            isLight ? "border-black/15 bg-white/90 text-black" : "border-white/15 bg-[#141414]/90 text-white",
-          )}
-          role="group"
-          aria-label="Region & language"
-          aria-describedby="welcome-region-hint"
-        >
-          {WELCOME_LANGUAGE_OPTIONS.map(({ locale: id, code, title }) => {
-            const isActive = activeCode === code;
-            return (
-              <button
-                key={code}
-                type="button"
-                title={title}
-                aria-label={`${code} — ${title}`}
-                onClick={() => setLocale(id)}
-                className={cn(
-                  "flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold tracking-wide transition sm:px-3",
+    <div className="flex max-w-[min(calc(100vw-5.5rem),22rem)] flex-nowrap items-center gap-1 sm:max-w-[min(calc(100vw-8rem),26rem)]">
+      <div
+        className={cn(
+          "flex min-w-0 flex-1 flex-nowrap items-center gap-0.5 overflow-x-auto overflow-y-hidden overscroll-x-contain rounded-full border [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+          compact ? "px-0.5 py-0.5" : "px-1 py-1",
+          isLight ? "border-black/15 bg-white/90 text-black" : "border-white/15 bg-[#141414]/90 text-white",
+        )}
+        role="group"
+        aria-label="Region & language"
+      >
+        {WELCOME_LANGUAGE_OPTIONS.map(({ locale: id, code, title }) => {
+          const isActive = activeCode === code;
+          return (
+            <button
+              key={code}
+              type="button"
+              title={title}
+              aria-label={`${code} — ${title}`}
+              onClick={() => setLocale(id)}
+              className={cn(
+                "flex shrink-0 items-center rounded-full font-semibold tracking-wide transition",
+                compact ? "gap-1 px-1.5 py-1 text-[10px]" : "gap-1.5 px-2.5 py-1.5 text-xs sm:px-3",
                   isActive
                     ? "bg-[#f5c518] text-black shadow-sm"
                     : isLight
@@ -48,18 +49,19 @@ export function WelcomeLocaleToggle({ isLight = false }: WelcomeLocaleToggleProp
                 )}
                 aria-pressed={isActive}
               >
-                <WelcomeLocaleFlag code={code} />
+                <WelcomeLocaleFlag code={code} className={compact ? "h-3 w-4" : undefined} />
                 <span className="whitespace-nowrap">{code}</span>
               </button>
             );
           })}
-        </div>
+      </div>
 
-        <button
-          type="button"
-          onClick={() => setLocalePinned(!localePinned)}
-          className={cn(
-            "flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition",
+      <button
+        type="button"
+        onClick={() => setLocalePinned(!localePinned)}
+        className={cn(
+          "flex shrink-0 items-center justify-center rounded-full border transition",
+          compact ? "h-7 w-7" : "h-9 w-9",
             isLight
               ? localePinned
                 ? "border-black/25 bg-black/10 text-black"
@@ -73,12 +75,11 @@ export function WelcomeLocaleToggle({ isLight = false }: WelcomeLocaleToggleProp
           title={localePinned ? pinCopy.unpinLabel : pinCopy.pinLabel}
         >
           {localePinned ? (
-            <Pin className="h-3.5 w-3.5" strokeWidth={1.75} />
+            <Pin className={cn(compact ? "h-3 w-3" : "h-3.5 w-3.5")} strokeWidth={1.75} />
           ) : (
-            <PinOff className="h-3.5 w-3.5" strokeWidth={1.75} />
+            <PinOff className={cn(compact ? "h-3 w-3" : "h-3.5 w-3.5")} strokeWidth={1.75} />
           )}
         </button>
-      </div>
     </div>
   );
 }

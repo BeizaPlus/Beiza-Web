@@ -1,7 +1,9 @@
+import type { CSSProperties } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { LegacyAuthGate } from "@/components/legacy/LegacyAuthGate";
 import { RecordStationViewport } from "@/components/legacy/RecordStationViewport";
 import { RecordFlowProvider } from "@/components/legacy/recordFlowContext";
+import { RecordViewportLock } from "@/components/legacy/RecordViewportLock";
 import { Navigation } from "@/components/Navigation";
 import { LegacyTabBar } from "@/components/legacy/LegacyTabBar";
 import { PageLayoutStudioZone } from "@/components/dev/PageLayoutStudioZone";
@@ -42,9 +44,16 @@ export function LegacyLayout() {
   if (isRecordRoute) {
     return (
       <RecordFlowProvider>
-        <div className="flex h-[100dvh] max-h-[100dvh] flex-col overflow-hidden bg-background text-foreground">
-          <Navigation />
-          <LegacyTabBar />
+        <RecordViewportLock />
+        <div
+          className="record-page-shell relative h-[100dvh] max-h-[100dvh] min-h-0 w-full overflow-hidden bg-black text-foreground"
+          style={
+            {
+              "--record-tab-bar-h": "4.25rem",
+              "--record-site-nav-h": "4.5rem",
+            } as CSSProperties
+          }
+        >
           <RecordStationViewport
             circleLabel={circleCtx?.circle?.name}
             station={
@@ -55,6 +64,8 @@ export function LegacyLayout() {
               ) : null
             }
           />
+          <Navigation variant="recordOverlay" />
+          <LegacyTabBar placement="overlay" />
         </div>
       </RecordFlowProvider>
     );

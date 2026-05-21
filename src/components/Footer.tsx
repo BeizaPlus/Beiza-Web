@@ -3,6 +3,8 @@ import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import { useMemo } from "react";
 import { FOOTER_PRICING_LINK } from "@/config/productNav";
 import { useFooterLinks, useSiteSettings } from "@/hooks/usePublicContent";
+import { sitePaddingX } from "@/lib/brandUi";
+import { cn } from "@/lib/utils";
 
 export const Footer = () => {
   const { data: footerLinks } = useFooterLinks();
@@ -50,7 +52,7 @@ export const Footer = () => {
 
   return (
     <footer className="bg-black text-white">
-      <div className="w-full px-12 py-24 lg:py-28">
+      <div className={cn("w-full py-24 lg:py-28", sitePaddingX)}>
         <div className="grid gap-16 lg:grid-cols-[minmax(0,1.2fr)_1fr_auto] lg:items-start lg:justify-between">
           <div className="max-w-md space-y-8">
             <BeizaLogoLink wordmarkClassName="h-5 w-auto" />

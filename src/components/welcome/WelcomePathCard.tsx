@@ -33,13 +33,18 @@ export type WelcomePathCardProps = {
   studioImageDrag?: boolean;
   onImagePositionLive?: (position: { imageOffsetX: number; imageOffsetY: number }) => void;
   onImagePositionCommit?: (position: { imageOffsetX: number; imageOffsetY: number }) => void;
+  /** Full-viewport scroll section — fills parent height */
+  layout?: "grid" | "scroll";
 };
 
 const PHOTO_OVERLAY =
   "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0.82) 78%, rgba(0,0,0,0.95) 100%)";
 
-const CARD_SURFACE_CLASS =
-  "group relative aspect-[2/3] w-full min-h-[320px] min-w-0 overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 sm:min-h-[380px] lg:min-h-[420px] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
+const CARD_SURFACE_GRID =
+  "group relative aspect-[2/3] w-full min-h-[280px] min-w-0 overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 sm:min-h-[340px] lg:min-h-[380px] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
+
+const CARD_SURFACE_SCROLL =
+  "group relative h-full min-h-0 w-full max-w-lg overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
 
 function readCardSize(el: HTMLElement | null): CardDimensions {
   if (!el) return { width: 1, height: 1 };
@@ -69,7 +74,9 @@ export function WelcomePathCard({
   studioImageDrag = false,
   onImagePositionLive,
   onImagePositionCommit,
+  layout = "grid",
 }: WelcomePathCardProps) {
+  const cardSurfaceClass = layout === "scroll" ? CARD_SURFACE_SCROLL : CARD_SURFACE_GRID;
   const iconTopPct = Math.min(100, Math.max(0, iconOffsetY));
   const cardRef = useRef<HTMLDivElement | HTMLAnchorElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -266,7 +273,7 @@ export function WelcomePathCard({
     return (
       <div
         ref={cardRef as React.RefObject<HTMLDivElement>}
-        className={cn(CARD_SURFACE_CLASS, studioImageDrag && "touch-none cursor-grab active:cursor-grabbing")}
+        className={cn(cardSurfaceClass, studioImageDrag && "touch-none cursor-grab active:cursor-grabbing")}
         {...studioPointerHandlers}
       >
         {body}
@@ -281,7 +288,7 @@ export function WelcomePathCard({
       onClick={(e) => {
         if (dragRef.current?.moved) e.preventDefault();
       }}
-      className={cn(CARD_SURFACE_CLASS, studioImageDrag && "touch-none cursor-grab active:cursor-grabbing")}
+      className={cn(cardSurfaceClass, studioImageDrag && "touch-none cursor-grab active:cursor-grabbing")}
       {...studioPointerHandlers}
     >
       {body}

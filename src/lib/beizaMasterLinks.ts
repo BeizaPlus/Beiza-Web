@@ -12,7 +12,7 @@ export const BEIZA_LINKS = {
     gate: "/",
     alias: "/welcome",
   },
-  /** Marketing home — hero "Build Intentional Legacy" (welcome Education card) */
+  /** Marketing home — Build Intentional Legacy hero (nav / CTAs, not welcome Education card) */
   home: {
     intentionalLegacy: "/home",
   },
@@ -106,7 +106,7 @@ function buildWelcomeRegionalRoutes(): Record<BeizaLocale, Record<WelcomePathKey
   const routes = {} as Record<BeizaLocale, Record<WelcomePathKey, string>>;
   for (const locale of BEIZA_LOCALES) {
     routes[locale] = {
-      education: BEIZA_LINKS.home.intentionalLegacy,
+      education: regionalEducationWrapperPath(locale),
       legacy: regionalHeritagePath(locale),
       farewell: regionalFarewellPath(locale),
     };
@@ -118,7 +118,7 @@ export const WELCOME_REGIONAL_ROUTES = buildWelcomeRegionalRoutes();
 
 /** Locked welcome card hrefs — do not change without updating docs/LINK-MASTERSHEET.md */
 export const WELCOME_CARD_TARGETS = {
-  education: BEIZA_LINKS.home.intentionalLegacy,
+  education: BEIZA_LINKS.education.hub,
   legacy: BEIZA_LINKS.legacy.recordStation,
 } as const;
 
@@ -129,14 +129,13 @@ export function getWelcomeRoute(locale: BeizaLocale, path: WelcomePathKey): stri
 /** Href for a welcome gate path card */
 export function getWelcomeCardHref(locale: BeizaLocale, path: WelcomePathKey): string {
   if (path === "legacy") return WELCOME_CARD_TARGETS.legacy;
-  if (path === "education") return WELCOME_CARD_TARGETS.education;
   return getWelcomeRoute(locale, path);
 }
 
 /** Expected EN welcome card hrefs in DOM order: Education · Legacy · Farewell */
 export function getWelcomeCardHrefsEn(): [string, string, string] {
   return [
-    WELCOME_CARD_TARGETS.education,
+    regionalEducationWrapperPath("black-american"),
     WELCOME_CARD_TARGETS.legacy,
     regionalFarewellPath("black-american"),
   ];
@@ -145,8 +144,8 @@ export function getWelcomeCardHrefsEn(): [string, string, string] {
 /** Invariants enforced by npm run links:check */
 export const LINK_MASTERSHEET_INVARIANTS = [
   {
-    id: "welcome-education-to-home",
-    description: "Welcome Education card → /home (Build Intentional Legacy)",
+    id: "welcome-education-to-hub",
+    description: "Welcome Education card (EN) → /education cultural immersion",
     expected: WELCOME_CARD_TARGETS.education,
   },
   {
@@ -155,8 +154,8 @@ export const LINK_MASTERSHEET_INVARIANTS = [
     expected: WELCOME_CARD_TARGETS.legacy,
   },
   {
-    id: "production-education-lead-in",
-    description: "Production education lead-in matches beizaplus.com/home",
-    expected: "/home",
+    id: "welcome-education-africa",
+    description: "Welcome Education card (Africa) → /af/education",
+    expected: regionalEducationWrapperPath("africa"),
   },
 ] as const;

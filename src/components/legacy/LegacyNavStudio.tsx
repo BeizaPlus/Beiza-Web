@@ -1,5 +1,6 @@
 import { useState, type CSSProperties, type ReactNode } from "react";
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
+import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
 import { StudioSlider } from "@/components/dev/StudioSlider";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import {
@@ -14,9 +15,11 @@ import { cn } from "@/lib/utils";
 type Props = {
   children: ReactNode;
   className?: string;
+  /** Record overlay: ignore saved translate offsets (prevents black band) */
+  disableTransform?: boolean;
 };
 
-export function LegacyNavStudio({ children, className }: Props) {
+export function LegacyNavStudio({ children, className, disableTransform = false }: Props) {
   const studioEnabled = isLayoutStudioEnabled();
   const [frame, setFrame] = useState<LegacyNavStudioFrame>(() => loadLegacyNavStudioFrame());
   const [open, setOpen] = useState(true);
@@ -34,7 +37,11 @@ export function LegacyNavStudio({ children, className }: Props) {
     <>
       <div
         className={cn("legacy-nav-studio mx-auto w-full", className)}
-        style={{ ...legacyNavStudioStyle(frame), ...labelLiftStyle }}
+        style={
+          disableTransform
+            ? { ...labelLiftStyle }
+            : { ...legacyNavStudioStyle(frame), ...labelLiftStyle }
+        }
       >
         {children}
       </div>
@@ -54,6 +61,8 @@ export function LegacyNavStudio({ children, className }: Props) {
           <p className="mb-3 text-[9px] leading-snug text-muted-foreground">
             Moves the Home · Tree · Record · Vault · Invite row. Negative ↑ / ↓ pulls the bar into view.
           </p>
+
+          <StudioTextEditButton />
 
           <div className="space-y-3">
             <StudioSlider
@@ -97,10 +106,10 @@ export function LegacyNavStudio({ children, className }: Props) {
 
           <button
             type="button"
-            onClick={() => patch({ offsetY: LEGACY_NAV_STUDIO_DEFAULTS.offsetY, offsetX: 0 })}
+            onClick={() => patch({ offsetY: 0, offsetX: 0 })}
             className="mt-3 w-full rounded-md bg-primary/15 py-2 text-[10px] font-semibold uppercase tracking-widest text-primary hover:bg-primary/25"
           >
-            Pull tab bar into view
+            Reset tab bar position
           </button>
 
           <div className="mt-4 flex gap-2">

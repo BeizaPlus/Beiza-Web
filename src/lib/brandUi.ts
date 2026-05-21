@@ -1,8 +1,13 @@
 import { cn } from "@/lib/utils";
+import { siteBoundedContainer, siteBounds, sitePaddingX } from "@/lib/siteLayout";
+
+export { siteBounds, siteBoundedContainer, sitePaddingX, siteContentIndentX, siteHeroContentRow } from "@/lib/siteLayout";
 
 /** Shared layout shells for public marketing pages. */
 export const marketingSection = "bg-background py-24 text-foreground lg:py-32";
-export const marketingContainer = "mx-auto max-w-6xl px-[5%]";
+
+/** Centered column with boundary padding (for pages without a siteBounds section wrapper) */
+export const marketingContainer = cn(siteBoundedContainer, sitePaddingX);
 
 /** Pill selector (locale, region, etc.) — matches Voices / What We Do. */
 export const segmentToggleShell =

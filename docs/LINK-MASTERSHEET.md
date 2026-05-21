@@ -8,7 +8,7 @@
 | `docs/LINK-MASTERSHEET.md` | This spreadsheet (human) |
 | `npm run links:check` | Fails CI/dev if invariants break |
 
-Production reference: [beizaplus.com/home](https://www.beizaplus.com/home) = welcome **Education** lead-in.
+Production reference: welcome **Education** card → locale cultural immersion (`/education`, `/af/education`, …).
 
 ---
 
@@ -16,11 +16,11 @@ Production reference: [beizaplus.com/home](https://www.beizaplus.com/home) = wel
 
 | Rule | Path | Why |
 |------|------|-----|
-| Welcome **Education** card | `/home` | Build Intentional Legacy marketing home |
+| Welcome **Education** card | Locale education wrapper (see below) | Cultural immersion films + symbols |
 | Welcome **Legacy** card | `/legacy/record` | Record tab (landscape hero + station below) |
 | Welcome **Farewell** card | Locale farewell (see below) | Memorial / White Swan heritage |
-| Education **hub** (nav/footer) | `/education` | Adinkra symbols — not the welcome card |
-| Same product all regions | Only Legacy **photo** changes | US/IN/LA/CN/BR toggle |
+| Marketing home | `/home` | Build Intentional Legacy — nav/CTAs, not welcome Education |
+| Same product all regions | Only Legacy **photo** + education **copy** change | US/IN/LA/CN/BR toggle |
 
 ---
 
@@ -28,16 +28,16 @@ Production reference: [beizaplus.com/home](https://www.beizaplus.com/home) = wel
 
 DOM order: **Education · Legacy · Farewell**
 
-| Card | EN title | Href (all character locales) | Page | Production URL |
-|------|----------|------------------------------|------|----------------|
-| Education | Learn your culture | `/home` | `Landing.tsx` | https://www.beizaplus.com/home |
-| Legacy | Preserve a life story | `/legacy/record` | `legacy/record.tsx` | /legacy/record |
-| Farewell | Craft a memorial | See regional table | `Heritage.tsx` | /farewell or /in/farewell … |
+| Card | EN title | Href (EN) | Page |
+|------|----------|-----------|------|
+| Education | Learn your culture | `/education` | `Education.tsx` + immersion hero |
+| Legacy | Preserve a life story | `/legacy/record` | `legacy/record.tsx` |
+| Farewell | Craft a memorial | See regional table | `Heritage.tsx` |
 
 ```ts
 import { getWelcomeCardHref, WELCOME_CARD_TARGETS } from "@/lib/beizaMasterLinks";
-// education → WELCOME_CARD_TARGETS.education  (/home)
-// legacy    → WELCOME_CARD_TARGETS.legacy     (/legacy/record)
+// education → getWelcomeRoute(locale, "education")  (/education, /af/education, …)
+// legacy    → WELCOME_CARD_TARGETS.legacy           (/legacy/record)
 ```
 
 ### Farewell card by locale
@@ -52,7 +52,17 @@ import { getWelcomeCardHref, WELCOME_CARD_TARGETS } from "@/lib/beizaMasterLinks
 | africa | AF | `/af/farewell` |
 | french | FR | `/fr/farewell` |
 
-Education is **always** `/home` — no `/in/home`.
+### Education card by locale
+
+| Locale | Education href |
+|--------|----------------|
+| black-american | `/education` |
+| indian | `/in/education` |
+| latina | `/la/education` |
+| chinese | `/zh/education` |
+| brazilian | `/br/education` |
+| africa | `/af/education` |
+| french | `/fr/education` |
 
 **Region toggle** — language/copy switches with US/IN/LA/CN/BR (native tongue in `welcomeCopy.ts`). **Pin** (`beiza-locale-pinned`): locks language on reload; unpinned uses browser detection. Legacy photo still follows selected region. Pin does not block live toggle switches.
 
@@ -62,10 +72,10 @@ Education is **always** `/home` — no `/in/home`.
 
 | Step | Path | Component | Notes |
 |------|------|-----------|-------|
-| Welcome card | `/home` | `Landing.tsx` | **Lead-in** — intentional legacy hero |
-| Symbols hub | `/education` | `Education.tsx` | Adinkra grid; nav links here |
+| Welcome card | `/education`, `/af/education`, … | `Education.tsx` | Cultural immersion video hero (per locale) |
+| Symbols | same page (below hero) | `Education.tsx` | Adinkra grid |
 | Story questions | `/education/story-questions` | `StoryQuestionsArticle.tsx` | SEO article |
-| Regional wrapper | `/in/education` etc. | `RegionalRoutePage` | Sets locale; still `Education.tsx` — **not** used by welcome card |
+| Marketing home | `/home` | `Landing.tsx` | Intentional legacy — separate from welcome Education |
 
 ---
 

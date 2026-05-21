@@ -4,6 +4,10 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LocaleProvider } from "@/context/LocaleContext";
+import { StudioTextEditProvider } from "@/context/StudioTextEditContext";
+import { SitePaddingStudioProvider } from "@/components/dev/SitePaddingStudio";
+import { SeoManager } from "@/components/seo/SeoManager";
+import { StudioTextEditToolbar } from "@/components/dev/StudioTextEditToolbar";
 import RegionalRoutePage from "@/pages/regional/RegionalRoutePage";
 import Landing from "./pages/Landing";
 import WelcomeGate from "./pages/WelcomeGate";
@@ -47,6 +51,10 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <StudioTextEditProvider>
+          <SitePaddingStudioProvider>
+          <SeoManager />
+          <StudioTextEditToolbar />
           <Routes>
           <Route path="/" element={<WelcomeGate />} />
           <Route path={BEIZA_LINKS.welcome.alias.slice(1)} element={<WelcomeGate />} />
@@ -108,6 +116,8 @@ const App = () => (
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           </Routes>
+          </SitePaddingStudioProvider>
+          </StudioTextEditProvider>
         </BrowserRouter>
       </TooltipProvider>
     </LocaleProvider>

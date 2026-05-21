@@ -23,16 +23,16 @@ function assert(condition, message) {
 assert(master.includes('intentionalLegacy: "/home"'), "BEIZA_LINKS.home.intentionalLegacy must be /home");
 assert(master.includes('recordStation: "/legacy/record"'), "BEIZA_LINKS.legacy.recordStation must be /legacy/record");
 assert(
-  master.includes("education: BEIZA_LINKS.home.intentionalLegacy"),
-  "All welcome education routes must use intentionalLegacy (/home)",
+  master.includes("education: regionalEducationWrapperPath(locale)"),
+  "All welcome education routes must use regionalEducationWrapperPath",
 );
 assert(
   master.includes("if (path === \"legacy\") return WELCOME_CARD_TARGETS.legacy"),
   "getWelcomeCardHref must lock Legacy to record station",
 );
 assert(
-  master.includes("if (path === \"education\") return WELCOME_CARD_TARGETS.education"),
-  "getWelcomeCardHref must lock Education to /home",
+  !master.includes('if (path === "education") return WELCOME_CARD_TARGETS.education'),
+  "getWelcomeCardHref must route Education via getWelcomeRoute (locale-aware)",
 );
 
 // Welcome gate uses mastersheet helper (not inline paths)
@@ -50,8 +50,8 @@ assert(
 );
 
 // Smoke expectations documented in mastersheet
-const expectedEn = "/home,/legacy/record,/farewell";
-assert(master.includes('"/home"'), "Mastersheet documents /home lead-in");
+const expectedEn = "/education,/legacy/record,/farewell";
+assert(master.includes('hub: "/education"'), "Mastersheet documents /education hub");
 
 console.log("Link mastersheet validation");
 console.log(`  file: ${masterPath}`);

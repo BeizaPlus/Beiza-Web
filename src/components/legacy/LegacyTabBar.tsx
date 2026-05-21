@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { LegacyNavIcon, type LegacyNavIconName } from "@/components/legacy/LegacyNavIcon";
 import { LegacyNavStudio } from "@/components/legacy/LegacyNavStudio";
+import { siteBounds } from "@/lib/siteLayout";
 import { cn } from "@/lib/utils";
 
 /** Signature Legacy tab row — Home · Tree · Record · Vault · Invite (all /legacy/* pages). */
@@ -22,12 +23,34 @@ const TAB_ACTIVE =
 const TAB_IDLE =
   "text-white/55 hover:bg-white/8 hover:text-white/90 [&_.legacy-nav-tab-label]:text-white/55";
 
-export function LegacyTabBar() {
+type LegacyTabBarProps = {
+  /** Record station: tabs overlay the hero (no extra black flex row). */
+  placement?: "stacked" | "overlay";
+};
+
+export function LegacyTabBar({ placement = "stacked" }: LegacyTabBarProps) {
   const location = useLocation();
+  const overlay = placement === "overlay";
 
   return (
-    <LegacyNavStudio className="w-full border-b border-white/10 bg-black">
-      <nav className="mx-auto flex w-full gap-1 px-4 py-2.5 sm:px-6" aria-label="Legacy">
+    <div
+      className={cn(
+        overlay
+          ? "pointer-events-none absolute inset-x-0 bottom-0 z-30 w-full"
+          : "w-full",
+        siteBounds,
+      )}
+    >
+      <LegacyNavStudio
+        disableTransform={overlay}
+        className={cn(
+          "w-full max-w-none",
+          overlay
+            ? "border-t border-white/10 bg-black/80 backdrop-blur-sm [&_nav]:pointer-events-auto"
+            : "border-b border-white/10 bg-black",
+        )}
+      >
+      <nav className="mx-auto flex w-full min-w-0 gap-1 py-2.5" aria-label="Legacy">
         {LEGACY_TAB_ITEMS.map((item) => {
           const active = item.end
             ? location.pathname === item.href
@@ -47,6 +70,7 @@ export function LegacyTabBar() {
           );
         })}
       </nav>
-    </LegacyNavStudio>
+      </LegacyNavStudio>
+    </div>
   );
 }

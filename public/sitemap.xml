@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://www.beizaplus.com/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://www.beizaplus.com/welcome</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.beizaplus.com/home</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.beizaplus.com/education</loc><changefreq>weekly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.beizaplus.com/legacy/record</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.beizaplus.com/legacy</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.beizaplus.com/heritage</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.beizaplus.com/farewell</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.beizaplus.com/contact</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.beizaplus.com/pricing</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.beizaplus.com/af/education</loc><changefreq>weekly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://www.beizaplus.com/fr/education</loc><changefreq>weekly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://www.beizaplus.com/in/education</loc><changefreq>weekly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://www.beizaplus.com/la/education</loc><changefreq>weekly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://www.beizaplus.com/zh/education</loc><changefreq>weekly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://www.beizaplus.com/br/education</loc><changefreq>weekly</changefreq><priority>0.75</priority></url>
+</urlset>

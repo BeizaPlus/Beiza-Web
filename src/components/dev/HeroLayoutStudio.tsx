@@ -14,6 +14,7 @@ import {
 } from "./heroLayoutStudioState";
 import { HeritageHeroStudioControls } from "./HeritageHeroStudioControls";
 import { FloatingStudioShell } from "./FloatingStudioShell";
+import { StudioTextEditButton } from "@/components/dev/StudioTextEditButton";
 import { StudioSlider } from "./StudioSlider";
 
 const EVENTS_ZOOM_MIN = 70;
@@ -74,6 +75,7 @@ export function HeroLayoutStudioPanel(props: PanelProps) {
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
     >
+      <StudioTextEditButton />
       <div className="mb-3 flex flex-wrap gap-1">
         {page === "heritage" ? (
           <Button

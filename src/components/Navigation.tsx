@@ -6,6 +6,7 @@ import { allowStaticContentFallback } from "@/lib/contentPolicy";
 import { useNavigationLinks } from "@/hooks/usePublicContent";
 import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import { Button } from "./ui/button";
+import { sitePaddingX } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
 
 const CTA = { label: "Contact", href: "/contact" };
@@ -80,7 +81,13 @@ function NavItem({ link, onNavigate, className }: NavItemProps) {
   );
 }
 
-export const Navigation = () => {
+type NavigationProps = {
+  /** Record page: floats on hero, no extra black flex row */
+  variant?: "default" | "recordOverlay";
+};
+
+export const Navigation = ({ variant = "default" }: NavigationProps) => {
+  const recordOverlay = variant === "recordOverlay";
   const [drawerOpen, setDrawerOpen] = useState(false);
   const { data: navFromDb = [] } = useNavigationLinks("primary");
 
@@ -106,8 +113,14 @@ export const Navigation = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-40 w-full border-b border-white/5 bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20">
-        <div className="w-full px-12 py-6">
+      <nav
+        className={cn(
+          recordOverlay
+            ? "pointer-events-none absolute inset-x-0 top-0 z-40 w-full border-0 bg-gradient-to-b from-black/75 via-black/35 to-transparent [&_*]:pointer-events-auto"
+            : "sticky top-0 z-40 w-full border-b border-white/5 bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20",
+        )}
+      >
+        <div className={cn("w-full", recordOverlay ? "py-3" : "py-6", sitePaddingX)}>
           <div className="flex items-center justify-between">
             <BeizaLogoLink />
 

@@ -7,6 +7,9 @@
 
 @layer base {
   :root {
+    /* Nav, footer, marketing gutters — override via Site padding studio */
+    --beiza-site-padding-x: 6.75rem;
+    --beiza-content-indent: 1rem;
     /* Global palette derived from Framer export (HSL values) */
     --background: 0 0% 0%;
     --foreground: 0 0% 100%;
@@ -889,4 +892,45 @@
 /* Legacy layout studio — tab label lift */
 .legacy-nav-studio .legacy-nav-tab-label {
   transform: translateY(calc(-1 * var(--legacy-nav-label-lift, 0px)));
+}
+
+/* /legacy/record — one viewport, no document scroll */
+html.record-route,
+html.record-route body,
+html.welcome-route,
+html.welcome-route body {
+  height: 100%;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+
+.record-page-shell {
+  height: 100dvh;
+  max-height: 100dvh;
+}
+
+@supports (height: 100dvh) {
+  .record-page-shell {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+}
+
+/* Site padding studio — vertical boundary guides (Heritage reference) */
+html.site-padding-guides body::before,
+html.site-padding-guides body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(245, 197, 24, 0.45);
+  z-index: 9998;
+  pointer-events: none;
+}
+html.site-padding-guides body::before {
+  left: var(--beiza-site-padding-x);
+}
+html.site-padding-guides body::after {
+  right: var(--beiza-site-padding-x);
 }

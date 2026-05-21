@@ -27,16 +27,16 @@ function warn(label, detail = "") {
 async function waitForWelcomeReady(page, route) {
   const path = route.includes("?") ? route : `${route}?studio=0`;
   await page.goto(`${base}${path}`, { waitUntil: "domcontentloaded" });
-  await page.getByRole("group", { name: "Region & language" }).waitFor({ timeout: 20_000 });
-  await page.locator("main h2").first().waitFor({ timeout: 10_000 });
-  await page.waitForTimeout(600);
+  await page.getByRole("listbox", { name: "Region & language" }).waitFor({ timeout: 20_000 });
+  await page.getByText(/Where would you like to begin/i).waitFor({ timeout: 10_000 });
+  await page.getByRole("heading", { name: "Learn your culture" }).waitFor({ state: "visible", timeout: 10_000 });
 }
 
 async function auditWelcome(page, route) {
   console.log(`\n--- ${route} ---\n`);
   await waitForWelcomeReady(page, route);
 
-  const cardCopy = await page.locator("main .grid h2, main .grid p").allTextContents();
+  const cardCopy = await page.locator("[data-welcome-path] h2, [data-welcome-path] p").allTextContents();
   const cardText = cardCopy.join(" ");
   if (cardText.includes("—")) fail(`${route} no em-dashes in card copy`);
   else pass(`${route} no em-dashes in card copy`);
@@ -57,24 +57,28 @@ async function auditWelcome(page, route) {
   if ((await logo.count()) > 0) pass(`${route} Beiza logo or mascot`);
   else fail(`${route} logo missing`);
 
-  const cards = page.locator("main a").filter({ has: page.locator("h2") });
+  const cards = page.locator("[data-welcome-path] a").filter({ has: page.locator("h2") });
   const hrefs = await cards.evaluateAll((els) => els.map((a) => a.getAttribute("href")));
   if (hrefs.length >= 3 && hrefs.every((h) => h && h.length > 0)) {
     pass(`${route} three path links (${hrefs.join(", ")})`);
   } else fail(`${route} path links`, hrefs.join(" | "));
 
-  if ((await page.getByRole("group", { name: "Region & language" }).count()) > 0) {
-    pass(`${route} language pill toggle`);
-  } else fail(`${route} locale toggle missing`);
+  if ((await page.getByRole("listbox", { name: "Region & language" }).count()) > 0) {
+    pass(`${route} vertical language rail`);
+  } else fail(`${route} locale rail missing`);
 
-  const expectedGh = "/home,/legacy/record,/af/farewell";
+  if ((await page.locator("#welcome-region-hint").count()) > 0) {
+    pass(`${route} region hint copy`);
+  } else fail(`${route} region hint missing`);
+
+  const expectedGh = "/af/education,/legacy/record,/af/farewell";
   if (hrefs.join(",") === expectedGh) pass(`${route} GH default card hrefs (${expectedGh})`);
   else fail(`${route} GH default card hrefs`, hrefs.join(" | "));
 
   await page.getByRole("button", { name: "EN — English" }).click();
   await page.waitForTimeout(400);
   const enHrefs = await cards.evaluateAll((els) => els.map((a) => a.getAttribute("href")));
-  const expectedEn = "/home,/legacy/record,/farewell";
+  const expectedEn = "/education,/legacy/record,/farewell";
   if (enHrefs.join(",") === expectedEn) pass(`${route} EN card hrefs (${expectedEn})`);
   else fail(`${route} EN card hrefs`, enHrefs.join(" | "));
 
@@ -87,12 +91,22 @@ async function auditWelcome(page, route) {
   if (titles.join("|") === enOrder.join("|")) pass(`${route} card order (Education · Legacy · Farewell)`);
   else fail(`${route} card order`, titles.join(" | "));
 
-  const iconCount = await page.locator("main a span.rounded-full:has(svg)").count();
+  const iconCount = await page.locator("[data-welcome-path] a span.rounded-full:has(svg)").count();
   if (iconCount >= 3) pass(`${route} icon circles present (${iconCount})`);
   else warn(`${route} icon circles`, `found ${iconCount} (ok if showIconCircleBg is off)`);
 
-  if ((await page.locator("#welcome-region-hint").count()) > 0) pass(`${route} region hint copy`);
-  else fail(`${route} region hint missing`);
+  const pageScroll = await page.evaluate(() => ({
+    welcomeRoute: document.documentElement.classList.contains("welcome-route"),
+    bodyOverflow: document.body.style.overflow,
+  }));
+  if (pageScroll.welcomeRoute && pageScroll.bodyOverflow === "hidden") {
+    pass(`${route} one viewport (no page scroll)`);
+  } else fail(`${route} viewport lock`, JSON.stringify(pageScroll));
+
+  const grid = page.locator("main .grid");
+  const box = await grid.boundingBox();
+  if (box && box.width > 200) pass(`${route} three-card grid (${Math.round(box.width)}px)`);
+  else fail(`${route} card grid`, box ? `width ${box.width}` : "missing");
 
   if ((await cards.nth(1).locator("img").count()) > 0) pass(`${route} Legacy card has photo`);
   else fail(`${route} Legacy card photo missing`);
@@ -102,10 +116,6 @@ async function auditWelcome(page, route) {
   });
   if ((await themeToggle.count()) > 0) pass(`${route} theme toggle`);
   else fail(`${route} theme toggle missing`);
-
-  const box = await page.locator("main .grid").boundingBox();
-  if (box && box.width > 200) pass(`${route} card grid layout (${Math.round(box.width)}px)`);
-  else fail(`${route} card grid layout`, box ? `width ${box.width}` : "no box");
 
   await page.getByRole("button", { name: "ES — Spanish" }).click();
   await page.waitForTimeout(400);

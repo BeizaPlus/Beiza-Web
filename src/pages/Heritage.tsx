@@ -22,7 +22,15 @@ import {
 import { BRAND_IMAGES } from "@/lib/brandImages";
 import { CasketIcon } from "@/components/icons/CasketIcon";
 import { cn } from "@/lib/utils";
-import { legacyFormField, legacyGoldPanel, marketingContainer, marketingSection } from "@/lib/brandUi";
+import {
+  legacyFormField,
+  legacyGoldPanel,
+  marketingSection,
+  siteBounds,
+  siteBoundedContainer,
+  siteContentIndentX,
+  siteHeroContentRow,
+} from "@/lib/brandUi";
 import { isWhiteSwanIncludedForUser } from "@/lib/legacy/heritage";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 
@@ -149,17 +157,17 @@ export default function HeritagePage() {
         overlayClassName="heritage-hero-overlay"
         contentStyle={{ paddingBottom: 0 }}
         contentClassName={cn(
-          "!flex !items-end px-8 pb-8 pt-28 md:!items-center md:px-0 md:pb-0 md:pt-32",
+          siteHeroContentRow,
+          "!flex !items-end pb-8 pt-28 md:!items-center md:pb-0 md:pt-32",
           heroFrame.textSide === "right" ? "md:!justify-end" : "md:!justify-start",
         )}
       >
           <div
             className={cn(
-              "w-full max-w-[520px]",
-              heroFrame.textSide === "right" ? "text-right" : "text-left",
-              heroFrame.textSide === "right"
-                ? "md:ml-auto md:py-20 md:pr-16 md:pl-10"
-                : "md:mr-auto md:py-20 md:pl-16 md:pr-10",
+              "w-full max-w-[520px] min-w-0",
+              siteContentIndentX,
+              heroFrame.textSide === "right" ? "text-right md:ml-auto" : "text-left md:mr-auto",
+              "md:py-20",
             )}
             style={{ paddingTop: `calc(${heroFrame.copyRaiseVh} * 1vh)` }}
           >
@@ -198,8 +206,8 @@ export default function HeritagePage() {
       </FullBleedHero>
 
       {/* 2. What's included */}
-      <section className={cn(marketingSection, "px-[5%]")}>
-        <div className="mx-auto max-w-5xl text-center">
+      <section className={cn(marketingSection, siteBounds)}>
+        <div className={cn(siteBoundedContainer, "max-w-5xl text-center")}>
           <p className="text-eyebrow">What&apos;s included</p>
           <h2 className="mt-3 text-display-lg text-white">A farewell worth remembering.</h2>
           <p className="mx-auto mt-4 max-w-[560px] text-sm leading-relaxed text-subtle">
@@ -207,7 +215,7 @@ export default function HeritagePage() {
             coordinated across continents, delivered to your family.
           </p>
         </div>
-        <div className="mx-auto mt-12 max-w-5xl overflow-hidden rounded-2xl border border-border md:grid md:grid-cols-2 md:gap-px md:bg-border">
+        <div className={cn(siteBoundedContainer, "mt-12 max-w-5xl overflow-hidden rounded-2xl border border-border md:grid md:grid-cols-2 md:gap-px md:bg-border")}>
           {FEATURES.map((item) => {
             const Icon = "icon" in item ? item.icon : null;
             return (
@@ -239,8 +247,8 @@ export default function HeritagePage() {
       </section>
 
       {/* 3. White Swan callout */}
-      <section className={cn("border-y border-border bg-secondary/30", marketingSection, "px-[5%]")}>
-        <div className={cn(marketingContainer, "grid gap-12 lg:grid-cols-2 lg:gap-16")}>
+      <section className={cn("border-y border-border bg-secondary/30", marketingSection, siteBounds)}>
+        <div className={cn(siteBoundedContainer, "grid gap-12 lg:grid-cols-2 lg:gap-16")}>
           <div>
             <div className="flex items-center gap-2.5">
               <CasketIcon size={24}  />
@@ -315,7 +323,7 @@ export default function HeritagePage() {
       </section>
 
       {/* 4. Two ways in */}
-      <section className={cn(marketingSection, "px-[5%]")}>
+      <section className={cn(marketingSection, siteBounds)}>
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="text-display-lg text-white">Two ways in.</h2>
           <p className="mt-3 text-sm text-subtle">
@@ -368,7 +376,7 @@ export default function HeritagePage() {
       </section>
 
       {/* 5. Consultation */}
-      <section id="consultation" className={cn("border-t border-border bg-background", marketingSection, "px-[5%]")}>
+      <section id="consultation" className={cn("border-t border-border bg-background", marketingSection, siteBounds)}>
         <div className="mx-auto max-w-lg text-center">
           <h2 className="text-display-lg italic text-white">Tell us about your family.</h2>
           <p className="mt-3 text-sm text-subtle">
@@ -466,7 +474,7 @@ export default function HeritagePage() {
       </section>
 
       {/* 6. Closing */}
-      <section className={cn("bg-secondary/30 px-[5%] py-20 text-center", marketingSection)}>
+      <section className={cn("bg-secondary/30 py-20 text-center", marketingSection, siteBounds)}>
         <blockquote className="mx-auto max-w-[560px] text-[22px] italic leading-relaxed text-muted-foreground">
           Gye Nyame. Except God, nothing is greater — not even forgetting.
         </blockquote>

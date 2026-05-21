@@ -13,7 +13,7 @@ export type LegacyNavStudioFrame = {
 
 export const LEGACY_NAV_STUDIO_DEFAULTS: LegacyNavStudioFrame = {
   offsetX: 0,
-  offsetY: 70,
+  offsetY: 0,
   labelLift: 0,
   maxWidthRem: 40,
 };
@@ -25,7 +25,12 @@ export function loadLegacyNavStudioFrame(): LegacyNavStudioFrame {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { ...LEGACY_NAV_STUDIO_DEFAULTS };
-    return { ...LEGACY_NAV_STUDIO_DEFAULTS, ...(JSON.parse(raw) as Partial<LegacyNavStudioFrame>) };
+    const parsed = { ...LEGACY_NAV_STUDIO_DEFAULTS, ...(JSON.parse(raw) as Partial<LegacyNavStudioFrame>) };
+    // Old studio default left a 70px gap (black band above hero on record)
+    if (parsed.offsetY === 70 && parsed.offsetX === 0) {
+      parsed.offsetY = 0;
+    }
+    return parsed;
   } catch {
     return { ...LEGACY_NAV_STUDIO_DEFAULTS };
   }
