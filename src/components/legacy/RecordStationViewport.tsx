@@ -166,8 +166,9 @@ export function RecordStationViewport({
             <div
               id="recording-station"
               className={cn(
-                stationExpanded ? "min-h-0 flex-1 overflow-y-auto" : "shrink-0",
-                textRight && "flex w-full flex-col items-end",
+                "min-h-0 w-full",
+                signedIn ? "flex-1 overflow-y-auto" : stationExpanded ? "flex-1 overflow-y-auto" : "shrink-0",
+                textRight && "flex flex-col items-end",
               )}
             >
               {station}

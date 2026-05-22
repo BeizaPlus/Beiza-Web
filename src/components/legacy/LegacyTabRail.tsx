@@ -1,7 +1,8 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LegacyNavIcon } from "@/components/legacy/LegacyNavIcon";
 import { LEGACY_TAB_ITEMS } from "@/components/legacy/LegacyTabBar";
 import { LegacyNavStudio } from "@/components/legacy/LegacyNavStudio";
+import { useLegacySession } from "@/hooks/useLegacy";
 import { cn } from "@/lib/utils";
 
 /**
@@ -10,6 +11,9 @@ import { cn } from "@/lib/utils";
  */
 export function LegacyTabRail() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { data: session } = useLegacySession();
+  const signedIn = !!session;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-30">
@@ -36,6 +40,11 @@ export function LegacyTabRail() {
                 title={item.label}
                 aria-label={item.label}
                 aria-current={active ? "page" : undefined}
+                onClick={(e) => {
+                  if (!signedIn) return;
+                  e.preventDefault();
+                  navigate(item.href);
+                }}
                 className={cn(
                   "flex items-center justify-center rounded-full transition-colors",
                   "h-9 w-9 max-md:h-10 max-md:w-10 md:h-10 md:w-10",

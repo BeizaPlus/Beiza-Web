@@ -1,4 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLegacySession } from "@/hooks/useLegacy";
 import { LegacyNavIcon, type LegacyNavIconName } from "@/components/legacy/LegacyNavIcon";
 import { LegacyNavStudio } from "@/components/legacy/LegacyNavStudio";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
@@ -31,6 +32,9 @@ type LegacyTabBarProps = {
 
 export function LegacyTabBar({ placement = "stacked" }: LegacyTabBarProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { data: session } = useLegacySession();
+  const signedIn = !!session;
   const overlay = placement === "overlay";
 
   return (
@@ -60,6 +64,11 @@ export function LegacyTabBar({ placement = "stacked" }: LegacyTabBarProps) {
             <Link
               key={item.href}
               to={item.href}
+              onClick={(e) => {
+                if (!signedIn) return;
+                e.preventDefault();
+                navigate(item.href);
+              }}
               className={cn(
                 "flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg px-1 py-2 text-center text-xs font-medium transition-colors sm:px-2",
                 active ? TAB_ACTIVE : TAB_IDLE,

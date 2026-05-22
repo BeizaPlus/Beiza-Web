@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +7,7 @@ import { useLegacySession } from "@/hooks/useLegacy";
 import { useToast } from "@/hooks/use-toast";
 
 export function LegacyAuthGate({ children }: { children: React.ReactNode }) {
+  const queryClient = useQueryClient();
   const { data: session, isLoading, refetch } = useLegacySession();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
@@ -55,7 +57,15 @@ export function LegacyAuthGate({ children }: { children: React.ReactNode }) {
       <Button className="w-full" disabled={sending} onClick={() => void signIn()}>
         {sending ? "Sending…" : "Send magic link"}
       </Button>
-      <Button variant="ghost" size="sm" onClick={() => void refetch()}>
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => {
+          void refetch().then(() => {
+            void queryClient.invalidateQueries({ queryKey: ["legacy"] });
+          });
+        }}
+      >
         I already signed in
       </Button>
     </div>

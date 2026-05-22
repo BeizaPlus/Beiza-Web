@@ -13,6 +13,7 @@ import { PageLayoutStudioZone } from "@/components/dev/PageLayoutStudioZone";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { loadRecordPageStudioFrame, type RecordPageStudioFrame } from "@/lib/legacy/recordPageStudio";
 import { LEGACY_AUTH_PAGE_STUDIO_ID, resolveLegacyPageStudioId } from "@/lib/pageLayoutStudio";
+import { useLegacyAuthSync } from "@/hooks/useLegacyAuthSync";
 import { useLegacySession, useMyLegacyCircle } from "@/hooks/useLegacy";
 
 function LegacyRecordRoute({ circleLabel, hasSession }: { circleLabel?: string; hasSession: boolean }) {
@@ -56,26 +57,28 @@ function LegacyRecordRoute({ circleLabel, hasSession }: { circleLabel?: string; 
 export function LegacyLayout() {
   const location = useLocation();
   const navigate = useNavigate();
+  useLegacyAuthSync();
   const { data: session, isLoading: sessionLoading } = useLegacySession();
   const { data: circleCtx } = useMyLegacyCircle();
+  const signedIn = !!session;
   const isTreeRoute = location.pathname === "/legacy/circle";
   const treeFullscreen = isTreeRoute && !!session;
   const isRecordRoute = location.pathname.startsWith(BEIZA_LINKS.legacy.recordStation);
   /** Logged out: every legacy tab shows the same record sign-in station (URL only changes active tab). */
   const recordStationShell = !session && !sessionLoading;
-  const pageStudioId = session
+  const pageStudioId = signedIn
     ? resolveLegacyPageStudioId(location.pathname)
     : LEGACY_AUTH_PAGE_STUDIO_ID;
 
   const hadSessionRef = useRef(false);
   useEffect(() => {
     if (sessionLoading) return;
-    const justSignedIn = !!session && !hadSessionRef.current;
-    hadSessionRef.current = !!session;
+    const justSignedIn = signedIn && !hadSessionRef.current;
+    hadSessionRef.current = signedIn;
     if (!justSignedIn || isRecordRoute || isTreeRoute) return;
     if (!location.pathname.startsWith("/legacy")) return;
     navigate(BEIZA_LINKS.legacy.recordStation, { replace: true });
-  }, [session, sessionLoading, isRecordRoute, isTreeRoute, location.pathname, navigate]);
+  }, [signedIn, sessionLoading, isRecordRoute, isTreeRoute, location.pathname, navigate]);
 
   if (treeFullscreen) {
     return (
@@ -93,10 +96,12 @@ export function LegacyLayout() {
     );
   }
 
-  if (isRecordRoute || recordStationShell) {
-    return (
-      <LegacyRecordRoute circleLabel={circleCtx?.circle?.name} hasSession={!!session} />
-    );
+  if (recordSignInShell) {
+    return <LegacyRecordRoute circleLabel={circleCtx?.circle?.name} hasSession={false} />;
+  }
+
+  if (isRecordRoute) {
+    return <LegacyRecordRoute circleLabel={circleCtx?.circle?.name} hasSession={signedIn} />;
   }
 
   return (
