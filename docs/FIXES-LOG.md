@@ -15,6 +15,7 @@ Related: `docs/SITE-SUMMARY.md`, `docs/LINK-MASTERSHEET.md`, `npm run smoke:site
 | Welcome studio sliders do nothing | `nudge`, `locale rail` |
 | Mobile welcome won’t scroll naturally | `snap`, `scroll` |
 | Smoke test false failures | `smoke` |
+| Tree “+ Add photo” does nothing / no portrait on node | `photo`, `useApi`, `persistViaApi` |
 
 **Re-run checks:** `npm run smoke:site` · `npm run smoke:record` · `npm run links:check`
 
@@ -147,6 +148,39 @@ Related: `docs/SITE-SUMMARY.md`, `docs/LINK-MASTERSHEET.md`, `npm run smoke:site
 ## Add new entries
 
 When fixing a recurring issue, append:
+
+## 2026-06-01 — Legacy tab rail icons did not open pages
+
+| | |
+|--|--|
+| **Symptom** | Vertical rail (Home / Tree / Mic / Vault / Invite) — click did nothing or only opened studio sliders |
+| **Cause** | `?studio=1` blocked all navigation; `LegacyTabBar` referenced missing `goToTab`; rail only on record route |
+| **Fix** | `useLegacyTabNavigate` — normal click → `/legacy/*` routes; shift+click → studio layout; vertical rail on all signed-in legacy pages + tree; `LegacyTabBar` wired |
+| **Commit** | _(pending)_ |
+
+---
+
+## 2026-06-01 — Studio mode stuck on record sign-in screen
+
+| | |
+|--|--|
+| **Symptom** | In studio, Tree/Vault tabs highlight but main area stays “Sign in to record”; email required |
+| **Cause** | `recordSignInShell` forced every logged-out `/legacy/*` URL to the record sign-in viewport; `LegacyAuthGate` blocked page outlets |
+| **Fix** | When `isLayoutStudioEnabled()`: skip sign-in shell, bypass auth gate, open real routes, preserve `?studio=1` on tab navigate; HUD insets use `vw`/`vh` |
+| **Commit** | _(pending)_ |
+
+---
+
+## 2026-06-01 — Tree photo upload not persisting (legacy circle)
+
+| | |
+|--|--|
+| **Symptom** | “+ Add photo” in person panel — no error, portrait missing on canvas after upload |
+| **Cause** | `PersonBiographyPanel` always called `savePersonPhoto({ useApi: true })`; legacy `/legacy/circle` uses Supabase session (`persistViaApi: false`) — upload failed silently |
+| **Fix** | Pass `persistViaApi` into panel; use it for photo upload; toast on error; `onPhotoSaved` updates `peopleList` + invalidates `family-people` query; storage UPDATE policy migration |
+| **Commit** | _(pending)_ |
+
+---
 
 ```markdown
 ## YYYY-MM-DD — Short title

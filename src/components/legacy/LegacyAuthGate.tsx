@@ -4,12 +4,18 @@ import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useLegacySession } from "@/hooks/useLegacy";
+import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { useToast } from "@/hooks/use-toast";
 
 export function LegacyAuthGate({ children }: { children: React.ReactNode }) {
+  const studioOn = isLayoutStudioEnabled();
   const queryClient = useQueryClient();
   const { data: session, isLoading, refetch } = useLegacySession();
   const { toast } = useToast();
+
+  if (studioOn) {
+    return <>{children}</>;
+  }
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
 

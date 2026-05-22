@@ -27,6 +27,7 @@ import { PersonPanelTabs, type PersonPanelTab } from "@/components/legacy/family
 import type { PersonHealthCondition } from "@/lib/legacy/types";
 import { savePersonPhoto } from "@/lib/legacy/treeCanvasPersistence";
 import { supabase } from "@/lib/supabaseClient";
+import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 // Every field filled here is a data point — patterns engine infrastructure.
@@ -47,7 +48,11 @@ type PersonBiographyPanelProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   circlePeople?: FamilyPerson[];
+  /** false = Supabase auth (legacy circle); true = circle bearer API */
+  persistViaApi?: boolean;
   onProfileSave?: (personId: string, patch: FamilyPersonProfilePatch) => Promise<void>;
+  /** Called after photo is stored in Storage + family_people.photo_url */
+  onPhotoSaved?: (personId: string, photoUrl: string) => void;
   onSiblingOrdersSave?: (
     updates: { personId: string; sibling_order: number }[],
   ) => Promise<void>;
@@ -821,13 +826,16 @@ export function PersonBiographyPanel({
   open,
   onOpenChange,
   circlePeople = [],
+  persistViaApi = false,
   onProfileSave,
+  onPhotoSaved,
   onSiblingOrdersSave,
   onSetTreeLeader,
   healthConditions = [],
 }: PersonBiographyPanelProps) {
   const editable = Boolean(onProfileSave);
-  const useApi = editable;
+  const useApi = persistViaApi;
+  const { toast } = useToast();
   const fragmentsRef = useRef<HTMLDivElement>(null);
 
   const { fragments, memoriesState } = usePanelMemories(person, useApi);
@@ -883,16 +891,22 @@ export function PersonBiographyPanel({
           circleId: localPerson.circle_id,
           personId: localPerson.id,
           file,
-          useApi: true,
+          useApi,
         });
         setLocalPerson((prev) => (prev ? { ...prev, photo_url: photoUrl } : prev));
+        onPhotoSaved?.(localPerson.id, photoUrl);
         dispatchBeizaTreeUpdated(localPerson.circle_id);
         flashSaved();
-      } catch {
-        /* ignore */
+        toast({ title: "Photo saved", description: "Portrait stored on this person’s tree node." });
+      } catch (err) {
+        toast({
+          title: "Could not save photo",
+          description: err instanceof Error ? err.message : "Try a JPEG, PNG, or WebP under 5 MB.",
+          variant: "destructive",
+        });
       }
     },
-    [localPerson, editable, flashSaved],
+    [localPerson, editable, useApi, onPhotoSaved, flashSaved, toast],
   );
 
   if (!person || !localPerson) return null;

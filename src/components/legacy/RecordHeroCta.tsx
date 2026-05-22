@@ -6,16 +6,26 @@ import { useRecordFlowOptional } from "@/components/legacy/recordFlowContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLegacySession, useMyLegacyCircle } from "@/hooks/useLegacy";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
+import { StudioSubsetZone } from "@/components/dev/StudioSubsetZone";
+import { useRecordLayoutStudio } from "@/context/RecordLayoutStudioContext";
+import {
+  loadRecordMemoryStudioFrame,
+  recordMemorySubsetStyle,
+} from "@/lib/legacy/recordMemoryStudio";
 import { cn } from "@/lib/utils";
 
 type RecordHeroCtaProps = {
   textAlign?: "left" | "right";
+  /** Wrap mic / prompt block for layout studio click targets */
+  studioSubset?: boolean;
 };
 
 /**
  * Hero CTA slot — sign-in (Heritage-style) then swaps to record controls once authenticated.
  */
-export function RecordHeroCta({ textAlign = "left" }: RecordHeroCtaProps) {
+export function RecordHeroCta({ textAlign = "left", studioSubset = false }: RecordHeroCtaProps) {
+  const studioCtx = useRecordLayoutStudio();
+  const memoryFrame = studioCtx?.memoryFrame ?? loadRecordMemoryStudioFrame();
   const queryClient = useQueryClient();
   const { data: session, isLoading, refetch } = useLegacySession();
   const { data: circleCtx } = useMyLegacyCircle();
@@ -124,7 +134,7 @@ export function RecordHeroCta({ textAlign = "left" }: RecordHeroCtaProps) {
   const phase = snapshot?.phase ?? "prepare";
   const isHold = phase === "prepare" || phase === "recording";
 
-  return (
+  const body = (
     <div className={cn("mt-3 space-y-3", alignEnd && "flex flex-col items-end")}>
       {isHold ? (
         <>
@@ -160,5 +170,18 @@ export function RecordHeroCta({ textAlign = "left" }: RecordHeroCtaProps) {
         </p>
       )}
     </div>
+  );
+
+  if (!studioSubset) return body;
+
+  return (
+    <StudioSubsetZone
+      target="record-cta"
+      label="Mic & prompt"
+      className="w-full max-w-full"
+      style={recordMemorySubsetStyle(memoryFrame, "cta")}
+    >
+      {body}
+    </StudioSubsetZone>
   );
 }

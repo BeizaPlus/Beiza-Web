@@ -20,6 +20,13 @@ import {
 } from "@/lib/prompts";
 import { Loader2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { StudioSubsetZone } from "@/components/dev/StudioSubsetZone";
+import { useRecordLayoutStudio } from "@/context/RecordLayoutStudioContext";
+import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
+import {
+  loadRecordMemoryStudioFrame,
+  recordMemorySubsetStyle,
+} from "@/lib/legacy/recordMemoryStudio";
 import { cn } from "@/lib/utils";
 
 const MIN_RECORD_SECONDS = 0;
@@ -314,11 +321,16 @@ export function RecordMemoryView({
   const isHoldPhase = phase === "prepare" || phase === "recording";
 
   const compact = belowHero || viewportCompact;
-
+  const studioOn = isLayoutStudioEnabled() && compact;
+  const studioCtx = useRecordLayoutStudio();
+  const memoryFrame =
+    studioOn && studioCtx ? studioCtx.memoryFrame : loadRecordMemoryStudioFrame();
   return (
     <div
       className={cn(
-        compact ? "record-memory-viewport flex min-h-0 flex-col gap-2 overflow-y-auto" : "space-y-8",
+        compact
+          ? "record-memory-viewport flex min-h-0 w-full min-w-0 max-w-full flex-col gap-2 overflow-y-auto overflow-x-hidden"
+          : "space-y-8",
       )}
     >
       {!compact ? (
@@ -339,7 +351,18 @@ export function RecordMemoryView({
       {phase !== "seal" && !compact ? <LegacyRecordPrompt prompt={prompt.text} /> : null}
 
       {phase === "upload" && recordedUri ? (
-        <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
+        studioOn ? (
+          <StudioSubsetZone
+            target="record-playback"
+            label="Playback"
+            className="w-full max-w-full"
+            style={recordMemorySubsetStyle(memoryFrame, "playback")}
+          >
+            <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
+          </StudioSubsetZone>
+        ) : (
+          <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
+        )
       ) : null}
 
       {isHoldPhase && !compact ? (
@@ -389,63 +412,170 @@ export function RecordMemoryView({
       ) : null}
 
       {phase === "upload" && (
-        <div className={cn(compact ? "space-y-2 rounded-xl border border-white/15 bg-black/50 p-3 backdrop-blur-sm" : "space-y-4")}>
-          <p className={cn("text-[#666666]", compact ? "text-xs text-white/70" : "text-center text-sm")}>
-            {durationSeconds}s captured — ready to preserve
-          </p>
-          <Input
-            placeholder="Give this memory a title (optional)"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="border-[#2a2a2a] bg-[#111111] text-white"
-          />
-          <MemoryAboutPicker people={people} value={memoryAbout} onChange={setMemoryAbout} />
-          <Button
-            className="w-full bg-[#E6A817] text-[#0a0a0a] hover:bg-[#E6A817]/90"
-            disabled={uploading || !memoryAbout}
-            onClick={() => void handleUpload()}
+        studioOn ? (
+          <StudioSubsetZone
+            target="record-upload"
+            label="Seal form"
+            className={cn(
+              "w-full max-w-full",
+              compact ? "space-y-2 rounded-xl border border-white/15 bg-black/50 p-3 backdrop-blur-sm" : "space-y-4",
+            )}
+            style={recordMemorySubsetStyle(memoryFrame, "upload")}
           >
-            {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Seal this memory"}
-          </Button>
-        </div>
-      )}
-
-      {phase === "seal" && (
-        <div className={cn(compact ? "space-y-2 text-center" : "space-y-6 text-center")}>
+            <UploadPanelBody
+              compact={compact}
+              durationSeconds={durationSeconds}
+              title={title}
+              setTitle={setTitle}
+              people={people}
+              memoryAbout={memoryAbout}
+              setMemoryAbout={setMemoryAbout}
+              uploading={uploading}
+              onSeal={() => void handleUpload()}
+            />
+          </StudioSubsetZone>
+        ) : (
           <div
             className={cn(
-              "rounded-xl border border-[#E6A817]/40 bg-[#1e1800]/50",
-              compact ? "p-3" : "p-6",
+              compact ? "space-y-2 rounded-xl border border-white/15 bg-black/50 p-3 backdrop-blur-sm" : "space-y-4",
             )}
           >
-            <h3 className="text-lg font-semibold text-[#E6A817]">Memory preserved</h3>
-            <p className="mt-2 text-sm text-[#666666]">
-              Keep their voice forever. This fragment is now part of their tree biography.
-            </p>
-            {createdPlaceholderName ? (
-              <p className="mt-3 text-xs text-[#E6A817]">
-                {createdPlaceholderName} was added to your family tree — invite them when you are
-                ready.
-              </p>
-            ) : null}
+            <UploadPanelBody
+              compact={compact}
+              durationSeconds={durationSeconds}
+              title={title}
+              setTitle={setTitle}
+              people={people}
+              memoryAbout={memoryAbout}
+              setMemoryAbout={setMemoryAbout}
+              uploading={uploading}
+              onSeal={() => void handleUpload()}
+            />
           </div>
-          <Button className="w-full" onClick={() => navigate(treeHref)}>
-            View family tree
-          </Button>
-          {vaultHref ? (
-            <Button
-              variant="secondary"
-              className="w-full"
-              onClick={() => navigate(vaultHref)}
-            >
-              Open the vault
-            </Button>
-          ) : null}
-          <Button variant="ghost" className="w-full text-[#888888]" onClick={resetForAnother}>
-            Record another memory
-          </Button>
-        </div>
+        )
       )}
+
+      {phase === "seal" &&
+        (studioOn ? (
+          <StudioSubsetZone
+            target="record-seal"
+            label="Preserved"
+            className={cn(compact ? "w-full max-w-full space-y-2 text-center" : "space-y-6 text-center")}
+            style={recordMemorySubsetStyle(memoryFrame, "seal")}
+          >
+            <SealPanelBody
+              compact={compact}
+              createdPlaceholderName={createdPlaceholderName}
+              vaultHref={vaultHref}
+              onTree={() => navigate(treeHref)}
+              onVault={vaultHref ? () => navigate(vaultHref) : undefined}
+              onAnother={resetForAnother}
+            />
+          </StudioSubsetZone>
+        ) : (
+          <div className={cn(compact ? "space-y-2 text-center" : "space-y-6 text-center")}>
+            <SealPanelBody
+              compact={compact}
+              createdPlaceholderName={createdPlaceholderName}
+              vaultHref={vaultHref}
+              onTree={() => navigate(treeHref)}
+              onVault={vaultHref ? () => navigate(vaultHref) : undefined}
+              onAnother={resetForAnother}
+            />
+          </div>
+        ))}
     </div>
+  );
+}
+
+function UploadPanelBody({
+  compact,
+  durationSeconds,
+  title,
+  setTitle,
+  people,
+  memoryAbout,
+  setMemoryAbout,
+  uploading,
+  onSeal,
+}: {
+  compact: boolean;
+  durationSeconds: number;
+  title: string;
+  setTitle: (v: string) => void;
+  people: FamilyPerson[];
+  memoryAbout: MemoryAboutChoice | null;
+  setMemoryAbout: (v: MemoryAboutChoice | null) => void;
+  uploading: boolean;
+  onSeal: () => void;
+}) {
+  return (
+    <>
+      <p className={cn("text-[#666666]", compact ? "text-xs text-white/70" : "text-center text-sm")}>
+        {durationSeconds}s captured — ready to preserve
+      </p>
+      <Input
+        placeholder="Give this memory a title (optional)"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        className="border-[#2a2a2a] bg-[#111111] text-white"
+      />
+      <MemoryAboutPicker people={people} value={memoryAbout} onChange={setMemoryAbout} />
+      <Button
+        className="w-full bg-[#E6A817] text-[#0a0a0a] hover:bg-[#E6A817]/90"
+        disabled={uploading || !memoryAbout}
+        onClick={onSeal}
+      >
+        {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Seal this memory"}
+      </Button>
+    </>
+  );
+}
+
+function SealPanelBody({
+  compact,
+  createdPlaceholderName,
+  vaultHref,
+  onTree,
+  onVault,
+  onAnother,
+}: {
+  compact: boolean;
+  createdPlaceholderName: string | null;
+  vaultHref?: string;
+  onTree: () => void;
+  onVault?: () => void;
+  onAnother: () => void;
+}) {
+  return (
+    <>
+      <div
+        className={cn(
+          "rounded-xl border border-[#E6A817]/40 bg-[#1e1800]/50",
+          compact ? "p-3" : "p-6",
+        )}
+      >
+        <h3 className="text-lg font-semibold text-[#E6A817]">Memory preserved</h3>
+        <p className="mt-2 text-sm text-[#666666]">
+          Keep their voice forever. This fragment is now part of their tree biography.
+        </p>
+        {createdPlaceholderName ? (
+          <p className="mt-3 text-xs text-[#E6A817]">
+            {createdPlaceholderName} was added to your family tree — invite them when you are ready.
+          </p>
+        ) : null}
+      </div>
+      <Button className="w-full" onClick={onTree}>
+        View family tree
+      </Button>
+      {vaultHref && onVault ? (
+        <Button variant="secondary" className="w-full" onClick={onVault}>
+          Open the vault
+        </Button>
+      ) : null}
+      <Button variant="ghost" className="w-full text-[#888888]" onClick={onAnother}>
+        Record another memory
+      </Button>
+    </>
   );
 }

@@ -27,6 +27,7 @@ import {
 
 } from "@/lib/legacyNavStudio";
 
+import { useRecordLayoutStudio } from "@/context/RecordLayoutStudioContext";
 import { cn } from "@/lib/utils";
 
 
@@ -41,13 +42,23 @@ type Props = {
 
   recordOverlay?: boolean;
 
+  /** Click rail container to edit whole-rail position (record route studio) */
+
+  studioSelectable?: boolean;
+
 };
 
 
 
-export function LegacyNavStudio({ children, className, recordOverlay = false }: Props) {
+export function LegacyNavStudio({
+  children,
+  className,
+  recordOverlay = false,
+  studioSelectable = false,
+}: Props) {
 
   const studioEnabled = isLayoutStudioEnabled();
+  const studioCtx = useRecordLayoutStudio();
 
   const [frame, setFrame] = useState<LegacyNavStudioFrame>(() => loadLegacyNavStudioFrame());
 
@@ -81,9 +92,30 @@ export function LegacyNavStudio({ children, className, recordOverlay = false }: 
 
       <div
 
-        className={cn("legacy-nav-studio", recordOverlay ? "w-auto max-w-none" : "mx-auto w-full", className)}
+        className={cn(
+          "legacy-nav-studio",
+          recordOverlay ? "w-auto max-w-none" : "mx-auto w-full",
+          studioSelectable &&
+            (studioCtx?.activeTarget === "nav-rail"
+              ? "ring-2 ring-primary ring-offset-2 ring-offset-black/40"
+              : "ring-1 ring-white/20"),
+          className,
+        )}
 
         style={{ ...legacyNavStudioStyle(appliedFrame, { recordRail: recordOverlay }), ...labelLiftStyle }}
+
+        onClick={
+          studioSelectable
+            ? (e) => {
+                if ((e.target as HTMLElement).closest("a")) return;
+                studioCtx?.setActiveTarget("nav-rail");
+              }
+            : undefined
+        }
+
+        role={studioSelectable ? "button" : undefined}
+
+        tabIndex={studioSelectable ? 0 : undefined}
 
       >
 
@@ -111,7 +143,7 @@ export function LegacyNavStudio({ children, className, recordOverlay = false }: 
 
           <p className="mb-3 text-[9px] leading-snug text-muted-foreground">
             {recordOverlay
-              ? "← / → and ↑ / ↓ are % of the viewport (0–100). Fine offset adds vw/vh on top."
+              ? "Click a tab to open its page (no sign-in in studio). Shift+click icon = per-icon nudge (% / vw / vh). Click rail gap = whole-rail % position."
               : "Fine-tune the tab row within site bounds. Shifts use % of the bar size."}
           </p>
 

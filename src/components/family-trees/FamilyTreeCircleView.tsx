@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FamilyTreeCanvas } from "@/components/legacy/family-tree/FamilyTreeCanvas";
 import { PersonBiographyPanel } from "@/components/legacy/family-tree/PersonBiographyPanel";
@@ -61,6 +62,7 @@ export function FamilyTreeCircleView({
 }: FamilyTreeCircleViewProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
   const canvasHref = treeHref ?? `/circle/${circleId}/tree`;
   const fitTreeOnLoad = searchParams.get("fit") === "1";
@@ -162,6 +164,16 @@ export function FamilyTreeCircleView({
     }
   };
 
+  const handlePhotoSaved = useCallback(
+    (personId: string, photoUrl: string) => {
+      setPeopleList((prev) =>
+        prev.map((p) => (p.id === personId ? { ...p, photo_url: photoUrl } : p)),
+      );
+      void queryClient.invalidateQueries({ queryKey: ["legacy", "family-people", circleId] });
+    },
+    [circleId, queryClient],
+  );
+
   const handleSiblingOrdersSave = async (
     updates: { personId: string; sibling_order: number }[],
   ) => {
@@ -247,7 +259,9 @@ export function FamilyTreeCircleView({
         open={panelOpen}
         onOpenChange={setPanelOpen}
         circlePeople={peopleList}
+        persistViaApi={persistViaApi}
         onProfileSave={handleProfileSave}
+        onPhotoSaved={handlePhotoSaved}
         onSiblingOrdersSave={handleSiblingOrdersSave}
         onSetTreeLeader={handleSetTreeLeader}
         healthConditions={healthConditions}

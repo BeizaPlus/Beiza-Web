@@ -24,6 +24,11 @@ import {
   loadPageLayoutFrame,
   pageLayoutDefaultsFor,
 } from "@/lib/pageLayoutStudio";
+import { useRecordLayoutStudio } from "@/context/RecordLayoutStudioContext";
+import {
+  loadRecordMemoryStudioFrame,
+  recordMemoryStationInsetStyle,
+} from "@/lib/legacy/recordMemoryStudio";
 import { cn } from "@/lib/utils";
 
 type RecordStationViewportProps = {
@@ -72,6 +77,9 @@ export function RecordStationViewport({
   const stationPhase = flow?.snapshot.phase ?? "prepare";
   const stationExpanded = stationPhase === "upload" || stationPhase === "seal";
   const signedIn = signedInProp || !!station;
+  const studioCtx = useRecordLayoutStudio();
+  const memoryFrame = studioCtx?.memoryFrame ?? loadRecordMemoryStudioFrame();
+  const hudInsetStyle = recordMemoryStationInsetStyle(memoryFrame);
 
   return (
     <section
@@ -128,13 +136,16 @@ export function RecordStationViewport({
             "mx-auto max-w-[var(--record-column-max,22rem)]",
             "max-[1199px]:items-center max-[1199px]:text-center",
             "py-6 min-[1200px]:py-8",
-            stationExpanded && station ? "h-full min-h-0" : "min-h-0",
+            stationExpanded && station ? "h-full min-h-0 record-station-expanded" : "min-h-0",
+            stationExpanded &&
+              "max-[1199px]:items-center max-[1199px]:text-center min-[1200px]:items-center min-[1200px]:text-center min-[1200px]:mx-auto",
             recordContentIndentX,
-            textRight
-              ? "min-[1200px]:ml-auto min-[1200px]:max-w-[var(--record-column-max,32rem)] min-[1200px]:items-end min-[1200px]:text-right"
-              : "min-[1200px]:mr-auto min-[1200px]:max-w-[var(--record-column-max,32rem)] min-[1200px]:text-left",
+            !stationExpanded &&
+              (textRight
+                ? "min-[1200px]:ml-auto min-[1200px]:max-w-[var(--record-column-max,32rem)] min-[1200px]:items-end min-[1200px]:text-right"
+                : "min-[1200px]:mr-auto min-[1200px]:max-w-[var(--record-column-max,32rem)] min-[1200px]:text-left"),
           )}
-          style={columnStyle}
+          style={{ ...columnStyle, ...hudInsetStyle }}
         >
           {!signedIn ? (
             <div className="shrink-0">
@@ -158,20 +169,29 @@ export function RecordStationViewport({
               "w-full min-w-0 max-[1199px]:flex max-[1199px]:flex-col max-[1199px]:items-center",
               signedIn && "flex flex-1 flex-col items-center justify-center",
               !signedIn && "shrink-0",
-              textRight && "min-[1200px]:flex min-[1200px]:flex-col min-[1200px]:items-end",
-              signedIn && textRight && "min-[1200px]:items-end",
+              stationExpanded && "items-center",
+              !stationExpanded &&
+                textRight &&
+                "min-[1200px]:flex min-[1200px]:flex-col min-[1200px]:items-end",
+              signedIn && !stationExpanded && textRight && "min-[1200px]:items-end",
             )}
           >
-            <RecordHeroCta textAlign={textRight ? "right" : "left"} />
+            <RecordHeroCta
+              textAlign={stationExpanded ? "left" : textRight ? "right" : "left"}
+              studioSubset={studioOn}
+            />
           </div>
 
           {station ? (
             <div
               id="recording-station"
               className={cn(
-                "min-h-0 w-full",
+                "min-h-0 w-full min-w-0 max-w-full",
+                "px-[var(--record-hud-inset-x,2vw)]",
+                "pb-[var(--record-hud-inset-bottom,4vh)]",
+                "min-[1200px]:pr-[max(var(--record-hud-inset-x,2vw),5.5rem)]",
                 signedIn ? "flex-1 overflow-y-auto" : stationExpanded ? "flex-1 overflow-y-auto" : "shrink-0",
-                textRight && "flex flex-col items-end",
+                stationExpanded ? "flex flex-col items-center" : textRight && "flex flex-col items-end",
               )}
             >
               {station}

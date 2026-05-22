@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { LegacyAuthGate } from "@/components/legacy/LegacyAuthGate";
@@ -6,9 +6,9 @@ import { RecordStationViewport } from "@/components/legacy/RecordStationViewport
 import { RecordFlowProvider } from "@/components/legacy/recordFlowContext";
 import { RecordViewportLock } from "@/components/legacy/RecordViewportLock";
 import { Navigation } from "@/components/Navigation";
-import { LegacyTabBar } from "@/components/legacy/LegacyTabBar";
 import { LegacyTabRail } from "@/components/legacy/LegacyTabRail";
-import { RecordPageStudioPanel } from "@/components/legacy/RecordPageStudioPanel";
+import { LegacyStudioPanels } from "@/components/legacy/LegacyStudioPanels";
+import { RecordLayoutStudioProvider } from "@/context/RecordLayoutStudioContext";
 import { PageLayoutStudioZone } from "@/components/dev/PageLayoutStudioZone";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { loadRecordPageStudioFrame, type RecordPageStudioFrame } from "@/lib/legacy/recordPageStudio";
@@ -20,41 +20,43 @@ import { useLegacySession, useMyLegacyCircle } from "@/hooks/useLegacy";
 function LegacyRecordRoute({
   circleLabel,
   signedIn,
+  studioPreview,
 }: {
   circleLabel?: string;
   signedIn: boolean;
+  studioPreview: boolean;
 }) {
   const studioOn = isLayoutStudioEnabled();
   const [recordStudio, setRecordStudio] = useState<RecordPageStudioFrame>(() =>
     loadRecordPageStudioFrame(),
   );
+  const showStation = signedIn || studioPreview;
 
   return (
-    <RecordFlowProvider>
-      <RecordViewportLock />
-      <div
-        className="record-page-shell relative h-[100dvh] max-h-[100dvh] min-h-0 w-full overflow-hidden bg-black text-foreground max-md:[--beiza-content-indent:0rem] max-md:[--record-content-indent:0rem]"
-        style={{ "--record-site-nav-h": "4.5rem" } as CSSProperties}
-      >
-        <RecordStationViewport
-          studioFrame={studioOn ? recordStudio : undefined}
-          circleLabel={circleLabel}
-          signedIn={signedIn}
-          station={
-            signedIn ? (
-              <div className="legacy-record-station-panel h-full min-h-0 w-full overflow-hidden">
-                <Outlet />
-              </div>
-            ) : null
-          }
-        />
-        <Navigation variant="recordOverlay" />
-        <LegacyTabRail />
-        {studioOn ? (
-          <RecordPageStudioPanel frame={recordStudio} onChange={setRecordStudio} />
-        ) : null}
-      </div>
-    </RecordFlowProvider>
+    <LegacyShellProvider signedIn={signedIn || studioPreview}>
+      <RecordFlowProvider>
+        <RecordViewportLock />
+        <div
+          className="record-page-shell relative h-[100dvh] max-h-[100dvh] min-h-0 w-full overflow-hidden bg-black text-foreground max-md:[--beiza-content-indent:0rem] max-md:[--record-content-indent:0rem]"
+          style={{ "--record-site-nav-h": "4.5rem" } as CSSProperties}
+        >
+          <RecordStationViewport
+            studioFrame={studioOn ? recordStudio : undefined}
+            circleLabel={circleLabel}
+            signedIn={showStation}
+            station={
+              showStation ? (
+                <div className="legacy-record-station-panel h-full min-h-0 w-full min-w-0 overflow-hidden">
+                  <Outlet />
+                </div>
+              ) : null
+            }
+          />
+          <Navigation variant="recordOverlay" />
+          <LegacyTabRail />
+        </div>
+      </RecordFlowProvider>
+    </LegacyShellProvider>
   );
 }
 
@@ -62,21 +64,35 @@ function LegacyRecordRoute({
  * Shared Legacy shell — Heritage nav + icon tab bar.
  * Record route: single viewport, no document scroll.
  */
+function wrapLegacyStudio(content: ReactNode) {
+  const studioOn = isLayoutStudioEnabled();
+  if (!studioOn) return content;
+  return (
+    <RecordLayoutStudioProvider>
+      {content}
+      <LegacyStudioPanels />
+    </RecordLayoutStudioProvider>
+  );
+}
+
 export function LegacyLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   useLegacyAuthSync();
+  const studioOn = isLayoutStudioEnabled();
+  const studioPreview = studioOn;
   const { data: session, isLoading: sessionLoading } = useLegacySession();
   const { data: circleCtx } = useMyLegacyCircle();
   const signedIn = !!session;
   const isTreeRoute = location.pathname === "/legacy/circle";
-  const treeFullscreen = isTreeRoute && !!session;
+  const treeFullscreen = isTreeRoute && (signedIn || studioPreview);
   const isRecordRoute = location.pathname.startsWith(BEIZA_LINKS.legacy.recordStation);
-  /** Logged out: every legacy tab shows the same record sign-in station (URL only changes active tab). */
-  const recordSignInShell = !signedIn && !sessionLoading;
-  const pageStudioId = signedIn
-    ? resolveLegacyPageStudioId(location.pathname)
-    : LEGACY_AUTH_PAGE_STUDIO_ID;
+  /** Logged out: record sign-in on every tab — unless layout studio (preview real pages). */
+  const recordSignInShell = !signedIn && !sessionLoading && !studioPreview;
+  const pageStudioId =
+    signedIn || studioPreview
+      ? resolveLegacyPageStudioId(location.pathname)
+      : LEGACY_AUTH_PAGE_STUDIO_ID;
 
   const hadSessionRef = useRef(false);
   useEffect(() => {
@@ -88,42 +104,55 @@ export function LegacyLayout() {
     navigate(BEIZA_LINKS.legacy.recordStation, { replace: true });
   }, [signedIn, sessionLoading, isRecordRoute, isTreeRoute, location.pathname, navigate]);
 
-  if (treeFullscreen) {
-    return (
-      <LegacyAuthGate>
-        <Outlet />
-      </LegacyAuthGate>
+  if (sessionLoading && isTreeRoute && !studioPreview) {
+    return wrapLegacyStudio(
+      <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
+        Loading…
+      </div>,
     );
   }
 
-  if (sessionLoading && isTreeRoute) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
-        Loading…
-      </div>
+  if (treeFullscreen) {
+    return wrapLegacyStudio(
+      <LegacyShellProvider signedIn={signedIn || studioPreview}>
+        <LegacyAuthGate>
+          <LegacyTabRail />
+          <Outlet />
+        </LegacyAuthGate>
+      </LegacyShellProvider>,
     );
   }
 
   if (recordSignInShell) {
-    return (
-      <LegacyRecordRoute circleLabel={circleCtx?.circle?.name} signedIn={false} />
+    return wrapLegacyStudio(
+      <LegacyRecordRoute
+        circleLabel={circleCtx?.circle?.name}
+        signedIn={false}
+        studioPreview={false}
+      />,
     );
   }
 
   if (isRecordRoute) {
-    return <LegacyRecordRoute circleLabel={circleCtx?.circle?.name} signedIn={signedIn} />;
+    return wrapLegacyStudio(
+      <LegacyRecordRoute
+        circleLabel={circleCtx?.circle?.name}
+        signedIn={signedIn}
+        studioPreview={studioPreview}
+      />,
+    );
   }
 
-  return (
-    <LegacyShellProvider signedIn={signedIn}>
-      <div className="min-h-screen bg-background text-foreground">
+  return wrapLegacyStudio(
+    <LegacyShellProvider signedIn={signedIn || studioPreview}>
+      <div className="relative min-h-screen bg-background text-foreground">
         <Navigation />
-        <LegacyTabBar />
+        <LegacyTabRail />
 
-        <main className="relative min-h-[calc(100dvh-8.5rem)] overflow-visible sm:min-h-[calc(100dvh-10.5rem)]">
+        <main className="relative min-h-[calc(100dvh-8.5rem)] overflow-visible px-[var(--beiza-site-padding-x,1.25rem)] pb-24 pt-4 sm:min-h-[calc(100dvh-10.5rem)] sm:pb-28 min-[1200px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]">
           <PageLayoutStudioZone
             pageId={pageStudioId}
-            className="w-full px-[var(--beiza-site-padding-x,1.25rem)] py-4 sm:py-6"
+            className="w-full py-4 sm:py-6"
             applyMaxWidth
             copyLiftTarget="children"
           >
@@ -133,6 +162,6 @@ export function LegacyLayout() {
           </PageLayoutStudioZone>
         </main>
       </div>
-    </LegacyShellProvider>
+    </LegacyShellProvider>,
   );
 }
