@@ -4,7 +4,25 @@
 **Live:** https://beizaplus.com  
 **Stack:** Vite + React + Tailwind + Supabase · Vercel serverless API
 
-Last updated: 19 May 2026 · branch `main`
+Last updated: 22 May 2026 · branch `main`
+
+---
+
+## Changelog (May 2026 — layout & legacy record station)
+
+| Commit | What shipped |
+|--------|----------------|
+| `c72954b` | Legacy tab rail navigates to real pages after sign-in (`LegacyShellProvider`, fixed `recordSignInShell` typo) |
+| `c92310a` | Supabase auth sync for legacy queries; signed-in vs logged-out shell split |
+| `245b7e7` | Record sign-in CTA no longer overlaps vertical nav rail (desktop) |
+| `daa52a7` | **Canonical JSON** — `src/data/beiza-layout-canonical.json`, `welcome-gate-canonical.json`; logged-out legacy tabs share one sign-in screen; welcome center-card color + locale rail CN/GH fix |
+| `c1ad363` | Record email/button overlap at tablet/desktop breakpoints |
+| `8f25b57` | Framer breakpoints (phone/tablet/desktop); site padding + record page studio tiers |
+| `34c6a78` | Local Storyworth-named images; expanded site SEO |
+
+**Layout source of truth:** `docs/SITE-SUMMARY.md` (breakpoints, legacy flow, canonical files, deploy checklist).
+
+**Legacy record flow (current):** Logged out → any `/legacy/*` tab shows the same record sign-in hero. Signed in → `/legacy/record` shows mic-centered recording station; other tabs open Home / Tree / Vault / Invite.
 
 ---
 
@@ -108,7 +126,7 @@ Primary nav — three core items only:
 |-------|--------|---------|
 | **Vault** | `/vault` → `/legacy/vault` | Recordings, preserved memories (the past) |
 | **Circle** | `/circle` | Family circle directory → access gate → private tree |
-| **Heritage** | `/heritage` | White Swan, premium tier, recovery entry |
+| **Blog** | `/blog` | Stories / blog (locked in `productNav.ts`) |
 
 - **Contact** — white pill CTA (right), `/contact`
 - **Pricing** — footer only: *Plans & pricing →* `/pricing`
