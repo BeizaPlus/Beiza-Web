@@ -1,5 +1,6 @@
 import type { NavigationLink, FooterLink } from "@/hooks/usePublicContent";
 import { BEIZA_LINKS, BEIZA_REDIRECTS } from "@/lib/beizaMasterLinks";
+import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 
 /** Matches `PRODUCT_NAV_LINKS` — header uses product nav, not CMS primary rows. */
 export const FALLBACK_NAVIGATION_LINKS: NavigationLink[] = [
@@ -28,8 +29,8 @@ export const FALLBACK_SITE_SETTINGS = {
     "It has never been about loss — it has always been about legacy. Every story, every voice, every design is our way of saying: their story, kept forever.",
   heroCtaLabel: "Start Your Legacy",
   heroCtaHref: BEIZA_LINKS.legacy.app,
-  heroBackgroundImage: "/images/adinkra-hands-hero.png",
-  heroBackgroundAlt: "Adinkra heritage — hands holding legacy",
+  heroBackgroundImage: MEDIA_ASSETS.home.adinkraHero.src,
+  heroBackgroundAlt: MEDIA_ASSETS.home.adinkraHero.alt,
   heroReviews: "100+ Families Preserved",
   footerTagline:
     "We design meaningful legacies — handcrafted records that celebrate life, culture, and family.",
@@ -265,8 +266,8 @@ export const FALLBACK_FEATURED_EVENT = {
   subtitle: "A cinematic homegoing celebration",
   duration_label: "Live archive · Full memoir",
   hero_media: {
-    src: "https://framerusercontent.com/images/hOxvbbCIefKg5M5GXOo8yBqATo.png?width=799&height=823",
-    alt: "Joyful woman with smartphone",
+    src: MEDIA_ASSETS.offerings.legacyGalleries.src,
+    alt: MEDIA_ASSETS.offerings.legacyGalleries.alt,
   },
 } as const;
 
@@ -284,8 +285,8 @@ export const FALLBACK_LIVE_EVENTS = [
     subtitle: "Live production in progress",
     duration_label: "Streaming soon",
     hero_media: {
-      src: "/images/beiza-ernestina-portrait-bw.png",
-      alt: "Madam Ernestina — portrait in black and white",
+      src: MEDIA_ASSETS.events.ernestinaPortrait.src,
+      alt: MEDIA_ASSETS.events.ernestinaPortrait.alt,
     },
   },
 ] as const;
@@ -301,7 +302,7 @@ export const FALLBACK_EVENT_STORIES = [
     is_new: true,
     display_order: 1,
     hero_media: {
-      src: "https://framerusercontent.com/images/YRsXM0Ss8CIUK02VdEkSJYDNdHU.png?width=1658&height=1151",
+      src: MEDIA_ASSETS.events.liveTribute.src,
       alt: "Celebration of Madam Monica Manu",
     },
   },
@@ -315,7 +316,7 @@ export const FALLBACK_EVENT_STORIES = [
     is_new: true,
     display_order: 2,
     hero_media: {
-      src: "https://framerusercontent.com/images/hOuECFey8F4ua6LAYVX7DHPnQ.png?width=1684&height=1140",
+      src: MEDIA_ASSETS.farewell.mournersGathering.src,
       alt: "Family gathered in celebration",
     },
   },
@@ -329,7 +330,7 @@ export const FALLBACK_EVENT_STORIES = [
     is_new: false,
     display_order: 3,
     hero_media: {
-      src: "https://framerusercontent.com/images/xsBNx9mI9Ew3pAqs1HZ9ywLrp0.png?width=1741&height=1153",
+      src: MEDIA_ASSETS.farewell.remembranceSong.src,
       alt: "Moments of song and remembrance",
     },
   },
@@ -343,7 +344,7 @@ export const FALLBACK_EVENT_STORIES = [
     is_new: true,
     display_order: 4,
     hero_media: {
-      src: "https://framerusercontent.com/images/hOxvbbCIefKg5M5GXOo8yBqATo.png?width=799&height=823",
+      src: MEDIA_ASSETS.offerings.legacyGalleries.src,
       alt: "Joyful family remembrance",
     },
   },
@@ -357,7 +358,7 @@ export const FALLBACK_EVENT_STORIES = [
     is_new: false,
     display_order: 5,
     hero_media: {
-      src: "https://framerusercontent.com/images/YRsXM0Ss8CIUK02VdEkSJYDNdHU.png?width=1658&height=1151",
+      src: MEDIA_ASSETS.events.liveTribute.src,
       alt: "Tribute film still",
     },
   },
@@ -371,7 +372,7 @@ export const FALLBACK_EVENT_STORIES = [
     is_new: false,
     display_order: 6,
     hero_media: {
-      src: "https://framerusercontent.com/images/hOuECFey8F4ua6LAYVX7DHPnQ.png?width=1684&height=1140",
+      src: MEDIA_ASSETS.farewell.mournersGathering.src,
       alt: "Family circle archive",
     },
   },
@@ -385,7 +386,7 @@ export const FALLBACK_EVENT_STORIES = [
     is_new: true,
     display_order: 7,
     hero_media: {
-      src: "https://framerusercontent.com/images/xsBNx9mI9Ew3pAqs1HZ9ywLrp0.png?width=1741&height=1153",
+      src: MEDIA_ASSETS.farewell.remembranceSong.src,
       alt: "Elder sharing wisdom",
     },
   },
@@ -399,7 +400,7 @@ export const FALLBACK_EVENT_STORIES = [
     is_new: false,
     display_order: 8,
     hero_media: {
-      src: "https://framerusercontent.com/images/hOxvbbCIefKg5M5GXOo8yBqATo.png?width=799&height=823",
+      src: MEDIA_ASSETS.offerings.legacyGalleries.src,
       alt: "Memorial gathering",
     },
   },
@@ -413,7 +414,7 @@ export const FALLBACK_EVENT_STORIES = [
     is_new: false,
     display_order: 9,
     hero_media: {
-      src: "https://framerusercontent.com/images/YRsXM0Ss8CIUK02VdEkSJYDNdHU.png?width=1658&height=1151",
+      src: MEDIA_ASSETS.events.liveTribute.src,
       alt: "Archive production",
     },
   },

@@ -18,6 +18,7 @@
     "smoke:screenshots": "node scripts/capture-smoke-family-tree.mjs",
     "smoke:tree-connect": "node scripts/capture-tree-connect-smoke.mjs",
     "links:check": "node scripts/validate-link-mastersheet.mjs && npx tsx scripts/validate-welcome-hrefs.mjs",
+    "media:check": "node scripts/validate-local-media.mjs",
     "smoke:record": "node scripts/capture-record-area-smoke.mjs",
     "smoke:seo": "node scripts/seo-smoke-test.mjs"
   },

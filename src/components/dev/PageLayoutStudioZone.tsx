@@ -37,7 +37,7 @@ export function PageLayoutStudioZone({
 
   const areaStyle = pageLayoutFrameStyle(
     copyLiftTarget === "children" ? { ...frame, copyLift: 0 } : frame,
-    { applyMaxWidth },
+    { applyMaxWidth, pageId },
   );
   const innerStyle =
     copyLiftTarget === "children" && (frame.copyLift ?? 0) > 0

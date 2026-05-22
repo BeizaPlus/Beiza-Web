@@ -27,7 +27,7 @@ export const LEGACY_AUTH_PAGE_STUDIO_ID = "legacy-auth";
 export const PAGE_LAYOUT_PAGE_DEFAULTS: Record<string, PageLayoutFrame> = {
   [LEGACY_AUTH_PAGE_STUDIO_ID]: {
     offsetX: 0,
-    offsetY: 11,
+    offsetY: 12.5,
     copyLift: 0,
     maxWidthRem: 23,
   },
@@ -66,12 +66,40 @@ export function savePageLayoutFrame(pageId: string, frame: PageLayoutFrame) {
   localStorage.setItem(pageLayoutStorageKey(pageId), JSON.stringify(frame));
 }
 
+function responsiveColumnMaxWidth(rem: number): string {
+  return `min(${rem}rem, calc(100vw - 2 * var(--beiza-site-padding-x, 1.25rem)))`;
+}
+
+/** Legacy sign-in shell — vw/vh offsets; vertical shift uses padding-top (stable on mobile). */
+export function legacyAuthPageLayoutStyle(frame: PageLayoutFrame): CSSProperties {
+  const transformParts: string[] = [];
+  if (frame.offsetX !== 0) {
+    transformParts.push(`translateX(${frame.offsetX}vw)`);
+  }
+  if (frame.copyLift && frame.copyLift > 0) {
+    transformParts.push(`translateY(-${frame.copyLift}vh)`);
+  }
+  return {
+    width: "100%",
+    maxWidth: responsiveColumnMaxWidth(frame.maxWidthRem),
+    marginLeft: "auto",
+    marginRight: "auto",
+    paddingTop: frame.offsetY !== 0 ? `${frame.offsetY}vh` : undefined,
+    transform: transformParts.length > 0 ? transformParts.join(" ") : undefined,
+  };
+}
+
 export function pageLayoutFrameStyle(
   frame: PageLayoutFrame,
-  options?: { applyMaxWidth?: boolean },
+  options?: { applyMaxWidth?: boolean; pageId?: string },
 ): CSSProperties {
+  if (options?.pageId === LEGACY_AUTH_PAGE_STUDIO_ID) {
+    return legacyAuthPageLayoutStyle(frame);
+  }
   return {
-    ...(options?.applyMaxWidth !== false ? { maxWidth: `${frame.maxWidthRem}rem` } : {}),
+    ...(options?.applyMaxWidth !== false
+      ? { maxWidth: responsiveColumnMaxWidth(frame.maxWidthRem) }
+      : {}),
     ...copyOffsetStyle(frame),
   };
 }

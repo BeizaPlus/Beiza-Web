@@ -79,13 +79,11 @@ import {
 
 } from "@/lib/welcomeStudio";
 
+import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { cn } from "@/lib/utils";
 
-
-
 const BEIZA_LOGO = "/Beiza_White.svg";
-
-const BEIZA_MASCOT = "/Beiza-head.png";
+const BEIZA_MASCOT = MEDIA_ASSETS.brand.mascotHead.src;
 
 
 

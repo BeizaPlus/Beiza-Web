@@ -90,10 +90,10 @@ export function LegacyLayout() {
       <Navigation />
       <LegacyTabBar />
 
-      <main className="relative min-h-[calc(100dvh-10.5rem)] overflow-visible">
+      <main className="relative min-h-[calc(100dvh-8.5rem)] overflow-visible sm:min-h-[calc(100dvh-10.5rem)]">
         <PageLayoutStudioZone
           pageId={pageStudioId}
-          className="px-4 py-6"
+          className="w-full px-[var(--beiza-site-padding-x,1.25rem)] py-4 sm:py-6"
           applyMaxWidth
           copyLiftTarget="children"
         >

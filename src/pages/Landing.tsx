@@ -19,6 +19,7 @@ import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FullBleedHero } from "@/components/FullBleedHero";
 import { VoicesThatStayedSection } from "@/components/landing/VoicesThatStayedSection";
 import { BRAND_IMAGES, HERO_OVERLAY_GRADIENT } from "@/lib/brandImages";
+import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { FAQItem } from "@/components/framer/FAQItem";
 import { ProductsPanel } from "@/components/shopify/ProductsPanel";
@@ -161,7 +162,7 @@ const Landing = () => {
         {showOfferings ? (
           <WhatWeDoSection
             offerings={offeringsList}
-            mockupSrc="/images/the-leader-mockup.png"
+            mockupSrc={MEDIA_ASSETS.home.productLeaderMockup.src}
             style={
               studio
                 ? {

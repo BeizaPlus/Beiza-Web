@@ -1,44 +1,24 @@
 import { BRAND_IMAGES } from "@/lib/brandImages";
+import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { FRENCH_LOCALE_IMAGE } from "@/lib/locale/frenchEntry";
 import { GHANA_MARMAH_IMAGE } from "@/lib/locale/ghanaEntry";
 import type { BeizaCharacterLocale, BeizaLocale, WelcomePathKey } from "@/lib/locale/types";
 
 /** Shared across all regions — only the center Legacy card swaps */
-const SHARED_EDUCATION = {
-  src: BRAND_IMAGES.homepageHero,
-  alt: "Hands holding Adinkra symbol blocks",
-} as const;
+const SHARED_EDUCATION = MEDIA_ASSETS.home.adinkraHero;
 
-const SHARED_FAREWELL = {
-  src: BRAND_IMAGES.heritageHero,
-  alt: "Elder in red kente before Gye Nyame carving",
-} as const;
+const SHARED_FAREWELL = MEDIA_ASSETS.farewell.elderGyeNyame;
 
 /** `/public/images/beiza-welcome-legacy-{character}.{ext}` */
 export const WELCOME_LEGACY_CHARACTER_IMAGES: Record<
   BeizaCharacterLocale,
   { src: string; alt: string }
 > = {
-  "black-american": {
-    src: "/images/beiza-welcome-legacy-black-american.jpg",
-    alt: "Black American — preserve a life story",
-  },
-  indian: {
-    src: "/images/beiza-welcome-legacy-indian.jpg",
-    alt: "Indian — preserve a life story",
-  },
-  latina: {
-    src: "/images/beiza-welcome-legacy-latina.jpg",
-    alt: "Latina — preserve a life story",
-  },
-  chinese: {
-    src: "/images/beiza-welcome-legacy-chinese.png",
-    alt: "Chinese — preserve a life story",
-  },
-  brazilian: {
-    src: "/images/beiza-welcome-legacy-brazilian.png",
-    alt: "Brazilian — preserve a life story",
-  },
+  "black-american": MEDIA_ASSETS.welcome.legacyBlackAmerican,
+  indian: MEDIA_ASSETS.welcome.legacyIndian,
+  latina: MEDIA_ASSETS.welcome.legacyLatina,
+  chinese: MEDIA_ASSETS.welcome.legacyChinese,
+  brazilian: MEDIA_ASSETS.welcome.legacyBrazilian,
 };
 
 const WELCOME_LEGACY_IMAGE_BY_LOCALE: Record<BeizaLocale, { src: string; alt: string }> = {

@@ -6,7 +6,7 @@ export const LEGACY_HERO = {
     "Preserve a life story in a beautiful book — yours or someone you love. Celebrate a loved one's legacy for generations to come.",
   cta: "Get started",
   ctaHref: BEIZA_LINKS.legacy.family,
-  image: "/assets/legacy-hero.jpg",
+  image: "/images/beiza-storyworth-heritage-memoir-legacy-hero.jpg",
   imageAlt: "Hands holding a My Life Story memoir book",
 };
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { cn } from "@/lib/utils";
 
 function BeizaMascotFallback({ className }: { className?: string }) {
@@ -38,7 +39,7 @@ export function LegacyBeizaMascot({ className }: LegacyBeizaMascotProps) {
 
   return (
     <img
-      src="/Beiza-head.png"
+      src={MEDIA_ASSETS.brand.mascotHead.src}
       alt="Beiza"
       width={36}
       height={36}

@@ -10,7 +10,9 @@ import {
 const CARD_GRADIENT =
   "linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(10,10,10,1) 100%)";
 
-const FALLBACK_IMAGE = "/images/adinkra-hands-hero.png";
+import { MEDIA_ASSETS } from "@/lib/mediaAssets";
+
+const FALLBACK_IMAGE = MEDIA_ASSETS.home.adinkraHero.src;
 
 type CircleCardVisualProps = {
   adinkraId?: string | null;

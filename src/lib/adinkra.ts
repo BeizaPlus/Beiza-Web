@@ -1,5 +1,7 @@
 /** Circle identity symbols — one per family circle when `adinkra_id` is set. */
 
+import { MEDIA_ASSETS } from "@/lib/mediaAssets";
+
 export type AdinkraSymbol = {
   id: string;
   name: string;
@@ -8,7 +10,7 @@ export type AdinkraSymbol = {
 };
 
 /** Default directory / fallback card visual (warm stamp — not a stick-figure tree). */
-export const CIRCLE_CARD_STAMP_IMAGE = "/images/beiza-adinkra-stamp-hand.png";
+export const CIRCLE_CARD_STAMP_IMAGE = MEDIA_ASSETS.circle.adinkraStamp.src;
 
 export const ADINKRA_SYMBOLS: AdinkraSymbol[] = [
   {

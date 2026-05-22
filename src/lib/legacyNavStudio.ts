@@ -98,7 +98,7 @@ export function legacyNavRecordRailStyle(frame: LegacyNavStudioFrame): CSSProper
     left: `${frame.offsetXPercent}%`,
     top: `${frame.offsetYPercent}%`,
     transform: parts.join(" "),
-    maxWidth: `${frame.maxWidthRem}rem`,
+    maxWidth: `min(${frame.maxWidthRem}rem, calc(100vw - 2 * var(--beiza-site-padding-x, 1.25rem)))`,
     width: "max-content",
     zIndex: 30,
   };
@@ -111,7 +111,8 @@ export function legacyNavTabBarStyle(frame: LegacyNavStudioFrame): CSSProperties
       ? `translate(${frame.tabShiftXPercent}%, ${frame.tabShiftYPercent}%)`
       : undefined;
   return {
-    maxWidth: `${frame.maxWidthRem}rem`,
+    maxWidth: `min(${frame.maxWidthRem}rem, calc(100vw - 2 * var(--beiza-site-padding-x, 1.25rem)))`,
+    width: "100%",
     transform,
   };
 }

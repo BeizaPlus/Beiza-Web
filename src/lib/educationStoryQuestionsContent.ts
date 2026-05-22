@@ -5,7 +5,7 @@ export const STORY_QUESTIONS_SEO = {
   description:
     "The stories your family carries are irreplaceable. These 52 questions help you capture them before they're gone.",
   canonical: `https://www.beizaplus.com${BEIZA_LINKS.education.storyQuestions}`,
-  ogImage: "/assets/legacy-hero.jpg",
+  ogImage: "/images/beiza-storyworth-heritage-memoir-legacy-hero.jpg",
 };
 
 export const QUESTION_CATEGORIES: { title: string; symbolId: string; questions: string[] }[] = [

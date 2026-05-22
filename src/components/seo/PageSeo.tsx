@@ -1,10 +1,13 @@
 import { useEffect } from "react";
 import {
   canonicalUrl,
+  faqPageJsonLd,
+  legacyProductJsonLd,
   organizationJsonLd,
   webSiteJsonLd,
   type PageSeoConfig,
 } from "@/lib/seo/siteSeo";
+import { absoluteMediaUrl } from "@/lib/mediaAssets";
 
 function upsertMeta(name: string, content: string, attr: "name" | "property" = "name") {
   let el = document.querySelector(`meta[${attr}="${name}"]`) as HTMLMetaElement | null;
@@ -60,8 +63,10 @@ export function PageSeo({ config, includeSiteSchema = false }: PageSeoProps) {
     upsertMeta("og:description", config.description, "property");
     upsertMeta("og:url", canonical, "property");
     upsertMeta("og:type", "website", "property");
-    if (config.ogImage) {
-      upsertMeta("og:image", config.ogImage, "property");
+    const ogImage = config.ogImage ? absoluteMediaUrl(config.ogImage) : undefined;
+    if (ogImage) {
+      upsertMeta("og:image", ogImage, "property");
+      upsertMeta("twitter:image", ogImage);
     }
 
     upsertMeta("twitter:card", "summary_large_image");
@@ -71,6 +76,8 @@ export function PageSeo({ config, includeSiteSchema = false }: PageSeoProps) {
     if (includeSiteSchema) {
       upsertJsonLd("beiza-jsonld-website", webSiteJsonLd());
       upsertJsonLd("beiza-jsonld-org", organizationJsonLd());
+      upsertJsonLd("beiza-jsonld-product", legacyProductJsonLd());
+      upsertJsonLd("beiza-jsonld-faq", faqPageJsonLd());
     }
   }, [config, includeSiteSchema]);
 

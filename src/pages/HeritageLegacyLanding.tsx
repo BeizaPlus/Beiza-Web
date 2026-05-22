@@ -258,7 +258,10 @@ export default function HeritageLegacyLanding() {
           document. A scene. Your grandmother walking through the city her people built.
         </p>
         <div className="mx-auto mt-10 grid max-w-4xl gap-4 sm:grid-cols-2">
-          {["/assets/ancestry-scene-1.jpg", "/assets/ancestry-scene-2.jpg"].map((src, i) => (
+          {[
+            "/images/beiza-storyworth-heritage-ancestry-gathering-scene-01.png",
+            "/images/beiza-storyworth-heritage-ancestry-gathering-scene-02.png",
+          ].map((src, i) => (
             <div
               key={src}
               className="aspect-[4/3] overflow-hidden rounded-xl bg-[#3d3834]"

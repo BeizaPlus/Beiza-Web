@@ -41,7 +41,7 @@ export function LegacyAuthGate({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="mx-auto max-w-sm space-y-4 rounded-xl border border-border bg-card p-6 text-center">
+    <div className="w-full space-y-4 rounded-xl border border-border bg-card p-6 text-center sm:p-8">
       <h2 className="text-lg font-semibold">Sign in to your Legacy Circle</h2>
       <p className="text-sm text-muted-foreground">
         Use your email — we&apos;ll send a secure link. Keep their voice forever.

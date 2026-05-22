@@ -1,27 +1,21 @@
-/** Brand image paths — do not swap emotional registers. */
+/** Brand image paths — re-export from media manifest (Storyworth-style SEO names). */
+import { MEDIA_ASSETS } from "@/lib/mediaAssets";
+
 export const BRAND_IMAGES = {
-  /** Welcome gate — Legacy path card (Africa diaspora elder) */
-  welcomeLegacyLifeStory: "/images/beiza-welcome-legacy-preserve-life-story.jpg",
-  welcomeLegacyBlackAmerican: "/images/beiza-welcome-legacy-black-american.jpg",
-  welcomeLegacyIndian: "/images/beiza-welcome-legacy-indian.jpg",
-  welcomeLegacyLatina: "/images/beiza-welcome-legacy-latina.jpg",
-  welcomeLegacyChinese: "/images/beiza-welcome-legacy-chinese.png",
-  welcomeLegacyBrazilian: "/images/beiza-welcome-legacy-brazilian.png",
-  /** Heritage / White Swan only — elder + Gye Nyame */
-  heritageHero: "/images/beiza-elder-gye-nyame-hero.png",
-  /** Heritage White Swan section — custom poster before YouTube plays */
-  whiteSwanFilmPoster: "/images/beiza-white-swan-film-poster.png",
-  /** Events + Stories — Ernestina B&W portrait */
-  eventsStoriesHero: "/images/beiza-ernestina-portrait-bw.png",
-  /** Homepage default when CMS has no hero */
-  homepageHero: "/images/adinkra-hands-hero.png",
-  /** Legacy Record tab — default studio hero + nav thumbnail */
-  legacyRecordTabLandscape: "/images/beiza-legacy-record-tab-landscape.png",
-  /** Ghana (GH) default — Marmah story (record hero + welcome Legacy card) */
-  legacyRecordAfrica: "/images/beiza-legacy-record-africa.png",
-  welcomeLegacyAfrica: "/images/beiza-welcome-legacy-africa.png",
-  /** French (FR) welcome Legacy + record hero */
-  frenchBase: "/images/beiza-french-base.png",
+  welcomeLegacyLifeStory: MEDIA_ASSETS.welcome.legacyPreserve.src,
+  welcomeLegacyBlackAmerican: MEDIA_ASSETS.welcome.legacyBlackAmerican.src,
+  welcomeLegacyIndian: MEDIA_ASSETS.welcome.legacyIndian.src,
+  welcomeLegacyLatina: MEDIA_ASSETS.welcome.legacyLatina.src,
+  welcomeLegacyChinese: MEDIA_ASSETS.welcome.legacyChinese.src,
+  welcomeLegacyBrazilian: MEDIA_ASSETS.welcome.legacyBrazilian.src,
+  heritageHero: MEDIA_ASSETS.farewell.elderGyeNyame.src,
+  whiteSwanFilmPoster: MEDIA_ASSETS.farewell.whiteSwanPoster.src,
+  eventsStoriesHero: MEDIA_ASSETS.events.ernestinaPortrait.src,
+  homepageHero: MEDIA_ASSETS.home.adinkraHero.src,
+  legacyRecordTabLandscape: MEDIA_ASSETS.record.studioLandscape.src,
+  legacyRecordAfrica: MEDIA_ASSETS.record.ghanaMarmah.src,
+  welcomeLegacyAfrica: MEDIA_ASSETS.welcome.legacyGhana.src,
+  frenchBase: MEDIA_ASSETS.welcome.legacyFrench.src,
 } as const;
 
 /** Shared left-to-right hero overlay (homepage, Events, Heritage). */

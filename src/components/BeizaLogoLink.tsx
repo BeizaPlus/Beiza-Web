@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
+import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { cn } from "@/lib/utils";
 
 type BeizaLogoLinkProps = {
@@ -31,7 +32,7 @@ export function BeizaLogoLink({
     >
       {showMascot ? (
         <img
-          src="/Beiza-head.png"
+          src={MEDIA_ASSETS.brand.mascotHead.src}
           alt=""
           aria-hidden
           className={cn("h-10 w-auto shrink-0", variant === "mascot" && "h-9 w-9", mascotClassName)}
