@@ -163,3 +163,9 @@ Implementation: `LegacyLayout.tsx`, `LegacyShellProvider`, `RecordStationViewpor
 ## Next step (baseline complete)
 
 Base layout, routing, canonical JSON, and legacy sign-in → record station flow are in place on `main`. Next work can build on this without re-tuning breakpoints or re-pasting studio JSON from chat.
+
+## Deferred (saved for later)
+
+| Doc | Purpose |
+|-----|---------|
+| `docs/design-references/beiza-volume-slider-plans-ui.md` | Volume slider + dark tier cards (Resend Plans–style reference) for future `/pricing` or upgrade UI — **not building now** |
