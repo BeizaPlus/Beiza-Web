@@ -3,6 +3,7 @@ import { Loader2 } from "lucide-react";
 import { RecordingButton } from "@/components/legacy/RecordingButton";
 import { useLegacyMagicLinkSignIn } from "@/components/legacy/useLegacyMagicLinkSignIn";
 import { useRecordFlowOptional } from "@/components/legacy/recordFlowContext";
+import { useQueryClient } from "@tanstack/react-query";
 import { useLegacySession, useMyLegacyCircle } from "@/hooks/useLegacy";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { cn } from "@/lib/utils";
@@ -15,6 +16,7 @@ type RecordHeroCtaProps = {
  * Hero CTA slot — sign-in (Heritage-style) then swaps to record controls once authenticated.
  */
 export function RecordHeroCta({ textAlign = "left" }: RecordHeroCtaProps) {
+  const queryClient = useQueryClient();
   const { data: session, isLoading, refetch } = useLegacySession();
   const { data: circleCtx } = useMyLegacyCircle();
   const circle = circleCtx?.circle;
@@ -88,7 +90,11 @@ export function RecordHeroCta({ textAlign = "left" }: RecordHeroCtaProps) {
         </p>
         <button
           type="button"
-          onClick={() => void refetch()}
+          onClick={() => {
+            void refetch().then(() => {
+              void queryClient.invalidateQueries({ queryKey: ["legacy"] });
+            });
+          }}
           className={cn(
             "text-[11px] text-white/50 underline-offset-2 hover:text-white/80 hover:underline",
             "max-[1199px]:mx-auto max-[1199px]:block",

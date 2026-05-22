@@ -30,6 +30,8 @@ export function useLegacySession() {
       return data.session;
     },
     enabled: Boolean(supabase),
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 }
 

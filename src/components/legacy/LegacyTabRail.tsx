@@ -1,19 +1,29 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LegacyNavIcon } from "@/components/legacy/LegacyNavIcon";
 import { LEGACY_TAB_ITEMS } from "@/components/legacy/LegacyTabBar";
+import { useLegacyShell } from "@/components/legacy/legacyShellContext";
 import { LegacyNavStudio } from "@/components/legacy/LegacyNavStudio";
-import { useLegacySession } from "@/hooks/useLegacy";
+import { supabase } from "@/lib/supabaseClient";
 import { cn } from "@/lib/utils";
 
 /**
  * Record station — vertical Legacy nav (Home · Tree · Record · Vault · Invite).
- * Replaces the horizontal tab bar on /legacy/record.
+ * Logged out: URL updates for active tab only (same sign-in screen).
+ * Signed in: navigates to real legacy pages.
  */
 export function LegacyTabRail() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { data: session } = useLegacySession();
-  const signedIn = !!session;
+  const { signedIn: signedInFromShell } = useLegacyShell();
+
+  const goToTab = async (href: string, e: React.MouseEvent) => {
+    const { data } = await supabase!.auth.getSession();
+    const hasSession = Boolean(data.session) || signedInFromShell;
+    if (!hasSession) return;
+    e.preventDefault();
+    if (location.pathname === href) return;
+    navigate(href);
+  };
 
   return (
     <div className="pointer-events-none fixed inset-0 z-30">
@@ -40,11 +50,7 @@ export function LegacyTabRail() {
                 title={item.label}
                 aria-label={item.label}
                 aria-current={active ? "page" : undefined}
-                onClick={(e) => {
-                  if (!signedIn) return;
-                  e.preventDefault();
-                  navigate(item.href);
-                }}
+                onClick={(e) => void goToTab(item.href, e)}
                 className={cn(
                   "flex items-center justify-center rounded-full transition-colors",
                   "h-9 w-9 max-md:h-10 max-md:w-10 md:h-10 md:w-10",

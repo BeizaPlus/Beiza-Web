@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useLegacySession } from "@/hooks/useLegacy";
+import { useLegacyShell } from "@/components/legacy/legacyShellContext";
+import { supabase } from "@/lib/supabaseClient";
 import { LegacyNavIcon, type LegacyNavIconName } from "@/components/legacy/LegacyNavIcon";
 import { LegacyNavStudio } from "@/components/legacy/LegacyNavStudio";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
@@ -64,11 +65,7 @@ export function LegacyTabBar({ placement = "stacked" }: LegacyTabBarProps) {
             <Link
               key={item.href}
               to={item.href}
-              onClick={(e) => {
-                if (!signedIn) return;
-                e.preventDefault();
-                navigate(item.href);
-              }}
+              onClick={(e) => void goToTab(item.href, e)}
               className={cn(
                 "flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg px-1 py-2 text-center text-xs font-medium transition-colors sm:px-2",
                 active ? TAB_ACTIVE : TAB_IDLE,

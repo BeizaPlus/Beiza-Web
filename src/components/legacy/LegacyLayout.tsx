@@ -13,10 +13,17 @@ import { PageLayoutStudioZone } from "@/components/dev/PageLayoutStudioZone";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { loadRecordPageStudioFrame, type RecordPageStudioFrame } from "@/lib/legacy/recordPageStudio";
 import { LEGACY_AUTH_PAGE_STUDIO_ID, resolveLegacyPageStudioId } from "@/lib/pageLayoutStudio";
+import { LegacyShellProvider } from "@/components/legacy/legacyShellContext";
 import { useLegacyAuthSync } from "@/hooks/useLegacyAuthSync";
 import { useLegacySession, useMyLegacyCircle } from "@/hooks/useLegacy";
 
-function LegacyRecordRoute({ circleLabel, hasSession }: { circleLabel?: string; hasSession: boolean }) {
+function LegacyRecordRoute({
+  circleLabel,
+  signedIn,
+}: {
+  circleLabel?: string;
+  signedIn: boolean;
+}) {
   const studioOn = isLayoutStudioEnabled();
   const [recordStudio, setRecordStudio] = useState<RecordPageStudioFrame>(() =>
     loadRecordPageStudioFrame(),
@@ -65,7 +72,7 @@ export function LegacyLayout() {
   const treeFullscreen = isTreeRoute && !!session;
   const isRecordRoute = location.pathname.startsWith(BEIZA_LINKS.legacy.recordStation);
   /** Logged out: every legacy tab shows the same record sign-in station (URL only changes active tab). */
-  const recordStationShell = !session && !sessionLoading;
+  const recordSignInShell = !signedIn && !sessionLoading;
   const pageStudioId = signedIn
     ? resolveLegacyPageStudioId(location.pathname)
     : LEGACY_AUTH_PAGE_STUDIO_ID;
@@ -97,30 +104,34 @@ export function LegacyLayout() {
   }
 
   if (recordSignInShell) {
-    return <LegacyRecordRoute circleLabel={circleCtx?.circle?.name} hasSession={false} />;
+    return (
+      <LegacyRecordRoute circleLabel={circleCtx?.circle?.name} signedIn={false} />
+    );
   }
 
   if (isRecordRoute) {
-    return <LegacyRecordRoute circleLabel={circleCtx?.circle?.name} hasSession={signedIn} />;
+    return <LegacyRecordRoute circleLabel={circleCtx?.circle?.name} signedIn={signedIn} />;
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
-      <LegacyTabBar />
+    <LegacyShellProvider signedIn={signedIn}>
+      <div className="min-h-screen bg-background text-foreground">
+        <Navigation />
+        <LegacyTabBar />
 
-      <main className="relative min-h-[calc(100dvh-8.5rem)] overflow-visible sm:min-h-[calc(100dvh-10.5rem)]">
-        <PageLayoutStudioZone
-          pageId={pageStudioId}
-          className="w-full px-[var(--beiza-site-padding-x,1.25rem)] py-4 sm:py-6"
-          applyMaxWidth
-          copyLiftTarget="children"
-        >
-          <LegacyAuthGate>
-            <Outlet />
-          </LegacyAuthGate>
-        </PageLayoutStudioZone>
-      </main>
-    </div>
+        <main className="relative min-h-[calc(100dvh-8.5rem)] overflow-visible sm:min-h-[calc(100dvh-10.5rem)]">
+          <PageLayoutStudioZone
+            pageId={pageStudioId}
+            className="w-full px-[var(--beiza-site-padding-x,1.25rem)] py-4 sm:py-6"
+            applyMaxWidth
+            copyLiftTarget="children"
+          >
+            <LegacyAuthGate>
+              <Outlet />
+            </LegacyAuthGate>
+          </PageLayoutStudioZone>
+        </main>
+      </div>
+    </LegacyShellProvider>
   );
 }
