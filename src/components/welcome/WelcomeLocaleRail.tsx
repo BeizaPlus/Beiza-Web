@@ -27,6 +27,42 @@ type WelcomeLocaleRailProps = {
   showLocaleRailBg?: boolean;
 };
 
+/** Dot column — shared center axis; inactive dots scale down from center (not top-left). */
+function LocaleRailDot({
+  isActive,
+  rail,
+  isLight,
+  axisNudge,
+}: {
+  isActive: boolean;
+  rail: LocaleRailLayout;
+  isLight: boolean;
+  axisNudge?: CSSProperties;
+}) {
+  const axisPx = Math.max(rail.dotSizePx, rail.activeDotSizePx);
+  const scale = isActive ? 1 : rail.dotSizePx / axisPx;
+
+  return (
+    <span
+      className="flex shrink-0 items-center justify-center"
+      style={{ width: axisPx, height: axisPx, ...axisNudge }}
+      aria-hidden
+    >
+      <span
+        className="block rounded-full transition-[transform,background-color,box-shadow] duration-200 ease-out"
+        style={{
+          width: axisPx,
+          height: axisPx,
+          transform: `scale(${scale})`,
+          transformOrigin: "center center",
+          backgroundColor: isActive ? "#f5c518" : isLight ? "rgba(0,0,0,0.25)" : "#6b6b6b",
+          boxShadow: isActive ? "0 0 0 2px rgba(245,197,24,0.3)" : undefined,
+        }}
+      />
+    </span>
+  );
+}
+
 /** Studio nudge — positive X moves cluster left; positive Y moves down (rem). */
 function nudgeStyle(xRem: number, yRem = 0): CSSProperties | undefined {
   if (xRem === 0 && yRem === 0) return undefined;
@@ -102,9 +138,10 @@ export function WelcomeLocaleRail({
   // dot center = containerRight - dotRadius
   // sun center = containerRight - sunRadius
   // → sun must shift left by (sunRadius - dotRadius) relative to container right
-  const dotRadius = rail.activeDotSizePx / 2;
+  const dotAxisPx = Math.max(rail.dotSizePx, rail.activeDotSizePx);
+  const dotAxisRadius = dotAxisPx / 2;
   const sunRadius = rail.sunSizePx / 2;
-  const sunMarginRight = sunRadius - dotRadius;
+  const sunMarginRight = sunRadius - dotAxisRadius;
 
   const sunButton = (
     <button
@@ -160,7 +197,6 @@ export function WelcomeLocaleRail({
           >
             {WELCOME_LANGUAGE_OPTIONS.map((option, i) => {
               const isActive = i === activeIndex;
-              const dotSize = isActive ? rail.activeDotSizePx : rail.dotSizePx;
               return (
                 <button
                   key={option.code}
@@ -173,6 +209,7 @@ export function WelcomeLocaleRail({
                   onClick={() => selectOption(option)}
                   className="flex items-center"
                   style={{
+                    minHeight: dotAxisPx,
                     gap: isActive
                       ? rail.labelToDotGapPx
                       : rail.showInactiveCodes
@@ -208,19 +245,11 @@ export function WelcomeLocaleRail({
                       </span>
                     </span>
                   )}
-                  <div
-                    className="shrink-0 rounded-full transition-colors duration-200"
-                    style={{
-                      width: dotSize,
-                      height: dotSize,
-                      backgroundColor: isActive
-                        ? "#f5c518"
-                        : isLight
-                          ? "rgba(0,0,0,0.25)"
-                          : "#6b6b6b",
-                      boxShadow: isActive ? "0 0 0 2px rgba(245,197,24,0.3)" : undefined,
-                      ...nudgeStyle(rail.axisNudgeXRem),
-                    }}
+                  <LocaleRailDot
+                    isActive={isActive}
+                    rail={rail}
+                    isLight={isLight}
+                    axisNudge={nudgeStyle(rail.axisNudgeXRem)}
                   />
                 </button>
               );
@@ -274,7 +303,6 @@ export function WelcomeLocaleRail({
         >
           {WELCOME_LANGUAGE_OPTIONS.map((option, i) => {
             const isActive = i === activeIndex;
-            const dotSize = isActive ? rail.activeDotSizePx : rail.dotSizePx;
             return (
               <button
                 key={option.code}
@@ -285,9 +313,10 @@ export function WelcomeLocaleRail({
                 title={option.title}
                 aria-label={`${option.code} — ${option.title}`}
                 onClick={() => selectOption(option)}
-                className="flex flex-col items-center"
+                className="flex flex-col items-center justify-end"
                 style={{
                   gap: isActive ? rail.labelToDotGapPx : rail.inactiveLabelGapPx,
+                  minWidth: dotAxisPx,
                   ...nudgeStyle(isActive ? rail.labelNudgeXRem : 0),
                 }}
               >
@@ -307,14 +336,11 @@ export function WelcomeLocaleRail({
                     </span>
                   </>
                 )}
-                <div
-                  className="shrink-0 rounded-full transition-colors duration-200"
-                  style={{
-                    width: dotSize,
-                    height: dotSize,
-                    backgroundColor: isActive ? "#f5c518" : isLight ? "rgba(0,0,0,0.25)" : "#6b6b6b",
-                    ...nudgeStyle(rail.axisNudgeXRem),
-                  }}
+                <LocaleRailDot
+                  isActive={isActive}
+                  rail={rail}
+                  isLight={isLight}
+                  axisNudge={nudgeStyle(rail.axisNudgeXRem)}
                 />
               </button>
             );

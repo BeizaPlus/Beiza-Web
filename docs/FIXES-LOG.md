@@ -53,6 +53,17 @@ Related: `docs/SITE-SUMMARY.md`, `docs/LINK-MASTERSHEET.md`, `npm run smoke:site
 
 ---
 
+## 2026-05-22 — Locale rail dots scale off-center
+
+| | |
+|--|--|
+| **Symptom** | Active yellow dot jumps/shifts; gray dots not on one vertical centerline when sizes differ |
+| **Cause** | Inactive/active used different `width`/`height` on the dot with no fixed axis slot — layout reflow, not `transform-origin: center` |
+| **Fix** | `LocaleRailDot`: fixed `axisPx = max(inactive, active)` slot; dot uses `transform: scale()` from `center center` |
+| **File** | `WelcomeLocaleRail.tsx` |
+
+---
+
 ## 2026-05-22 — Welcome locale rail studio sliders inert
 
 | | |
