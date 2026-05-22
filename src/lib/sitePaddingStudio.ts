@@ -1,4 +1,5 @@
 import type { LayoutStudioBreakpoint } from "@/lib/layoutBreakpoints";
+import { LAYOUT_CANONICAL } from "@/lib/layoutCanonical";
 
 /** Global left/right gutter + inner indent — Heritage sets the standard */
 
@@ -28,12 +29,7 @@ export const SITE_PADDING_TABLET_DEFAULTS = {
   contentIndentRemTablet: 0,
 } as const;
 
-export const SITE_PADDING_DEFAULTS: SitePaddingFrame = {
-  paddingXRem: 6.75,
-  contentIndentRem: 6.78,
-  ...SITE_PADDING_TABLET_DEFAULTS,
-  ...SITE_PADDING_PHONE_DEFAULTS,
-};
+export const SITE_PADDING_DEFAULTS = LAYOUT_CANONICAL.sitePadding as SitePaddingFrame;
 
 const STORAGE_KEY = "beiza-site-padding-studio";
 

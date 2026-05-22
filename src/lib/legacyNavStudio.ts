@@ -4,6 +4,7 @@ import {
   looksLikePxOffset,
   pxToVh,
 } from "@/lib/layoutOffsetUnits";
+import { LAYOUT_CANONICAL } from "@/lib/layoutCanonical";
 
 /** Legacy bottom tab bar + record vertical rail */
 
@@ -26,16 +27,8 @@ export type LegacyNavStudioFrame = {
   maxWidthRem: number;
 };
 
-export const LEGACY_NAV_STUDIO_DEFAULTS: LegacyNavStudioFrame = {
-  offsetXPercent: 79,
-  offsetYPercent: 55,
-  offsetXVw: 0,
-  offsetYVh: 0,
-  tabShiftXPercent: 0,
-  tabShiftYPercent: 0,
-  labelLiftVh: 0,
-  maxWidthRem: 23.5,
-};
+export const LEGACY_NAV_STUDIO_DEFAULTS =
+  LAYOUT_CANONICAL.legacyNav as LegacyNavStudioFrame;
 
 const STORAGE_KEY = "beiza-legacy-nav-studio";
 

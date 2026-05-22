@@ -63,12 +63,20 @@ export function WelcomeLocaleRail({
   const isLightTheme = theme === "light";
   const autoMs = Math.max(1, rail.autoRotateSec) * 1000;
   const sunGapPx = toolbar?.controlsGapPx ?? 0;
-  const clusterWidthPx = rail.sunSizePx;
   const dotTrackPx = Math.max(rail.dotSizePx, rail.activeDotSizePx);
   const slotHeightPx = dotTrackPx + rail.dotStackGapPx;
   const slotWidthPx = dotTrackPx + rail.dotStackGapPx;
+  /** Flag + code + gap + dot — vertical rail was 62px (sun only) and clipped CN/GH */
+  const centerLabelWidthPx = Math.ceil(
+    rail.flagWidthPx + 10 + rail.labelFontPx * 2.75 + rail.labelToDotGapPx + dotTrackPx * 0.5,
+  );
+  const railClusterWidthPx = Math.max(rail.sunSizePx, centerLabelWidthPx + dotTrackPx);
+  const centerSlotWidthPx = Math.max(dotTrackPx, centerLabelWidthPx);
   const railViewportHeightPx = slotHeightPx * RAIL_OFFSETS.length - rail.dotStackGapPx;
-  const railViewportWidthPx = slotWidthPx * RAIL_OFFSETS.length - rail.dotStackGapPx;
+  const railViewportWidthPx =
+    centerSlotWidthPx +
+    slotWidthPx * (RAIL_OFFSETS.length - 1) +
+    rail.dotStackGapPx * (RAIL_OFFSETS.length - 1);
 
   const nudgeX = (xRem: number, yRem = 0) => {
     if (xRem === 0 && yRem === 0) return undefined;
@@ -167,12 +175,13 @@ export function WelcomeLocaleRail({
     return (
       <div
         className="relative flex shrink-0 items-center justify-center"
-        style={{ width: clusterWidthPx, height: dotTrackPx }}
+        style={{ width: isCenter ? railClusterWidthPx : dotTrackPx, height: dotTrackPx }}
       >
         <div
-          className="absolute top-1/2 flex -translate-y-1/2 items-center justify-end"
+          className="absolute top-1/2 z-10 flex -translate-y-1/2 items-center justify-end whitespace-nowrap"
           style={{
             right: `calc(50% + ${dotTrackPx / 2}px + ${isCenter ? rail.labelToDotGapPx : rail.inactiveLabelGapPx}px)`,
+            maxWidth: isCenter ? `${centerLabelWidthPx}px` : undefined,
             ...nudgeX(rail.labelNudgeXRem),
           }}
         >
@@ -255,7 +264,10 @@ export function WelcomeLocaleRail({
     return (
       <div
         className="relative flex shrink-0 flex-col items-center justify-center"
-        style={{ width: dotTrackPx, minHeight: dotTrackPx + (isCenter ? 28 : 0) }}
+        style={{
+          width: isCenter ? centerSlotWidthPx : dotTrackPx,
+          minHeight: dotTrackPx + (isCenter ? 28 : 0),
+        }}
       >
         {isCenter ? (
           <button
@@ -357,7 +369,7 @@ export function WelcomeLocaleRail({
           )}
         >
           <nav
-            className="relative overflow-hidden"
+            className="relative overflow-x-visible overflow-y-hidden"
             style={{ width: railViewportWidthPx, height: dotTrackPx + 28 }}
             role="listbox"
             aria-label="Region & language"
@@ -406,11 +418,11 @@ export function WelcomeLocaleRail({
     >
       <div
         className="pointer-events-auto flex flex-col items-center"
-        style={{ width: clusterWidthPx, gap: sunGapPx }}
+        style={{ width: railClusterWidthPx, gap: sunGapPx }}
       >
         <nav
           className={cn(
-            "relative flex w-full flex-col items-center overflow-hidden",
+            "relative flex w-full flex-col items-center overflow-x-visible overflow-y-hidden",
             showLocaleRailBg && "rounded-2xl border px-3 py-4",
             showLocaleRailBg &&
               (isLight ? "border-black/15 bg-white/90" : "border-white/10 bg-black/40"),

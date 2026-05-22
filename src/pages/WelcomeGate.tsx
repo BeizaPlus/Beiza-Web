@@ -1,4 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useLayoutStudioBreakpoint } from "@/hooks/useLayoutStudioViewport";
+import { useWelcomeSnapPath } from "@/hooks/useWelcomeSnapPath";
+import {
+  WELCOME_CENTER_ALWAYS_COLOR,
+  WELCOME_CENTER_PATH_KEY,
+  WELCOME_SIDE_CENTER_COLOR_STRIP,
+} from "@/lib/layoutCanonical";
 
 import { motion } from "framer-motion";
 
@@ -678,6 +685,9 @@ const subtitleVariants = {
 
 export default function WelcomeGate() {
   const welcomeRootRef = useRef<HTMLDivElement>(null);
+  const cardsScrollRef = useRef<HTMLDivElement>(null);
+  const layoutBreakpoint = useLayoutStudioBreakpoint();
+  const snappedPath = useWelcomeSnapPath(cardsScrollRef, PATH_KEYS);
   const { locale, ready } = useLocaleContext();
   const [theme, setTheme] = useState<WelcomeTheme>("dark");
   const [store, setStore] = useState<WelcomeStudioStore>(() => loadWelcomeStudioStore());
@@ -817,6 +827,7 @@ export default function WelcomeGate() {
           )}
         >
           <motion.div
+            ref={cardsScrollRef}
             className={cn(
               "flex w-full min-h-0 flex-1 flex-col items-stretch gap-3",
               "max-sm:snap-y max-sm:snap-mandatory max-sm:gap-4",
@@ -827,6 +838,13 @@ export default function WelcomeGate() {
             animate="show"
           >
             {paths.map((path) => {
+              const isCenterCard =
+                layoutBreakpoint === "phone"
+                  ? path.key === snappedPath
+                  : path.key === WELCOME_CENTER_PATH_KEY;
+              const imageFullColor = WELCOME_CENTER_ALWAYS_COLOR && isCenterCard;
+              const centerColorStrip =
+                WELCOME_SIDE_CENTER_COLOR_STRIP && !imageFullColor && !!path.backgroundImage;
               const s = studio[path.key];
               const patchCardImage = (partial: Partial<CardStudio>, persist = true) => {
                 const nextStore = patchLocaleCard(store, locale, path.key, partial);
@@ -877,6 +895,8 @@ export default function WelcomeGate() {
                             patchCardImage({ imageOffsetX, imageOffsetY })
                         : undefined
                     }
+                    imageFullColor={imageFullColor}
+                    centerColorStrip={centerColorStrip}
                   />
                 </motion.div>
               );

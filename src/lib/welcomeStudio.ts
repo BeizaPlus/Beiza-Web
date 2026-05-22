@@ -1,4 +1,5 @@
 import type { BeizaLocale } from "@/lib/locale/types";
+import welcomeGateCanonical from "@/data/welcome-gate-canonical.json";
 import { migrateCopyOffsetFields } from "@/lib/copyLayoutOffset";
 import { looksLikePxOffset, pxToVh } from "@/lib/layoutOffsetUnits";
 
@@ -117,142 +118,13 @@ export const DEFAULT_TOOLBAR_LAYOUT: ToolbarControlsLayout = {
   controlsButtonGapPx: 6,
 };
 
-export const DEFAULT_STUDIO_GLOBAL: StudioGlobal = {
-  iconOffsetY: 6,
-  copyOffsetX: 0,
-  copyOffsetY: 0,
-  copyLift: 3,
-  showIconCircleBg: false,
-  logoScale: 2.25,
-  useMascot: true,
-  lockCardLinks: false,
-  showLocaleRailBg: false,
-  localeRail: DEFAULT_LOCALE_RAIL_LAYOUT,
-  toolbar: DEFAULT_TOOLBAR_LAYOUT,
-};
+/** From `src/data/welcome-gate-canonical.json` — edit JSON, not this file. */
+export const DEFAULT_STUDIO_GLOBAL = welcomeGateCanonical.global as StudioGlobal;
 
-/** Production defaults — tuned per character (welcome gate center card) */
-export const DEFAULT_STUDIO_BY_LOCALE: Record<BeizaLocale, LocaleCardStudio> = {
-  "black-american": {
-    legacy: {
-      imageZoom: 1.71,
-      imageOffsetX: 54.89481872294373,
-      imageOffsetY: 42.30582611832611,
-    },
-    education: {
-      imageZoom: 2.25,
-      imageOffsetX: 24.955212734541828,
-      imageOffsetY: 34.49371431708387,
-    },
-    farewell: {
-      imageZoom: 1.71,
-      imageOffsetX: 54.882992962632684,
-      imageOffsetY: 26.061007957559674,
-    },
-  },
-  indian: {
-    legacy: {
-      imageZoom: 1.73,
-      imageOffsetX: 36.462729978354986,
-      imageOffsetY: 27.424873737373733,
-    },
-    education: {
-      imageZoom: 2.06,
-      imageOffsetX: 24.873737605896885,
-      imageOffsetY: 38.30517801062303,
-    },
-    farewell: {
-      imageZoom: 1.71,
-      imageOffsetX: 54.882992962632684,
-      imageOffsetY: 26.061007957559674,
-    },
-  },
-  latina: {
-    legacy: {
-      imageZoom: 1.73,
-      imageOffsetX: 56.92403950216452,
-      imageOffsetY: 15.587752525252526,
-    },
-    education: {
-      imageZoom: 2.25,
-      imageOffsetX: 24.500667279996367,
-      imageOffsetY: 31.23613855950811,
-    },
-    farewell: {
-      imageZoom: 1.71,
-      imageOffsetX: 52.17736525700498,
-      imageOffsetY: 31.021325417877133,
-    },
-  },
-  chinese: {
-    legacy: {
-      imageZoom: 1.73,
-      imageOffsetX: 65.88643127705629,
-      imageOffsetY: 29.11589105339105,
-    },
-    education: {
-      imageZoom: 2.25,
-      imageOffsetX: 24.7279400072691,
-      imageOffsetY: 32.29674462011417,
-    },
-    farewell: {
-      imageZoom: 1.71,
-      imageOffsetX: 54.882992962632684,
-      imageOffsetY: 26.061007957559674,
-    },
-  },
-  brazilian: {
-    legacy: {
-      imageZoom: 1.73,
-      imageOffsetX: 38.49195075757577,
-      imageOffsetY: 12.31845238095238,
-    },
-    education: {
-      imageZoom: 2.25,
-      imageOffsetX: 24.955212734541828,
-      imageOffsetY: 34.49371431708387,
-    },
-    farewell: {
-      imageZoom: 1.71,
-      imageOffsetX: 54.882992962632684,
-      imageOffsetY: 26.061007957559674,
-    },
-  },
-  africa: {
-    legacy: {
-      imageZoom: 1.73,
-      imageOffsetX: 74.17241612554112,
-      imageOffsetY: 21.337211399711396,
-    },
-    education: {
-      imageZoom: 2.25,
-      imageOffsetX: 24.955212734541828,
-      imageOffsetY: 34.49371431708387,
-    },
-    farewell: {
-      imageZoom: 1.71,
-      imageOffsetX: 54.882992962632684,
-      imageOffsetY: 26.061007957559674,
-    },
-  },
-  fr: {
-    legacy: {
-      imageZoom: 2.11,
-      imageOffsetX: 51.309862012987026,
-      imageOffsetY: 40.028589466089464,
-    },
-    education: {
-      imageZoom: 2.25,
-      imageOffsetX: 24.955212734541828,
-      imageOffsetY: 34.49371431708387,
-    },
-    farewell: {
-      imageZoom: 1.71,
-      imageOffsetX: 56.23580681544654,
-      imageOffsetY: 22.566238837790554,
-    },
-  },
-};
+export const DEFAULT_STUDIO_BY_LOCALE = welcomeGateCanonical.locales as Record<
+  BeizaLocale,
+  LocaleCardStudio
+>;
 
 export const DEFAULT_STUDIO_STORE: WelcomeStudioStore = {
   global: DEFAULT_STUDIO_GLOBAL,

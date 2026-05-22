@@ -8,6 +8,7 @@ import {
   migrateCopyOffsetFields,
 } from "@/lib/copyLayoutOffset";
 import { RECORD_HERO_STUDIO_DEFAULTS } from "@/lib/legacy/recordHeroFrame";
+import { LAYOUT_CANONICAL } from "@/lib/layoutCanonical";
 
 /** Full record station layout — copy column, email, hero (localhost / ?studio=1) */
 export type RecordPageStudioFrame = HeritageHeroFrame & {
@@ -51,38 +52,16 @@ export type RecordPageStudioFrame = HeritageHeroFrame & {
   subtitleMaxWidthRemMobile?: number;
 };
 
-export const RECORD_PAGE_PHONE_DEFAULTS = {
-  offsetXPhone: 0,
-  offsetYPhone: 0,
-  copyLiftPhone: 0,
-  columnMaxWidthRemPhone: 22,
-  contentIndentRemPhone: 0,
-  emailMaxWidthRemPhone: 22,
-  subtitleMaxWidthRemPhone: 20,
-} as const;
+export const RECORD_PAGE_PHONE_DEFAULTS = LAYOUT_CANONICAL.recordPage.phone;
 
-export const RECORD_PAGE_TABLET_DEFAULTS = {
-  offsetXTablet: 0,
-  offsetYTablet: 0,
-  copyLiftTablet: 0,
-  columnMaxWidthRemTablet: 26,
-  contentIndentRemTablet: 0,
-  emailMaxWidthRemTablet: 24,
-  subtitleMaxWidthRemTablet: 22,
-} as const;
+export const RECORD_PAGE_TABLET_DEFAULTS = LAYOUT_CANONICAL.recordPage.tablet;
 
 /** @deprecated use RECORD_PAGE_PHONE_DEFAULTS */
 export const RECORD_PAGE_MOBILE_DEFAULTS = RECORD_PAGE_PHONE_DEFAULTS;
 
 export const RECORD_PAGE_STUDIO_DEFAULTS: RecordPageStudioFrame = {
   ...RECORD_HERO_STUDIO_DEFAULTS,
-  offsetX: 12.5,
-  offsetY: 0,
-  copyLift: 0,
-  columnMaxWidthRem: 32,
-  contentIndentRem: 0,
-  emailMaxWidthRem: 17.5,
-  subtitleMaxWidthRem: 24.75,
+  ...LAYOUT_CANONICAL.recordPage.desktop,
   ...RECORD_PAGE_TABLET_DEFAULTS,
   ...RECORD_PAGE_PHONE_DEFAULTS,
 };

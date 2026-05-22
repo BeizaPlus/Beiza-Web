@@ -10,9 +10,21 @@ Full-page PNG captures to track design and copy iteration over time.
 
 ## Layout JSON
 
+**Source of truth (edit these, then reload):**
+
+| File | Purpose |
+|------|---------|
+| `src/data/beiza-layout-canonical.json` | Record page, nav rail, site padding, heritage hero, welcome UI rules |
+| `src/data/welcome-gate-canonical.json` | Welcome gate crops + locale rail/toolbar |
+
+Imported by `src/lib/layoutCanonical.ts`. Older snapshots below are archives only.
+
 | File | Purpose |
 |------|---------|
 | `landing-layout.json` | Baseline slider values (hero, sections) — commit snapshots as `landing-layout-YYYY-MM-DD.json` |
+| `record-page-canonical.json` | Archive — see `beiza-layout-canonical.json` |
+| `legacy-record-station-canonical.json` | Archive — signed-in station (`legacy-auth`) |
+| `legacy-nav-canonical.json` | Archive — record vertical tab rail |
 
 In **Layout studio** (local dev): **Copy JSON** → clipboard, or **Save JSON** → downloads `landing-layout-YYYY-MM-DD.json`.
 

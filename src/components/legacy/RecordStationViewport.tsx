@@ -18,7 +18,12 @@ import {
   RECORD_PAGE_STUDIO_DEFAULTS,
   type RecordPageStudioFrame,
 } from "@/lib/legacy/recordPageStudio";
-import { siteHeroContentRow } from "@/lib/siteLayout";
+import {
+  LEGACY_AUTH_PAGE_STUDIO_ID,
+  legacyAuthPageLayoutStyle,
+  loadPageLayoutFrame,
+  pageLayoutDefaultsFor,
+} from "@/lib/pageLayoutStudio";
 import { cn } from "@/lib/utils";
 
 type RecordStationViewportProps = {
@@ -49,11 +54,21 @@ export function RecordStationViewport({
   const breakpoint = useLayoutStudioBreakpoint();
   const heroFrame = recordPageFrameForViewport(frame, breakpoint);
   const cssVars = recordPageShellCssVars(heroFrame) as CSSProperties;
-  const columnStyle = breakpoint === "desktop" ? recordColumnLayoutStyle(frame) : undefined;
+  const isDesktop = breakpoint === "desktop";
+  const authStationFrame = studioOn
+    ? loadPageLayoutFrame(LEGACY_AUTH_PAGE_STUDIO_ID)
+    : pageLayoutDefaultsFor(LEGACY_AUTH_PAGE_STUDIO_ID);
+  /** Pasted JSON bindings apply on desktop only — phone/tablet stay centered. */
+  const columnStyle = !isDesktop
+    ? undefined
+    : station
+      ? legacyAuthPageLayoutStyle(authStationFrame)
+      : recordColumnLayoutStyle(frame);
   const textRight = heroFrame.textSide === "right";
   const flow = useRecordFlowOptional();
   const stationPhase = flow?.snapshot.phase ?? "prepare";
   const stationExpanded = stationPhase === "upload" || stationPhase === "seal";
+  const signedIn = !!station;
 
   return (
     <section
@@ -104,7 +119,8 @@ export function RecordStationViewport({
       >
         <div
           className={cn(
-            "record-copy-column flex w-full min-w-0 flex-col justify-center gap-4 overflow-hidden",
+            "record-copy-column flex w-full min-w-0 flex-col overflow-hidden",
+            signedIn ? "min-h-0 flex-1 justify-center gap-3" : "justify-center gap-4",
             "mx-auto max-w-[var(--record-column-max,22rem)]",
             "max-[1199px]:items-center max-[1199px]:text-center",
             "py-6 min-[1200px]:py-8",
@@ -116,25 +132,30 @@ export function RecordStationViewport({
           )}
           style={columnStyle}
         >
-          <div className="shrink-0">
-            <p className="text-eyebrow text-primary">Beiza Legacy · Record</p>
-            <h1 className="mt-2 text-2xl font-semibold leading-tight text-white sm:text-3xl">
-              Record a memory
-            </h1>
-            <p
-              className="mt-2 text-sm leading-snug text-white/85 sm:text-base"
-              style={{ maxWidth: "var(--record-subtitle-max, 28rem)" }}
-            >
-              {circleLabel
-                ? `For ${circleLabel}. Capture a voice or story, then seal it in your vault.`
-                : "Capture a voice or story, then seal it in your family vault."}
-            </p>
-          </div>
+          {!signedIn ? (
+            <div className="shrink-0">
+              <p className="text-eyebrow text-primary">Beiza Legacy · Record</p>
+              <h1 className="mt-2 text-2xl font-semibold leading-tight text-white sm:text-3xl">
+                Record a memory
+              </h1>
+              <p
+                className="mt-2 text-sm leading-snug text-white/85 sm:text-base"
+                style={{ maxWidth: "var(--record-subtitle-max, 28rem)" }}
+              >
+                {circleLabel
+                  ? `For ${circleLabel}. Capture a voice or story, then seal it in your vault.`
+                  : "Capture a voice or story, then seal it in your family vault."}
+              </p>
+            </div>
+          ) : null}
 
           <div
             className={cn(
-              "w-full min-w-0 shrink-0 max-[1199px]:flex max-[1199px]:flex-col max-[1199px]:items-center",
+              "w-full min-w-0 max-[1199px]:flex max-[1199px]:flex-col max-[1199px]:items-center",
+              signedIn && "flex flex-1 flex-col items-center justify-center",
+              !signedIn && "shrink-0",
               textRight && "min-[1200px]:flex min-[1200px]:flex-col min-[1200px]:items-end",
+              signedIn && textRight && "min-[1200px]:items-end",
             )}
           >
             <RecordHeroCta textAlign={textRight ? "right" : "left"} />
@@ -147,7 +168,6 @@ export function RecordStationViewport({
                 stationExpanded ? "min-h-0 flex-1 overflow-y-auto" : "shrink-0",
                 textRight && "flex w-full flex-col items-end",
               )}
-              style={{ maxWidth: "var(--record-column-max, 32rem)" }}
             >
               {station}
             </div>

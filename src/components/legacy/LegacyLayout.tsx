@@ -1,5 +1,6 @@
-import { useState, type CSSProperties } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { LegacyAuthGate } from "@/components/legacy/LegacyAuthGate";
 import { RecordStationViewport } from "@/components/legacy/RecordStationViewport";
 import { RecordFlowProvider } from "@/components/legacy/recordFlowContext";
@@ -54,14 +55,27 @@ function LegacyRecordRoute({ circleLabel, hasSession }: { circleLabel?: string; 
  */
 export function LegacyLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { data: session, isLoading: sessionLoading } = useLegacySession();
   const { data: circleCtx } = useMyLegacyCircle();
   const isTreeRoute = location.pathname === "/legacy/circle";
   const treeFullscreen = isTreeRoute && !!session;
-  const isRecordRoute = location.pathname === "/legacy/record";
+  const isRecordRoute = location.pathname.startsWith(BEIZA_LINKS.legacy.recordStation);
+  /** Logged out: every legacy tab shows the same record sign-in station (URL only changes active tab). */
+  const recordStationShell = !session && !sessionLoading;
   const pageStudioId = session
     ? resolveLegacyPageStudioId(location.pathname)
     : LEGACY_AUTH_PAGE_STUDIO_ID;
+
+  const hadSessionRef = useRef(false);
+  useEffect(() => {
+    if (sessionLoading) return;
+    const justSignedIn = !!session && !hadSessionRef.current;
+    hadSessionRef.current = !!session;
+    if (!justSignedIn || isRecordRoute || isTreeRoute) return;
+    if (!location.pathname.startsWith("/legacy")) return;
+    navigate(BEIZA_LINKS.legacy.recordStation, { replace: true });
+  }, [session, sessionLoading, isRecordRoute, isTreeRoute, location.pathname, navigate]);
 
   if (treeFullscreen) {
     return (
@@ -79,7 +93,7 @@ export function LegacyLayout() {
     );
   }
 
-  if (isRecordRoute) {
+  if (isRecordRoute || recordStationShell) {
     return (
       <LegacyRecordRoute circleLabel={circleCtx?.circle?.name} hasSession={!!session} />
     );

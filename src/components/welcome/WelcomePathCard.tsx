@@ -38,10 +38,20 @@ export type WelcomePathCardProps = {
   onImagePositionCommit?: (position: { imageOffsetX: number; imageOffsetY: number }) => void;
   /** Full-viewport scroll section — fills parent height */
   layout?: "grid" | "scroll";
+  /** Center card — full color always (no grayscale) */
+  imageFullColor?: boolean;
+  /** Side cards — color in the middle strip; edges muted until hover */
+  centerColorStrip?: boolean;
 };
 
 const PHOTO_OVERLAY =
   "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0.82) 78%, rgba(0,0,0,0.95) 100%)";
+
+/** Center strip shows full color; edges stay muted on side cards */
+const CENTER_COLOR_MASK =
+  "linear-gradient(90deg, transparent 6%, black 28%, black 72%, transparent 94%)";
+const EDGE_GRAY_MASK =
+  "linear-gradient(90deg, black 0%, transparent 28%, transparent 72%, black 100%)";
 
 /** Portrait 2:3 at every tier — matches desktop card proportion */
 const CARD_SURFACE_GRID =
@@ -81,6 +91,8 @@ export function WelcomePathCard({
   onImagePositionLive,
   onImagePositionCommit,
   layout = "grid",
+  imageFullColor = false,
+  centerColorStrip = false,
 }: WelcomePathCardProps) {
   const cardSurfaceClass = layout === "scroll" ? CARD_SURFACE_SCROLL : CARD_SURFACE_GRID;
   const iconTopPct = Math.min(100, Math.max(0, iconOffsetY));
@@ -216,18 +228,62 @@ export function WelcomePathCard({
   const body: ReactNode = (
     <>
       {backgroundImage ? (
-        <img
-          ref={imgRef}
-          src={backgroundImage}
-          alt={backgroundImageAlt}
-          className={cn(
-            "pointer-events-none absolute inset-0 z-0 h-full w-full object-cover grayscale group-hover:grayscale-0",
-            "transition-[filter] duration-500",
-          )}
-          style={imageStyle}
-          loading="eager"
-          draggable={false}
-        />
+        imageFullColor ? (
+          <img
+            ref={imgRef}
+            src={backgroundImage}
+            alt={backgroundImageAlt}
+            className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+            style={imageStyle}
+            loading="eager"
+            draggable={false}
+          />
+        ) : centerColorStrip ? (
+          <>
+            <img
+              ref={imgRef}
+              src={backgroundImage}
+              alt=""
+              aria-hidden
+              className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+              style={{
+                ...imageStyle,
+                maskImage: CENTER_COLOR_MASK,
+                WebkitMaskImage: CENTER_COLOR_MASK,
+              }}
+              loading="eager"
+              draggable={false}
+            />
+            <img
+              src={backgroundImage}
+              alt={backgroundImageAlt}
+              className={cn(
+                "pointer-events-none absolute inset-0 z-[1] h-full w-full object-cover grayscale",
+                "transition-opacity duration-500 group-hover:opacity-0",
+              )}
+              style={{
+                ...imageStyle,
+                maskImage: EDGE_GRAY_MASK,
+                WebkitMaskImage: EDGE_GRAY_MASK,
+              }}
+              loading="eager"
+              draggable={false}
+            />
+          </>
+        ) : (
+          <img
+            ref={imgRef}
+            src={backgroundImage}
+            alt={backgroundImageAlt}
+            className={cn(
+              "pointer-events-none absolute inset-0 z-0 h-full w-full object-cover grayscale group-hover:grayscale-0",
+              "transition-[filter] duration-500",
+            )}
+            style={imageStyle}
+            loading="eager"
+            draggable={false}
+          />
+        )
       ) : (
         <div
           className="absolute inset-0 z-0 grayscale transition-[filter] duration-500 group-hover:grayscale-0"

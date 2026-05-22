@@ -1,4 +1,5 @@
 import type { HeritageHeroFrame } from "@/components/dev/heroLayoutStudioState";
+import { LAYOUT_CANONICAL } from "@/lib/layoutCanonical";
 
 /** Ghana (Marmah) — site default record hero framing */
 export const RECORD_HERO_GHANA_DEFAULTS: HeritageHeroFrame = {
@@ -10,15 +11,9 @@ export const RECORD_HERO_GHANA_DEFAULTS: HeritageHeroFrame = {
   copyRaiseVh: 6,
 };
 
-/** Studio portrait — EN / ES / FR / CN entry */
-export const RECORD_HERO_STUDIO_DEFAULTS: HeritageHeroFrame = {
-  posX: 80,
-  posY: 67,
-  scale: 106,
-  textSide: "left",
-  overlayStrength: 68,
-  copyRaiseVh: 4,
-};
+/** Studio portrait — from `beiza-layout-canonical.json` */
+export const RECORD_HERO_STUDIO_DEFAULTS = LAYOUT_CANONICAL.recordPage
+  .hero as HeritageHeroFrame;
 
 /** @deprecated use RECORD_HERO_GHANA_DEFAULTS */
 export const RECORD_HERO_DEFAULTS = RECORD_HERO_GHANA_DEFAULTS;

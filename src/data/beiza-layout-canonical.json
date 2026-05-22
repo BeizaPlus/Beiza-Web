@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "savedAt": "2026-05-22T01:00:00.000Z",
+  "label": "Beiza layout canonical — single source of truth",
+  "breakpoints": {
+    "phone": "≤809px",
+    "tablet": "810–1199px",
+    "desktop": "≥1200px"
+  },
+  "legacyFlow": {
+    "loggedOutSameScreen": true,
+    "signedInRecordMicCenter": true
+  },
+  "welcomeGateUi": {
+    "centerPathKey": "legacy",
+    "centerCardAlwaysFullColor": true,
+    "sideCardsCenterColorStrip": true
+  },
+  "recordPage": {
+    "hero": {
+      "posX": 80,
+      "posY": 67,
+      "scale": 106,
+      "textSide": "left",
+      "overlayStrength": 68,
+      "copyRaiseVh": 4
+    },
+    "desktop": {
+      "offsetX": 12.5,
+      "offsetY": 0,
+      "copyLift": 0,
+      "columnMaxWidthRem": 32,
+      "contentIndentRem": 0,
+      "emailMaxWidthRem": 28.25,
+      "subtitleMaxWidthRem": 24.75
+    },
+    "tablet": {
+      "offsetXTablet": 0,
+      "offsetYTablet": 0,
+      "copyLiftTablet": 0,
+      "columnMaxWidthRemTablet": 26,
+      "contentIndentRemTablet": 0,
+      "emailMaxWidthRemTablet": 24,
+      "subtitleMaxWidthRemTablet": 22
+    },
+    "phone": {
+      "offsetXPhone": 0,
+      "offsetYPhone": 0,
+      "copyLiftPhone": 0,
+      "columnMaxWidthRemPhone": 22,
+      "contentIndentRemPhone": 0,
+      "emailMaxWidthRemPhone": 22,
+      "subtitleMaxWidthRemPhone": 20
+    }
+  },
+  "legacyRecordStation": {
+    "pageId": "legacy-auth",
+    "offsetX": 0,
+    "offsetY": 12.5,
+    "copyLift": 0,
+    "maxWidthRem": 23
+  },
+  "legacyNav": {
+    "offsetXPercent": 79,
+    "offsetYPercent": 55,
+    "offsetXVw": 0,
+    "offsetYVh": 0,
+    "tabShiftXPercent": 0,
+    "tabShiftYPercent": 0,
+    "labelLiftVh": 0,
+    "maxWidthRem": 23.5
+  },
+  "sitePadding": {
+    "paddingXRem": 6.75,
+    "contentIndentRem": 0,
+    "paddingXRemTablet": 1.5,
+    "contentIndentRemTablet": 0,
+    "paddingXRemPhone": 0.75,
+    "contentIndentRemPhone": 0
+  },
+  "heritageHero": {
+    "posX": 80,
+    "posY": 100,
+    "scale": 111,
+    "textSide": "right",
+    "overlayStrength": 71,
+    "copyOffsetX": 6.5,
+    "copyOffsetY": 0
+  }
+}

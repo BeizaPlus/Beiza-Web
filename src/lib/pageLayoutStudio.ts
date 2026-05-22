@@ -5,6 +5,7 @@ import {
   migrateCopyOffsetFields,
   type CopyOffsetFields,
 } from "@/lib/copyLayoutOffset";
+import { LAYOUT_CANONICAL } from "@/lib/layoutCanonical";
 
 /** Per-page content area positioning — localStorage, dev / ?studio=1 */
 
@@ -25,12 +26,10 @@ export const PAGE_LAYOUT_DEFAULTS: PageLayoutFrame = {
 export const LEGACY_AUTH_PAGE_STUDIO_ID = "legacy-auth";
 
 export const PAGE_LAYOUT_PAGE_DEFAULTS: Record<string, PageLayoutFrame> = {
-  [LEGACY_AUTH_PAGE_STUDIO_ID]: {
-    offsetX: 0,
-    offsetY: 12.5,
-    copyLift: 0,
-    maxWidthRem: 23,
-  },
+  [LEGACY_AUTH_PAGE_STUDIO_ID]: (() => {
+    const { pageId: _id, ...frame } = LAYOUT_CANONICAL.legacyRecordStation;
+    return frame;
+  })(),
   "legacy-home": { ...PAGE_LAYOUT_DEFAULTS },
   "legacy-record": { ...PAGE_LAYOUT_DEFAULTS },
   "legacy-vault": { ...PAGE_LAYOUT_DEFAULTS },
