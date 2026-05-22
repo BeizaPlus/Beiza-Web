@@ -42,6 +42,10 @@ export type WelcomePathCardProps = {
   imageFullColor?: boolean;
   /** Side cards — color in the middle strip; edges muted until hover */
   centerColorStrip?: boolean;
+  /** Phone — max width (rem); omit on desktop */
+  phoneCardMaxWidthRem?: number;
+  /** Phone — height (% viewport); 0 = 2:3 aspect from width */
+  phoneCardHeightVh?: number;
 };
 
 const PHOTO_OVERLAY =
@@ -55,7 +59,7 @@ const EDGE_GRAY_MASK =
 
 /** Portrait 2:3 at every tier — matches desktop card proportion */
 const CARD_SURFACE_GRID =
-  "group relative aspect-[2/3] w-full min-w-0 max-w-full overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 max-[809px]:mx-auto max-[809px]:max-w-[min(20rem,calc(100vw-1.5rem))] min-[810px]:min-h-[260px] min-[1200px]:min-h-[380px] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
+  "group relative aspect-[2/3] w-full min-w-0 max-w-full overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 max-[809px]:mx-auto min-[810px]:min-h-[260px] min-[1200px]:min-h-[380px] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
 
 const CARD_SURFACE_SCROLL =
   "group relative h-full min-h-0 w-full max-w-lg overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
@@ -93,8 +97,23 @@ export function WelcomePathCard({
   layout = "grid",
   imageFullColor = false,
   centerColorStrip = false,
+  phoneCardMaxWidthRem,
+  phoneCardHeightVh = 0,
 }: WelcomePathCardProps) {
-  const cardSurfaceClass = layout === "scroll" ? CARD_SURFACE_SCROLL : CARD_SURFACE_GRID;
+  const phoneFixedHeight = (phoneCardHeightVh ?? 0) > 0;
+  const cardSurfaceClass = cn(
+    layout === "scroll" ? CARD_SURFACE_SCROLL : CARD_SURFACE_GRID,
+    phoneFixedHeight && "max-[809px]:aspect-auto",
+  );
+  const phoneCardStyle =
+    phoneCardMaxWidthRem != null || phoneFixedHeight
+      ? {
+          ...(phoneCardMaxWidthRem != null
+            ? { maxWidth: `min(${phoneCardMaxWidthRem}rem, calc(100vw - 1.5rem))` }
+            : {}),
+          ...(phoneFixedHeight ? { height: `${phoneCardHeightVh}vh`, minHeight: `${phoneCardHeightVh}vh` } : {}),
+        }
+      : undefined;
   const iconTopPct = Math.min(100, Math.max(0, iconOffsetY));
   const cardRef = useRef<HTMLDivElement | HTMLAnchorElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -336,6 +355,7 @@ export function WelcomePathCard({
       <div
         ref={cardRef as React.RefObject<HTMLDivElement>}
         className={cn(cardSurfaceClass, studioImageDrag && "touch-none cursor-grab active:cursor-grabbing")}
+        style={phoneCardStyle}
         {...studioPointerHandlers}
       >
         {body}
@@ -351,6 +371,7 @@ export function WelcomePathCard({
         if (dragRef.current?.moved) e.preventDefault();
       }}
       className={cn(cardSurfaceClass, studioImageDrag && "touch-none cursor-grab active:cursor-grabbing")}
+      style={phoneCardStyle}
       {...studioPointerHandlers}
     >
       {body}

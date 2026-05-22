@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, type CSSProperties } from "react";
 import { Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocaleContext } from "@/context/LocaleContext";
@@ -26,6 +26,15 @@ type WelcomeLocaleRailProps = {
   rail?: LocaleRailLayout;
   showLocaleRailBg?: boolean;
 };
+
+/** Studio nudge — positive X moves cluster left; positive Y moves down (rem). */
+function nudgeStyle(xRem: number, yRem = 0): CSSProperties | undefined {
+  if (xRem === 0 && yRem === 0) return undefined;
+  const parts: string[] = [];
+  if (xRem !== 0) parts.push(`translateX(${-xRem}rem)`);
+  if (yRem !== 0) parts.push(`translateY(${yRem}rem)`);
+  return { transform: parts.join(" ") };
+}
 
 export function WelcomeLocaleRail({
   isLight = false,
@@ -163,31 +172,42 @@ export function WelcomeLocaleRail({
                   aria-label={`${option.code} — ${option.title}`}
                   onClick={() => selectOption(option)}
                   className="flex items-center"
-                  style={{ gap: isActive ? rail.labelToDotGapPx : (rail.showInactiveCodes ? rail.inactiveLabelGapPx : 0) }}
+                  style={{
+                    gap: isActive
+                      ? rail.labelToDotGapPx
+                      : rail.showInactiveCodes
+                        ? rail.inactiveLabelGapPx
+                        : 0,
+                  }}
                 >
-                  {/* Flag — active only */}
-                  {isActive && (
-                    <span
-                      className="inline-flex shrink-0 overflow-hidden rounded-[1px]"
-                      style={{ width: rail.flagWidthPx, height: rail.flagHeightPx }}
-                    >
-                      <WelcomeLocaleFlag code={option.code} className="h-full w-full" />
-                    </span>
-                  )}
-                  {/* Code label — active always; inactive only when showInactiveCodes */}
                   {(isActive || rail.showInactiveCodes) && (
                     <span
-                      className={cn(
-                        "shrink-0 font-bold leading-none tracking-wide",
-                        isLight ? "text-black" : "text-white",
-                        !isActive && "opacity-40",
-                      )}
-                      style={{ fontSize: rail.labelFontPx }}
+                      className="flex shrink-0 items-center"
+                      style={{
+                        gap: isActive ? 10 : rail.inactiveLabelGapPx,
+                        ...nudgeStyle(rail.labelNudgeXRem),
+                      }}
                     >
-                      {option.code}
+                      {isActive && (
+                        <span
+                          className="inline-flex shrink-0 overflow-hidden rounded-[1px]"
+                          style={{ width: rail.flagWidthPx, height: rail.flagHeightPx }}
+                        >
+                          <WelcomeLocaleFlag code={option.code} className="h-full w-full" />
+                        </span>
+                      )}
+                      <span
+                        className={cn(
+                          "shrink-0 font-bold leading-none tracking-wide",
+                          isLight ? "text-black" : "text-white",
+                          !isActive && "opacity-40",
+                        )}
+                        style={{ fontSize: rail.labelFontPx }}
+                      >
+                        {option.code}
+                      </span>
                     </span>
                   )}
-                  {/* Dot */}
                   <div
                     className="shrink-0 rounded-full transition-colors duration-200"
                     style={{
@@ -195,8 +215,11 @@ export function WelcomeLocaleRail({
                       height: dotSize,
                       backgroundColor: isActive
                         ? "#f5c518"
-                        : isLight ? "rgba(0,0,0,0.25)" : "#6b6b6b",
+                        : isLight
+                          ? "rgba(0,0,0,0.25)"
+                          : "#6b6b6b",
                       boxShadow: isActive ? "0 0 0 2px rgba(245,197,24,0.3)" : undefined,
+                      ...nudgeStyle(rail.axisNudgeXRem),
                     }}
                   />
                 </button>
@@ -206,8 +229,13 @@ export function WelcomeLocaleRail({
 
           <p className="sr-only" aria-live="polite">{welcomeToolbarCode(locale)}</p>
 
-          {/* Sun button — its center aligns to dot center axis via negative marginRight */}
-          <div style={{ marginTop: sunGapPx + (rail.sunAxisNudgeYRem ? rail.sunAxisNudgeYRem * 16 : 0) }}>
+          <div
+            className="flex justify-end"
+            style={{
+              marginTop: sunGapPx,
+              ...nudgeStyle(rail.sunAxisNudgeXRem, rail.sunAxisNudgeYRem),
+            }}
+          >
             {sunButton}
           </div>
         </div>
@@ -223,16 +251,21 @@ export function WelcomeLocaleRail({
     >
       <div
         className={cn(
-          "pointer-events-auto flex items-center gap-3 rounded-full px-4 py-2.5",
+          "pointer-events-auto flex items-center rounded-full px-4 py-2.5",
           showLocaleRailBg
             ? isLight
               ? "border border-black/15 bg-white/95 shadow-lg"
               : "border border-white/10 bg-black/85 shadow-lg"
             : isLight ? "bg-white/80" : "bg-black/50",
         )}
+        style={{
+          gap: rail.dotStackGapPx,
+          ...nudgeStyle(rail.railNudgeXRem),
+        }}
       >
         <nav
-          className="flex items-end gap-3"
+          className="flex items-end"
+          style={{ gap: rail.dotStackGapPx }}
           role="listbox"
           aria-label="Region & language"
           aria-activedescendant={`welcome-locale-mobile-${activeOption.code}`}
@@ -252,7 +285,11 @@ export function WelcomeLocaleRail({
                 title={option.title}
                 aria-label={`${option.code} — ${option.title}`}
                 onClick={() => selectOption(option)}
-                className="flex flex-col items-center gap-1"
+                className="flex flex-col items-center"
+                style={{
+                  gap: isActive ? rail.labelToDotGapPx : rail.inactiveLabelGapPx,
+                  ...nudgeStyle(isActive ? rail.labelNudgeXRem : 0),
+                }}
               >
                 {isActive && (
                   <>
@@ -276,13 +313,14 @@ export function WelcomeLocaleRail({
                     width: dotSize,
                     height: dotSize,
                     backgroundColor: isActive ? "#f5c518" : isLight ? "rgba(0,0,0,0.25)" : "#6b6b6b",
+                    ...nudgeStyle(rail.axisNudgeXRem),
                   }}
                 />
               </button>
             );
           })}
         </nav>
-        {sunButton}
+        <div style={nudgeStyle(rail.sunAxisNudgeXRem, rail.sunAxisNudgeYRem)}>{sunButton}</div>
         <p className="sr-only" aria-live="polite">{welcomeToolbarCode(locale)}</p>
       </div>
     </aside>

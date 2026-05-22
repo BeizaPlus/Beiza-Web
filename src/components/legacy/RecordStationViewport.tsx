@@ -28,6 +28,8 @@ import { cn } from "@/lib/utils";
 
 type RecordStationViewportProps = {
   circleLabel?: string;
+  /** Authenticated — centered mic + station panel; hides sign-in hero copy */
+  signedIn?: boolean;
   station?: ReactNode;
   /** Live frame from Record page studio (dev) */
   studioFrame?: RecordPageStudioFrame;
@@ -38,6 +40,7 @@ type RecordStationViewportProps = {
  */
 export function RecordStationViewport({
   circleLabel,
+  signedIn: signedInProp = false,
   station,
   studioFrame: studioFrameProp,
 }: RecordStationViewportProps) {
@@ -68,7 +71,7 @@ export function RecordStationViewport({
   const flow = useRecordFlowOptional();
   const stationPhase = flow?.snapshot.phase ?? "prepare";
   const stationExpanded = stationPhase === "upload" || stationPhase === "seal";
-  const signedIn = !!station;
+  const signedIn = signedInProp || !!station;
 
   return (
     <section

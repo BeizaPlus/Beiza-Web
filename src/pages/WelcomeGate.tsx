@@ -59,6 +59,7 @@ import {
 
   DEFAULT_STUDIO_GLOBAL,
   DEFAULT_LOCALE_RAIL_LAYOUT,
+  DEFAULT_PHONE_LAYOUT,
   DEFAULT_TOOLBAR_LAYOUT,
 
   loadWelcomeStudioStore,
@@ -77,6 +78,7 @@ import {
 
   type LocaleRailLayout,
   type ToolbarControlsLayout,
+  type WelcomePhoneLayout,
 
   type CardStudio,
 
@@ -287,6 +289,60 @@ function LocaleRailLayoutSliders({
   );
 }
 
+function PhoneLayoutSliders({
+  phone,
+  onChange,
+}: {
+  phone: WelcomePhoneLayout;
+  onChange: (partial: Partial<WelcomePhoneLayout>) => void;
+}) {
+  const patch = onChange;
+  return (
+    <>
+      <StudioSlider
+        compact
+        label="Card max width (rem)"
+        value={phone.cardMaxWidthRem}
+        defaultValue={DEFAULT_PHONE_LAYOUT.cardMaxWidthRem}
+        min={14}
+        max={28}
+        step={0.25}
+        onChange={(v) => patch({ cardMaxWidthRem: v })}
+      />
+      <StudioSlider
+        compact
+        label="Card height (% viewport, 0 = 2:3)"
+        value={phone.cardHeightVh}
+        defaultValue={DEFAULT_PHONE_LAYOUT.cardHeightVh}
+        min={0}
+        max={85}
+        step={1}
+        onChange={(v) => patch({ cardHeightVh: v })}
+      />
+      <StudioSlider
+        compact
+        label="Gap between cards (rem)"
+        value={phone.cardGapRem}
+        defaultValue={DEFAULT_PHONE_LAYOUT.cardGapRem}
+        min={0}
+        max={2.5}
+        step={0.125}
+        onChange={(v) => patch({ cardGapRem: v })}
+      />
+      <StudioSlider
+        compact
+        label="Scroll padding below cards (rem)"
+        value={phone.scrollPaddingBottomRem}
+        defaultValue={DEFAULT_PHONE_LAYOUT.scrollPaddingBottomRem}
+        min={3}
+        max={12}
+        step={0.25}
+        onChange={(v) => patch({ scrollPaddingBottomRem: v })}
+      />
+    </>
+  );
+}
+
 function ToolbarLayoutSliders({
   layout,
   onChange,
@@ -489,7 +545,7 @@ function WelcomeStudioPanel({
 
       <StudioTextEditButton />
 
-      <StudioAccordionPanels defaultValue={["layout", "rail", "cards"]} className="mb-3">
+      <StudioAccordionPanels defaultValue={["layout", "phone", "rail", "cards"]} className="mb-3">
         <StudioAccordionSection value="layout" title="Page layout">
           <StudioSlider
             compact
@@ -544,6 +600,17 @@ function WelcomeStudioPanel({
             label="Lock cards (no navigation)"
             checked={studio.lockCardLinks}
             onChange={(v) => patchGlobal({ lockCardLinks: v })}
+          />
+        </StudioAccordionSection>
+
+        <StudioAccordionSection
+          value="phone"
+          title="Mobile cards (≤809px)"
+          hint="Touch scroll only — no snap buttons. Tune card size vs viewport; 0 height keeps 2:3 aspect."
+        >
+          <PhoneLayoutSliders
+            phone={studio.phone}
+            onChange={(partial) => patchGlobal({ phone: partial })}
           />
         </StudioAccordionSection>
 
@@ -693,7 +760,8 @@ export default function WelcomeGate() {
   const [store, setStore] = useState<WelcomeStudioStore>(() => loadWelcomeStudioStore());
   const studioEnabled = isLayoutStudioEnabled();
 
-  useWelcomeLocaleSceneWheel(welcomeRootRef, ready);
+  const isPhone = layoutBreakpoint === "phone";
+  useWelcomeLocaleSceneWheel(welcomeRootRef, ready && !isPhone);
 
   useEffect(() => {
     setTheme(getStoredWelcomeTheme());
@@ -822,7 +890,7 @@ export default function WelcomeGate() {
         <main
           className={cn(
             "mx-auto flex min-h-0 w-full flex-1 flex-col",
-            "max-sm:justify-start max-sm:overflow-y-auto max-sm:overscroll-y-contain max-sm:pb-24 max-sm:pt-2",
+            "max-sm:min-h-0 max-sm:overflow-hidden max-sm:pt-2",
             "sm:justify-center sm:overflow-visible sm:px-4 sm:py-8",
           )}
         >
@@ -830,9 +898,17 @@ export default function WelcomeGate() {
             ref={cardsScrollRef}
             className={cn(
               "flex w-full min-h-0 flex-1 flex-col items-stretch gap-3",
-              "max-sm:snap-y max-sm:snap-mandatory max-sm:gap-4",
-              "sm:grid sm:grid-cols-3 sm:gap-6 sm:snap-none",
+              "max-sm:overflow-y-auto max-sm:overscroll-y-contain max-sm:[-webkit-overflow-scrolling:touch]",
+              "sm:grid sm:grid-cols-3 sm:gap-6",
             )}
+            style={
+              isPhone
+                ? {
+                    gap: `${studio.phone.cardGapRem}rem`,
+                    paddingBottom: `${studio.phone.scrollPaddingBottomRem}rem`,
+                  }
+                : undefined
+            }
             variants={containerVariants}
             initial="hidden"
             animate="show"
@@ -858,7 +934,7 @@ export default function WelcomeGate() {
                   variants={cardVariants}
                   className={cn(
                     "flex h-full min-h-0 min-w-0",
-                    "max-[809px]:snap-center max-[809px]:flex-none max-[809px]:w-full",
+                    "max-[809px]:flex-none max-[809px]:w-full",
                     "min-[810px]:max-[1199px]:min-h-[280px]",
                   )}
                 >
@@ -897,6 +973,8 @@ export default function WelcomeGate() {
                     }
                     imageFullColor={imageFullColor}
                     centerColorStrip={centerColorStrip}
+                    phoneCardMaxWidthRem={isPhone ? studio.phone.cardMaxWidthRem : undefined}
+                    phoneCardHeightVh={isPhone ? studio.phone.cardHeightVh : undefined}
                   />
                 </motion.div>
               );

@@ -39,8 +39,9 @@ function LegacyRecordRoute({
         <RecordStationViewport
           studioFrame={studioOn ? recordStudio : undefined}
           circleLabel={circleLabel}
+          signedIn={signedIn}
           station={
-            hasSession ? (
+            signedIn ? (
               <div className="legacy-record-station-panel h-full min-h-0 w-full overflow-hidden">
                 <Outlet />
               </div>
