@@ -164,6 +164,10 @@ Implementation: `LegacyLayout.tsx`, `LegacyShellProvider`, `RecordStationViewpor
 
 Base layout, routing, canonical JSON, and legacy sign-in → record station flow are in place on `main`. Next work can build on this without re-tuning breakpoints or re-pasting studio JSON from chat.
 
+## Fixes log (don’t re-debug the same bug)
+
+See **`docs/FIXES-LOG.md`** — symptoms, causes, commits for record station, legacy tabs, welcome rail, smoke gotchas.
+
 ## Deferred (saved for later)
 
 | Doc | Purpose |
