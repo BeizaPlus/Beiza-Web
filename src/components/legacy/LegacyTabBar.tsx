@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useLegacyShell } from "@/components/legacy/legacyShellContext";
+import { useLegacySession } from "@/hooks/useLegacy";
 import { supabase } from "@/lib/supabaseClient";
 import { LegacyNavIcon, type LegacyNavIconName } from "@/components/legacy/LegacyNavIcon";
 import { LegacyNavStudio } from "@/components/legacy/LegacyNavStudio";

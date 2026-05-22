@@ -20,6 +20,7 @@
     "links:check": "node scripts/validate-link-mastersheet.mjs && npx tsx scripts/validate-welcome-hrefs.mjs",
     "media:check": "node scripts/validate-local-media.mjs",
     "smoke:record": "node scripts/capture-record-area-smoke.mjs",
+    "smoke:site": "node scripts/capture-site-links-smoke.mjs",
     "smoke:seo": "node scripts/seo-smoke-test.mjs"
   },
   "dependencies": {
