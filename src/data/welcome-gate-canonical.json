@@ -10,15 +10,15 @@
     "lockCardLinks": false,
     "showLocaleRailBg": false,
     "localeRail": {
-      "dotSizePx": 12,
-      "activeDotSizePx": 16,
-      "dotStackGapPx": 6,
+      "dotSizePx": 18,
+      "activeDotSizePx": 20,
+      "dotStackGapPx": 16,
       "labelToDotGapPx": 12,
-      "flagWidthPx": 17,
-      "flagHeightPx": 13,
-      "labelFontPx": 14,
-      "sunSizePx": 62,
-      "sunIconPx": 28,
+      "flagWidthPx": 22,
+      "flagHeightPx": 16,
+      "labelFontPx": 16,
+      "sunSizePx": 78,
+      "sunIconPx": 32,
       "autoRotateSec": 5,
       "showInactiveCodes": false,
       "railNudgeXRem": 0,
@@ -29,13 +29,19 @@
       "inactiveLabelGapPx": 8
     },
     "toolbar": {
-      "railRightRem": 1.75,
+      "railRightRem": 1.25,
       "railTopPct": 50,
-      "railDotsGapPx": 6,
-      "controlsGapPx": 0,
+      "railDotsGapPx": 16,
+      "controlsGapPx": 36,
       "controlsOffsetXRem": 0,
       "controlsOffsetYPx": 0,
       "controlsButtonGapPx": 6
+    },
+    "phone": {
+      "cardMaxWidthRem": 20,
+      "cardHeightVh": 0,
+      "cardGapRem": 1,
+      "scrollPaddingBottomRem": 6
     }
   },
   "locales": {

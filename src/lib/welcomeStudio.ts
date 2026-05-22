@@ -64,6 +64,18 @@ export type ToolbarControlsLayout = {
   controlsButtonGapPx: number;
 };
 
+/** Phone (≤809px) — path card size vs viewport; scroll is touch-only (no snap buttons). */
+export type WelcomePhoneLayout = {
+  /** Max card width on phone (rem) */
+  cardMaxWidthRem: number;
+  /** Card height as % of viewport; 0 = keep 2:3 aspect from width */
+  cardHeightVh: number;
+  /** Vertical gap between stacked cards (rem) */
+  cardGapRem: number;
+  /** Padding below last card — clears bottom locale rail (rem) */
+  scrollPaddingBottomRem: number;
+};
+
 export type StudioGlobal = {
   iconOffsetY: number;
   /** Copy shift vw / vh on welcome cards */
@@ -78,6 +90,7 @@ export type StudioGlobal = {
   showLocaleRailBg: boolean;
   localeRail: LocaleRailLayout;
   toolbar: ToolbarControlsLayout;
+  phone: WelcomePhoneLayout;
 };
 
 /** Per-locale card crops + shared global layout controls */
@@ -89,15 +102,15 @@ export type WelcomeStudioStore = {
 export type StudioState = LocaleCardStudio & StudioGlobal;
 
 export const DEFAULT_LOCALE_RAIL_LAYOUT: LocaleRailLayout = {
-  dotSizePx: 12,
-  activeDotSizePx: 16,
-  dotStackGapPx: 6,
+  dotSizePx: 18,
+  activeDotSizePx: 20,
+  dotStackGapPx: 16,
   labelToDotGapPx: 12,
-  flagWidthPx: 17,
-  flagHeightPx: 13,
-  labelFontPx: 14,
-  sunSizePx: 62,
-  sunIconPx: 28,
+  flagWidthPx: 22,
+  flagHeightPx: 16,
+  labelFontPx: 16,
+  sunSizePx: 78,
+  sunIconPx: 32,
   autoRotateSec: 5,
   showInactiveCodes: false,
   railNudgeXRem: 0,
@@ -116,6 +129,13 @@ export const DEFAULT_TOOLBAR_LAYOUT: ToolbarControlsLayout = {
   controlsOffsetXRem: 0,
   controlsOffsetYPx: 0,
   controlsButtonGapPx: 6,
+};
+
+export const DEFAULT_PHONE_LAYOUT: WelcomePhoneLayout = {
+  cardMaxWidthRem: 20,
+  cardHeightVh: 0,
+  cardGapRem: 1,
+  scrollPaddingBottomRem: 6,
 };
 
 /** From `src/data/welcome-gate-canonical.json` — edit JSON, not this file. */
@@ -160,6 +180,10 @@ function normalizeToolbarLayout(raw: Partial<ToolbarControlsLayout> | undefined)
   return { ...DEFAULT_TOOLBAR_LAYOUT, ...raw };
 }
 
+function normalizePhoneLayout(raw: Partial<WelcomePhoneLayout> | undefined): WelcomePhoneLayout {
+  return { ...DEFAULT_PHONE_LAYOUT, ...raw };
+}
+
 function normalizeLocaleRailLayout(
   raw: Partial<LocaleRailLayout> | undefined,
   toolbar?: Partial<ToolbarControlsLayout>,
@@ -175,7 +199,7 @@ function normalizeLocaleRailLayout(
 }
 
 function normalizeGlobal(raw: Partial<StudioGlobal> | undefined): StudioGlobal {
-  const { toolbar: toolbarRaw, localeRail: localeRailRaw, ...rest } = raw ?? {};
+  const { toolbar: toolbarRaw, localeRail: localeRailRaw, phone: phoneRaw, ...rest } = raw ?? {};
   const toolbar = normalizeToolbarLayout(toolbarRaw);
   const migrated = migrateCopyOffsetFields({
     offsetX: rest.copyOffsetX,
@@ -196,6 +220,7 @@ function normalizeGlobal(raw: Partial<StudioGlobal> | undefined): StudioGlobal {
     copyLift,
     toolbar,
     localeRail: normalizeLocaleRailLayout(localeRailRaw, toolbarRaw),
+    phone: normalizePhoneLayout(phoneRaw),
   };
 }
 
@@ -317,7 +342,8 @@ export function patchStudioGlobal(
   store: WelcomeStudioStore,
   partial: Partial<StudioGlobal>,
 ): WelcomeStudioStore {
-  const { toolbar: toolbarPartial, localeRail: localeRailPartial, ...rest } = partial;
+  const { toolbar: toolbarPartial, localeRail: localeRailPartial, phone: phonePartial, ...rest } =
+    partial;
   return {
     ...store,
     global: {
@@ -329,6 +355,7 @@ export function patchStudioGlobal(
       localeRail: localeRailPartial
         ? { ...store.global.localeRail, ...localeRailPartial }
         : store.global.localeRail,
+      phone: phonePartial ? { ...store.global.phone, ...phonePartial } : store.global.phone,
     },
   };
 }
