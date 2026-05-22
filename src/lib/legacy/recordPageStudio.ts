@@ -81,7 +81,7 @@ export const RECORD_PAGE_STUDIO_DEFAULTS: RecordPageStudioFrame = {
   copyLift: 0,
   columnMaxWidthRem: 32,
   contentIndentRem: 0,
-  emailMaxWidthRem: 28.25,
+  emailMaxWidthRem: 17.5,
   subtitleMaxWidthRem: 24.75,
   ...RECORD_PAGE_TABLET_DEFAULTS,
   ...RECORD_PAGE_PHONE_DEFAULTS,

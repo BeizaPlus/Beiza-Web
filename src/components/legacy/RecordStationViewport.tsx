@@ -133,7 +133,7 @@ export function RecordStationViewport({
 
           <div
             className={cn(
-              "shrink-0 w-full max-md:flex max-md:flex-col max-md:items-center",
+              "w-full min-w-0 shrink-0 max-[1199px]:flex max-[1199px]:flex-col max-[1199px]:items-center",
               textRight && "min-[1200px]:flex min-[1200px]:flex-col min-[1200px]:items-end",
             )}
           >
