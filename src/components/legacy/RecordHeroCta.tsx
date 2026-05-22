@@ -66,13 +66,13 @@ export function RecordHeroCta({ textAlign = "left" }: RecordHeroCtaProps) {
             className={cn(
               "h-12 w-full min-w-0 rounded-full border border-white/25 bg-white/10 px-6 text-base text-white placeholder:text-white/45 backdrop-blur-sm",
               "focus:border-white/50 focus:outline-none focus:ring-1 focus:ring-white/30",
-              "min-[1200px]:h-11 min-[1200px]:max-w-[min(var(--record-email-max,28.25rem),calc(100%-11.5rem))] min-[1200px]:flex-1 min-[1200px]:px-5 min-[1200px]:text-sm",
+              "min-[1280px]:h-11 min-[1280px]:max-w-[min(var(--record-email-max,17.5rem),calc(100%-12.5rem))] min-[1280px]:flex-1 min-[1280px]:px-5 min-[1280px]:text-sm",
             )}
           />
           <button
             type="submit"
             disabled={sending}
-            className="w-full shrink-0 whitespace-nowrap rounded-full bg-white px-6 py-3.5 text-sm font-medium text-background transition hover:bg-white/90 disabled:opacity-60 min-[1200px]:w-auto min-[1200px]:py-3 min-[1200px]:text-[13px]"
+            className="w-full shrink-0 whitespace-nowrap rounded-full bg-white px-6 py-3.5 text-sm font-medium text-background transition hover:bg-white/90 disabled:opacity-60 min-[1280px]:w-auto min-[1280px]:py-3 min-[1280px]:text-[13px]"
           >
             {sending ? "Sending…" : "Sign in to record →"}
           </button>
