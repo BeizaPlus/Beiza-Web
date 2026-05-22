@@ -167,7 +167,7 @@ export default function HeritagePage() {
       >
           <div
             className={cn(
-              "w-full max-w-[520px] min-w-0",
+              "w-full min-w-0 max-w-[min(42rem,calc(100vw-2*var(--beiza-site-padding-x,1.25rem)))]",
               siteContentIndentX,
               heroFrame.textSide === "right" ? "text-right md:ml-auto" : "text-left md:mr-auto",
               "md:py-20",
@@ -183,7 +183,7 @@ export default function HeritagePage() {
             </p>
             <p
               className={cn(
-                "mt-3 max-w-[420px] text-sm leading-relaxed text-subtle",
+                "mt-3 max-w-[min(36rem,100%)] text-sm leading-relaxed text-subtle",
                 heroFrame.textSide === "right" ? "ml-auto" : "",
               )}
             >

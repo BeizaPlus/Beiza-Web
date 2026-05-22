@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import type { HeritageHeroFrame } from "@/components/dev/heroLayoutStudioState";
+import type { LayoutStudioBreakpoint } from "@/lib/layoutBreakpoints";
 import { heritageHeroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
 import {
   clampCopyOffsetFields,
@@ -24,7 +25,54 @@ export type RecordPageStudioFrame = HeritageHeroFrame & {
   emailMaxWidthRem: number;
   /** Subtitle paragraph max width (rem) */
   subtitleMaxWidthRem: number;
+  /** Phone (≤809px) */
+  offsetXPhone: number;
+  offsetYPhone: number;
+  copyLiftPhone: number;
+  columnMaxWidthRemPhone: number;
+  contentIndentRemPhone: number;
+  emailMaxWidthRemPhone: number;
+  subtitleMaxWidthRemPhone: number;
+  /** Tablet (810–1199px) */
+  offsetXTablet: number;
+  offsetYTablet: number;
+  copyLiftTablet: number;
+  columnMaxWidthRemTablet: number;
+  contentIndentRemTablet: number;
+  emailMaxWidthRemTablet: number;
+  subtitleMaxWidthRemTablet: number;
+  /** @deprecated → offsetXPhone */
+  offsetXMobile?: number;
+  offsetYMobile?: number;
+  copyLiftMobile?: number;
+  columnMaxWidthRemMobile?: number;
+  contentIndentRemMobile?: number;
+  emailMaxWidthRemMobile?: number;
+  subtitleMaxWidthRemMobile?: number;
 };
+
+export const RECORD_PAGE_PHONE_DEFAULTS = {
+  offsetXPhone: 0,
+  offsetYPhone: 0,
+  copyLiftPhone: 0,
+  columnMaxWidthRemPhone: 22,
+  contentIndentRemPhone: 0,
+  emailMaxWidthRemPhone: 22,
+  subtitleMaxWidthRemPhone: 20,
+} as const;
+
+export const RECORD_PAGE_TABLET_DEFAULTS = {
+  offsetXTablet: 0,
+  offsetYTablet: 0,
+  copyLiftTablet: 0,
+  columnMaxWidthRemTablet: 26,
+  contentIndentRemTablet: 0,
+  emailMaxWidthRemTablet: 24,
+  subtitleMaxWidthRemTablet: 22,
+} as const;
+
+/** @deprecated use RECORD_PAGE_PHONE_DEFAULTS */
+export const RECORD_PAGE_MOBILE_DEFAULTS = RECORD_PAGE_PHONE_DEFAULTS;
 
 export const RECORD_PAGE_STUDIO_DEFAULTS: RecordPageStudioFrame = {
   ...RECORD_HERO_STUDIO_DEFAULTS,
@@ -35,7 +83,70 @@ export const RECORD_PAGE_STUDIO_DEFAULTS: RecordPageStudioFrame = {
   contentIndentRem: 0,
   emailMaxWidthRem: 28.25,
   subtitleMaxWidthRem: 24.75,
+  ...RECORD_PAGE_TABLET_DEFAULTS,
+  ...RECORD_PAGE_PHONE_DEFAULTS,
 };
+
+function phoneFieldsFromLegacy(parsed: Partial<RecordPageStudioFrame>) {
+  return {
+    offsetXPhone: parsed.offsetXPhone ?? parsed.offsetXMobile ?? RECORD_PAGE_PHONE_DEFAULTS.offsetXPhone,
+    offsetYPhone: parsed.offsetYPhone ?? parsed.offsetYMobile ?? RECORD_PAGE_PHONE_DEFAULTS.offsetYPhone,
+    copyLiftPhone: parsed.copyLiftPhone ?? parsed.copyLiftMobile ?? RECORD_PAGE_PHONE_DEFAULTS.copyLiftPhone,
+    columnMaxWidthRemPhone:
+      parsed.columnMaxWidthRemPhone ??
+      parsed.columnMaxWidthRemMobile ??
+      RECORD_PAGE_PHONE_DEFAULTS.columnMaxWidthRemPhone,
+    contentIndentRemPhone:
+      parsed.contentIndentRemPhone ??
+      parsed.contentIndentRemMobile ??
+      RECORD_PAGE_PHONE_DEFAULTS.contentIndentRemPhone,
+    emailMaxWidthRemPhone:
+      parsed.emailMaxWidthRemPhone ??
+      parsed.emailMaxWidthRemMobile ??
+      RECORD_PAGE_PHONE_DEFAULTS.emailMaxWidthRemPhone,
+    subtitleMaxWidthRemPhone:
+      parsed.subtitleMaxWidthRemPhone ??
+      parsed.subtitleMaxWidthRemMobile ??
+      RECORD_PAGE_PHONE_DEFAULTS.subtitleMaxWidthRemPhone,
+  };
+}
+
+export function recordPageFrameForViewport(
+  frame: RecordPageStudioFrame,
+  breakpoint: LayoutStudioBreakpoint,
+): RecordPageStudioFrame {
+  if (breakpoint === "desktop") return frame;
+  if (breakpoint === "tablet") {
+    return {
+      ...frame,
+      offsetX: frame.offsetXTablet,
+      offsetY: frame.offsetYTablet,
+      copyLift: frame.copyLiftTablet,
+      columnMaxWidthRem: frame.columnMaxWidthRemTablet,
+      contentIndentRem: frame.contentIndentRemTablet,
+      emailMaxWidthRem: frame.emailMaxWidthRemTablet,
+      subtitleMaxWidthRem: frame.subtitleMaxWidthRemTablet,
+    };
+  }
+  return {
+    ...frame,
+    offsetX: frame.offsetXPhone,
+    offsetY: frame.offsetYPhone,
+    copyLift: frame.copyLiftPhone,
+    columnMaxWidthRem: frame.columnMaxWidthRemPhone,
+    contentIndentRem: frame.contentIndentRemPhone,
+    emailMaxWidthRem: frame.emailMaxWidthRemPhone,
+    subtitleMaxWidthRem: frame.subtitleMaxWidthRemPhone,
+  };
+}
+
+/** @deprecated use recordPageFrameForViewport(frame, 'phone') */
+export function recordPageFrameForViewportLegacy(
+  frame: RecordPageStudioFrame,
+  mobile: boolean,
+): RecordPageStudioFrame {
+  return recordPageFrameForViewport(frame, mobile ? "phone" : "desktop");
+}
 
 const STORAGE_KEY = "beiza-record-page-studio";
 
@@ -54,9 +165,22 @@ export function loadRecordPageStudioFrame(): RecordPageStudioFrame {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { ...RECORD_PAGE_STUDIO_DEFAULTS };
+    const parsed = JSON.parse(raw) as Partial<RecordPageStudioFrame>;
     return clampRecordStudioFrame({
       ...RECORD_PAGE_STUDIO_DEFAULTS,
-      ...migrateCopyOffsetFields(JSON.parse(raw) as Partial<RecordPageStudioFrame>),
+      ...migrateCopyOffsetFields(parsed),
+      offsetXTablet: parsed.offsetXTablet ?? RECORD_PAGE_TABLET_DEFAULTS.offsetXTablet,
+      offsetYTablet: parsed.offsetYTablet ?? RECORD_PAGE_TABLET_DEFAULTS.offsetYTablet,
+      copyLiftTablet: parsed.copyLiftTablet ?? RECORD_PAGE_TABLET_DEFAULTS.copyLiftTablet,
+      columnMaxWidthRemTablet:
+        parsed.columnMaxWidthRemTablet ?? RECORD_PAGE_TABLET_DEFAULTS.columnMaxWidthRemTablet,
+      contentIndentRemTablet:
+        parsed.contentIndentRemTablet ?? RECORD_PAGE_TABLET_DEFAULTS.contentIndentRemTablet,
+      emailMaxWidthRemTablet:
+        parsed.emailMaxWidthRemTablet ?? RECORD_PAGE_TABLET_DEFAULTS.emailMaxWidthRemTablet,
+      subtitleMaxWidthRemTablet:
+        parsed.subtitleMaxWidthRemTablet ?? RECORD_PAGE_TABLET_DEFAULTS.subtitleMaxWidthRemTablet,
+      ...phoneFieldsFromLegacy(parsed),
     });
   } catch {
     return { ...RECORD_PAGE_STUDIO_DEFAULTS };
@@ -100,4 +224,4 @@ export function recordColumnLayoutStyle(
 }
 
 export const recordContentIndentX =
-  "pl-[var(--record-content-indent,var(--beiza-content-indent,1rem))] pr-[var(--record-content-indent,var(--beiza-content-indent,1rem))]";
+  "min-[1200px]:pl-[var(--record-content-indent,var(--beiza-content-indent,1rem))] min-[1200px]:pr-[var(--record-content-indent,var(--beiza-content-indent,1rem))]";

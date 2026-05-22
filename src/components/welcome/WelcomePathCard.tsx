@@ -43,8 +43,9 @@ export type WelcomePathCardProps = {
 const PHOTO_OVERLAY =
   "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.25) 45%, rgba(0,0,0,0.82) 78%, rgba(0,0,0,0.95) 100%)";
 
+/** Portrait 2:3 at every tier — matches desktop card proportion */
 const CARD_SURFACE_GRID =
-  "group relative aspect-[2/3] w-full min-h-[min(220px,38dvh)] max-h-[min(46dvh,400px)] min-w-0 overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 sm:min-h-[280px] sm:max-h-none md:min-h-[340px] lg:min-h-[380px] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
+  "group relative aspect-[2/3] w-full min-w-0 max-w-full overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 max-[809px]:mx-auto max-[809px]:max-w-[min(20rem,calc(100vw-1.5rem))] min-[810px]:min-h-[260px] min-[1200px]:min-h-[380px] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
 
 const CARD_SURFACE_SCROLL =
   "group relative h-full min-h-0 w-full max-w-lg overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";

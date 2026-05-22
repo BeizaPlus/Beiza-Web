@@ -8,10 +8,12 @@ import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { getRecordStationHeroSources } from "@/lib/locale/recordHeroImages";
 import { isGhanaEntryLocale } from "@/lib/locale/ghanaEntry";
 import { RECORD_HERO_GHANA_DEFAULTS, RECORD_HERO_STUDIO_DEFAULTS } from "@/lib/legacy/recordHeroFrame";
+import { useLayoutStudioBreakpoint } from "@/hooks/useLayoutStudioViewport";
 import {
   loadRecordPageStudioFrame,
   recordColumnLayoutStyle,
   recordContentIndentX,
+  recordPageFrameForViewport,
   recordPageShellCssVars,
   RECORD_PAGE_STUDIO_DEFAULTS,
   type RecordPageStudioFrame,
@@ -44,9 +46,10 @@ export function RecordStationViewport({
   };
   const frame =
     studioFrameProp ?? (studioOn ? loadRecordPageStudioFrame() : codeDefaults);
-  const heroFrame = frame;
+  const breakpoint = useLayoutStudioBreakpoint();
+  const heroFrame = recordPageFrameForViewport(frame, breakpoint);
   const cssVars = recordPageShellCssVars(heroFrame) as CSSProperties;
-  const columnStyle = recordColumnLayoutStyle(frame);
+  const columnStyle = breakpoint === "desktop" ? recordColumnLayoutStyle(frame) : undefined;
   const textRight = heroFrame.textSide === "right";
   const flow = useRecordFlowOptional();
   const stationPhase = flow?.snapshot.phase ?? "prepare";
@@ -60,9 +63,21 @@ export function RecordStationViewport({
     >
       <style>{`
         .record-station-viewport .record-viewport-overlay {
-          background: var(--record-overlay-mobile, linear-gradient(to top, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.2) 100%));
+          background: var(--record-overlay-mobile, linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.55) 42%, rgba(0,0,0,0.15) 100%));
         }
-        @media (min-width: 768px) {
+        @media (max-width: 809px) {
+          .record-station-viewport .record-copy-column {
+            transform: none !important;
+            margin-left: auto;
+            margin-right: auto;
+          }
+        }
+        @media (max-width: 1199px) {
+          .record-station-viewport .record-copy-column {
+            transform: none !important;
+          }
+        }
+        @media (min-width: 810px) {
           .record-station-viewport .record-viewport-overlay {
             background: var(--record-overlay-md, var(--heritage-overlay-md));
           }
@@ -81,17 +96,23 @@ export function RecordStationViewport({
       <div
         className={cn(
           "relative z-10 flex h-full min-h-0 w-full",
-          siteHeroContentRow,
-          textRight ? "md:justify-end" : "md:justify-start",
+          "justify-center items-center",
+          "px-[var(--beiza-site-padding-x,0.75rem)]",
+          "max-[809px]:pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] max-[809px]:pt-4",
+          textRight ? "min-[1200px]:justify-end" : "min-[1200px]:justify-start",
         )}
       >
         <div
           className={cn(
-            "flex w-full min-w-0 flex-col justify-center gap-4 overflow-hidden py-6 sm:py-8",
+            "record-copy-column flex w-full min-w-0 flex-col justify-center gap-4 overflow-hidden",
+            "mx-auto max-w-[var(--record-column-max,22rem)]",
+            "max-[1199px]:items-center max-[1199px]:text-center",
+            "py-6 min-[1200px]:py-8",
             stationExpanded && station ? "h-full min-h-0" : "min-h-0",
-            "max-w-[var(--record-column-max,32rem)]",
             recordContentIndentX,
-            textRight ? "md:ml-auto md:items-end md:text-right" : "md:mr-auto md:text-left",
+            textRight
+              ? "min-[1200px]:ml-auto min-[1200px]:max-w-[var(--record-column-max,32rem)] min-[1200px]:items-end min-[1200px]:text-right"
+              : "min-[1200px]:mr-auto min-[1200px]:max-w-[var(--record-column-max,32rem)] min-[1200px]:text-left",
           )}
           style={columnStyle}
         >
@@ -110,7 +131,12 @@ export function RecordStationViewport({
             </p>
           </div>
 
-          <div className={cn("shrink-0 w-full", textRight && "flex flex-col items-end")}>
+          <div
+            className={cn(
+              "shrink-0 w-full max-md:flex max-md:flex-col max-md:items-center",
+              textRight && "min-[1200px]:flex min-[1200px]:flex-col min-[1200px]:items-end",
+            )}
+          >
             <RecordHeroCta textAlign={textRight ? "right" : "left"} />
           </div>
 

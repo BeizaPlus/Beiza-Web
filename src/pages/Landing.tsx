@@ -19,6 +19,7 @@ import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FullBleedHero } from "@/components/FullBleedHero";
 import { VoicesThatStayedSection } from "@/components/landing/VoicesThatStayedSection";
 import { BRAND_IMAGES, HERO_OVERLAY_GRADIENT } from "@/lib/brandImages";
+import { resolveHeroBackgroundSrc } from "@/lib/resolveHeroImage";
 import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { FAQItem } from "@/components/framer/FAQItem";
@@ -142,7 +143,10 @@ const Landing = () => {
           ctaText={hero.ctaLabel ?? "Start Your Legacy"}
           ctaLink={hero.ctaHref ?? BEIZA_LINKS.legacy.app}
           reviews={hero.reviews ?? undefined}
-          backgroundImage={hero.backgroundMedia?.src ?? BRAND_IMAGES.homepageHero}
+          backgroundImage={resolveHeroBackgroundSrc(
+            hero.backgroundMedia?.src,
+            BRAND_IMAGES.homepageHero,
+          )}
           backgroundPosition={`${studioState.hero.posX}% ${studioState.hero.posY}%`}
           backgroundScale={studioState.hero.scale}
           overlayStyle={{ background: HERO_OVERLAY_GRADIENT }}

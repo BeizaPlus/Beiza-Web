@@ -148,7 +148,7 @@ Education regional paths (`/af/education`, etc.) redirect to `/home` — not ren
 
 ## Header nav (locked)
 
-`Navigation.tsx` always uses `PRODUCT_NAV_LINKS` from `src/config/productNav.ts` — CMS `navigation_links` rows do **not** replace the header (prevents Vault/Circle/Heritage flash).
+`Navigation.tsx` always uses `PRODUCT_NAV_LINKS` from `src/config/productNav.ts` — CMS `navigation_links` rows do **not** replace the header (prevents Vault/Circle/Blog flash). Life-story marketing: `/heritage`. Farewell/memorial: `/farewell` (not in header).
 
 | Label | Path |
 |-------|------|

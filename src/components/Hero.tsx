@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CTAButton } from "./framer/CTAButton";
-import { HERO_OVERLAY_GRADIENT, HERO_SHELL_CLASS, HERO_CONTENT_CLASS, HERO_CONTENT_BOTTOM_STYLE } from "@/lib/brandImages";
+import { BRAND_IMAGES, HERO_OVERLAY_GRADIENT, HERO_SHELL_CLASS, HERO_CONTENT_CLASS, HERO_CONTENT_BOTTOM_STYLE } from "@/lib/brandImages";
 import { FALLBACK_SITE_SETTINGS } from "@/lib/fallbackContent";
+import { resolveHeroBackgroundSrc } from "@/lib/resolveHeroImage";
 
 interface HeroProps {
   headline?: string;
@@ -46,9 +48,18 @@ export const Hero = ({
   const buttonLabel = ctaLabel ?? ctaText ?? FALLBACK_SITE_SETTINGS.heroCtaLabel;
   const buttonTarget = ctaLink ?? ctaHref ?? FALLBACK_SITE_SETTINGS.heroCtaHref;
 
+  const heroFallback = BRAND_IMAGES.homepageHero;
+  const [heroSrc, setHeroSrc] = useState(() =>
+    resolveHeroBackgroundSrc(backgroundImage, heroFallback),
+  );
+
+  useEffect(() => {
+    setHeroSrc(resolveHeroBackgroundSrc(backgroundImage, heroFallback));
+  }, [backgroundImage, heroFallback]);
+
   return (
     <header className={HERO_SHELL_CLASS} id="hero">
-      {backgroundImage ? (
+      {heroSrc ? (
         <motion.div
           className="absolute inset-0 overflow-hidden"
           initial={{ opacity: 0, scale: 1.05 }}
@@ -56,7 +67,7 @@ export const Hero = ({
           transition={{ duration: 1.4, ease: [0.12, 0.23, 0.5, 1] }}
         >
           <img
-            src={backgroundImage}
+            src={heroSrc}
             alt="Hero background"
             className="h-full w-full object-cover"
             style={{
@@ -65,6 +76,7 @@ export const Hero = ({
               transformOrigin: backgroundPosition ?? "50% 50%",
             }}
             loading="lazy"
+            onError={() => setHeroSrc(heroFallback)}
           />
         </motion.div>
       ) : null}

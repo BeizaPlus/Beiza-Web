@@ -20,9 +20,20 @@ import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 
 import { cn } from "@/lib/utils";
 
+import { useLayoutStudioBreakpoint } from "@/hooks/useLayoutStudioViewport";
+import {
+  layoutBreakpointFromWidth,
+  layoutBreakpointLabel,
+  type LayoutStudioBreakpoint,
+} from "@/lib/layoutBreakpoints";
+
 import {
 
   SITE_PADDING_DEFAULTS,
+
+  SITE_PADDING_PHONE_DEFAULTS,
+
+  SITE_PADDING_TABLET_DEFAULTS,
 
   applySitePaddingCssVar,
 
@@ -30,11 +41,21 @@ import {
 
   loadSitePaddingFrame,
 
+  patchSitePaddingBoundary,
+
+  patchSitePaddingIndent,
+
   saveIndentGuidesLive,
 
   saveSitePaddingFrame,
 
   siteContentIndentPx,
+
+  sitePaddingBoundaryForBreakpoint,
+
+  sitePaddingForViewport,
+
+  sitePaddingIndentForBreakpoint,
 
   sitePaddingPx,
 
@@ -58,11 +79,20 @@ export function SitePaddingStudioProvider({ children }: Props) {
 
   const [frame, setFrame] = useState<SitePaddingFrame>(() => loadSitePaddingFrame());
 
-  const [draftIndentRem, setDraftIndentRem] = useState(() => loadSitePaddingFrame().contentIndentRem);
+  const [draftIndentRem, setDraftIndentRem] = useState(() => {
+    const f = loadSitePaddingFrame();
+    const bp =
+      typeof window !== "undefined" ? layoutBreakpointFromWidth(window.innerWidth) : "desktop";
+    return sitePaddingIndentForBreakpoint(f, bp);
+  });
 
   const [guidesLive, setGuidesLive] = useState(() => loadIndentGuidesLive());
 
   const studioOn = isLayoutStudioEnabled();
+
+  const breakpoint = useLayoutStudioBreakpoint();
+
+  const guideFrame = sitePaddingForViewport(frame, breakpoint);
 
   const { guidesVisible } = useLayoutStudio();
 
@@ -74,9 +104,21 @@ export function SitePaddingStudioProvider({ children }: Props) {
 
   useEffect(() => {
 
-    applySitePaddingCssVar(frame);
+    applySitePaddingCssVar(frame, { studioActive: studioOn });
 
-  }, [frame]);
+    return () => {
+
+      if (studioOn) applySitePaddingCssVar(frame, { studioActive: false });
+
+    };
+
+  }, [frame, studioOn]);
+
+  useEffect(() => {
+
+    setDraftIndentRem(sitePaddingIndentForBreakpoint(frame, breakpoint));
+
+  }, [breakpoint, frame]);
 
 
 
@@ -94,6 +136,14 @@ export function SitePaddingStudioProvider({ children }: Props) {
 
     }
 
+    if (
+      partial.contentIndentRemPhone !== undefined ||
+      partial.contentIndentRemTablet !== undefined ||
+      partial.contentIndentRem !== undefined
+    ) {
+      setDraftIndentRem(sitePaddingIndentForBreakpoint(next, breakpoint));
+    }
+
   };
 
 
@@ -102,7 +152,7 @@ export function SitePaddingStudioProvider({ children }: Props) {
 
     if (guidesLive) {
 
-      patch({ contentIndentRem });
+      patch(patchSitePaddingIndent(breakpoint, contentIndentRem));
 
     } else {
 
@@ -116,7 +166,7 @@ export function SitePaddingStudioProvider({ children }: Props) {
 
   const applyDraftIndent = () => {
 
-    patch({ contentIndentRem: draftIndentRem });
+    patch(patchSitePaddingIndent(breakpoint, draftIndentRem));
 
   };
 
@@ -130,7 +180,7 @@ export function SitePaddingStudioProvider({ children }: Props) {
 
     if (live) {
 
-      patch({ contentIndentRem: draftIndentRem });
+      patch(patchSitePaddingIndent(breakpoint, draftIndentRem));
 
     }
 
@@ -148,7 +198,9 @@ export function SitePaddingStudioProvider({ children }: Props) {
 
         <SiteIndentGuides
 
-          frame={frame}
+          frame={guideFrame}
+
+          viewportLabel={breakpoint}
 
           draftIndentRem={draftIndentRem}
 
@@ -169,6 +221,8 @@ export function SitePaddingStudioProvider({ children }: Props) {
         <SitePaddingStudioPanel
 
           frame={frame}
+
+          breakpoint={breakpoint}
 
           draftIndentRem={draftIndentRem}
 
@@ -196,6 +250,8 @@ function SitePaddingStudioPanel({
 
   frame,
 
+  breakpoint,
+
   draftIndentRem,
 
   guidesLive,
@@ -209,6 +265,8 @@ function SitePaddingStudioPanel({
 }: {
 
   frame: SitePaddingFrame;
+
+  breakpoint: LayoutStudioBreakpoint;
 
   draftIndentRem: number;
 
@@ -224,11 +282,45 @@ function SitePaddingStudioPanel({
 
   const [open, setOpen] = useState(true);
 
-  const px = sitePaddingPx(frame);
+  const active = sitePaddingForViewport(frame, breakpoint);
 
-  const indentPx = siteContentIndentPx(frame);
+  const boundaryRem = sitePaddingBoundaryForBreakpoint(frame, breakpoint);
 
-  const previewPx = siteContentIndentPx({ ...frame, contentIndentRem: draftIndentRem });
+  const appliedIndentRem = sitePaddingIndentForBreakpoint(frame, breakpoint);
+
+  const boundaryMax = breakpoint === "phone" ? 2 : breakpoint === "tablet" ? 4 : 8;
+
+  const indentMax = breakpoint === "phone" ? 1.5 : breakpoint === "tablet" ? 3 : 20;
+
+  const boundaryDefault =
+
+    breakpoint === "phone"
+
+      ? SITE_PADDING_PHONE_DEFAULTS.paddingXRemPhone
+
+      : breakpoint === "tablet"
+
+        ? SITE_PADDING_TABLET_DEFAULTS.paddingXRemTablet
+
+        : SITE_PADDING_DEFAULTS.paddingXRem;
+
+  const indentDefault =
+
+    breakpoint === "phone"
+
+      ? SITE_PADDING_PHONE_DEFAULTS.contentIndentRemPhone
+
+      : breakpoint === "tablet"
+
+        ? SITE_PADDING_TABLET_DEFAULTS.contentIndentRemTablet
+
+        : SITE_PADDING_DEFAULTS.contentIndentRem;
+
+  const px = sitePaddingPx(active);
+
+  const indentPx = siteContentIndentPx(active);
+
+  const previewPx = siteContentIndentPx({ ...active, contentIndentRem: draftIndentRem });
 
 
 
@@ -248,9 +340,15 @@ function SitePaddingStudioPanel({
 
     >
 
-      <p className="mb-3 text-[9px] leading-snug text-muted-foreground">
+      <p className="mb-2 text-[9px] leading-snug text-muted-foreground">
 
         Yellow = site boundary. Cyan handles = inner indent. Heritage (/farewell) is the reference.
+
+      </p>
+
+      <p className="mb-3 rounded-md border border-primary/30 bg-primary/10 px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+
+        Editing: {layoutBreakpointLabel(breakpoint)} — resize the window or use devtools device mode
 
       </p>
 
@@ -324,7 +422,7 @@ function SitePaddingStudioPanel({
 
 
 
-        <StudioAccordionSection value="bounds" title="Site bounds">
+        <StudioAccordionSection value="bounds" title={`${layoutBreakpointLabel(breakpoint)} bounds`}>
 
           <StudioSlider
 
@@ -332,19 +430,19 @@ function SitePaddingStudioPanel({
 
             label="Boundary each side (rem)"
 
-            value={frame.paddingXRem}
+            value={boundaryRem}
 
-            defaultValue={SITE_PADDING_DEFAULTS.paddingXRem}
+            defaultValue={boundaryDefault}
 
             min={0}
 
-            max={8}
+            max={boundaryMax}
 
-            step={0.25}
+            step={0.125}
 
-            displayValue={`${frame.paddingXRem}rem · ${px}px`}
+            displayValue={`${boundaryRem}rem · ${px}px`}
 
-            onChange={(v) => onChange({ paddingXRem: v })}
+            onChange={(v) => onChange(patchSitePaddingBoundary(breakpoint, v))}
 
           />
 
@@ -354,31 +452,37 @@ function SitePaddingStudioPanel({
 
             label="Indent inside boundary (rem)"
 
-            value={guidesLive ? frame.contentIndentRem : draftIndentRem}
+            value={guidesLive ? appliedIndentRem : draftIndentRem}
 
-            defaultValue={SITE_PADDING_DEFAULTS.contentIndentRem}
+            defaultValue={indentDefault}
 
             min={0}
 
-            max={20}
+            max={indentMax}
 
-            step={0.25}
+            step={0.125}
 
             displayValue={
 
               guidesLive
 
-                ? `${frame.contentIndentRem}rem · ${indentPx}px`
+                ? `${appliedIndentRem}rem · ${indentPx}px`
 
-                : `${draftIndentRem}rem preview · ${indentPx}rem applied`
+                : `${draftIndentRem}rem preview · ${appliedIndentRem}rem applied`
 
             }
 
             onChange={(v) => {
 
-              if (guidesLive) onChange({ contentIndentRem: v });
+              if (guidesLive) {
 
-              else onDraftIndentChange(v);
+                onChange(patchSitePaddingIndent(breakpoint, v));
+
+              } else {
+
+                onDraftIndentChange(v);
+
+              }
 
             }}
 
@@ -388,7 +492,7 @@ function SitePaddingStudioPanel({
 
             Boundary inset: {(px * 2).toLocaleString()}px · applied inner +{(indentPx * 2).toLocaleString()}px
 
-            {!guidesLive && Math.abs(draftIndentRem - frame.contentIndentRem) > 0.01
+            {!guidesLive && Math.abs(draftIndentRem - appliedIndentRem) > 0.01
 
               ? ` · preview ${(previewPx * 2).toLocaleString()}px`
 

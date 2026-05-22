@@ -6,8 +6,6 @@ import {
   BEIZA_LINKS,
   BEIZA_REDIRECTS,
   isCirclePath,
-  isFarewellPath,
-  isHeritageMarketingPath,
 } from "@/lib/beizaMasterLinks";
 import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import { Button } from "./ui/button";
@@ -23,15 +21,15 @@ function isActiveNavPath(pathname: string, href: string): boolean {
   if (href === BEIZA_LINKS.circle.directory) {
     return isCirclePath(pathname);
   }
-  if (href === BEIZA_LINKS.legacy.heritage) {
-    return isHeritageMarketingPath(pathname) || isFarewellPath(pathname);
+  if (href === BEIZA_LINKS.marketing.blog) {
+    return pathname === BEIZA_LINKS.marketing.blog || pathname.startsWith(`${BEIZA_LINKS.marketing.blog}/`);
   }
   return pathname === href;
 }
 
 function navLinkClassName(linkId: string, active: boolean): string {
   if (active) return "text-white";
-  if (linkId === "heritage") return "text-[#666666] transition-colors hover:text-[#E6A817]";
+  if (linkId === "blog") return "text-[#666666] transition-colors hover:text-[#E6A817]";
   return "text-[#666666] transition-colors hover:text-white";
 }
 
@@ -71,7 +69,7 @@ type NavigationProps = {
   variant?: "default" | "recordOverlay";
 };
 
-/** Locked product header — Vault · Circle · Heritage (CMS rows must not replace this). */
+/** Locked product header — Vault · Circle · Blog (CMS rows must not replace this). */
 const HEADER_NAV_LINKS: ProductNavLink[] = PRODUCT_NAV_LINKS;
 
 export const Navigation = ({ variant = "default" }: NavigationProps) => {

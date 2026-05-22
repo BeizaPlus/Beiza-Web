@@ -24,7 +24,7 @@ function LegacyRecordRoute({ circleLabel, hasSession }: { circleLabel?: string; 
     <RecordFlowProvider>
       <RecordViewportLock />
       <div
-        className="record-page-shell relative h-[100dvh] max-h-[100dvh] min-h-0 w-full overflow-hidden bg-black text-foreground"
+        className="record-page-shell relative h-[100dvh] max-h-[100dvh] min-h-0 w-full overflow-hidden bg-black text-foreground max-md:[--beiza-content-indent:0rem] max-md:[--record-content-indent:0rem]"
         style={{ "--record-site-nav-h": "4.5rem" } as CSSProperties}
       >
         <RecordStationViewport

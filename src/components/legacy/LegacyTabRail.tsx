@@ -13,9 +13,16 @@ export function LegacyTabRail() {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-30">
-      <LegacyNavStudio recordOverlay className="pointer-events-auto">
+      <LegacyNavStudio
+        recordOverlay
+        className="legacy-record-tab-rail pointer-events-auto"
+      >
         <nav
-          className="flex flex-col items-center gap-1 rounded-full border border-white/10 bg-black/80 p-2 shadow-lg backdrop-blur-sm"
+          className={cn(
+            "items-center gap-1 rounded-full border border-white/10 bg-black/80 p-2 shadow-lg backdrop-blur-sm",
+            "flex flex-row max-md:px-2.5 max-md:py-2",
+            "md:flex-col",
+          )}
           aria-label="Legacy"
         >
           {LEGACY_TAB_ITEMS.map((item) => {
@@ -30,7 +37,8 @@ export function LegacyTabRail() {
                 aria-label={item.label}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-full transition-colors",
+                  "flex items-center justify-center rounded-full transition-colors",
+                  "h-9 w-9 max-md:h-10 max-md:w-10 md:h-10 md:w-10",
                   active
                     ? "bg-white text-black shadow-sm"
                     : "text-white/55 hover:bg-white/10 hover:text-white/90",

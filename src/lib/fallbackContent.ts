@@ -6,7 +6,7 @@ import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 export const FALLBACK_NAVIGATION_LINKS: NavigationLink[] = [
   { id: "fallback-nav-vault", label: "Vault", href: BEIZA_REDIRECTS.vault.from, location: "primary", displayOrder: 1 },
   { id: "fallback-nav-circle", label: "Circle", href: BEIZA_LINKS.circle.directory, location: "primary", displayOrder: 2 },
-  { id: "fallback-nav-heritage", label: "Heritage", href: BEIZA_LINKS.legacy.heritage, location: "primary", displayOrder: 3 },
+  { id: "fallback-nav-blog", label: "Blog", href: BEIZA_LINKS.marketing.blog, location: "primary", displayOrder: 3 },
 ];
 
 export const FALLBACK_FOOTER_LINKS: FooterLink[] = [

@@ -753,7 +753,12 @@ export default function WelcomeGate() {
         }}
       />
 
-      <div className={cn("relative z-10 mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col siteBounds pb-4 pt-2 sm:pb-6 max-sm:pr-[calc(var(--beiza-site-padding-x,1.25rem)+3.5rem)]")}>
+      <div
+        className={cn(
+          "relative z-10 mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col siteBounds pb-4 pt-2",
+          "max-[809px]:px-3 min-[810px]:pb-6",
+        )}
+      >
         <motion.div
           key={locale}
           className="flex min-h-0 flex-1 flex-col"
@@ -762,7 +767,7 @@ export default function WelcomeGate() {
           transition={{ duration: 0.38, ease: "easeOut" }}
         >
         <motion.header
-          className="mx-auto flex w-full max-w-4xl shrink-0 flex-col items-center px-4 text-center"
+          className="mx-auto flex w-full max-w-4xl shrink-0 flex-col items-center px-2 text-center max-[809px]:pt-1 min-[810px]:px-4"
           initial="hidden"
           animate="show"
           variants={{ hidden: {}, show: {} }}
@@ -804,9 +809,19 @@ export default function WelcomeGate() {
           </motion.p>
         </motion.header>
 
-        <main className="mx-auto flex min-h-0 w-full flex-1 flex-col justify-center overflow-y-auto overscroll-contain px-2 py-4 sm:overflow-visible sm:px-4 sm:py-8">
+        <main
+          className={cn(
+            "mx-auto flex min-h-0 w-full flex-1 flex-col",
+            "max-sm:justify-start max-sm:overflow-y-auto max-sm:overscroll-y-contain max-sm:pb-24 max-sm:pt-2",
+            "sm:justify-center sm:overflow-visible sm:px-4 sm:py-8",
+          )}
+        >
           <motion.div
-            className="grid min-h-0 flex-1 grid-cols-1 items-stretch gap-4 sm:grid-cols-3 sm:gap-6"
+            className={cn(
+              "flex w-full min-h-0 flex-1 flex-col items-stretch gap-3",
+              "max-sm:snap-y max-sm:snap-mandatory max-sm:gap-4",
+              "sm:grid sm:grid-cols-3 sm:gap-6 sm:snap-none",
+            )}
             variants={containerVariants}
             initial="hidden"
             animate="show"
@@ -823,7 +838,11 @@ export default function WelcomeGate() {
                   key={`${locale}-${path.key}`}
                   data-welcome-path={path.key}
                   variants={cardVariants}
-                  className="flex h-full min-h-0 min-w-0"
+                  className={cn(
+                    "flex h-full min-h-0 min-w-0",
+                    "max-[809px]:snap-center max-[809px]:flex-none max-[809px]:w-full",
+                    "min-[810px]:max-[1199px]:min-h-[280px]",
+                  )}
                 >
                   <WelcomePathCard
                     to={path.to}

@@ -8,6 +8,7 @@ import {
 
 type Props = {
   frame: SitePaddingFrame;
+  viewportLabel?: "mobile" | "desktop";
   /** Preview position when guides are measure-only */
   draftIndentRem: number;
   /** true = drag updates live copy; false = measure only until Apply */
@@ -28,6 +29,7 @@ function indentRemFromPointer(clientX: number, side: "left" | "right", boundaryP
 /** Draggable inner indent guides (inside the yellow boundary lines). */
 export function SiteIndentGuides({
   frame,
+  viewportLabel = "desktop",
   draftIndentRem,
   live,
   onDraftIndentChange,
@@ -119,7 +121,9 @@ export function SiteIndentGuides({
 
       <div className="pointer-events-auto fixed left-1/2 top-2 z-[9999] flex -translate-x-1/2 flex-col items-center gap-1.5">
         <div className="rounded-md bg-black/90 px-3 py-1.5 font-mono text-[10px] text-cyan-200">
-          {live ? "Live" : "Measure"}: {displayRem}rem ({displayPx * 2}px total)
+          {viewportLabel === "phone" ? "Phone" : viewportLabel === "tablet" ? "Tablet" : "Desktop"} ·{" "}
+          {live ? "Live" : "Measure"}: {displayRem}rem (
+          {displayPx * 2}px total)
           {!live && dirty ? " · not applied" : !live ? " · matches page" : ""}
         </div>
         {!live && dirty ? (

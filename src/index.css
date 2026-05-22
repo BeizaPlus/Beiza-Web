@@ -65,23 +65,38 @@
     --transition-studio: cubic-bezier(0.12, 0.23, 0.5, 1);
   }
 
-  @media (min-width: 640px) {
+  /* Framer tiers: phone ≤809 · tablet 810–1199 · desktop ≥1200 */
+  @media (min-width: 810px) {
     :root {
-      --beiza-site-padding-x: 2.5rem;
-      --beiza-content-indent: 0.75rem;
+      --beiza-site-padding-x: 1.5rem;
+      --beiza-content-indent: 0.5rem;
     }
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1200px) {
     :root {
-      --beiza-site-padding-x: 4.5rem;
+      --beiza-site-padding-x: 6.75rem;
       --beiza-content-indent: 1rem;
     }
   }
 
-  @media (min-width: 1280px) {
-    :root {
-      --beiza-site-padding-x: 6.75rem;
+  /* Layout studio — per-tier gutters (never jump to 6.75rem at 768px) */
+  html[data-beiza-studio-padding] {
+    --beiza-site-padding-x: var(--beiza-studio-pad-x-phone, 0.75rem);
+    --beiza-content-indent: var(--beiza-studio-indent-phone, 0rem);
+  }
+
+  @media (min-width: 810px) {
+    html[data-beiza-studio-padding] {
+      --beiza-site-padding-x: var(--beiza-studio-pad-x-tablet, 1.5rem);
+      --beiza-content-indent: var(--beiza-studio-indent-tablet, 0rem);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    html[data-beiza-studio-padding] {
+      --beiza-site-padding-x: var(--beiza-studio-pad-x-desktop, 6.75rem);
+      --beiza-content-indent: var(--beiza-studio-indent-desktop, 0rem);
     }
   }
 
@@ -921,6 +936,18 @@
 /* Legacy layout studio — tab label lift */
 .legacy-nav-studio .legacy-nav-tab-label {
   transform: translateY(calc(-1 * var(--legacy-nav-label-lift, 0vh)));
+}
+
+/* /legacy/record — mobile: bottom horizontal tab rail (studio rail stays md+) */
+@media (max-width: 809px) {
+  .legacy-record-tab-rail.legacy-nav-studio {
+    left: 50% !important;
+    top: auto !important;
+    bottom: calc(1.125rem + env(safe-area-inset-bottom, 0px)) !important;
+    transform: translateX(-50%) !important;
+    max-width: min(24rem, calc(100vw - 2 * var(--beiza-site-padding-x, 1.25rem))) !important;
+    width: max-content;
+  }
 }
 
 /* /legacy/record — one viewport, no document scroll */

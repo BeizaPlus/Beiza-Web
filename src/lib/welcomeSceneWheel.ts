@@ -20,6 +20,6 @@ export function stepWelcomeLocale(current: BeizaLocale, direction: 1 | -1): Beiz
 export function shouldIgnoreWelcomeWheelTarget(target: EventTarget | null): boolean {
   if (!(target instanceof Element)) return false;
   return !!target.closest(
-    '[data-beiza-studio-panel],[role="listbox"][aria-label="Region & language"],textarea,input,select,[contenteditable="true"]',
+    '[data-beiza-studio-panel],textarea,input,select,[contenteditable="true"]',
   );
 }

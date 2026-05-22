@@ -38,9 +38,20 @@ export function RecordHeroCta({ textAlign = "left" }: RecordHeroCtaProps) {
 
   if (!session) {
     return (
-      <div className={cn("mt-3 space-y-2", alignEnd && "md:ml-auto")}>
+      <div
+        className={cn(
+          "mt-3 w-full space-y-2.5",
+          "max-md:mx-auto max-md:w-full max-md:max-w-[var(--record-column-max,22rem)]",
+          alignEnd && "md:ml-auto",
+        )}
+      >
         <form
-          className={cn("flex flex-col gap-3 sm:flex-row sm:items-center", alignEnd && "sm:justify-end")}
+          className={cn(
+            "flex w-full flex-col gap-3",
+            "max-md:items-stretch",
+            "sm:flex-row sm:items-center",
+            alignEnd && "sm:justify-end",
+          )}
           onSubmit={(e) => {
             e.preventDefault();
             void signIn();
@@ -53,17 +64,22 @@ export function RecordHeroCta({ textAlign = "left" }: RecordHeroCtaProps) {
             placeholder="you@family.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="h-11 min-w-0 flex-1 rounded-full border border-white/25 bg-white/10 px-5 text-sm text-white placeholder:text-white/45 backdrop-blur-sm focus:border-white/50 focus:outline-none focus:ring-1 focus:ring-white/30 sm:max-w-[var(--record-email-max,17.5rem)]"
+            className={cn(
+              "min-w-0 flex-1 rounded-full border border-white/25 bg-white/10 text-white placeholder:text-white/45 backdrop-blur-sm",
+              "focus:border-white/50 focus:outline-none focus:ring-1 focus:ring-white/30",
+              "h-12 px-6 text-base max-md:w-full",
+              "sm:h-11 sm:px-5 sm:text-sm sm:max-w-[var(--record-email-max,17.5rem)]",
+            )}
           />
           <button
             type="submit"
             disabled={sending}
-            className="shrink-0 rounded-full bg-white px-6 py-3 text-[13px] font-medium text-background transition hover:bg-white/90 disabled:opacity-60"
+            className="w-full shrink-0 rounded-full bg-white px-6 py-3.5 text-sm font-medium text-background transition hover:bg-white/90 disabled:opacity-60 sm:w-auto sm:py-3 sm:text-[13px]"
           >
             {sending ? "Sending…" : "Sign in to record →"}
           </button>
         </form>
-        <p className={cn("text-[11px] text-subtle", alignEnd && "text-right")}>
+        <p className={cn("text-[11px] text-subtle", "max-md:text-center", alignEnd && "md:text-right")}>
           Magic link to your email · no password
         </p>
         <button
@@ -71,7 +87,8 @@ export function RecordHeroCta({ textAlign = "left" }: RecordHeroCtaProps) {
           onClick={() => void refetch()}
           className={cn(
             "text-[11px] text-white/50 underline-offset-2 hover:text-white/80 hover:underline",
-            alignEnd && "block text-right w-full",
+            "max-md:mx-auto max-md:block",
+            alignEnd && "md:block md:w-full md:text-right",
           )}
         >
           I already signed in
