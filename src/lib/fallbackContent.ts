@@ -10,7 +10,13 @@ export const FALLBACK_NAVIGATION_LINKS: NavigationLink[] = [
 ];
 
 export const FALLBACK_FOOTER_LINKS: FooterLink[] = [
-  { id: "fallback-footer-about", label: "About Us", href: "/#about", groupLabel: "Sections", displayOrder: 1 },
+  {
+    id: "fallback-footer-about",
+    label: "About Us",
+    href: `${BEIZA_LINKS.home.educationHome}#about`,
+    groupLabel: "Sections",
+    displayOrder: 1,
+  },
   { id: "fallback-footer-events", label: "Events", href: BEIZA_LINKS.marketing.events, groupLabel: "Sections", displayOrder: 2 },
   { id: "fallback-footer-gallery", label: "Gallery", href: BEIZA_REDIRECTS.gallery.from, groupLabel: "Sections", displayOrder: 3 },
   { id: "fallback-footer-legacy", label: "Legacy Vault", href: BEIZA_LINKS.legacy.app, groupLabel: "Sections", displayOrder: 4 },

@@ -83,9 +83,10 @@ type WhatWeDoSectionProps = {
   mockupSrc?: string | null;
   className?: string;
   style?: CSSProperties;
+  id?: string;
 };
 
-export function WhatWeDoSection({ offerings, mockupSrc, className, style }: WhatWeDoSectionProps) {
+export function WhatWeDoSection({ offerings, mockupSrc, className, style, id }: WhatWeDoSectionProps) {
   const [locale, setLocale] = useState<LegacyLocale>("global");
   const [mockupFailed, setMockupFailed] = useState(false);
   const localeScrollRef = useDraggableScroll();
@@ -105,7 +106,8 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style }: What
 
   return (
     <section
-      className={cn("studio-offerings", marketingSection, marketingContainer, className)}
+      id={id}
+      className={cn("studio-offerings scroll-mt-24", marketingSection, marketingContainer, className)}
       style={style}
     >
       <SectionHeader

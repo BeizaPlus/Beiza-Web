@@ -90,7 +90,13 @@ function VoiceCard({
   );
 }
 
-export function VoicesThatStayedSection({ className }: { className?: string }) {
+export function VoicesThatStayedSection({
+  className,
+  id = "cultural-films",
+}: {
+  className?: string;
+  id?: string;
+}) {
   const items = useVoicesTestimonials();
   const scrollRef = useDraggableScroll();
   const [canScrollPrev, setCanScrollPrev] = useState(false);
@@ -130,7 +136,8 @@ export function VoicesThatStayedSection({ className }: { className?: string }) {
 
   return (
     <section
-      className={cn("border-t border-[#1a1a1a] bg-background text-foreground", className)}
+      id={id}
+      className={cn("scroll-mt-24 border-t border-[#1a1a1a] bg-background text-foreground", className)}
       aria-label="Family testimonials"
     >
       <div className="mx-auto max-w-[1200px] px-6 pt-16 pb-16 md:px-12 md:pt-24 md:pb-20">

@@ -116,6 +116,9 @@ const App = () => (
             )),
           )}
           <Route path={routerPath(BEIZA_REDIRECTS.whiteSwan.from)} element={<Navigate to={BEIZA_REDIRECTS.whiteSwan.to} replace />} />
+          <Route path={routerPath(BEIZA_REDIRECTS.booklet.from)} element={<Navigate to={BEIZA_REDIRECTS.booklet.to} replace />} />
+          <Route path={routerPath(BEIZA_REDIRECTS.packet.from)} element={<Navigate to={BEIZA_REDIRECTS.packet.to} replace />} />
+          <Route path={routerPath(BEIZA_REDIRECTS.services.from)} element={<Navigate to={BEIZA_REDIRECTS.services.to} replace />} />
           <Route path={`${routerPath(BEIZA_LINKS.admin.base)}/*`} element={<AdminApp />} />
           <Route path={routerPath(BEIZA_LINKS.legacy.app)} element={<LegacyLayout />}>
             <Route index element={<LegacyHomePage />} />

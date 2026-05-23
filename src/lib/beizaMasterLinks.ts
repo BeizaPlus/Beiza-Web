@@ -30,6 +30,9 @@ export const BEIZA_LINKS = {
     vault: "/legacy/vault",
     family: "/legacy/family",
     circle: "/legacy/circle",
+    /** Legacy Packet invite flow (legacy `/packet` redirects here) */
+    packet: "/legacy/family",
+    faqs: "/legacy#faqs",
   },
   farewell: {
     heritage: "/farewell",
@@ -50,10 +53,13 @@ export const BEIZA_LINKS = {
     events: "/events",
     blog: "/blog",
     memoirs: "/memoirs",
+    /** Family booklet / memoir product (legacy `/booklet` redirects here) */
+    booklet: "/memoirs",
     vaultExplore: "/vault/explore",
     recover: "/recover",
     download: "/download",
     orderConfirmation: "/order-confirmation",
+    services: "/contact",
   },
   record: {
     alias: "/record",
@@ -79,6 +85,9 @@ export const BEIZA_REDIRECTS = {
     from: BEIZA_LINKS.education.culturalImmersion,
     to: BEIZA_LINKS.home.educationHome,
   },
+  booklet: { from: "/booklet", to: BEIZA_LINKS.marketing.booklet },
+  packet: { from: "/packet", to: BEIZA_LINKS.legacy.packet },
+  services: { from: "/services", to: BEIZA_LINKS.marketing.services },
 } as const;
 
 /** URL prefix per locale (empty = default US paths) */

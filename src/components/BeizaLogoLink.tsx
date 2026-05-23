@@ -12,7 +12,7 @@ type BeizaLogoLinkProps = {
   onClick?: () => void;
 };
 
-/** Beiza logo — always navigates to the marketing landing page (`/`). */
+/** Beiza logo — always navigates to the welcome gate (`/welcome`). */
 export function BeizaLogoLink({
   variant = "full",
   className,
@@ -25,7 +25,7 @@ export function BeizaLogoLink({
 
   return (
     <Link
-      to={BEIZA_LINKS.welcome.gate}
+      to={BEIZA_LINKS.welcome.alias}
       onClick={onClick}
       className={cn("inline-flex items-center gap-3", className)}
       aria-label="Beiza home"

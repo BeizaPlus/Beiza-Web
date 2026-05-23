@@ -4,8 +4,40 @@ import { useMemo } from "react";
 import { FOOTER_PRICING_LINK, FOOTER_STORIES_LINK } from "@/config/productNav";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { useFooterLinks, useSiteSettings } from "@/hooks/usePublicContent";
+import { isExternalHref, isInternalAppHref } from "@/lib/internalLink";
 import { sitePaddingX } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
+
+function normalizeFooterHref(href: string): string {
+  if (href === "/#about") return `${BEIZA_LINKS.home.educationHome}#about`;
+  return href;
+}
+
+function FooterNavItem({ href, label }: { href: string; label: string }) {
+  const className = "block text-subtle transition-colors duration-200 hover:text-white";
+
+  if (isExternalHref(href)) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+        {label}
+      </a>
+    );
+  }
+
+  if (isInternalAppHref(href)) {
+    return (
+      <Link to={href} className={className}>
+        {label}
+      </Link>
+    );
+  }
+
+  return (
+    <a href={href} className={className}>
+      {label}
+    </a>
+  );
+}
 
 export const Footer = () => {
   const { data: footerLinks } = useFooterLinks();
@@ -17,7 +49,7 @@ export const Footer = () => {
     const links = footerLinks.map((link) => ({
       id: link.id,
       label: link.label,
-      href: link.href,
+      href: normalizeFooterHref(link.href),
       groupLabel: link.groupLabel ?? "Sections",
     }));
 
@@ -103,13 +135,7 @@ export const Footer = () => {
               <p className="text-xs uppercase tracking-[0.3em] text-subtle">{group.groupLabel}</p>
               <nav className="space-y-3 text-sm">
                 {group.links.map((item) => (
-                  <Link
-                    key={item.id}
-                    to={item.href}
-                    className="block text-subtle transition-colors duration-200 hover:text-white"
-                  >
-                    {item.label}
-                  </Link>
+                  <FooterNavItem key={item.id} href={item.href} label={item.label} />
                 ))}
               </nav>
             </div>

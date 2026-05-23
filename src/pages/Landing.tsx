@@ -3,6 +3,7 @@ import { Navigation } from "@/components/Navigation";
 import { Hero } from "@/components/Hero";
 import { Footer } from "@/components/Footer";
 import { LegacyCurationPricing } from "@/components/landing/LegacyCurationPricing";
+import { AboutSection } from "@/components/AboutSection";
 import { LegacyOutro } from "@/components/landing/LegacyOutro";
 import { WhatWeDoSection } from "@/components/landing/WhatWeDoSection";
 import {
@@ -23,6 +24,10 @@ import { resolveHeroBackgroundSrc } from "@/lib/resolveHeroImage";
 import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { FAQItem } from "@/components/framer/FAQItem";
+import { FaqStaircaseSection } from "@/components/marketing/FaqStaircaseSection";
+import { ArmAnchorMenu } from "@/components/marketing/ArmAnchorMenu";
+import { EDUCATION_FAQ } from "@/lib/auditFaqContent";
+import { EDUCATION_ARM_ANCHORS } from "@/lib/armNavLinks";
 import { ProductsPanel } from "@/components/shopify/ProductsPanel";
 import { AdZone } from "@/components/AdZone";
 import { Palette, Heart, FileText, Monitor, Box, Cloud, Sparkles } from "lucide-react";
@@ -136,6 +141,10 @@ const Landing = () => {
       style={studioCssVars(studioState) as CSSProperties}
     >
       <Navigation />
+      <ArmAnchorMenu
+        links={EDUCATION_ARM_ANCHORS}
+        className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-40"
+      />
       {showHero && hero ? (
         <Hero
           headline={hero.heading}
@@ -178,7 +187,9 @@ const Landing = () => {
           />
         ) : null}
 
-        {showRest ? <VoicesThatStayedSection /> : null}
+        {showRest ? <VoicesThatStayedSection id="cultural-films" /> : null}
+
+        {showRest ? <AboutSection /> : null}
 
         {showFaq ? (
         <section
@@ -209,6 +220,8 @@ const Landing = () => {
           </div>
         </section>
         ) : null}
+
+        <FaqStaircaseSection id="education-faqs" items={EDUCATION_FAQ} variant="light" />
 
         {showRest && event ? (
           <div style={heroStudioCssVars(eventsHeroFrame) as CSSProperties}>
@@ -261,7 +274,9 @@ const Landing = () => {
         ) : null}
 
         {showRest ? (
-          <ProductsPanel title="Featured Products" description="Explore our collection of legacy products and services." />
+          <section id="your-language" className="scroll-mt-24">
+            <ProductsPanel title="Featured Products" description="Explore our collection of legacy products and services." />
+          </section>
         ) : null}
 
         {showOutro ? (

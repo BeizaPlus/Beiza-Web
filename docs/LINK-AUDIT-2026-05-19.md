@@ -121,14 +121,15 @@
 
 ---
 
-## Recommended Task 1 fixes (priority)
+## Fixes applied (post-audit)
 
-1. Point `/booklet` and `/packet` to real destinations (or add routes/pages).
-2. Add section `id`s on `/home` for education hamburger anchors, or update `EDUCATION_ARM_ANCHORS`.
-3. Fix footer “About Us” → real section on `/home` or change href to an existing anchor/page.
-4. Scope `#faqs` in legacy hamburger to `/legacy` only, or add FAQ block to other legacy tabs.
-5. Register `/services` or remove dead `Services.tsx` / CMS links if any.
+- `/booklet` → `/memoirs`, `/packet` → `/legacy/family`, `/services` → `/contact` (redirects in `App.tsx`)
+- Home drawer + legacy hamburger use `BEIZA_LINKS` (no bare `/booklet` / `/packet`)
+- Logo → `/welcome` (`BeizaLogoLink`)
+- Education home: section ids `#symbols`, `#cultural-films`, `#your-language`, `#start-legacy`, `#about`
+- Legacy FAQs hamburger → `/legacy#faqs`
+- Footer: internal vs external link handling; CMS `/#about` normalized to `/home#about`
 
 ---
 
-*Generated for BEIZA implementation audit · Task 0.*
+*Generated for BEIZA implementation audit · Task 0. Updated after link fixes.*

@@ -3,7 +3,7 @@ import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 export function LegacyOutro() {
   return (
-    <section className="studio-outro border-t border-border bg-[hsl(var(--surface))] py-24">
+    <section id="start-legacy" className="studio-outro scroll-mt-24 border-t border-border bg-[hsl(var(--surface))] py-24">
       <div className="mx-auto max-w-3xl px-6 text-center">
         <p className="text-eyebrow">Beiza Legacy</p>
         <h2 className="mt-4 text-display-lg text-primary">
