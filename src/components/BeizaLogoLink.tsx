@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { handleWelcomeHomeClick, WELCOME_HOME_PATH } from "@/lib/welcomeHomeNav";
 import { cn } from "@/lib/utils";
@@ -25,13 +25,13 @@ export function BeizaLogoLink({
   const showWordmark = variant === "full" || variant === "wordmark";
 
   return (
-    <a
-      href={WELCOME_HOME_PATH}
+    <Link
+      to={WELCOME_HOME_PATH}
       onClick={(e) => {
         handleWelcomeHomeClick(e, navigate, onClick);
       }}
       className={cn(
-        "relative z-[70] inline-flex cursor-pointer items-center gap-3 pointer-events-auto",
+        "relative z-[80] inline-flex cursor-pointer items-center gap-3 pointer-events-auto",
         className,
       )}
       aria-label="Beiza home"
@@ -57,6 +57,6 @@ export function BeizaLogoLink({
           draggable={false}
         />
       ) : null}
-    </a>
+    </Link>
   );
 }

@@ -964,6 +964,13 @@ html.welcome-route body {
   overscroll-behavior: none;
 }
 
+html.record-route:has(.record-memory-expanded),
+html.record-route:has(.record-memory-expanded) body {
+  height: auto;
+  min-height: 100%;
+  overflow-y: auto !important;
+}
+
 /* Welcome gate — mobile path cards: horizontal swipe, one card + peek (≤809px) */
 @media (max-width: 809px) {
   .welcome-cards-row {
@@ -995,15 +1002,23 @@ html.welcome-route body {
 }
 
 .record-page-shell {
-  height: 100dvh;
-  max-height: 100dvh;
+  min-height: 100dvh;
 }
 
-@supports (height: 100dvh) {
-  .record-page-shell {
-    height: 100dvh;
-    max-height: 100dvh;
-  }
+/* Upload / seal — scroll the shell so HUD is never clipped at the bottom */
+.record-page-shell:has(.record-memory-expanded) {
+  height: auto;
+  max-height: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.record-page-shell:has(.record-memory-expanded) .record-station-viewport-expanded {
+  position: relative;
+  inset: auto;
+  min-height: calc(100dvh - var(--record-site-nav-h, 4.5rem));
+  height: auto;
 }
 
 /* Upload / seal HUD — wider column, no horizontal clip when repositioning */
@@ -1023,8 +1038,8 @@ html.welcome-route body {
 }
 
 .record-page-shell .legacy-record-station-panel:has(.record-memory-expanded) {
-  overflow-x: visible;
-  overflow-y: auto;
+  overflow: visible;
+  height: auto;
 }
 
 .record-page-shell .record-memory-expanded {

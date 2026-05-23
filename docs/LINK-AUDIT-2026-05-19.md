@@ -47,7 +47,7 @@
 | Welcome · Education card | `/education` or education home | `/home` via `getWelcomeCardHref` | OK — `/education` redirects to `/home` |
 | Welcome · Legacy card | `/heritage` or `/legacy` | **`/legacy/record`** (locked in mastersheet) | OK by product spec; not `/heritage` |
 | Welcome · Farewell card | Farewell route | `/farewell` (locale: `/af/farewell`, etc.) | OK |
-| Logo / mascot | `/welcome` | **`/`** via `BeizaLogoLink` (`BEIZA_LINKS.welcome.gate`) | OK — `/welcome` alias also routed |
+| Logo / mascot | `/welcome` | **`/welcome`** via `BeizaLogoLink` (`BEIZA_LINKS.welcome.gate`) | OK — `/` also redirects to gate |
 | “Open Legacy →” (education) | Legacy entry | **`/heritage`** (`Education.tsx`) | OK |
 | Circle “Open Legacy” / tree CTAs | Legacy tree | **`/legacy/circle`** | OK |
 | Access code “/circle” | Circle directory | **`/circle`** (`enter.tsx`, `family.tsx`) | OK |
@@ -125,11 +125,45 @@
 
 - `/booklet` → `/memoirs`, `/packet` → `/legacy/family`, `/services` → `/contact` (redirects in `App.tsx`)
 - Home drawer + legacy hamburger use `BEIZA_LINKS` (no bare `/booklet` / `/packet`)
-- Logo → `/welcome` (`BeizaLogoLink`)
+- Logo / mascot → `/welcome` (`BeizaLogoLink`, `welcomeHomeNav.ts`)
 - Education home: section ids `#symbols`, `#cultural-films`, `#your-language`, `#start-legacy`, `#about`
 - Legacy FAQs hamburger → `/legacy#faqs`
 - Footer: internal vs external link handling; CMS `/#about` normalized to `/home#about`
 
 ---
 
-*Generated for BEIZA implementation audit · Task 0. Updated after link fixes.*
+---
+
+## Smoke test — 23 May 2026
+
+**Automated:** `npm run links:check` — passed.
+
+### Logo / mascot → `/welcome` (14/14 pass)
+
+Script: `node scripts/capture-logo-mascot-smoke.mjs`  
+Report: `docs/progress-snapshots/logo-mascot-smoke-2026-05-23-fix2/index.html`
+
+| Route | Mascot/logo → `/welcome` |
+|-------|--------------------------|
+| `/home`, `/legacy/*`, `/heritage`, `/farewell`, `/pricing`, `/contact`, `/blog`, `/events`, `/circle` | Pass |
+| `/welcome` mascot, `/` redirect | Pass |
+
+**Fixes applied for smoke:**
+
+- `Landing.tsx`: `fa` → `faq` typo (crashed `/home`)
+- `LandingLayoutStudio.tsx` / `HeroLayoutStudio.tsx`: missing `useEffect` import
+- `LandingLayoutStudioPanel`: `useStudioPanel("landing")` (crashed `/education` → `/home` when studio enabled)
+- `HeritageLegacyLanding.tsx`: `BeizaLogoLink` for heritage header
+
+### Full route smoke (39/48 pass)
+
+Script: `node scripts/capture-site-links-smoke.mjs`  
+Report: `docs/progress-snapshots/site-links-smoke-2026-05-23/index.html`
+
+**Known false negatives (not broken redirects):**
+
+- `/vault`, `/packet` — router redirects to `/legacy/vault` and `/legacy/family`, but logged-out Legacy shell shows the record sign-in UI and URL may settle on `/legacy/record` (by design in `LegacyLayout.tsx`).
+
+---
+
+*Generated for BEIZA implementation audit · Task 0. Updated after link fixes and 23 May smoke.*

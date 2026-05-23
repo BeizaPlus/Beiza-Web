@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useStudioPanel } from "@/hooks/useStudioPanel";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -42,7 +43,7 @@ type PanelProps = EventsPanelProps | HeritagePanelProps;
 
 export function HeroLayoutStudioPanel(props: PanelProps) {
   const { page, frame, onChange } = props;
-  const [open, setOpen] = useState(true);
+  const studioPanel = useStudioPanel(`hero-${page}`);
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
   const patchEvents = (partial: Partial<HeroFrame>) => {
     if (page !== "events") return;
@@ -72,14 +73,14 @@ export function HeroLayoutStudioPanel(props: PanelProps) {
   return (
     <FloatingStudioShell
       panelId={`hero-${page}`}
-      open={open}
-      onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
+      open={studioPanel.open}
+      onOpen={studioPanel.onOpen}
+      onClose={studioPanel.onClose}
       openButtonLabel={page === "heritage" ? "Heritage hero" : "Events hero"}
     >
       <StudioTextEditButton />
 
-      <StudioAccordionPanels defaultValue={["hero"]}>
+      <StudioAccordionPanels defaultValue="hero">
         <StudioAccordionSection
           value="hero"
           title={page === "heritage" ? "Heritage hero" : "Events hero"}

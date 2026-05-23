@@ -8,6 +8,7 @@ import { getFlowNodeType } from "@/lib/legacy/personNodeShapes";
 import {
   edgeStyleForRelationship,
   formatRelationship,
+  TREE_EDGE_TYPE,
   type TreeEdgeRow,
 } from "@/lib/legacy/treeRelationships";
 import { normalizeTreeHandleId } from "@/lib/legacy/personNodeMetrics";
@@ -53,7 +54,7 @@ export function treeEdgesToFlowEdges(
       sourceHandle: normalizeTreeHandleId(handles.sourceHandle),
       targetHandle: normalizeTreeHandleId(handles.targetHandle),
       label: formatRelationship(row.relationship_type),
-      type: "smoothstep",
+      type: TREE_EDGE_TYPE,
       style: edgeStyleForRelationship(row.relationship_type),
       labelStyle: { fill: "#888888", fontSize: 10 },
       labelBgStyle: { fill: "#111111", fillOpacity: 0.9 },

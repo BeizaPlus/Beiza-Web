@@ -38,18 +38,43 @@ export function StudioAccordionSection({
   );
 }
 
-/** Collapsible multi-section wrapper for layout studio panels */
+/** Collapsible wrapper — single section open at a time (clicked area only). */
 export function StudioAccordionPanels({
   children,
-  defaultValue = [],
+  defaultValue,
+  value,
+  onValueChange,
   className,
 }: {
   children: ReactNode;
-  defaultValue?: string[];
+  /** First section to open when uncontrolled */
+  defaultValue?: string;
+  /** Controlled open section (pass one id) */
+  value?: string;
+  onValueChange?: (value: string) => void;
   className?: string;
 }) {
+  if (value !== undefined) {
+    return (
+      <Accordion
+        type="single"
+        collapsible
+        value={value}
+        onValueChange={(v) => onValueChange?.(v ?? "")}
+        className={cn("w-full", className)}
+      >
+        {children}
+      </Accordion>
+    );
+  }
+
   return (
-    <Accordion type="multiple" defaultValue={defaultValue} className={cn("w-full", className)}>
+    <Accordion
+      type="single"
+      collapsible
+      defaultValue={defaultValue ?? ""}
+      className={cn("w-full", className)}
+    >
       {children}
     </Accordion>
   );

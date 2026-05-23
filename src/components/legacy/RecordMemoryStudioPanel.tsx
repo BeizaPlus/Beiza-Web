@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
+import { useStudioPanel } from "@/hooks/useStudioPanel";
 import { StudioJsonCopyBlock } from "@/components/dev/StudioJsonCopyBlock";
 import {
   StudioAccordionPanels,
@@ -44,8 +45,15 @@ function activeSubsetFromTarget(
 export function RecordMemoryStudioPanel({ frame, onChange }: Props) {
   const studioEnabled = isLayoutStudioEnabled();
   const ctx = useRecordLayoutStudio();
-  const [open, setOpen] = useState(true);
+  const panel = useStudioPanel("record-memory-hud");
   const activeId = activeSubsetFromTarget(ctx?.activeTarget ?? null);
+  const [accordionSection, setAccordionSection] = useState("inset");
+  const uploadHudActive = ctx?.activeTarget === "record-upload-hud";
+
+  useEffect(() => {
+    if (uploadHudActive) setAccordionSection("upload-hud");
+    else if (activeId) setAccordionSection("subset");
+  }, [activeId, uploadHudActive]);
 
   if (!studioEnabled) return null;
 
@@ -76,12 +84,6 @@ export function RecordMemoryStudioPanel({ frame, onChange }: Props) {
     saveRecordMemoryStudioFrame(next);
   };
 
-  const uploadHudActive = ctx?.activeTarget === "record-upload-hud";
-
-  useEffect(() => {
-    if (activeId || uploadHudActive) setOpen(true);
-  }, [activeId, uploadHudActive]);
-
   const editingLabel = uploadHudActive
     ? RECORD_MEMORY_UPLOAD_HUD_LABEL
     : activeId
@@ -91,9 +93,9 @@ export function RecordMemoryStudioPanel({ frame, onChange }: Props) {
   return (
     <FloatingStudioShell
       panelId="record-memory-hud"
-      open={open}
-      onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
+      open={panel.open}
+      onOpen={panel.onOpen}
+      onClose={panel.onClose}
       openButtonLabel="Record HUD"
     >
       <p className="mb-2 text-[9px] leading-snug text-muted-foreground">
@@ -104,7 +106,7 @@ export function RecordMemoryStudioPanel({ frame, onChange }: Props) {
         {editingLabel}
       </p>
 
-      <StudioAccordionPanels defaultValue={["inset", "upload-hud", "subset"]}>
+      <StudioAccordionPanels value={accordionSection} onValueChange={setAccordionSection}>
         <StudioAccordionSection value="inset" title="Station safe area">
           <StudioSlider
             compact

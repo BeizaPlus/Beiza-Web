@@ -93,7 +93,7 @@ export function legacyNavRecordRailStyle(frame: LegacyNavStudioFrame): CSSProper
     transform: parts.join(" "),
     maxWidth: `min(${frame.maxWidthRem}rem, calc(100vw - 2 * var(--beiza-site-padding-x, 1.25rem)))`,
     width: "max-content",
-    zIndex: 50,
+    zIndex: 85,
   };
 }
 

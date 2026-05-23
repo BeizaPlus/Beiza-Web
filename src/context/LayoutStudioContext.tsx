@@ -12,6 +12,7 @@ import { createPortal } from "react-dom";
 import { useLocation } from "react-router-dom";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { loadSiteGuidesVisible, saveSiteGuidesVisible } from "@/lib/sitePaddingStudio";
+import { studioControlsDockPosition } from "@/lib/studioPanelPlacement";
 import { cn } from "@/lib/utils";
 
 export const LAYOUT_STUDIO_MASTER_OPEN_EVENT = "beiza:layout-studio-master-open";
@@ -37,8 +38,11 @@ type LayoutStudioContextValue = {
   registerStudioPanel: (entry: StudioPanelEntry) => void;
   unregisterStudioPanel: (id: string) => void;
   dockAllPanels: () => void;
-  /** Open a registered panel and turn layout studio on (PANELS dock). */
+  /** Id of the only floating panel that may be open, or null when all docked. */
+  activePanelId: string | null;
+  /** Open one panel (closes all others) and turn layout studio on. */
   openStudioPanel: (panelId: string) => void;
+  closeStudioPanel: () => void;
 };
 
 const LayoutStudioContext = createContext<LayoutStudioContextValue | null>(null);
@@ -63,6 +67,7 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
   const [masterOpen, setMasterOpenState] = useState(readMasterOpen);
   const [guidesVisible, setGuidesVisibleState] = useState(loadSiteGuidesVisible);
   const [studioPanels, setStudioPanels] = useState<StudioPanelEntry[]>([]);
+  const [activePanelId, setActivePanelId] = useState<string | null>(null);
   const panelsRef = useRef<Map<string, StudioPanelEntry>>(new Map());
 
   const syncPanels = useCallback(() => {
@@ -116,18 +121,19 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const dockAllPanels = useCallback(() => {
-    panelsRef.current.forEach((panel) => {
-      if (panel.open) panel.onClose();
-    });
+  const closeStudioPanel = useCallback(() => {
+    setActivePanelId(null);
   }, []);
+
+  const dockAllPanels = useCallback(() => {
+    closeStudioPanel();
+  }, [closeStudioPanel]);
 
   const openStudioPanel = useCallback(
     (panelId: string) => {
-      const entry = panelsRef.current.get(panelId);
-      if (!entry) return;
+      if (!panelsRef.current.has(panelId)) return;
       applyMasterOpen(true);
-      if (!entry.open) entry.onOpen();
+      setActivePanelId(panelId);
     },
     [applyMasterOpen],
   );
@@ -167,7 +173,9 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
       registerStudioPanel,
       unregisterStudioPanel,
       dockAllPanels,
+      activePanelId,
       openStudioPanel,
+      closeStudioPanel,
     }),
     [
       enabled,
@@ -180,7 +188,9 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
       registerStudioPanel,
       unregisterStudioPanel,
       dockAllPanels,
+      activePanelId,
       openStudioPanel,
+      closeStudioPanel,
     ],
   );
 
@@ -203,16 +213,22 @@ function LayoutStudioControls({
   masterOpen: boolean;
   setMasterOpen: (open: boolean) => void;
 }) {
-  const { toggleMaster, dockAllPanels, guidesVisible, toggleGuides } = useLayoutStudio();
+  const { toggleMaster, dockAllPanels, openStudioPanel, guidesVisible, toggleGuides } =
+    useLayoutStudio();
 
   const ensureMasterOpen = useCallback(() => {
     if (!masterOpen) setMasterOpen(true);
   }, [masterOpen, setMasterOpen]);
 
+  const dockPos =
+    typeof window !== "undefined" ? studioControlsDockPosition() : { x: 16, y: 16 };
+
   const controls = (
     <div
-      className="fixed bottom-4 left-4 z-[9998] flex max-w-[min(100vw-2rem,20rem)] flex-col items-start gap-2"
+      className="fixed z-[9998] flex max-w-[min(100vw-2rem,20rem)] flex-col items-start gap-2"
       data-beiza-layout-studio-controls
+      style={{ left: dockPos.x, top: dockPos.y }}
+      title="Layout studio — open panels here, then drag panel headers to your second screen"
     >
       {panels.length > 0 ? (
         <div
@@ -242,11 +258,11 @@ function LayoutStudioControls({
                   aria-pressed={visible}
                   onClick={() => {
                     if (visible) {
-                      panel.onClose();
+                      dockAllPanels();
                       return;
                     }
                     ensureMasterOpen();
-                    panel.onOpen();
+                    openStudioPanel(panel.id);
                   }}
                   className={cn(
                     "rounded-md border px-2 py-1 text-[10px] font-medium transition",
@@ -323,7 +339,9 @@ export function useLayoutStudio(): LayoutStudioContextValue {
       registerStudioPanel: () => {},
       unregisterStudioPanel: () => {},
       dockAllPanels: () => {},
+      activePanelId: null,
       openStudioPanel: () => {},
+      closeStudioPanel: () => {},
     }
   );
 }

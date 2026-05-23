@@ -91,13 +91,19 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
       <nav
         className={cn(
           recordOverlay
-            ? "pointer-events-auto fixed inset-x-0 top-0 z-[60] w-full border-0 bg-gradient-to-b from-black/75 via-black/35 to-transparent"
+            ? "pointer-events-none fixed inset-x-0 top-0 z-[90] w-full border-0 bg-gradient-to-b from-black/75 via-black/35 to-transparent"
             : "sticky top-0 z-40 w-full border-b border-white/5 bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20",
         )}
       >
-        <div className={cn("w-full", recordOverlay ? "py-3" : "py-4 sm:py-6", sitePaddingX)}>
+        <div
+          className={cn(
+            "pointer-events-auto w-full",
+            recordOverlay ? "py-3" : "py-4 sm:py-6",
+            sitePaddingX,
+          )}
+        >
           <div className="flex min-w-0 items-center justify-between gap-3">
-            <BeizaLogoLink />
+            <BeizaLogoLink className="relative z-[100]" />
 
             <div className="hidden min-w-0 items-center gap-6 lg:flex lg:gap-10">
               {navLinks.map((link) => (

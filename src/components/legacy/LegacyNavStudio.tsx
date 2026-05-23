@@ -28,6 +28,7 @@ import {
 } from "@/lib/legacyNavStudio";
 
 import { useRecordLayoutStudio } from "@/context/RecordLayoutStudioContext";
+import { useStudioPanel } from "@/hooks/useStudioPanel";
 import { cn } from "@/lib/utils";
 
 
@@ -62,7 +63,7 @@ export function LegacyNavStudio({
 
   const [frame, setFrame] = useState<LegacyNavStudioFrame>(() => loadLegacyNavStudioFrame());
 
-  const [open, setOpen] = useState(true);
+  const studioPanel = useStudioPanel("legacy-tab-nav");
 
 
 
@@ -131,11 +132,11 @@ export function LegacyNavStudio({
 
           panelId="legacy-tab-nav"
 
-          open={open}
+          open={studioPanel.open}
 
-          onOpen={() => setOpen(true)}
+          onOpen={studioPanel.onOpen}
 
-          onClose={() => setOpen(false)}
+          onClose={studioPanel.onClose}
 
           openButtonLabel={recordOverlay ? "Nav rail" : "Tab bar"}
 
@@ -149,7 +150,7 @@ export function LegacyNavStudio({
 
           <StudioTextEditButton />
 
-          <StudioAccordionPanels defaultValue={["position"]}>
+          <StudioAccordionPanels defaultValue="position">
             <StudioAccordionSection
               value="position"
               title={recordOverlay ? "Rail position" : "Tab bar position"}

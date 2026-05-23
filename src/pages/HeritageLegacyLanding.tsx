@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/accordion";
 import { BookOpen, Mail, Mic, Sparkles, Star } from "lucide-react";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
+import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import { cn } from "@/lib/utils";
 import { legacyBody, legacyDisplay } from "@/lib/legacyLandingFonts";
 import {
@@ -69,9 +70,12 @@ export default function HeritageLegacyLanding() {
     <div className={cn("heritage-legacy-page min-h-screen", CREAM, legacyBody)}>
       <header className="border-b border-[#e8e2d8]/80">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <Link to={BEIZA_LINKS.welcome.gate} className={cn(legacyDisplay, "text-xl tracking-[0.2em] text-[#2c2824]")}>
-            BEIZA
-          </Link>
+          <BeizaLogoLink
+            variant="full"
+            className="gap-2"
+            wordmarkClassName="h-5 invert"
+            mascotClassName="h-9 w-9"
+          />
           <nav className={cn(legacyBody, "flex gap-6 text-sm font-light", MUTED)}>
             <Link to={BEIZA_LINKS.education.storyQuestions} className="hover:text-[#2c2824]">
               Questions

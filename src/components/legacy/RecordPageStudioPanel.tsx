@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { useRecordLayoutStudio } from "@/context/RecordLayoutStudioContext";
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
+import { useStudioPanel } from "@/hooks/useStudioPanel";
 import { HeritageHeroStudioControls } from "@/components/dev/HeritageHeroStudioControls";
 import { StudioJsonCopyBlock } from "@/components/dev/StudioJsonCopyBlock";
 import {
@@ -172,12 +172,8 @@ export function RecordPageStudioPanel({ frame, onChange }: Props) {
   const studioEnabled = isLayoutStudioEnabled();
   const ctx = useRecordLayoutStudio();
   const breakpoint = useLayoutStudioBreakpoint();
-  const [open, setOpen] = useState(true);
+  const panel = useStudioPanel("record-page");
   const active = recordPageFrameForViewport(frame, breakpoint);
-
-  useEffect(() => {
-    if (ctx?.activeTarget === "record-page") setOpen(true);
-  }, [ctx?.activeTarget]);
 
   if (!studioEnabled) return null;
 
@@ -190,9 +186,9 @@ export function RecordPageStudioPanel({ frame, onChange }: Props) {
   return (
     <FloatingStudioShell
       panelId="record-page"
-      open={open}
-      onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
+      open={panel.open}
+      onOpen={panel.onOpen}
+      onClose={panel.onClose}
       openButtonLabel="Record page"
     >
       <p className="mb-2 text-[9px] leading-snug text-muted-foreground">
@@ -204,7 +200,7 @@ export function RecordPageStudioPanel({ frame, onChange }: Props) {
 
       <StudioTextEditButton />
 
-      <StudioAccordionPanels defaultValue={["copy", "hero"]}>
+      <StudioAccordionPanels defaultValue="copy">
         <StudioAccordionSection
           value="copy"
           title={`${layoutBreakpointLabel(breakpoint)} · copy & sign-in`}

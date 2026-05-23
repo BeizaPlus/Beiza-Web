@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useStudioPanel } from "@/hooks/useStudioPanel";
 
 
 
@@ -84,7 +84,7 @@ export function PageLayoutStudioPanel({ pageId, frame, onChange }: Props) {
 
 
 
-  const [open, setOpen] = useState(true);
+  const studioPanel = useStudioPanel(`page-layout-${pageId}`);
 
 
 
@@ -172,15 +172,15 @@ export function PageLayoutStudioPanel({ pageId, frame, onChange }: Props) {
 
 
 
-      open={open}
+      open={studioPanel.open}
 
 
 
-      onOpen={() => setOpen(true)}
+      onOpen={studioPanel.onOpen}
 
 
 
-      onClose={() => setOpen(false)}
+      onClose={studioPanel.onClose}
 
 
 
@@ -216,7 +216,7 @@ export function PageLayoutStudioPanel({ pageId, frame, onChange }: Props) {
 
 
 
-      <StudioAccordionPanels defaultValue={["layout"]}>
+      <StudioAccordionPanels defaultValue="layout">
 
         <StudioAccordionSection value="layout" title="Page layout">
           {pageId === "legacy-auth" ? (

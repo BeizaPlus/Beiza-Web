@@ -21,6 +21,7 @@ import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { cn } from "@/lib/utils";
 
 import { useLayoutStudioBreakpoint } from "@/hooks/useLayoutStudioViewport";
+import { useStudioPanel } from "@/hooks/useStudioPanel";
 import {
   layoutBreakpointFromWidth,
   layoutBreakpointLabel,
@@ -280,7 +281,7 @@ function SitePaddingStudioPanel({
 
 }) {
 
-  const [open, setOpen] = useState(true);
+  const studioPanel = useStudioPanel("site-padding");
 
   const active = sitePaddingForViewport(frame, breakpoint);
 
@@ -330,11 +331,11 @@ function SitePaddingStudioPanel({
 
       panelId="site-padding"
 
-      open={open}
+      open={studioPanel.open}
 
-      onOpen={() => setOpen(true)}
+      onOpen={studioPanel.onOpen}
 
-      onClose={() => setOpen(false)}
+      onClose={studioPanel.onClose}
 
       openButtonLabel="Site bounds"
 
@@ -354,7 +355,7 @@ function SitePaddingStudioPanel({
 
 
 
-      <StudioAccordionPanels defaultValue={["guides", "bounds"]}>
+      <StudioAccordionPanels defaultValue="guides">
 
         <StudioAccordionSection
 

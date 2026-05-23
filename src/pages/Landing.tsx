@@ -129,8 +129,8 @@ const Landing = () => {
     if (faqList.length > 0) {
       return faqList.map((faq) => ({
         id: faq.id,
-        question: fa.question,
-        answer: fa.answer,
+        question: faq.question,
+        answer: faq.answer,
       }));
     }
     return EDUCATION_FAQ.map((item, index) => ({

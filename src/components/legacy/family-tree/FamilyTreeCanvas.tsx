@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Background,
   BackgroundVariant,
+  ConnectionLineType,
   ConnectionMode,
   ReactFlow,
   ReactFlowProvider,
@@ -995,6 +996,7 @@ function FamilyTreeCanvasInner({
         selectionKeyCode={null}
         deleteKeyCode={["Backspace", "Delete"]}
         defaultEdgeOptions={TREE_DEFAULT_EDGE_OPTIONS}
+        connectionLineType={ConnectionLineType.Bezier}
         connectionLineStyle={{ stroke: "rgba(68, 102, 255, 0.5)", strokeWidth: 1.5 }}
         onInit={() => {
           // fitView is called via the nodes-populated effect below

@@ -2,20 +2,14 @@ import { useCallback, useEffect, useRef, useState, type ReactNode, type PointerE
 import { createPortal } from "react-dom";
 import { GripVertical } from "lucide-react";
 import { useLayoutStudio } from "@/context/LayoutStudioContext";
+import {
+  clampStudioPanelPosition,
+  loadStudioPanelSharedPosition,
+  saveStudioPanelSharedPosition,
+  studioPanelDefaultPosition,
+} from "@/lib/studioPanelPlacement";
 
-const STORAGE_PREFIX = "beiza-studio-panel-pos:";
 const PANEL_W = 352;
-const PANEL_MIN_TOP = 48;
-
-/** Default panel anchor — right side, staggered vertically */
-function defaultPanelPos(panelId: string): { x: number; y: number } {
-  const w = typeof window !== "undefined" ? window.innerWidth : 1200;
-  const x = Math.max(16, w - PANEL_W - 16);
-  let hash = 0;
-  for (let i = 0; i < panelId.length; i++) hash += panelId.charCodeAt(i);
-  const y = PANEL_MIN_TOP + (hash % 5) * 48;
-  return { x, y };
-}
 
 type Props = {
   panelId: string;
@@ -34,9 +28,9 @@ export function FloatingStudioShell({
   children,
   openButtonLabel = "Panel",
 }: Props) {
-  const { enabled: masterMode, masterOpen, registerStudioPanel, unregisterStudioPanel } =
+  const { enabled: masterMode, masterOpen, activePanelId, registerStudioPanel, unregisterStudioPanel } =
     useLayoutStudio();
-  const [pos, setPos] = useState(() => defaultPanelPos(panelId));
+  const [pos, setPos] = useState(() => loadStudioPanelSharedPosition() ?? studioPanelDefaultPosition());
   const posRef = useRef(pos);
   const dragRef = useRef<{ startX: number; startY: number; originX: number; originY: number } | null>(
     null,
@@ -45,36 +39,14 @@ export function FloatingStudioShell({
   posRef.current = pos;
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(`${STORAGE_PREFIX}${panelId}`);
-      if (raw) {
-        const parsed = JSON.parse(raw) as { x?: number; y?: number };
-        if (typeof parsed.x === "number" && typeof parsed.y === "number") {
-          setPos({ x: parsed.x, y: parsed.y });
-        }
-      }
-    } catch {
-      /* ignore */
-    }
-  }, [panelId]);
+    const saved = loadStudioPanelSharedPosition();
+    if (saved) setPos(saved);
+    else setPos(studioPanelDefaultPosition());
+  }, []);
 
-  const persistPos = useCallback(
-    (next: { x: number; y: number }) => {
-      setPos(next);
-      localStorage.setItem(`${STORAGE_PREFIX}${panelId}`, JSON.stringify(next));
-    },
-    [panelId],
-  );
-
-  const clampPos = useCallback((x: number, y: number) => {
-    const maxY =
-      typeof window !== "undefined"
-        ? Math.max(PANEL_MIN_TOP, window.innerHeight - 120)
-        : y;
-    return {
-      x: Math.max(8, Math.min((window.innerWidth ?? 1200) - PANEL_W - 8, x)),
-      y: Math.max(PANEL_MIN_TOP, Math.min(maxY, y)),
-    };
+  const persistPos = useCallback((next: { x: number; y: number }) => {
+    setPos(next);
+    saveStudioPanelSharedPosition(next);
   }, []);
 
   useEffect(() => {
@@ -99,7 +71,7 @@ export function FloatingStudioShell({
     if (!dragRef.current) return;
     const dx = e.clientX - dragRef.current.startX;
     const dy = e.clientY - dragRef.current.startY;
-    persistPos(clampPos(dragRef.current.originX + dx, dragRef.current.originY + dy));
+    persistPos(clampStudioPanelPosition(dragRef.current.originX + dx, dragRef.current.originY + dy));
   };
 
   endDragRef.current = () => {
@@ -126,13 +98,13 @@ export function FloatingStudioShell({
   useEffect(() => () => endDragRef.current(), []);
 
   if (masterMode && !masterOpen) return null;
-  if (!open) return null;
+  if (!open || activePanelId !== panelId) return null;
 
   const panel = (
     <aside
       data-beiza-studio-panel
       className="pointer-events-auto fixed z-[10050] w-[min(100vw-2rem,22rem)] max-h-[min(85vh,calc(100vh-2rem))] overflow-y-auto rounded-xl border border-border bg-card/95 p-4 shadow-2xl backdrop-blur-md"
-      style={{ left: pos.x, top: pos.y }}
+      style={{ left: pos.x, top: pos.y, width: PANEL_W }}
     >
       <div
         className="mb-3 flex cursor-grab touch-none select-none items-center justify-between gap-2 active:cursor-grabbing"
@@ -157,7 +129,7 @@ export function FloatingStudioShell({
         </button>
       </div>
       <p className="mb-3 text-[9px] text-muted-foreground/80">
-        Drag the header bar to move. Click numbers to type; double-click sliders to reset.
+        One panel at a time — click another region to switch. Drag the header to your second screen.
       </p>
       {children}
     </aside>

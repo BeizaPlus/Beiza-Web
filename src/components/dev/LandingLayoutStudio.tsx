@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useStudioPanel } from "@/hooks/useStudioPanel";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -29,7 +30,7 @@ type Props = {
 };
 
 export function LandingLayoutStudioPanel({ state, onChange }: Props) {
-  const [open, setOpen] = useState(true);
+  const studioPanel = useStudioPanel("landing");
   const [heritageFrame, setHeritageFrame] = useState<HeritageHeroFrame>(() =>
     loadHeroStudioFrame("heritage"),
   );
@@ -56,7 +57,7 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
     patch({ outro: { ...state.outro, ...outro } });
 
   const [saveStatus, setSaveStatus] = useState<string | null>(null);
-  const [openSections, setOpenSections] = useState<string[]>([state.focus]);
+  const [openSection, setOpenSection] = useState<string>(state.focus);
 
   const exportJson = async () => {
     const text = studioStateToJson(state);
@@ -79,23 +80,24 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
   return (
     <FloatingStudioShell
       panelId="landing"
-      open={open}
-      onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
+      open={studioPanel.open}
+      onOpen={studioPanel.onOpen}
+      onClose={studioPanel.onClose}
       openButtonLabel="Landing studio"
     >
       <StudioTextEditButton />
       <p className="mb-3 text-[9px] leading-snug text-muted-foreground">
-        Open a section to preview that block on the page. Multiple sections can stay open.
+        One section at a time — expands the matching block on the page.
       </p>
 
       <Accordion
-        type="multiple"
-        value={openSections}
-        onValueChange={(open) => {
-          setOpenSections(open);
-          const last = open[open.length - 1] as StudioFocus | undefined;
-          if (last) patch({ focus: last });
+        type="single"
+        collapsible
+        value={openSection}
+        onValueChange={(value) => {
+          if (!value) return;
+          setOpenSection(value);
+          patch({ focus: value as StudioFocus });
         }}
         className="w-full"
       >

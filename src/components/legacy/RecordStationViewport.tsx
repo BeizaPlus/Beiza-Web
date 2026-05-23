@@ -84,7 +84,12 @@ export function RecordStationViewport({
 
   return (
     <section
-      className="record-station-viewport absolute inset-0 z-0 h-full w-full overflow-hidden pt-[var(--record-site-nav-h,4.5rem)]"
+      className={cn(
+        "record-station-viewport absolute inset-0 z-0 w-full pt-[var(--record-site-nav-h,4.5rem)]",
+        stationExpanded
+          ? "record-station-viewport-expanded min-h-full overflow-visible"
+          : "h-full overflow-hidden",
+      )}
       style={cssVars}
       aria-label="Recording station"
     >
@@ -203,7 +208,7 @@ function recordStationColumn({
               ? "items-stretch text-left"
               : "max-[1199px]:items-center max-[1199px]:text-center",
             "py-6 min-[1200px]:py-8",
-            stationExpanded && station ? "h-full min-h-0" : "min-h-0",
+            stationExpanded && station ? "min-h-0 flex-none" : "min-h-0",
             !stationExpanded &&
               "max-[1199px]:items-center max-[1199px]:text-center min-[1200px]:mx-auto",
             recordContentIndentX,
@@ -260,7 +265,11 @@ function recordStationColumn({
                 "px-[var(--record-hud-inset-x,2vw)]",
                 "pb-[var(--record-hud-inset-bottom,4vh)]",
                 "min-[1200px]:pr-[max(var(--record-hud-inset-x,2vw),5.5rem)]",
-                signedIn ? "flex-1 overflow-y-auto overflow-x-visible" : stationExpanded ? "flex-1 overflow-y-auto overflow-x-visible" : "shrink-0",
+                stationExpanded
+                  ? "flex-none overflow-visible"
+                  : signedIn
+                    ? "flex-1 overflow-y-auto overflow-x-visible"
+                    : "shrink-0",
                 stationExpanded ? "flex flex-col items-stretch" : textRight && "flex flex-col items-end",
               )}
             >

@@ -74,7 +74,10 @@ export const PERSON_EDGE_SELECTED_STYLE = {
   strokeWidth: 2,
 } as const;
 
+/** Fluid Bézier curves (matches connection preview while linking nodes). */
+export const TREE_EDGE_TYPE = "default" as const;
+
 export const TREE_DEFAULT_EDGE_OPTIONS = {
-  type: "smoothstep" as const,
+  type: TREE_EDGE_TYPE,
   style: PERSON_EDGE_STYLE,
 };

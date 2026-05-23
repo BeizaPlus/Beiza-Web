@@ -47,6 +47,7 @@ import { StudioSlider } from "@/components/dev/StudioSlider";
 
 import { welcomeCopyForLocale } from "@/lib/locale/welcomeCopy";
 import { useWelcomeLocaleSceneWheel } from "@/hooks/useWelcomeLocaleSceneWheel";
+import { useStudioPanel } from "@/hooks/useStudioPanel";
 import { siteBounds } from "@/lib/siteLayout";
 
 import { getWelcomeCardImage } from "@/lib/locale/welcomeImages";
@@ -464,7 +465,7 @@ function WelcomeStudioPanel({
 
 }) {
 
-  const [open, setOpen] = useState(true);
+  const studioPanel = useStudioPanel("welcome-gate");
 
   const [card, setCard] = useState<WelcomePathKey>("legacy");
 
@@ -536,9 +537,9 @@ function WelcomeStudioPanel({
 
     <FloatingStudioShell
       panelId="welcome-gate"
-      open={open}
-      onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
+      open={studioPanel.open}
+      onOpen={studioPanel.onOpen}
+      onClose={studioPanel.onClose}
       openButtonLabel="Welcome studio"
     >
 
@@ -550,7 +551,7 @@ function WelcomeStudioPanel({
 
       <StudioTextEditButton />
 
-      <StudioAccordionPanels defaultValue={["layout", "phone", "rail", "cards"]} className="mb-3">
+      <StudioAccordionPanels defaultValue="layout" className="mb-3">
         <StudioAccordionSection value="layout" title="Page layout">
           <StudioSlider
             compact

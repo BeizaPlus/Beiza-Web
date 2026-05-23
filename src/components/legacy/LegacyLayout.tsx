@@ -45,7 +45,7 @@ function LegacyRecordRoute({
       <RecordFlowProvider>
         <RecordViewportLock />
         <div
-          className="record-page-shell relative h-[100dvh] max-h-[100dvh] min-h-0 w-full overflow-hidden bg-black text-foreground max-md:[--beiza-content-indent:0rem] max-md:[--record-content-indent:0rem]"
+          className="record-page-shell relative min-h-[100dvh] w-full overflow-visible bg-black text-foreground max-md:[--beiza-content-indent:0rem] max-md:[--record-content-indent:0rem]"
           style={{ "--record-site-nav-h": "4.5rem" } as CSSProperties}
         >
           <RecordStationViewport
@@ -54,7 +54,7 @@ function LegacyRecordRoute({
             signedIn={showStation}
             station={
               showStation ? (
-                <div className="legacy-record-station-panel h-full min-h-0 w-full min-w-0 overflow-y-auto overflow-x-visible">
+                <div className="legacy-record-station-panel w-full min-w-0 overflow-visible">
                   <Outlet />
                 </div>
               ) : null

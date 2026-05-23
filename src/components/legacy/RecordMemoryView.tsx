@@ -374,8 +374,8 @@ export function RecordMemoryView({
       className={cn(
         compact
           ? cn(
-              "record-memory-viewport flex min-h-0 w-full min-w-0 max-w-full flex-col gap-2 overflow-y-auto",
-              hudExpanded ? "record-memory-expanded overflow-x-visible" : "overflow-x-hidden",
+              "record-memory-viewport flex w-full min-w-0 max-w-full flex-col gap-2",
+              hudExpanded ? "record-memory-expanded overflow-visible" : "min-h-0 overflow-x-hidden",
             )
           : "space-y-8",
       )}
@@ -459,14 +459,7 @@ export function RecordMemoryView({
             {recordedUri ? (
               <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
             ) : null}
-            <div
-              className={cn(
-                "w-full min-w-0",
-                compact
-                  ? "space-y-2 rounded-xl border border-white/15 bg-black/50 p-3 backdrop-blur-sm"
-                  : "space-y-4",
-              )}
-            >
+            <div className={cn("w-full min-w-0", compact ? "space-y-2" : "space-y-4")}>
               <UploadPanelBody
                 compact={compact}
                 durationSeconds={durationSeconds}
@@ -485,14 +478,7 @@ export function RecordMemoryView({
             {recordedUri ? (
               <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
             ) : null}
-            <div
-              className={cn(
-                "w-full min-w-0",
-                compact
-                  ? "space-y-2 rounded-xl border border-white/15 bg-black/50 p-3 backdrop-blur-sm"
-                  : "space-y-4",
-              )}
-            >
+            <div className={cn("w-full min-w-0", compact ? "space-y-2" : "space-y-4")}>
               <UploadPanelBody
                 compact={compact}
                 durationSeconds={durationSeconds}

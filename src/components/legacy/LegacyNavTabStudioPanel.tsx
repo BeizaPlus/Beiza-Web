@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
+import { useStudioPanel } from "@/hooks/useStudioPanel";
 import { StudioJsonCopyBlock } from "@/components/dev/StudioJsonCopyBlock";
 import {
   StudioAccordionPanels,
@@ -30,7 +30,7 @@ function tabFromTarget(target: string | null): LegacyNavTabHref | null {
 export function LegacyNavTabStudioPanel({ frame, onChange }: Props) {
   const studioEnabled = isLayoutStudioEnabled();
   const ctx = useRecordLayoutStudio();
-  const [open, setOpen] = useState(true);
+  const panel = useStudioPanel("legacy-nav-tabs");
   const activeHref = tabFromTarget(ctx?.activeTarget ?? null);
 
   if (!studioEnabled) return null;
@@ -51,9 +51,9 @@ export function LegacyNavTabStudioPanel({ frame, onChange }: Props) {
   return (
     <FloatingStudioShell
       panelId="legacy-nav-tabs"
-      open={open}
-      onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
+      open={panel.open}
+      onOpen={panel.onOpen}
+      onClose={panel.onClose}
       openButtonLabel="Tab icons"
     >
       <p className="mb-2 text-[9px] leading-snug text-muted-foreground">
@@ -63,7 +63,7 @@ export function LegacyNavTabStudioPanel({ frame, onChange }: Props) {
         {editingLabel}
       </p>
 
-      <StudioAccordionPanels defaultValue={["offset"]}>
+      <StudioAccordionPanels defaultValue="offset">
         <StudioAccordionSection value="offset" title="Selected tab icon">
           {activeHref ? (
             <StudioCopyOffsetSliders
