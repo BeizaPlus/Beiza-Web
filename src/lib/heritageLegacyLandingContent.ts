@@ -1,4 +1,5 @@
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
+import { RECORDING_HOME_FAQ } from "@/lib/auditFaqContent";
 
 export const LEGACY_HERO = {
   headline: "Reminisce now. Treasure forever.",
@@ -46,24 +47,10 @@ export const TESTIMONIALS = [
   },
 ];
 
-export const LEGACY_FAQ = [
-  {
-    q: "What's included in a Beiza Legacy membership?",
-    a: "Weekly story prompts, voice recording, family tree, vault storage, and tools to compile answers into a memoir. Keeper adds unlimited storage, downloads, and printed book options.",
-  },
-  {
-    q: "Can I add any question myself?",
-    a: "Yes. You can add custom prompts alongside our weekly questions — perfect for holidays, reunions, or a specific chapter you want captured.",
-  },
-  {
-    q: "Can I answer on behalf of someone I love?",
-    a: "Absolutely. Many families record on behalf of parents or grandparents. You can invite them to contribute, or capture their answers in your own circle.",
-  },
-  {
-    q: "Can I create multiple copies of the book?",
-    a: "Yes. When your memoir is ready, order additional printed copies for siblings, cousins, and the next generation.",
-  },
-];
+export const LEGACY_FAQ = RECORDING_HOME_FAQ.map((item) => ({
+  q: item.q,
+  a: item.a,
+}));
 
 export const SAMPLE_QUESTIONS = [
   "What are you most proud of in your life?",

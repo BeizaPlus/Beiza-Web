@@ -14,7 +14,14 @@ type Props = {
   style?: CSSProperties;
 };
 
-/** Studio-only click target — highlights selection and opens the matching slider group. */
+function isStudioChromeTarget(el: EventTarget | null) {
+  return (
+    el instanceof HTMLElement &&
+    Boolean(el.closest("button, a, input, textarea, select, [role='slider'], audio, video"))
+  );
+}
+
+/** Studio-only click target — highlights selection and opens the matching PANELS dock control. */
 export function StudioSubsetZone({ target, label, children, className, style }: Props) {
   const studioOn = isLayoutStudioEnabled();
   const ctx = useRecordLayoutStudio();
@@ -27,6 +34,8 @@ export function StudioSubsetZone({ target, label, children, className, style }: 
       </div>
     );
   }
+
+  const activate = () => ctx?.selectTarget(target);
 
   return (
     <div
@@ -42,15 +51,15 @@ export function StudioSubsetZone({ target, label, children, className, style }: 
       )}
       style={style}
       onClick={(e) => {
-        if (!e.shiftKey) return;
+        if (isStudioChromeTarget(e.target)) return;
         e.preventDefault();
         e.stopPropagation();
-        ctx?.setActiveTarget(target);
+        activate();
       }}
       onKeyDown={(e) => {
-        if ((e.key === "Enter" || e.key === " ") && e.shiftKey) {
+        if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          ctx?.setActiveTarget(target);
+          activate();
         }
       }}
     >

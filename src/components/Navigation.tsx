@@ -91,7 +91,7 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
       <nav
         className={cn(
           recordOverlay
-            ? "pointer-events-none absolute inset-x-0 top-0 z-40 w-full border-0 bg-gradient-to-b from-black/75 via-black/35 to-transparent [&_*]:pointer-events-auto"
+            ? "pointer-events-auto fixed inset-x-0 top-0 z-[60] w-full border-0 bg-gradient-to-b from-black/75 via-black/35 to-transparent"
             : "sticky top-0 z-40 w-full border-b border-white/5 bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20",
         )}
       >

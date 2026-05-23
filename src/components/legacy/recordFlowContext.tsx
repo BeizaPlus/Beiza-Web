@@ -7,6 +7,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { studioRecordPhaseParam } from "@/lib/layoutStudio";
+import { STUDIO_MOCK_PROMPT_TEXT } from "@/lib/legacy/studioPreviewData";
 import type { RecordPhase } from "@/lib/legacy/types";
 
 export type RecordFlowSnapshot = {
@@ -28,18 +30,21 @@ type RecordFlowContextValue = {
   syncSnapshot: () => void;
 };
 
-const defaultSnapshot: RecordFlowSnapshot = {
-  phase: "prepare",
-  isRequestingMic: false,
-  elapsedSeconds: 0,
-  promptText: "",
-};
+function initialSnapshot(): RecordFlowSnapshot {
+  const studioPhase = studioRecordPhaseParam();
+  return {
+    phase: studioPhase ?? "prepare",
+    isRequestingMic: false,
+    elapsedSeconds: studioPhase === "recording" ? 12 : 0,
+    promptText: studioPhase ? STUDIO_MOCK_PROMPT_TEXT : "",
+  };
+}
 
 const RecordFlowContext = createContext<RecordFlowContextValue | null>(null);
 
 export function RecordFlowProvider({ children }: { children: ReactNode }) {
   const bridgeRef = useRef<RecordFlowBridge | null>(null);
-  const [snapshot, setSnapshot] = useState<RecordFlowSnapshot>(defaultSnapshot);
+  const [snapshot, setSnapshot] = useState<RecordFlowSnapshot>(initialSnapshot);
 
   const syncSnapshot = useCallback(() => {
     if (bridgeRef.current) setSnapshot(bridgeRef.current.getSnapshot());
@@ -49,7 +54,7 @@ export function RecordFlowProvider({ children }: { children: ReactNode }) {
     (bridge: RecordFlowBridge | null) => {
       bridgeRef.current = bridge;
       if (bridge) setSnapshot(bridge.getSnapshot());
-      else setSnapshot(defaultSnapshot);
+      else setSnapshot(initialSnapshot());
     },
     [],
   );

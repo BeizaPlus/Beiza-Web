@@ -5,6 +5,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 @layer base {
   :root {
     /* Nav, footer, marketing gutters — override via Site padding studio */
@@ -960,6 +964,36 @@ html.welcome-route body {
   overscroll-behavior: none;
 }
 
+/* Welcome gate — mobile path cards: horizontal swipe, one card + peek (≤809px) */
+@media (max-width: 809px) {
+  .welcome-cards-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .welcome-cards-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .welcome-cards-row > .welcome-card-slot {
+    flex: 0 0 var(--welcome-card-width, 82vw);
+    width: var(--welcome-card-width, 82vw);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    aspect-ratio: 3 / 4;
+    min-height: 0;
+  }
+}
+
 .record-page-shell {
   height: 100dvh;
   max-height: 100dvh;
@@ -970,6 +1004,41 @@ html.welcome-route body {
     height: 100dvh;
     max-height: 100dvh;
   }
+}
+
+/* Upload / seal HUD — wider column, no horizontal clip when repositioning */
+.record-page-shell .record-station-expanded.record-copy-column {
+  max-width: min(
+    36rem,
+    calc(100vw - 5.5rem - var(--beiza-site-padding-x, 1.25rem) * 2)
+  ) !important;
+  overflow: visible !important;
+  align-items: stretch !important;
+}
+
+.record-page-shell .record-station-expanded #recording-station {
+  align-items: stretch !important;
+  overflow-x: visible;
+  overflow-y: auto;
+}
+
+.record-page-shell .legacy-record-station-panel:has(.record-memory-expanded) {
+  overflow-x: visible;
+  overflow-y: auto;
+}
+
+.record-page-shell .record-memory-expanded {
+  overflow-x: visible !important;
+  width: 100%;
+  max-width: 100%;
+  align-self: stretch;
+}
+
+.record-page-shell .record-upload-hud-group {
+  width: 100%;
+  max-width: 100%;
+  align-self: stretch;
+  box-sizing: border-box;
 }
 
 /* Site padding studio — vertical boundary guides (Heritage reference) */

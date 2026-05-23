@@ -64,15 +64,21 @@ export type ToolbarControlsLayout = {
   controlsButtonGapPx: number;
 };
 
-/** Phone (≤809px) — path card size vs viewport; scroll is touch-only (no snap buttons). */
+/** Phone (≤809px) — horizontal swipe carousel (one card + peek). */
 export type WelcomePhoneLayout = {
-  /** Max card width on phone (rem) */
-  cardMaxWidthRem: number;
-  /** Card height as % of viewport; 0 = keep 2:3 aspect from width */
-  cardHeightVh: number;
-  /** Vertical gap between stacked cards (rem) */
+  /** Card width as % of viewport — ~82vw shows a peek of the next card */
+  cardWidthVw: number;
+  /** Side padding on the carousel row (rem) — creates edge peek */
+  carouselInsetRem: number;
+  /** Gap between cards (rem) */
   cardGapRem: number;
-  /** Padding below last card — clears bottom locale rail (rem) */
+  /** Padding after last card — clears bottom locale rail (rem) */
+  scrollPaddingEndRem: number;
+  /** @deprecated stacked layout — use cardWidthVw */
+  cardMaxWidthRem: number;
+  /** @deprecated stacked layout — carousel uses 3:4 aspect */
+  cardHeightVh: number;
+  /** @deprecated use scrollPaddingEndRem */
   scrollPaddingBottomRem: number;
 };
 
@@ -132,9 +138,12 @@ export const DEFAULT_TOOLBAR_LAYOUT: ToolbarControlsLayout = {
 };
 
 export const DEFAULT_PHONE_LAYOUT: WelcomePhoneLayout = {
+  cardWidthVw: 82,
+  carouselInsetRem: 1.5,
+  cardGapRem: 0.75,
+  scrollPaddingEndRem: 1.5,
   cardMaxWidthRem: 20,
   cardHeightVh: 0,
-  cardGapRem: 1,
   scrollPaddingBottomRem: 6,
 };
 
@@ -181,7 +190,11 @@ function normalizeToolbarLayout(raw: Partial<ToolbarControlsLayout> | undefined)
 }
 
 function normalizePhoneLayout(raw: Partial<WelcomePhoneLayout> | undefined): WelcomePhoneLayout {
-  return { ...DEFAULT_PHONE_LAYOUT, ...raw };
+  const merged = { ...DEFAULT_PHONE_LAYOUT, ...raw };
+  if (raw?.scrollPaddingBottomRem != null && raw.scrollPaddingEndRem === undefined) {
+    merged.scrollPaddingEndRem = raw.scrollPaddingBottomRem;
+  }
+  return merged;
 }
 
 function normalizeLocaleRailLayout(

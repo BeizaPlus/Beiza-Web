@@ -108,7 +108,7 @@ export function LegacyNavStudio({
           studioSelectable
             ? (e) => {
                 if ((e.target as HTMLElement).closest("a")) return;
-                studioCtx?.setActiveTarget("nav-rail");
+                studioCtx?.selectTarget("nav-rail");
               }
             : undefined
         }

@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { Link } from "react-router-dom";
 import { useLayoutStudioBreakpoint } from "@/hooks/useLayoutStudioViewport";
 import { useWelcomeSnapPath } from "@/hooks/useWelcomeSnapPath";
 import {
@@ -13,6 +14,7 @@ import { BookOpen, Feather, GraduationCap } from "lucide-react";
 
 import { WelcomePathCard } from "@/components/welcome/WelcomePathCard";
 
+import { WelcomeLangSwitcher } from "@/components/welcome/WelcomeLangSwitcher";
 import { WelcomeLocaleRail } from "@/components/welcome/WelcomeLocaleRail";
 
 import { welcomePathIconHoverBgClass, welcomePathIconHoverFgClass } from "@/lib/welcomePathIconStyles";
@@ -88,6 +90,7 @@ import {
 
 } from "@/lib/welcomeStudio";
 
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { cn } from "@/lib/utils";
 
@@ -301,23 +304,25 @@ function PhoneLayoutSliders({
     <>
       <StudioSlider
         compact
-        label="Card max width (rem)"
-        value={phone.cardMaxWidthRem}
-        defaultValue={DEFAULT_PHONE_LAYOUT.cardMaxWidthRem}
-        min={14}
-        max={28}
-        step={0.25}
-        onChange={(v) => patch({ cardMaxWidthRem: v })}
+        label="Card width (% viewport)"
+        value={phone.cardWidthVw}
+        defaultValue={DEFAULT_PHONE_LAYOUT.cardWidthVw}
+        min={72}
+        max={92}
+        step={1}
+        displayValue={`${phone.cardWidthVw}vw`}
+        onChange={(v) => patch({ cardWidthVw: v })}
       />
       <StudioSlider
         compact
-        label="Card height (% viewport, 0 = 2:3)"
-        value={phone.cardHeightVh}
-        defaultValue={DEFAULT_PHONE_LAYOUT.cardHeightVh}
+        label="Side peek padding (rem)"
+        value={phone.carouselInsetRem}
+        defaultValue={DEFAULT_PHONE_LAYOUT.carouselInsetRem}
         min={0}
-        max={85}
-        step={1}
-        onChange={(v) => patch({ cardHeightVh: v })}
+        max={3}
+        step={0.125}
+        displayValue={`${phone.carouselInsetRem}rem`}
+        onChange={(v) => patch({ carouselInsetRem: v })}
       />
       <StudioSlider
         compact
@@ -331,13 +336,13 @@ function PhoneLayoutSliders({
       />
       <StudioSlider
         compact
-        label="Scroll padding below cards (rem)"
-        value={phone.scrollPaddingBottomRem}
-        defaultValue={DEFAULT_PHONE_LAYOUT.scrollPaddingBottomRem}
-        min={3}
-        max={12}
-        step={0.25}
-        onChange={(v) => patch({ scrollPaddingBottomRem: v })}
+        label="Scroll padding after last card (rem)"
+        value={phone.scrollPaddingEndRem}
+        defaultValue={DEFAULT_PHONE_LAYOUT.scrollPaddingEndRem}
+        min={0}
+        max={6}
+        step={0.125}
+        onChange={(v) => patch({ scrollPaddingEndRem: v })}
       />
     </>
   );
@@ -605,8 +610,8 @@ function WelcomeStudioPanel({
 
         <StudioAccordionSection
           value="phone"
-          title="Mobile cards (≤809px)"
-          hint="Touch scroll only — no snap buttons. Tune card size vs viewport; 0 height keeps 2:3 aspect."
+          title="Mobile carousel (≤809px)"
+          hint="Horizontal swipe — one card with peek. Width ~82vw; 3:4 portrait aspect is locked in CSS."
         >
           <PhoneLayoutSliders
             phone={studio.phone}
@@ -852,13 +857,19 @@ export default function WelcomeGate() {
         >
           <motion.div variants={heroVariants} className="flex flex-col items-center">
             {studio.useMascot ? (
-              <img
-                src={BEIZA_MASCOT}
-                alt=""
-                aria-hidden
-                className="mx-auto mb-2 object-contain"
-                style={{ height: `${logoHeightRem}rem`, width: `${logoHeightRem}rem` }}
-              />
+              <Link
+                to={BEIZA_LINKS.welcome.gate}
+                className="mx-auto mb-2 inline-block"
+                aria-label="Beiza welcome"
+              >
+                <img
+                  src={BEIZA_MASCOT}
+                  alt=""
+                  aria-hidden
+                  className="object-contain"
+                  style={{ height: `${logoHeightRem}rem`, width: `${logoHeightRem}rem` }}
+                />
+              </Link>
             ) : (
               <img
                 src={BEIZA_LOGO}
@@ -885,6 +896,11 @@ export default function WelcomeGate() {
           >
             {copy.subheading}
           </motion.p>
+          {isPhone ? (
+            <motion.div variants={subtitleVariants}>
+              <WelcomeLangSwitcher isLight={isLight} rail={studio.localeRail} />
+            </motion.div>
+          ) : null}
         </motion.header>
 
         <main
@@ -897,16 +913,18 @@ export default function WelcomeGate() {
           <motion.div
             ref={cardsScrollRef}
             className={cn(
-              "flex w-full min-h-0 flex-1 flex-col items-stretch gap-3",
-              "max-sm:overflow-y-auto max-sm:overscroll-y-contain max-sm:[-webkit-overflow-scrolling:touch]",
-              "sm:grid sm:grid-cols-3 sm:gap-6",
+              "w-full min-h-0 flex-1",
+              "welcome-cards-row",
+              "min-[810px]:grid min-[810px]:grid-cols-3 min-[810px]:gap-6 min-[810px]:overflow-visible",
             )}
             style={
               isPhone
-                ? {
+                ? ({
+                    ["--welcome-card-width" as string]: `${studio.phone.cardWidthVw}vw`,
                     gap: `${studio.phone.cardGapRem}rem`,
-                    paddingBottom: `${studio.phone.scrollPaddingBottomRem}rem`,
-                  }
+                    paddingLeft: `${studio.phone.carouselInsetRem}rem`,
+                    paddingRight: `${studio.phone.scrollPaddingEndRem}rem`,
+                  } as CSSProperties)
                 : undefined
             }
             variants={containerVariants}
@@ -933,9 +951,8 @@ export default function WelcomeGate() {
                   data-welcome-path={path.key}
                   variants={cardVariants}
                   className={cn(
-                    "flex h-full min-h-0 min-w-0",
-                    "max-[809px]:flex-none max-[809px]:w-full",
-                    "min-[810px]:max-[1199px]:min-h-[280px]",
+                    "welcome-card-slot flex min-h-0 min-w-0",
+                    "min-[810px]:h-full min-[810px]:max-[1199px]:min-h-[280px]",
                   )}
                 >
                   <WelcomePathCard
@@ -973,8 +990,7 @@ export default function WelcomeGate() {
                     }
                     imageFullColor={imageFullColor}
                     centerColorStrip={centerColorStrip}
-                    phoneCardMaxWidthRem={isPhone ? studio.phone.cardMaxWidthRem : undefined}
-                    phoneCardHeightVh={isPhone ? studio.phone.cardHeightVh : undefined}
+                    layout={isPhone ? "carousel" : "grid"}
                   />
                 </motion.div>
               );

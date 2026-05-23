@@ -20,12 +20,17 @@ import {
 } from "@/lib/prompts";
 import { Loader2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { StudioDragGroup } from "@/components/dev/StudioDragGroup";
 import { StudioSubsetZone } from "@/components/dev/StudioSubsetZone";
+import { clampCopyOffsetFields, type CopyOffsetFields } from "@/lib/copyLayoutOffset";
 import { useRecordLayoutStudio } from "@/context/RecordLayoutStudioContext";
-import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
+import { isLayoutStudioEnabled, studioRecordPhaseParam } from "@/lib/layoutStudio";
+import { STUDIO_MOCK_PROMPT_TEXT } from "@/lib/legacy/studioPreviewData";
 import {
   loadRecordMemoryStudioFrame,
+  RECORD_MEMORY_UPLOAD_HUD_LABEL,
   recordMemorySubsetStyle,
+  saveRecordMemoryStudioFrame,
 } from "@/lib/legacy/recordMemoryStudio";
 import { cn } from "@/lib/utils";
 
@@ -325,11 +330,53 @@ export function RecordMemoryView({
   const studioCtx = useRecordLayoutStudio();
   const memoryFrame =
     studioOn && studioCtx ? studioCtx.memoryFrame : loadRecordMemoryStudioFrame();
+
+  const studioPhase = studioOn ? studioRecordPhaseParam() : null;
+  useEffect(() => {
+    if (!studioOn || !studioPhase) return;
+    setPrompt((p) => ({ ...p, text: STUDIO_MOCK_PROMPT_TEXT }));
+    if (studioPhase === "upload" || studioPhase === "seal") {
+      setPhase(studioPhase === "seal" ? "seal" : "upload");
+      setDurationSeconds(3);
+      setRecordedUri((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=";
+      });
+      if (studioPhase === "upload") {
+        setMemoryAbout({ type: "self" });
+      }
+    } else if (studioPhase === "recording") {
+      setPhase("recording");
+      setElapsedSeconds(8);
+    } else {
+      setPhase("prepare");
+    }
+  }, [studioOn, studioPhase]);
+
+  const patchUploadHudGroup = useCallback(
+    (partial: Partial<CopyOffsetFields>) => {
+      if (!studioCtx) return;
+      const uploadHudGroup = clampCopyOffsetFields({
+        ...memoryFrame.uploadHudGroup,
+        ...partial,
+      });
+      const next = { ...memoryFrame, uploadHudGroup };
+      studioCtx.setMemoryFrame(next);
+      saveRecordMemoryStudioFrame(next);
+    },
+    [memoryFrame, studioCtx],
+  );
+
+  const hudExpanded = compact && (phase === "upload" || phase === "seal");
+
   return (
     <div
       className={cn(
         compact
-          ? "record-memory-viewport flex min-h-0 w-full min-w-0 max-w-full flex-col gap-2 overflow-y-auto overflow-x-hidden"
+          ? cn(
+              "record-memory-viewport flex min-h-0 w-full min-w-0 max-w-full flex-col gap-2 overflow-y-auto",
+              hudExpanded ? "record-memory-expanded overflow-x-visible" : "overflow-x-hidden",
+            )
           : "space-y-8",
       )}
     >
@@ -350,19 +397,8 @@ export function RecordMemoryView({
 
       {phase !== "seal" && !compact ? <LegacyRecordPrompt prompt={prompt.text} /> : null}
 
-      {phase === "upload" && recordedUri ? (
-        studioOn ? (
-          <StudioSubsetZone
-            target="record-playback"
-            label="Playback"
-            className="w-full max-w-full"
-            style={recordMemorySubsetStyle(memoryFrame, "playback")}
-          >
-            <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
-          </StudioSubsetZone>
-        ) : (
-          <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
-        )
+      {phase === "upload" && recordedUri && !studioOn ? (
+        <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
       ) : null}
 
       {isHoldPhase && !compact ? (
@@ -411,49 +447,66 @@ export function RecordMemoryView({
         </Button>
       ) : null}
 
-      {phase === "upload" && (
-        studioOn ? (
-          <StudioSubsetZone
-            target="record-upload"
-            label="Seal form"
-            className={cn(
-              "w-full max-w-full",
-              compact ? "space-y-2 rounded-xl border border-white/15 bg-black/50 p-3 backdrop-blur-sm" : "space-y-4",
-            )}
-            style={recordMemorySubsetStyle(memoryFrame, "upload")}
+      {phase === "upload" &&
+        (studioOn ? (
+          <StudioDragGroup
+            target="record-upload-hud"
+            label={RECORD_MEMORY_UPLOAD_HUD_LABEL}
+            offset={memoryFrame.uploadHudGroup}
+            onOffsetChange={patchUploadHudGroup}
+            className="record-upload-hud-group flex w-full min-w-0 max-w-full flex-col gap-2 self-stretch"
           >
-            <UploadPanelBody
-              compact={compact}
-              durationSeconds={durationSeconds}
-              title={title}
-              setTitle={setTitle}
-              people={people}
-              memoryAbout={memoryAbout}
-              setMemoryAbout={setMemoryAbout}
-              uploading={uploading}
-              onSeal={() => void handleUpload()}
-            />
-          </StudioSubsetZone>
+            {recordedUri ? (
+              <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
+            ) : null}
+            <div
+              className={cn(
+                "w-full min-w-0",
+                compact
+                  ? "space-y-2 rounded-xl border border-white/15 bg-black/50 p-3 backdrop-blur-sm"
+                  : "space-y-4",
+              )}
+            >
+              <UploadPanelBody
+                compact={compact}
+                durationSeconds={durationSeconds}
+                title={title}
+                setTitle={setTitle}
+                people={people}
+                memoryAbout={memoryAbout}
+                setMemoryAbout={setMemoryAbout}
+                uploading={uploading}
+                onSeal={() => void handleUpload()}
+              />
+            </div>
+          </StudioDragGroup>
         ) : (
-          <div
-            className={cn(
-              compact ? "space-y-2 rounded-xl border border-white/15 bg-black/50 p-3 backdrop-blur-sm" : "space-y-4",
-            )}
-          >
-            <UploadPanelBody
-              compact={compact}
-              durationSeconds={durationSeconds}
-              title={title}
-              setTitle={setTitle}
-              people={people}
-              memoryAbout={memoryAbout}
-              setMemoryAbout={setMemoryAbout}
-              uploading={uploading}
+          <div className="record-upload-hud-group flex w-full min-w-0 max-w-full flex-col gap-2 self-stretch">
+            {recordedUri ? (
+              <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
+            ) : null}
+            <div
+              className={cn(
+                "w-full min-w-0",
+                compact
+                  ? "space-y-2 rounded-xl border border-white/15 bg-black/50 p-3 backdrop-blur-sm"
+                  : "space-y-4",
+              )}
+            >
+              <UploadPanelBody
+                compact={compact}
+                durationSeconds={durationSeconds}
+                title={title}
+                setTitle={setTitle}
+                people={people}
+                memoryAbout={memoryAbout}
+                setMemoryAbout={setMemoryAbout}
+                uploading={uploading}
               onSeal={() => void handleUpload()}
             />
+            </div>
           </div>
-        )
-      )}
+        ))}
 
       {phase === "seal" &&
         (studioOn ? (

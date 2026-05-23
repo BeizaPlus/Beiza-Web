@@ -7,9 +7,17 @@ type RecordingButtonProps = {
   onPress: () => void;
   /** Tighter control for viewport-fitted record station */
   compact?: boolean;
+  /** Hide caption under mic (hero provides copy) */
+  hideCaption?: boolean;
 };
 
-export function RecordingButton({ isRecording, disabled, onPress, compact = false }: RecordingButtonProps) {
+export function RecordingButton({
+  isRecording,
+  disabled,
+  onPress,
+  compact = false,
+  hideCaption = false,
+}: RecordingButtonProps) {
   return (
     <div className={cn("flex flex-col items-center", compact ? "gap-1.5" : "gap-3")}>
       <button
@@ -39,13 +47,15 @@ export function RecordingButton({ isRecording, disabled, onPress, compact = fals
           />
         )}
       </button>
-      <p className={cn("text-center text-muted-foreground", compact ? "text-[11px]" : "text-sm")}>
-        {disabled && !isRecording
-          ? "Starting microphone…"
-          : isRecording
-            ? "Recording — tap to stop"
-            : "Tap to record"}
-      </p>
+      {!hideCaption ? (
+        <p className={cn("text-center text-muted-foreground", compact ? "text-[11px]" : "text-sm")}>
+          {disabled && !isRecording
+            ? "Starting microphone…"
+            : isRecording
+              ? "Recording — tap to stop"
+              : "Tap to record"}
+        </p>
+      ) : null}
     </div>
   );
 }

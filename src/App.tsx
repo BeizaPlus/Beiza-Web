@@ -66,8 +66,8 @@ const App = () => (
           <SitePaddingStudioProvider>
           <SeoManager />
           <Routes>
-          <Route path="/" element={<WelcomeGate />} />
-          <Route path={routerPath(BEIZA_LINKS.welcome.alias)} element={<WelcomeGate />} />
+          <Route path="/" element={<Navigate to={BEIZA_LINKS.welcome.gate} replace />} />
+          <Route path={routerPath(BEIZA_LINKS.welcome.gate)} element={<WelcomeGate />} />
           <Route path={routerPath(BEIZA_LINKS.home.educationHome)} element={<Landing />} />
           <Route
             path={routerPath(BEIZA_REDIRECTS.educationCulturalImmersion.from)}

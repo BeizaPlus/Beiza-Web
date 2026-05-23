@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { legacyTabLinkTo } from "@/hooks/useLegacyTabNavigate";
 import { Menu, X } from "lucide-react";
 import { isInternalAppHref } from "@/lib/internalLink";
 import { cn } from "@/lib/utils";
@@ -44,7 +45,12 @@ export function ArmAnchorMenu({ links, className }: Props) {
 
               if (isInternalAppHref(link.href) && !link.href.startsWith("#")) {
                 return (
-                  <Link key={link.href} to={link.href} className={itemClass} onClick={close}>
+                  <Link
+                    key={link.href}
+                    to={legacyTabLinkTo(link.href, location)}
+                    className={itemClass}
+                    onClick={close}
+                  >
                     {link.label}
                   </Link>
                 );

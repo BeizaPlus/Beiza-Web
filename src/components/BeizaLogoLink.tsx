@@ -25,7 +25,7 @@ export function BeizaLogoLink({
 
   return (
     <Link
-      to={BEIZA_LINKS.welcome.alias}
+      to={BEIZA_LINKS.welcome.gate}
       onClick={onClick}
       className={cn("inline-flex items-center gap-3", className)}
       aria-label="Beiza home"

@@ -1,17 +1,30 @@
 import { useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import type { Location } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   useRecordLayoutStudio,
   type RecordLayoutStudioTarget,
 } from "@/context/RecordLayoutStudioContext";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 
+/** Preserve studio query string when switching Legacy tabs. */
+export function legacyTabLinkTo(href: string, location: Pick<Location, "search" | "hash">) {
+  const hashIndex = href.indexOf("#");
+  if (hashIndex >= 0) {
+    return {
+      pathname: href.slice(0, hashIndex) || "/",
+      search: location.search,
+      hash: href.slice(hashIndex),
+    };
+  }
+  return { pathname: href, search: location.search, hash: location.hash };
+}
+
 /**
- * Legacy tab rail / bar — always navigates to the wired /legacy/* route.
- * Shift+click (studio only) selects a tab icon for layout sliders instead.
+ * Legacy tab rail / bar click handler — shift+click selects studio target;
+ * same-route clicks noop. Normal clicks use React Router <Link> navigation.
  */
 export function useLegacyTabNavigate() {
-  const navigate = useNavigate();
   const location = useLocation();
   const studioOn = isLayoutStudioEnabled();
   const studioCtx = useRecordLayoutStudio();
@@ -23,18 +36,14 @@ export function useLegacyTabNavigate() {
       if (studioOn && e.shiftKey && studioCtx) {
         e.preventDefault();
         e.stopPropagation();
-        studioCtx.setActiveTarget(target);
+        studioCtx.selectTarget(target);
         return;
       }
 
       if (location.pathname === href) {
         e.preventDefault();
-        return;
       }
-
-      e.preventDefault();
-      navigate({ pathname: href, search: location.search, hash: location.hash });
     },
-    [location.hash, location.pathname, location.search, navigate, studioCtx, studioOn],
+    [location.pathname, studioCtx, studioOn],
   );
 }

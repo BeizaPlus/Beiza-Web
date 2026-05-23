@@ -9,8 +9,10 @@ import { BEIZA_LOCALES } from "@/lib/locale/types";
 /** Stable path constants */
 export const BEIZA_LINKS = {
   welcome: {
-    gate: "/",
-    alias: "/welcome",
+    /** Canonical welcome gate — logo / mascot always link here */
+    gate: "/welcome",
+    /** Legacy root URL; App.tsx redirects `/` → gate */
+    root: "/",
   },
   /** Education home — Build Intentional Legacy (`Landing.tsx`); welcome Education card lands here */
   home: {

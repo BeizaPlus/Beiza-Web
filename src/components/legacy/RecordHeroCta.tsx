@@ -141,8 +141,10 @@ export function RecordHeroCta({ textAlign = "left", studioSubset = false }: Reco
           {snapshot?.promptText ? (
             <p
               className={cn(
-                "max-w-[420px] text-sm italic leading-relaxed text-white/85",
-                alignEnd && "text-right",
+                "w-full max-w-[min(100%,28rem)] font-bold italic leading-[1.2] tracking-[-0.02em] text-white",
+                "text-[clamp(1.375rem,6vw,2.375rem)]",
+                "px-6 text-center [text-shadow:0_2px_20px_rgba(0,0,0,0.9)]",
+                alignEnd && "min-[1200px]:text-right",
               )}
             >
               &ldquo;{snapshot.promptText}&rdquo;
@@ -154,13 +156,14 @@ export function RecordHeroCta({ textAlign = "left", studioSubset = false }: Reco
               disabled={snapshot?.isRequestingMic || !flow}
               onPress={startRecording}
               compact
+              hideCaption
             />
           </div>
           {phase === "recording" && snapshot ? (
             <p className="text-sm tabular-nums text-white/70">{snapshot.elapsedSeconds}s</p>
           ) : (
             <p className={cn("text-[11px] text-subtle", alignEnd && "text-right")}>
-              Tap to record · title and vault steps appear here when you finish
+              Tap to record
             </p>
           )}
         </>

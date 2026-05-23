@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRecordLayoutStudio } from "@/context/RecordLayoutStudioContext";
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
 import { HeritageHeroStudioControls } from "@/components/dev/HeritageHeroStudioControls";
 import { StudioJsonCopyBlock } from "@/components/dev/StudioJsonCopyBlock";
@@ -169,9 +170,14 @@ function tierSliders(
 
 export function RecordPageStudioPanel({ frame, onChange }: Props) {
   const studioEnabled = isLayoutStudioEnabled();
+  const ctx = useRecordLayoutStudio();
   const breakpoint = useLayoutStudioBreakpoint();
   const [open, setOpen] = useState(true);
   const active = recordPageFrameForViewport(frame, breakpoint);
+
+  useEffect(() => {
+    if (ctx?.activeTarget === "record-page") setOpen(true);
+  }, [ctx?.activeTarget]);
 
   if (!studioEnabled) return null;
 
@@ -190,7 +196,7 @@ export function RecordPageStudioPanel({ frame, onChange }: Props) {
       openButtonLabel="Record page"
     >
       <p className="mb-2 text-[9px] leading-snug text-muted-foreground">
-        Copy column, email width, inner indent, and hero image — live on /legacy/record.
+        Click the record page (hero + column) to open this panel. Adjust column, email width, and hero image.
       </p>
       <p className="mb-3 rounded-md border border-primary/30 bg-primary/10 px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
         Editing: {layoutBreakpointLabel(breakpoint)}

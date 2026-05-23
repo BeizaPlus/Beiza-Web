@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { StudioSlider } from "@/components/dev/StudioSlider";
 import {
   COPY_OFFSET_LIMITS,
@@ -9,6 +10,8 @@ type Props = {
   defaults: CopyOffsetFields;
   onPatch: (partial: Partial<CopyOffsetFields>) => void;
   showLift?: boolean;
+  showCenter?: boolean;
+  onCenter?: () => void;
 };
 
 /** Shared copy ← / → / ↑ / ↓ controls (vw / vh) for layout studio panels */
@@ -17,11 +20,24 @@ export function StudioCopyOffsetSliders({
   defaults,
   onPatch,
   showLift = true,
+  showCenter = false,
+  onCenter,
 }: Props) {
   const { offsetX, offsetY, copyLift } = COPY_OFFSET_LIMITS;
 
   return (
     <>
+      {showCenter && onCenter ? (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="h-7 w-full text-[10px]"
+          onClick={onCenter}
+        >
+          Center (reset ←/→ and ↑/↓)
+        </Button>
+      ) : null}
       <StudioSlider
         compact
         label="Move copy ← / → (vw)"

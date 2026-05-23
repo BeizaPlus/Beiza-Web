@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { LegacyNavIcon, type LegacyNavIconName } from "@/components/legacy/LegacyNavIcon";
 import { LegacyNavStudio } from "@/components/legacy/LegacyNavStudio";
-import { useLegacyTabNavigate } from "@/hooks/useLegacyTabNavigate";
+import { legacyTabLinkTo, useLegacyTabNavigate } from "@/hooks/useLegacyTabNavigate";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { siteBounds } from "@/lib/siteLayout";
 import { cn } from "@/lib/utils";
@@ -61,7 +61,7 @@ export function LegacyTabBar({ placement = "stacked" }: LegacyTabBarProps) {
           return (
             <Link
               key={item.href}
-              to={item.href}
+              to={legacyTabLinkTo(item.href, location)}
               onClick={(e) => goToTab(item.href, e)}
               className={cn(
                 "flex min-w-0 flex-1 flex-col items-center gap-1 rounded-lg px-1 py-2 text-center text-xs font-medium transition-colors sm:px-2",

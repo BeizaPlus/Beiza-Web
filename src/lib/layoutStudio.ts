@@ -19,3 +19,28 @@ export function isLayoutStudioEnabled(): boolean {
   const host = window.location.hostname;
   return host === "localhost" || host === "127.0.0.1";
 }
+
+/** Studio layout pass: skip auth gates and use mock legacy data when needed. */
+export function isLegacyStudioPreview(): boolean {
+  return isLayoutStudioEnabled();
+}
+
+export function studioRecordShellMode(): "signin" | "station" {
+  if (typeof window === "undefined") return "station";
+  const mode = new URLSearchParams(window.location.search).get("recordShell");
+  return mode === "signin" ? "signin" : "station";
+}
+
+export function studioRecordPhaseParam():
+  | "prepare"
+  | "recording"
+  | "upload"
+  | "seal"
+  | null {
+  if (!isLegacyStudioPreview() || typeof window === "undefined") return null;
+  const raw = new URLSearchParams(window.location.search).get("recordPhase");
+  if (raw === "prepare" || raw === "recording" || raw === "upload" || raw === "seal") {
+    return raw;
+  }
+  return null;
+}

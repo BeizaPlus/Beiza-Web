@@ -7,10 +7,16 @@ import { RecordFlowProvider } from "@/components/legacy/recordFlowContext";
 import { RecordViewportLock } from "@/components/legacy/RecordViewportLock";
 import { Navigation } from "@/components/Navigation";
 import { LegacyTabRail } from "@/components/legacy/LegacyTabRail";
+import { ArmAnchorMenu } from "@/components/marketing/ArmAnchorMenu";
+import { LEGACY_ARM_ANCHORS } from "@/lib/armNavLinks";
 import { LegacyStudioPanels } from "@/components/legacy/LegacyStudioPanels";
 import { RecordLayoutStudioProvider } from "@/context/RecordLayoutStudioContext";
 import { PageLayoutStudioZone } from "@/components/dev/PageLayoutStudioZone";
-import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
+import {
+  isLayoutStudioEnabled,
+  isLegacyStudioPreview,
+  studioRecordShellMode,
+} from "@/lib/layoutStudio";
 import { loadRecordPageStudioFrame, type RecordPageStudioFrame } from "@/lib/legacy/recordPageStudio";
 import { LEGACY_AUTH_PAGE_STUDIO_ID, resolveLegacyPageStudioId } from "@/lib/pageLayoutStudio";
 import { LegacyShellProvider } from "@/components/legacy/legacyShellContext";
@@ -30,7 +36,9 @@ function LegacyRecordRoute({
   const [recordStudio, setRecordStudio] = useState<RecordPageStudioFrame>(() =>
     loadRecordPageStudioFrame(),
   );
-  const showStation = signedIn || studioPreview;
+  const recordShell = studioPreview ? studioRecordShellMode() : "station";
+  const showStation =
+    studioPreview ? recordShell === "station" : signedIn;
 
   return (
     <LegacyShellProvider signedIn={signedIn || studioPreview}>
@@ -46,14 +54,18 @@ function LegacyRecordRoute({
             signedIn={showStation}
             station={
               showStation ? (
-                <div className="legacy-record-station-panel h-full min-h-0 w-full min-w-0 overflow-hidden">
+                <div className="legacy-record-station-panel h-full min-h-0 w-full min-w-0 overflow-y-auto overflow-x-visible">
                   <Outlet />
                 </div>
               ) : null
             }
           />
-          <Navigation variant="recordOverlay" />
-          <LegacyTabRail />
+        <Navigation variant="recordOverlay" />
+        <LegacyTabRail />
+        <ArmAnchorMenu
+          links={LEGACY_ARM_ANCHORS}
+          className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-[60] min-[1200px]:right-[calc(5.5rem+var(--beiza-site-padding-x))]"
+        />
         </div>
       </RecordFlowProvider>
     </LegacyShellProvider>
@@ -148,6 +160,10 @@ export function LegacyLayout() {
       <div className="relative min-h-screen bg-background text-foreground">
         <Navigation />
         <LegacyTabRail />
+        <ArmAnchorMenu
+          links={LEGACY_ARM_ANCHORS}
+          className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-[60] min-[1200px]:right-[calc(5.5rem+var(--beiza-site-padding-x))]"
+        />
 
         <main className="relative min-h-[calc(100dvh-8.5rem)] overflow-visible px-[var(--beiza-site-padding-x,1.25rem)] pb-24 pt-4 sm:min-h-[calc(100dvh-10.5rem)] sm:pb-28 min-[1200px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]">
           <PageLayoutStudioZone

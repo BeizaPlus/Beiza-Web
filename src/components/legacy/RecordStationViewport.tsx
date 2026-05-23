@@ -29,6 +29,7 @@ import {
   loadRecordMemoryStudioFrame,
   recordMemoryStationInsetStyle,
 } from "@/lib/legacy/recordMemoryStudio";
+import { StudioSubsetZone } from "@/components/dev/StudioSubsetZone";
 import { cn } from "@/lib/utils";
 
 type RecordStationViewportProps = {
@@ -119,26 +120,92 @@ export function RecordStationViewport({
       />
       <div className="record-viewport-overlay pointer-events-none absolute inset-0" aria-hidden />
 
-      <div
-        className={cn(
-          "relative z-10 flex h-full min-h-0 w-full",
-          "justify-center items-center",
-          "px-[var(--beiza-site-padding-x,0.75rem)]",
-          "min-[1200px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
-          "max-[809px]:pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] max-[809px]:pt-4",
-          textRight ? "min-[1200px]:justify-end" : "min-[1200px]:justify-start",
-        )}
-      >
+      {studioOn ? (
+        <StudioSubsetZone
+          target="record-page"
+          label="Record page"
+          className={cn(
+            "relative z-10 flex h-full min-h-0 w-full",
+            "justify-center items-center",
+            "px-[var(--beiza-site-padding-x,0.75rem)]",
+            "min-[1200px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
+            "max-[809px]:pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] max-[809px]:pt-4",
+            textRight ? "min-[1200px]:justify-end" : "min-[1200px]:justify-start",
+          )}
+        >
+          {recordStationColumn({
+            signedIn,
+            stationExpanded,
+            station,
+            circleLabel,
+            textRight,
+            columnStyle,
+            hudInsetStyle,
+            studioOn,
+          })}
+        </StudioSubsetZone>
+      ) : (
         <div
           className={cn(
-            "record-copy-column flex w-full min-w-0 flex-col overflow-hidden",
+            "relative z-10 flex h-full min-h-0 w-full",
+            "justify-center items-center",
+            "px-[var(--beiza-site-padding-x,0.75rem)]",
+            "min-[1200px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
+            "max-[809px]:pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] max-[809px]:pt-4",
+            textRight ? "min-[1200px]:justify-end" : "min-[1200px]:justify-start",
+          )}
+        >
+          {recordStationColumn({
+            signedIn,
+            stationExpanded,
+            station,
+            circleLabel,
+            textRight,
+            columnStyle,
+            hudInsetStyle,
+            studioOn,
+          })}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function recordStationColumn({
+  signedIn,
+  stationExpanded,
+  station,
+  circleLabel,
+  textRight,
+  columnStyle,
+  hudInsetStyle,
+  studioOn,
+}: {
+  signedIn: boolean;
+  stationExpanded: boolean;
+  station?: React.ReactNode;
+  circleLabel?: string;
+  textRight: boolean;
+  columnStyle?: React.CSSProperties;
+  hudInsetStyle?: React.CSSProperties;
+  studioOn: boolean;
+}) {
+  return (
+        <div
+          className={cn(
+            "record-copy-column flex w-full min-w-0 flex-col",
+            stationExpanded ? "overflow-visible record-station-expanded" : "overflow-hidden",
             signedIn ? "min-h-0 flex-1 justify-center gap-3" : "justify-center gap-4",
-            "mx-auto max-w-[var(--record-column-max,22rem)]",
-            "max-[1199px]:items-center max-[1199px]:text-center",
+            stationExpanded
+              ? "mx-auto max-w-[min(36rem,calc(100vw-6rem))]"
+              : "mx-auto max-w-[var(--record-column-max,22rem)]",
+            stationExpanded
+              ? "items-stretch text-left"
+              : "max-[1199px]:items-center max-[1199px]:text-center",
             "py-6 min-[1200px]:py-8",
-            stationExpanded && station ? "h-full min-h-0 record-station-expanded" : "min-h-0",
-            stationExpanded &&
-              "max-[1199px]:items-center max-[1199px]:text-center min-[1200px]:items-center min-[1200px]:text-center min-[1200px]:mx-auto",
+            stationExpanded && station ? "h-full min-h-0" : "min-h-0",
+            !stationExpanded &&
+              "max-[1199px]:items-center max-[1199px]:text-center min-[1200px]:mx-auto",
             recordContentIndentX,
             !stationExpanded &&
               (textRight
@@ -166,10 +233,12 @@ export function RecordStationViewport({
 
           <div
             className={cn(
-              "w-full min-w-0 max-[1199px]:flex max-[1199px]:flex-col max-[1199px]:items-center",
-              signedIn && "flex flex-1 flex-col items-center justify-center",
+              "w-full min-w-0 max-[1199px]:flex max-[1199px]:flex-col",
+              !stationExpanded && "max-[1199px]:items-center",
+              signedIn && "flex flex-1 flex-col justify-center",
+              signedIn && !stationExpanded && "items-center",
+              signedIn && stationExpanded && "items-stretch",
               !signedIn && "shrink-0",
-              stationExpanded && "items-center",
               !stationExpanded &&
                 textRight &&
                 "min-[1200px]:flex min-[1200px]:flex-col min-[1200px]:items-end",
@@ -185,20 +254,19 @@ export function RecordStationViewport({
           {station ? (
             <div
               id="recording-station"
+      data-studio-section="recording-station"
               className={cn(
                 "min-h-0 w-full min-w-0 max-w-full",
                 "px-[var(--record-hud-inset-x,2vw)]",
                 "pb-[var(--record-hud-inset-bottom,4vh)]",
                 "min-[1200px]:pr-[max(var(--record-hud-inset-x,2vw),5.5rem)]",
-                signedIn ? "flex-1 overflow-y-auto" : stationExpanded ? "flex-1 overflow-y-auto" : "shrink-0",
-                stationExpanded ? "flex flex-col items-center" : textRight && "flex flex-col items-end",
+                signedIn ? "flex-1 overflow-y-auto overflow-x-visible" : stationExpanded ? "flex-1 overflow-y-auto overflow-x-visible" : "shrink-0",
+                stationExpanded ? "flex flex-col items-stretch" : textRight && "flex flex-col items-end",
               )}
             >
               {station}
             </div>
           ) : null}
         </div>
-      </div>
-    </section>
   );
 }

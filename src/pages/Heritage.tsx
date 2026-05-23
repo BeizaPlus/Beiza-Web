@@ -35,6 +35,10 @@ import {
 } from "@/lib/brandUi";
 import { isWhiteSwanIncludedForUser } from "@/lib/legacy/heritage";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
+import { FaqStaircaseSection } from "@/components/marketing/FaqStaircaseSection";
+import { ArmAnchorMenu } from "@/components/marketing/ArmAnchorMenu";
+import { FAREWELL_FAQ } from "@/lib/auditFaqContent";
+import { FAREWELL_ARM_ANCHORS } from "@/lib/armNavLinks";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 const FEATURES = [
@@ -151,6 +155,10 @@ export default function HeritagePage() {
         }
       `}</style>
       <Navigation />
+      <ArmAnchorMenu
+        links={FAREWELL_ARM_ANCHORS}
+        className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-40"
+      />
 
       {/* 1. Hero */}
       <FullBleedHero
@@ -199,7 +207,7 @@ export default function HeritagePage() {
               Plan your Heritage experience →
             </button>
             <p className="mt-3 text-[11px] text-subtle">Or call us — we answer.</p>
-            <p className="mt-6 text-[13px] text-[#555555]">
+            <p id="recover-voice" className="mt-6 scroll-mt-24 text-[13px] text-[#555555]">
               Already lost someone?{" "}
               <Link to={BEIZA_LINKS.marketing.recover} className="text-[#888888] hover:text-primary">
                 Recover a voice →
@@ -209,7 +217,7 @@ export default function HeritagePage() {
       </FullBleedHero>
 
       {/* 2. What's included */}
-      <section className={cn(marketingSection, siteBounds)}>
+      <section id="vessels-caskets" className={cn("scroll-mt-24", marketingSection, siteBounds)}>
         <div className={cn(siteBoundedContainer, "max-w-5xl text-center")}>
           <p className="text-eyebrow">What&apos;s included</p>
           <h2 className="mt-3 text-display-lg text-white">A farewell worth remembering.</h2>
@@ -250,7 +258,10 @@ export default function HeritagePage() {
       </section>
 
       {/* 3. White Swan callout + film */}
-      <section className={cn("border-y border-border bg-secondary/30", marketingSection, siteBounds)}>
+      <section
+        id="white-swan"
+        className={cn("scroll-mt-24 border-y border-border bg-secondary/30", marketingSection, siteBounds)}
+      >
         <div className={siteBoundedContainer}>
           <WhiteSwanFilmEmbed className="mb-10 sm:mb-12" />
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
@@ -382,7 +393,10 @@ export default function HeritagePage() {
       </section>
 
       {/* 5. Consultation */}
-      <section id="consultation" className={cn("border-t border-border bg-background", marketingSection, siteBounds)}>
+      <section
+        id="plan-farewell"
+        className={cn("scroll-mt-24 border-t border-border bg-background", marketingSection, siteBounds)}
+      >
         <div className="mx-auto max-w-lg text-center">
           <h2 className="text-display-lg italic text-white">Tell us about your family.</h2>
           <p className="mt-3 text-sm text-subtle">
@@ -478,6 +492,8 @@ export default function HeritagePage() {
           </a>
         </p>
       </section>
+
+      <FaqStaircaseSection id="farewell-faqs" items={FAREWELL_FAQ} variant="dark" />
 
       {/* 6. Closing */}
       <section className={cn("bg-secondary/30 py-20 text-center", marketingSection, siteBounds)}>

@@ -23,8 +23,9 @@ import { BRAND_IMAGES, HERO_OVERLAY_GRADIENT } from "@/lib/brandImages";
 import { resolveHeroBackgroundSrc } from "@/lib/resolveHeroImage";
 import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { CTAButton } from "@/components/framer/CTAButton";
-import { FAQItem } from "@/components/framer/FAQItem";
-import { FaqStaircaseSection } from "@/components/marketing/FaqStaircaseSection";
+import { HomeFaqSection } from "@/components/framer/HomeFaqSection";
+import { FaqDarkMobileSection } from "@/components/marketing/FaqDarkMobileSection";
+import type { FaqAccordionEntry } from "@/components/framer/FaqAccordionGroup";
 import { ArmAnchorMenu } from "@/components/marketing/ArmAnchorMenu";
 import { EDUCATION_FAQ } from "@/lib/auditFaqContent";
 import { EDUCATION_ARM_ANCHORS } from "@/lib/armNavLinks";
@@ -124,6 +125,21 @@ const Landing = () => {
     [faqs],
   );
 
+  const homeFaqItems = useMemo((): FaqAccordionEntry[] => {
+    if (faqList.length > 0) {
+      return faqList.map((faq) => ({
+        id: faq.id,
+        question: fa.question,
+        answer: fa.answer,
+      }));
+    }
+    return EDUCATION_FAQ.map((item, index) => ({
+      id: `education-faq-${index}`,
+      question: item.q,
+      answer: item.a,
+    }));
+  }, [faqList]);
+
   const event = useMemo(() => {
     return featuredEvent ?? null;
   }, [featuredEvent]);
@@ -192,36 +208,29 @@ const Landing = () => {
         {showRest ? <AboutSection /> : null}
 
         {showFaq ? (
-        <section
-          className="studio-faq bg-white py-24 text-black"
-          style={
-            studio
-              ? {
-                  transform: `translateY(var(--faq-offset-y))`,
-                  paddingTop: `var(--faq-padding-top)`,
-                }
-              : undefined
-          }
-        >
-          <div className="mx-auto max-w-5xl px-6">
-            <SectionHeader
-              eyebrow="FAQ"
-              title="Everything you need to know"
-              align="center"
-              variant="light"
+          <div
+            id="education-faqs"
+            className="scroll-mt-24 studio-faq"
+            style={
+              studio
+                ? {
+                    transform: `translateY(var(--faq-offset-y))`,
+                    paddingTop: `var(--faq-padding-top)`,
+                  }
+                : undefined
+            }
+          >
+            <FaqDarkMobileSection
+              title="FAQs"
+              items={homeFaqItems}
+              className="min-[810px]:hidden"
             />
-            {faqList.length > 0 ? (
-              <div className="mt-12">
-                {faqList.map((faq) => (
-                  <FAQItem key={faq.id} question={faq.question} answer={faq.answer} />
-                ))}
-              </div>
-            ) : null}
+            <HomeFaqSection
+              items={homeFaqItems}
+              className="max-[809px]:hidden"
+            />
           </div>
-        </section>
         ) : null}
-
-        <FaqStaircaseSection id="education-faqs" items={EDUCATION_FAQ} variant="light" />
 
         {showRest && event ? (
           <div style={heroStudioCssVars(eventsHeroFrame) as CSSProperties}>

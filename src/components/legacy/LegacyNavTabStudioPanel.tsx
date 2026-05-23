@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
 import { StudioJsonCopyBlock } from "@/components/dev/StudioJsonCopyBlock";
 import {
@@ -57,7 +57,7 @@ export function LegacyNavTabStudioPanel({ frame, onChange }: Props) {
       openButtonLabel="Tab icons"
     >
       <p className="mb-2 text-[9px] leading-snug text-muted-foreground">
-        Click a tab to open its page. Shift+click an icon to fine-tune its position relative to the rail.
+        Click a tab icon to edit its position. Shift+click still adjusts without leaving the page.
       </p>
       <p className="mb-3 rounded-md border border-primary/30 bg-primary/10 px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
         {editingLabel}

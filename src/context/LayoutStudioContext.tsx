@@ -37,6 +37,8 @@ type LayoutStudioContextValue = {
   registerStudioPanel: (entry: StudioPanelEntry) => void;
   unregisterStudioPanel: (id: string) => void;
   dockAllPanels: () => void;
+  /** Open a registered panel and turn layout studio on (PANELS dock). */
+  openStudioPanel: (panelId: string) => void;
 };
 
 const LayoutStudioContext = createContext<LayoutStudioContextValue | null>(null);
@@ -120,6 +122,16 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const openStudioPanel = useCallback(
+    (panelId: string) => {
+      const entry = panelsRef.current.get(panelId);
+      if (!entry) return;
+      applyMasterOpen(true);
+      if (!entry.open) entry.onOpen();
+    },
+    [applyMasterOpen],
+  );
+
   const setGuidesVisible = useCallback((visible: boolean) => {
     setGuidesVisibleState(visible);
     saveSiteGuidesVisible(visible);
@@ -155,6 +167,7 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
       registerStudioPanel,
       unregisterStudioPanel,
       dockAllPanels,
+      openStudioPanel,
     }),
     [
       enabled,
@@ -167,6 +180,7 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
       registerStudioPanel,
       unregisterStudioPanel,
       dockAllPanels,
+      openStudioPanel,
     ],
   );
 
@@ -309,6 +323,7 @@ export function useLayoutStudio(): LayoutStudioContextValue {
       registerStudioPanel: () => {},
       unregisterStudioPanel: () => {},
       dockAllPanels: () => {},
+      openStudioPanel: () => {},
     }
   );
 }

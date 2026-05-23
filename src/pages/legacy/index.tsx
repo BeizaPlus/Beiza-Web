@@ -7,6 +7,8 @@ import { useFamilyPeople, useRecordingPersonLinks } from "@/hooks/useFamilyTree"
 import { FamilyTreeMobileFocus } from "@/components/legacy/family-tree/FamilyTreeMobileFocus";
 import { Mic, Users } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
+import { FaqStaircaseSection } from "@/components/marketing/FaqStaircaseSection";
+import { RECORDING_HOME_FAQ } from "@/lib/auditFaqContent";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 export default function LegacyHomePage() {
@@ -109,6 +111,8 @@ export default function LegacyHomePage() {
           Recover a voice →
         </Link>
       </p>
+
+      <FaqStaircaseSection id="faqs" items={RECORDING_HOME_FAQ} variant="dark" className="pt-4" />
     </div>
   );
 }

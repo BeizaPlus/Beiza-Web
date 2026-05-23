@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, type CSSProperties } from "react";
+import { useRef, type CSSProperties } from "react";
 import { Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLocaleContext } from "@/context/LocaleContext";
@@ -8,14 +8,13 @@ import { welcomeCopyForLocale } from "@/lib/locale/welcomeCopy";
 import {
   WELCOME_LANGUAGE_OPTIONS,
   welcomeToolbarCode,
-  type WelcomeLanguageOption,
 } from "@/lib/locale/welcomeLanguageOptions";
 import {
   DEFAULT_LOCALE_RAIL_LAYOUT,
   type LocaleRailLayout,
   type ToolbarControlsLayout,
 } from "@/lib/welcomeStudio";
-import { WELCOME_SCENE_STEP_EVENT } from "@/lib/welcomeSceneWheel";
+import { useWelcomeLocaleRailBehavior } from "@/hooks/useWelcomeLocaleRailBehavior";
 import { useWelcomeMobileLayout } from "@/hooks/useWelcomeViewport";
 
 type WelcomeLocaleRailProps = {
@@ -72,76 +71,28 @@ function nudgeStyle(xRem: number, yRem = 0): CSSProperties | undefined {
   return { transform: parts.join(" ") };
 }
 
-export function WelcomeLocaleRail({
-  isLight = false,
+function useWelcomeSunButton({
+  isLight,
   theme,
   onThemeChange,
-  layout,
-  rail: railProp,
-  showLocaleRailBg = false,
-}: WelcomeLocaleRailProps) {
-  const isMobile = useWelcomeMobileLayout();
-  const toolbar = layout;
-  const rail = railProp ?? DEFAULT_LOCALE_RAIL_LAYOUT;
-  const { locale, setLocale, localePinned, setLocalePinned } = useLocaleContext();
-  const pauseAutoRef = useRef(false);
+  rail,
+}: Pick<WelcomeLocaleRailProps, "isLight" | "theme" | "onThemeChange" | "rail"> & {
+  rail: LocaleRailLayout;
+}) {
+  const { locale, localePinned, setLocalePinned } = useLocaleContext();
   const holdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const activeIndex = Math.max(
-    0,
-    WELCOME_LANGUAGE_OPTIONS.findIndex((o) => o.locale === locale),
-  );
-  const activeOption = WELCOME_LANGUAGE_OPTIONS[activeIndex];
   const pinCopy = welcomeCopyForLocale(locale);
   const isLightTheme = theme === "light";
-  const autoMs = Math.max(1, rail.autoRotateSec) * 1000;
-  const sunGapPx = toolbar?.controlsGapPx ?? 32;
-
-  const selectOption = useCallback(
-    (option: WelcomeLanguageOption) => {
-      setLocale(option.locale);
-    },
-    [setLocale],
-  );
-
-  useEffect(() => {
-    const pause = () => {
-      pauseAutoRef.current = true;
-      window.setTimeout(() => { pauseAutoRef.current = false; }, 6000);
-    };
-    window.addEventListener(WELCOME_SCENE_STEP_EVENT, pause);
-    return () => window.removeEventListener(WELCOME_SCENE_STEP_EVENT, pause);
-  }, []);
-
-  useEffect(() => {
-    if (localePinned) return;
-    const id = window.setInterval(() => {
-      if (pauseAutoRef.current) return;
-      const next = (activeIndex + 1) % WELCOME_LANGUAGE_OPTIONS.length;
-      selectOption(WELCOME_LANGUAGE_OPTIONS[next]);
-    }, autoMs);
-    return () => window.clearInterval(id);
-  }, [activeIndex, autoMs, localePinned, selectOption]);
+  const dotAxisPx = Math.max(rail.dotSizePx, rail.activeDotSizePx);
+  const sunRadius = rail.sunSizePx / 2;
+  const sunMarginRight = sunRadius - dotAxisPx / 2;
 
   const clearHold = () => {
-    if (holdRef.current) { clearTimeout(holdRef.current); holdRef.current = null; }
+    if (holdRef.current) {
+      clearTimeout(holdRef.current);
+      holdRef.current = null;
+    }
   };
-
-  const asideTransform = `translateY(-50%)${rail.railNudgeXRem ? ` translateX(${-rail.railNudgeXRem}rem)` : ""}`;
-  const asidePosition = toolbar
-    ? { right: `${toolbar.railRightRem}rem`, top: `${toolbar.railTopPct}%`, transform: asideTransform }
-    : { right: "1.75rem", top: "50%", transform: asideTransform };
-
-  // Dot center axis: right edge of container is the anchor. All dots
-  // are right-aligned so their right edges meet the container right edge.
-  // The sun button needs its CENTER to align with the dot centers:
-  // dot center = containerRight - dotRadius
-  // sun center = containerRight - sunRadius
-  // → sun must shift left by (sunRadius - dotRadius) relative to container right
-  const dotAxisPx = Math.max(rail.dotSizePx, rail.activeDotSizePx);
-  const dotAxisRadius = dotAxisPx / 2;
-  const sunRadius = rail.sunSizePx / 2;
-  const sunMarginRight = sunRadius - dotAxisRadius;
 
   const sunButton = (
     <button
@@ -176,14 +127,60 @@ export function WelcomeLocaleRail({
     </button>
   );
 
-  // Desktop: static vertical list, all locales, active shows flag+code+dot
-  if (!isMobile) {
-    return (
-      <aside
-        className="pointer-events-none fixed z-40 hidden origin-right sm:flex"
-        style={asidePosition}
-        aria-label="Language"
+  return sunButton;
+}
+
+function WelcomeLocaleRailMobile({
+  isLight = false,
+  theme,
+  onThemeChange,
+  rail: railProp,
+}: WelcomeLocaleRailProps) {
+  const rail = railProp ?? DEFAULT_LOCALE_RAIL_LAYOUT;
+  const sunButton = useWelcomeSunButton({ isLight, theme, onThemeChange, rail });
+
+  return (
+    <aside
+      className="pointer-events-none fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-40 sm:hidden"
+      aria-label="Theme"
+    >
+      <div
+        className="pointer-events-auto"
+        style={nudgeStyle(rail.sunAxisNudgeXRem, rail.sunAxisNudgeYRem)}
       >
+        {sunButton}
+      </div>
+    </aside>
+  );
+}
+
+function WelcomeLocaleRailDesktop({
+  isLight = false,
+  theme,
+  onThemeChange,
+  layout,
+  rail: railProp,
+}: WelcomeLocaleRailProps) {
+  const toolbar = layout;
+  const rail = railProp ?? DEFAULT_LOCALE_RAIL_LAYOUT;
+  const { locale } = useLocaleContext();
+  const { activeIndex, activeOption, selectOption, pauseAutoHandlers } =
+    useWelcomeLocaleRailBehavior(rail);
+  const sunButton = useWelcomeSunButton({ isLight, theme, onThemeChange, rail });
+  const sunGapPx = toolbar?.controlsGapPx ?? 32;
+  const dotAxisPx = Math.max(rail.dotSizePx, rail.activeDotSizePx);
+
+  const asideTransform = `translateY(-50%)${rail.railNudgeXRem ? ` translateX(${-rail.railNudgeXRem}rem)` : ""}`;
+  const asidePosition = toolbar
+    ? { right: `${toolbar.railRightRem}rem`, top: `${toolbar.railTopPct}%`, transform: asideTransform }
+    : { right: "1.75rem", top: "50%", transform: asideTransform };
+
+  return (
+    <aside
+      className="pointer-events-none fixed z-40 hidden origin-right sm:flex"
+      style={asidePosition}
+      aria-label="Language"
+    >
         <div className="pointer-events-auto flex flex-col items-end">
           {/* Static dot column: all locales */}
           <nav
@@ -192,8 +189,7 @@ export function WelcomeLocaleRail({
             role="listbox"
             aria-label="Region & language"
             aria-activedescendant={`welcome-locale-${activeOption.code}`}
-            onPointerEnter={() => { pauseAutoRef.current = true; }}
-            onPointerLeave={() => { pauseAutoRef.current = false; }}
+            {...pauseAutoHandlers}
           >
             {WELCOME_LANGUAGE_OPTIONS.map((option, i) => {
               const isActive = i === activeIndex;
@@ -269,86 +265,11 @@ export function WelcomeLocaleRail({
           </div>
         </div>
       </aside>
-    );
-  }
-
-  // Mobile: horizontal bottom bar
-  return (
-    <aside
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center pb-[max(0.5rem,env(safe-area-inset-bottom))] sm:hidden"
-      aria-label="Language"
-    >
-      <div
-        className={cn(
-          "pointer-events-auto flex items-center rounded-full px-4 py-2.5",
-          showLocaleRailBg
-            ? isLight
-              ? "border border-black/15 bg-white/95 shadow-lg"
-              : "border border-white/10 bg-black/85 shadow-lg"
-            : isLight ? "bg-white/80" : "bg-black/50",
-        )}
-        style={{
-          gap: rail.dotStackGapPx,
-          ...nudgeStyle(rail.railNudgeXRem),
-        }}
-      >
-        <nav
-          className="flex items-end"
-          style={{ gap: rail.dotStackGapPx }}
-          role="listbox"
-          aria-label="Region & language"
-          aria-activedescendant={`welcome-locale-mobile-${activeOption.code}`}
-          onPointerEnter={() => { pauseAutoRef.current = true; }}
-          onPointerLeave={() => { pauseAutoRef.current = false; }}
-        >
-          {WELCOME_LANGUAGE_OPTIONS.map((option, i) => {
-            const isActive = i === activeIndex;
-            return (
-              <button
-                key={option.code}
-                id={isActive ? `welcome-locale-mobile-${option.code}` : undefined}
-                type="button"
-                role="option"
-                aria-selected={isActive}
-                title={option.title}
-                aria-label={`${option.code} — ${option.title}`}
-                onClick={() => selectOption(option)}
-                className="flex flex-col items-center justify-end"
-                style={{
-                  gap: isActive ? rail.labelToDotGapPx : rail.inactiveLabelGapPx,
-                  minWidth: dotAxisPx,
-                  ...nudgeStyle(isActive ? rail.labelNudgeXRem : 0),
-                }}
-              >
-                {isActive && (
-                  <>
-                    <span
-                      className="inline-flex shrink-0 overflow-hidden rounded-[1px]"
-                      style={{ width: rail.flagWidthPx, height: rail.flagHeightPx }}
-                    >
-                      <WelcomeLocaleFlag code={option.code} className="h-full w-full" />
-                    </span>
-                    <span
-                      className={cn("shrink-0 font-bold leading-none tracking-wide", isLight ? "text-black" : "text-white")}
-                      style={{ fontSize: rail.labelFontPx }}
-                    >
-                      {option.code}
-                    </span>
-                  </>
-                )}
-                <LocaleRailDot
-                  isActive={isActive}
-                  rail={rail}
-                  isLight={isLight}
-                  axisNudge={nudgeStyle(rail.axisNudgeXRem)}
-                />
-              </button>
-            );
-          })}
-        </nav>
-        <div style={nudgeStyle(rail.sunAxisNudgeXRem, rail.sunAxisNudgeYRem)}>{sunButton}</div>
-        <p className="sr-only" aria-live="polite">{welcomeToolbarCode(locale)}</p>
-      </div>
-    </aside>
   );
+}
+
+export function WelcomeLocaleRail(props: WelcomeLocaleRailProps) {
+  const isMobile = useWelcomeMobileLayout();
+  if (isMobile) return <WelcomeLocaleRailMobile {...props} />;
+  return <WelcomeLocaleRailDesktop {...props} />;
 }

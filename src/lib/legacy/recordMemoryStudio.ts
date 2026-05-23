@@ -13,6 +13,8 @@ export type RecordMemoryStudioFrame = {
   stationInsetVw: number;
   /** Safe padding from bottom (vh) */
   stationInsetBottomVh: number;
+  /** Playback bar + seal form — moved together in studio */
+  uploadHudGroup: CopyOffsetFields;
   subsets: Record<RecordMemorySubsetId, CopyOffsetFields>;
 };
 
@@ -21,6 +23,7 @@ const ZERO_OFFSET: CopyOffsetFields = { offsetX: 0, offsetY: 0, copyLift: 0 };
 export const RECORD_MEMORY_STUDIO_DEFAULTS: RecordMemoryStudioFrame = {
   stationInsetVw: 2,
   stationInsetBottomVh: 4,
+  uploadHudGroup: { ...ZERO_OFFSET },
   subsets: {
     playback: { ...ZERO_OFFSET },
     upload: { ...ZERO_OFFSET },
@@ -54,8 +57,25 @@ export function loadRecordMemoryStudioFrame(): RecordMemoryStudioFrame {
     const legacyBottomRem =
       typeof parsed.stationInsetBottomRem === "number" ? parsed.stationInsetBottomRem : undefined;
 
+    const uploadSubset = subsets.upload;
+    const playbackSubset = subsets.playback;
+    const uploadHudGroup = clampCopyOffsetFields(
+      parsed.uploadHudGroup
+        ? {
+            ...RECORD_MEMORY_STUDIO_DEFAULTS.uploadHudGroup,
+            ...migrateCopyOffsetFields(parsed.uploadHudGroup),
+          }
+        : {
+            offsetX: (playbackSubset.offsetX + uploadSubset.offsetX) / 2,
+            offsetY: (playbackSubset.offsetY + uploadSubset.offsetY) / 2,
+            copyLift:
+              ((playbackSubset.copyLift ?? 0) + (uploadSubset.copyLift ?? 0)) / 2,
+          },
+    );
+
     return {
       ...RECORD_MEMORY_STUDIO_DEFAULTS,
+      uploadHudGroup,
       stationInsetVw:
         typeof parsed.stationInsetVw === "number"
           ? parsed.stationInsetVw
@@ -85,6 +105,14 @@ export function recordMemorySubsetStyle(
 ): CSSProperties {
   return copyOffsetStyle(frame.subsets[id]);
 }
+
+export function recordMemoryUploadHudGroupStyle(
+  frame: RecordMemoryStudioFrame,
+): CSSProperties {
+  return copyOffsetStyle(frame.uploadHudGroup);
+}
+
+export const RECORD_MEMORY_UPLOAD_HUD_LABEL = "Seal HUD (playback + form)";
 
 export function recordMemoryStationInsetStyle(frame: RecordMemoryStudioFrame): CSSProperties {
   return {

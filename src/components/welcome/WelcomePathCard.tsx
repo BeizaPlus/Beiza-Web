@@ -36,8 +36,8 @@ export type WelcomePathCardProps = {
   studioImageDrag?: boolean;
   onImagePositionLive?: (position: { imageOffsetX: number; imageOffsetY: number }) => void;
   onImagePositionCommit?: (position: { imageOffsetX: number; imageOffsetY: number }) => void;
-  /** Full-viewport scroll section — fills parent height */
-  layout?: "grid" | "scroll";
+  /** grid = desktop; carousel = phone horizontal snap row; scroll = legacy full-height */
+  layout?: "grid" | "scroll" | "carousel";
   /** Center card — full color always (no grayscale) */
   imageFullColor?: boolean;
   /** Side cards — color in the middle strip; edges muted until hover */
@@ -63,6 +63,10 @@ const CARD_SURFACE_GRID =
 
 const CARD_SURFACE_SCROLL =
   "group relative h-full min-h-0 w-full max-w-lg overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
+
+/** Phone carousel slot — parent sets 3:4 width via .welcome-card-slot */
+const CARD_SURFACE_CAROUSEL =
+  "group relative h-full w-full min-h-0 overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
 
 function readCardSize(el: HTMLElement | null): CardDimensions {
   if (!el) return { width: 1, height: 1 };
@@ -102,8 +106,12 @@ export function WelcomePathCard({
 }: WelcomePathCardProps) {
   const phoneFixedHeight = (phoneCardHeightVh ?? 0) > 0;
   const cardSurfaceClass = cn(
-    layout === "scroll" ? CARD_SURFACE_SCROLL : CARD_SURFACE_GRID,
-    phoneFixedHeight && "max-[809px]:aspect-auto",
+    layout === "carousel"
+      ? CARD_SURFACE_CAROUSEL
+      : layout === "scroll"
+        ? CARD_SURFACE_SCROLL
+        : CARD_SURFACE_GRID,
+    phoneFixedHeight && layout !== "carousel" && "max-[809px]:aspect-auto",
   );
   const phoneCardStyle =
     phoneCardMaxWidthRem != null || phoneFixedHeight

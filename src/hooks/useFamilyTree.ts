@@ -1,4 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { isLegacyStudioPreview } from "@/lib/layoutStudio";
+import { STUDIO_MOCK_CIRCLE_ID, STUDIO_MOCK_PEOPLE } from "@/lib/legacy/studioPreviewData";
 import { supabase } from "@/lib/supabaseClient";
 import type {
   FamilyPerson,
@@ -11,9 +13,12 @@ import { fetchTreeEdges } from "@/lib/legacy/treeCanvasPersistence";
 import type { TreeEdgeRow } from "@/lib/legacy/treeRelationships";
 
 export function useFamilyPeople(circleId?: string) {
-  return useQuery({
-    queryKey: ["legacy", "family-people", circleId],
+  const studio = isLegacyStudioPreview();
+  const effectiveId = circleId ?? (studio ? STUDIO_MOCK_CIRCLE_ID : undefined);
+  const query = useQuery({
+    queryKey: ["legacy", "family-people", effectiveId],
     queryFn: async () => {
+      if (studio) return STUDIO_MOCK_PEOPLE;
       if (!circleId) return [];
       const { data, error } = await supabase!
         .from("family_people")
@@ -23,14 +28,21 @@ export function useFamilyPeople(circleId?: string) {
       if (error) throw error;
       return (data ?? []) as FamilyPerson[];
     },
-    enabled: Boolean(supabase && circleId),
+    enabled: Boolean(supabase && effectiveId) && !studio,
   });
+  if (studio) {
+    return { ...query, data: STUDIO_MOCK_PEOPLE, isLoading: false, isFetching: false };
+  }
+  return query;
 }
 
 export function useRecordingPersonLinks(circleId?: string) {
-  return useQuery({
-    queryKey: ["legacy", "recording-links", circleId],
+  const studio = isLegacyStudioPreview();
+  const effectiveId = circleId ?? (studio ? STUDIO_MOCK_CIRCLE_ID : undefined);
+  const query = useQuery({
+    queryKey: ["legacy", "recording-links", effectiveId],
     queryFn: async () => {
+      if (studio) return [];
       if (!circleId) return [];
       const { data: recordings, error: recError } = await supabase!
         .from("recordings")
@@ -47,8 +59,12 @@ export function useRecordingPersonLinks(circleId?: string) {
       if (error) throw error;
       return (data ?? []) as RecordingPersonLink[];
     },
-    enabled: Boolean(supabase && circleId),
+    enabled: Boolean(supabase && effectiveId) && !studio,
   });
+  if (studio) {
+    return { ...query, data: [], isLoading: false, isFetching: false };
+  }
+  return query;
 }
 
 export function usePersonBiography(personId?: string | null) {

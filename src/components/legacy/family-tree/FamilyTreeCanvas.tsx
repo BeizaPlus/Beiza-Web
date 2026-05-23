@@ -232,8 +232,8 @@ function FamilyTreeCanvasInner({
           death_year: p.death_year ?? edit?.death_year,
           photo_url:
             edit?.photo_url ??
-            portraitForPerson(p.id, p.photo_url, portraitPool) ??
-            p.photo_url,
+            p.photo_url ??
+            (p.is_tree_anchor ? null : portraitForPerson(p.id, null, portraitPool)),
           canvas_x: override?.x ?? p.canvas_x,
           canvas_y: override?.y ?? p.canvas_y,
         };

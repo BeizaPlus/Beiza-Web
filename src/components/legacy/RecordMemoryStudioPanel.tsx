@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FloatingStudioShell } from "@/components/dev/FloatingStudioShell";
 import { StudioJsonCopyBlock } from "@/components/dev/StudioJsonCopyBlock";
 import {
@@ -13,11 +13,13 @@ import {
   loadRecordMemoryStudioFrame,
   RECORD_MEMORY_STUDIO_DEFAULTS,
   RECORD_MEMORY_SUBSET_LABELS,
+  RECORD_MEMORY_UPLOAD_HUD_LABEL,
   recordMemoryStudioToJson,
   saveRecordMemoryStudioFrame,
   type RecordMemoryStudioFrame,
   type RecordMemorySubsetId,
 } from "@/lib/legacy/recordMemoryStudio";
+import type { CopyOffsetFields } from "@/lib/copyLayoutOffset";
 
 type Props = {
   frame: RecordMemoryStudioFrame;
@@ -65,9 +67,26 @@ export function RecordMemoryStudioPanel({ frame, onChange }: Props) {
     saveRecordMemoryStudioFrame(next);
   };
 
-  const editingLabel = activeId
-    ? RECORD_MEMORY_SUBSET_LABELS[activeId]
-    : "Click a HUD block on the page";
+  const patchUploadHudGroup = (partial: Partial<CopyOffsetFields>) => {
+    const next = {
+      ...frame,
+      uploadHudGroup: { ...frame.uploadHudGroup, ...partial },
+    };
+    onChange(next);
+    saveRecordMemoryStudioFrame(next);
+  };
+
+  const uploadHudActive = ctx?.activeTarget === "record-upload-hud";
+
+  useEffect(() => {
+    if (activeId || uploadHudActive) setOpen(true);
+  }, [activeId, uploadHudActive]);
+
+  const editingLabel = uploadHudActive
+    ? RECORD_MEMORY_UPLOAD_HUD_LABEL
+    : activeId
+      ? RECORD_MEMORY_SUBSET_LABELS[activeId]
+      : "Drag the seal HUD or Shift+click a block";
 
   return (
     <FloatingStudioShell
@@ -78,13 +97,14 @@ export function RecordMemoryStudioPanel({ frame, onChange }: Props) {
       openButtonLabel="Record HUD"
     >
       <p className="mb-2 text-[9px] leading-snug text-muted-foreground">
-        Studio preview: no email sign-in. Click tabs to switch pages. Shift+click a HUD block here to nudge (vw / vh).
+        Click a block on the page to open this panel. Drag the playback + seal form as one group, or use sliders
+        (vw / vh).
       </p>
       <p className="mb-3 rounded-md border border-primary/30 bg-primary/10 px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
         {editingLabel}
       </p>
 
-      <StudioAccordionPanels defaultValue={["inset", "subset"]}>
+      <StudioAccordionPanels defaultValue={["inset", "upload-hud", "subset"]}>
         <StudioAccordionSection value="inset" title="Station safe area">
           <StudioSlider
             compact
@@ -107,6 +127,25 @@ export function RecordMemoryStudioPanel({ frame, onChange }: Props) {
             step={0.25}
             displayValue={`${frame.stationInsetBottomVh}vh`}
             onChange={(stationInsetBottomVh) => patch({ stationInsetBottomVh })}
+          />
+        </StudioAccordionSection>
+
+        <StudioAccordionSection value="upload-hud" title={RECORD_MEMORY_UPLOAD_HUD_LABEL}>
+          <p className="mb-2 text-[10px] text-muted-foreground">
+            Upload phase: playback bar and seal form move together. Drag on the page or nudge below.
+          </p>
+          <StudioCopyOffsetSliders
+            frame={frame.uploadHudGroup}
+            defaults={RECORD_MEMORY_STUDIO_DEFAULTS.uploadHudGroup}
+            onPatch={patchUploadHudGroup}
+            showCenter
+            onCenter={() =>
+              patchUploadHudGroup({
+                offsetX: RECORD_MEMORY_STUDIO_DEFAULTS.uploadHudGroup.offsetX,
+                offsetY: RECORD_MEMORY_STUDIO_DEFAULTS.uploadHudGroup.offsetY,
+                copyLift: RECORD_MEMORY_STUDIO_DEFAULTS.uploadHudGroup.copyLift,
+              })
+            }
           />
         </StudioAccordionSection>
 

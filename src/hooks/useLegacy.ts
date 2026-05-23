@@ -1,5 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { pickRandomAdinkra } from "@/lib/adinkra";
+import { isLegacyStudioPreview } from "@/lib/layoutStudio";
+import {
+  STUDIO_MOCK_CIRCLE,
+  STUDIO_MOCK_CIRCLE_ID,
+  STUDIO_MOCK_MEMBER,
+  STUDIO_MOCK_RECORDINGS,
+  STUDIO_MOCK_SESSION,
+} from "@/lib/legacy/studioPreviewData";
 import { supabase } from "@/lib/supabaseClient";
 import type {
   FamilyCircle,
@@ -22,21 +30,27 @@ function generateInviteCode(): string {
 }
 
 export function useLegacySession() {
-  return useQuery({
+  const studio = isLegacyStudioPreview();
+  const query = useQuery({
     queryKey: ["legacy", "session"],
     queryFn: async () => {
       const { data, error } = await supabase!.auth.getSession();
       if (error) throw error;
       return data.session;
     },
-    enabled: Boolean(supabase),
+    enabled: Boolean(supabase) && !studio,
     staleTime: 0,
     refetchOnMount: "always",
   });
+  if (studio) {
+    return { ...query, data: STUDIO_MOCK_SESSION, isLoading: false, isFetching: false };
+  }
+  return query;
 }
 
 export function useMyLegacyCircle() {
-  return useQuery({
+  const studio = isLegacyStudioPreview();
+  const query = useQuery({
     queryKey: ["legacy", "my-circle"],
     queryFn: async () => {
       const { data: userData, error: userError } = await supabase!.auth.getUser();
@@ -67,14 +81,26 @@ export function useMyLegacyCircle() {
         circle: circle as FamilyCircle,
       };
     },
-    enabled: Boolean(supabase),
+    enabled: Boolean(supabase) && !studio,
   });
+  if (studio) {
+    return {
+      ...query,
+      data: { circle: STUDIO_MOCK_CIRCLE, member: STUDIO_MOCK_MEMBER },
+      isLoading: false,
+      isFetching: false,
+    };
+  }
+  return query;
 }
 
 export function useLegacyRecordings(circleId?: string) {
-  return useQuery({
-    queryKey: ["legacy", "recordings", circleId],
+  const studio = isLegacyStudioPreview();
+  const effectiveId = circleId ?? (studio ? STUDIO_MOCK_CIRCLE_ID : undefined);
+  const query = useQuery({
+    queryKey: ["legacy", "recordings", effectiveId],
     queryFn: async () => {
+      if (studio) return STUDIO_MOCK_RECORDINGS;
       if (!circleId) return [];
       const { data, error } = await supabase!
         .from("recordings")
@@ -84,8 +110,12 @@ export function useLegacyRecordings(circleId?: string) {
       if (error) throw error;
       return (data ?? []) as LegacyRecording[];
     },
-    enabled: Boolean(supabase && circleId),
+    enabled: Boolean(supabase && effectiveId) && !studio,
   });
+  if (studio) {
+    return { ...query, data: STUDIO_MOCK_RECORDINGS, isLoading: false, isFetching: false };
+  }
+  return query;
 }
 
 export function useCreateLegacyCircle() {

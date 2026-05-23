@@ -4,19 +4,29 @@ import { motion, AnimatePresence } from "framer-motion";
 interface FAQItemProps {
   question: string;
   answer: string;
+  /** Controlled open state (use inside `FaqAccordionGroup` for one-at-a-time). */
+  isOpen?: boolean;
+  onToggle?: () => void;
 }
 
-export const FAQItem = ({ question, answer }: FAQItemProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+export const FAQItem = ({ question, answer, isOpen: isOpenProp, onToggle }: FAQItemProps) => {
+  const [openInternal, setOpenInternal] = useState(false);
+  const controlled = onToggle != null;
+  const isOpen = controlled ? Boolean(isOpenProp) : openInternal;
+
+  const toggle = () => {
+    if (onToggle) onToggle();
+    else setOpenInternal((prev) => !prev);
+  };
 
   return (
     <div
       className="relative w-full cursor-pointer border-b border-[#e1e1e1] bg-white py-6 transition-colors"
-      onClick={() => setIsOpen(!isOpen)}
+      onClick={toggle}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          setIsOpen(!isOpen);
+          toggle();
         }
       }}
       tabIndex={0}
