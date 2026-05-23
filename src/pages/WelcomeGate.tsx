@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useLayoutStudioBreakpoint } from "@/hooks/useLayoutStudioViewport";
 import { useWelcomeSnapPath } from "@/hooks/useWelcomeSnapPath";
 import {
@@ -90,8 +90,8 @@ import {
 
 } from "@/lib/welcomeStudio";
 
-import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { MEDIA_ASSETS } from "@/lib/mediaAssets";
+import { handleWelcomeHomeClick, WELCOME_HOME_PATH } from "@/lib/welcomeHomeNav";
 import { cn } from "@/lib/utils";
 
 const BEIZA_LOGO = "/Beiza_White.svg";
@@ -756,6 +756,7 @@ const subtitleVariants = {
 };
 
 export default function WelcomeGate() {
+  const navigate = useNavigate();
   const welcomeRootRef = useRef<HTMLDivElement>(null);
   const cardsScrollRef = useRef<HTMLDivElement>(null);
   const layoutBreakpoint = useLayoutStudioBreakpoint();
@@ -857,26 +858,36 @@ export default function WelcomeGate() {
         >
           <motion.div variants={heroVariants} className="flex flex-col items-center">
             {studio.useMascot ? (
-              <Link
-                to={BEIZA_LINKS.welcome.gate}
-                className="mx-auto mb-2 inline-block"
+              <a
+                href={WELCOME_HOME_PATH}
+                onClick={(e) => handleWelcomeHomeClick(e, navigate)}
+                className="relative z-[10] mx-auto mb-2 inline-block cursor-pointer"
                 aria-label="Beiza welcome"
               >
                 <img
                   src={BEIZA_MASCOT}
                   alt=""
                   aria-hidden
-                  className="object-contain"
+                  className="pointer-events-none object-contain"
                   style={{ height: `${logoHeightRem}rem`, width: `${logoHeightRem}rem` }}
+                  draggable={false}
                 />
-              </Link>
+              </a>
             ) : (
-              <img
-                src={BEIZA_LOGO}
-                alt="Beiza"
-                className={cn("mx-auto mb-2 w-auto", isLight && "invert")}
-                style={{ height: `${logoHeightRem}rem` }}
-              />
+              <a
+                href={WELCOME_HOME_PATH}
+                onClick={(e) => handleWelcomeHomeClick(e, navigate)}
+                className="relative z-[10] mx-auto mb-2 inline-block cursor-pointer"
+                aria-label="Beiza welcome"
+              >
+                <img
+                  src={BEIZA_LOGO}
+                  alt="Beiza"
+                  className={cn("pointer-events-none mx-auto w-auto", isLight && "invert")}
+                  style={{ height: `${logoHeightRem}rem` }}
+                  draggable={false}
+                />
+              </a>
             )}
             <p
               className={cn(

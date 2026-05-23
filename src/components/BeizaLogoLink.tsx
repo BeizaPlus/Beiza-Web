@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
-import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
+import { useNavigate } from "react-router-dom";
 import { MEDIA_ASSETS } from "@/lib/mediaAssets";
+import { handleWelcomeHomeClick, WELCOME_HOME_PATH } from "@/lib/welcomeHomeNav";
 import { cn } from "@/lib/utils";
 
 type BeizaLogoLinkProps = {
@@ -20,14 +20,20 @@ export function BeizaLogoLink({
   wordmarkClassName,
   onClick,
 }: BeizaLogoLinkProps) {
+  const navigate = useNavigate();
   const showMascot = variant === "full" || variant === "mascot";
   const showWordmark = variant === "full" || variant === "wordmark";
 
   return (
-    <Link
-      to={BEIZA_LINKS.welcome.gate}
-      onClick={onClick}
-      className={cn("inline-flex items-center gap-3", className)}
+    <a
+      href={WELCOME_HOME_PATH}
+      onClick={(e) => {
+        handleWelcomeHomeClick(e, navigate, onClick);
+      }}
+      className={cn(
+        "relative z-[70] inline-flex cursor-pointer items-center gap-3 pointer-events-auto",
+        className,
+      )}
       aria-label="Beiza home"
     >
       {showMascot ? (
@@ -36,6 +42,7 @@ export function BeizaLogoLink({
           alt=""
           aria-hidden
           className={cn("h-10 w-auto shrink-0", variant === "mascot" && "h-9 w-9", mascotClassName)}
+          draggable={false}
         />
       ) : null}
       {showWordmark ? (
@@ -47,8 +54,9 @@ export function BeizaLogoLink({
             variant === "wordmark" && "h-5 w-auto",
             wordmarkClassName,
           )}
+          draggable={false}
         />
       ) : null}
-    </Link>
+    </a>
   );
 }
