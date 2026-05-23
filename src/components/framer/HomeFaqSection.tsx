@@ -29,7 +29,11 @@ export function HomeFaqSection({
     >
       <div className="mx-auto max-w-5xl px-[var(--beiza-site-padding-x,1.25rem)] sm:px-6">
         <SectionHeader eyebrow={eyebrow} title={title} align="center" variant="light" />
-        {items.length > 0 ? <FaqAccordionGroup items={items} className="mt-12" /> : null}
+        {items.length > 0 ? (
+          <div className="mt-12">
+            <FaqAccordionGroup items={items} variant="light" />
+          </div>
+        ) : null}
       </div>
     </section>
   );

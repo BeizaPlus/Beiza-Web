@@ -1,12 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { BookOpen, Mail, Mic, Sparkles, Star } from "lucide-react";
+import { FaqStaircaseSection } from "@/components/marketing/FaqStaircaseSection";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import { cn } from "@/lib/utils";
@@ -180,26 +175,13 @@ export default function HeritageLegacyLanding() {
       </section>
 
       {/* §5 FAQ */}
-      <section className="mx-auto max-w-2xl px-6 py-16">
-        <Accordion type="single" collapsible className="space-y-2">
-          {LEGACY_FAQ.map((item, i) => (
-            <AccordionItem key={item.q} value={`faq-${i}`} className="border-0 border-b border-[#e8e2d8]">
-              <AccordionTrigger
-                className={cn(
-                  legacyBody,
-                  "py-5 text-left text-base font-normal hover:no-underline [&[data-state=open]]:text-[#2c2824]",
-                  MUTED,
-                )}
-              >
-                {item.q}
-              </AccordionTrigger>
-              <AccordionContent className={cn(legacyBody, "pb-5 text-sm font-light leading-relaxed", MUTED)}>
-                {item.a}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </section>
+      <FaqStaircaseSection
+        id="legacy-faqs"
+        title="FAQs"
+        items={LEGACY_FAQ}
+        variant="light"
+        className={cn(CREAM, "py-16")}
+      />
 
       {/* §6 Finest home */}
       <section className="mx-auto grid max-w-6xl gap-10 px-6 py-20 lg:grid-cols-2 lg:items-center">

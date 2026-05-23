@@ -10,6 +10,15 @@ import {
 } from "@/lib/studioPanelPlacement";
 
 const PANEL_W = 352;
+const PANEL_MIN_TOP = 48;
+
+function panelReopenStackOffset(panelId: string): number {
+  let hash = 0;
+  for (let i = 0; i < panelId.length; i++) {
+    hash = (hash + panelId.charCodeAt(i) * (i + 3)) % 7;
+  }
+  return hash * 36;
+}
 
 type Props = {
   panelId: string;
@@ -97,8 +106,33 @@ export function FloatingStudioShell({
 
   useEffect(() => () => endDragRef.current(), []);
 
-  if (masterMode && !masterOpen) return null;
-  if (!open || activePanelId !== panelId) return null;
+  if (!masterMode) return null;
+
+  const panelVisible = masterOpen && open && activePanelId === panelId;
+
+  if (!panelVisible) {
+    const stack = panelReopenStackOffset(panelId);
+    const chipPos = clampStudioPanelPosition(pos.x, Math.max(PANEL_MIN_TOP, pos.y - 44 - stack));
+
+    const reopen = (
+      <button
+        type="button"
+        data-beiza-studio-panel-reopen
+        onClick={(e) => {
+          e.stopPropagation();
+          onOpen();
+        }}
+        className="pointer-events-auto fixed z-[10055] max-w-[min(100vw-2rem,14rem)] truncate rounded-full border border-[#E6A817]/55 bg-black/92 px-3 py-2 text-left text-[11px] font-semibold text-[#f5c518] shadow-lg ring-1 ring-[#f5c518]/25 backdrop-blur-sm hover:bg-[#E6A817]/20"
+        style={{ left: chipPos.x, top: chipPos.y }}
+        title={`Open ${openButtonLabel}`}
+      >
+        {openButtonLabel}
+      </button>
+    );
+
+    if (typeof document === "undefined") return reopen;
+    return createPortal(reopen, document.body);
+  }
 
   const panel = (
     <aside

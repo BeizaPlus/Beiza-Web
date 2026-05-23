@@ -24,7 +24,6 @@ import { resolveHeroBackgroundSrc } from "@/lib/resolveHeroImage";
 import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { HomeFaqSection } from "@/components/framer/HomeFaqSection";
-import { FaqDarkMobileSection } from "@/components/marketing/FaqDarkMobileSection";
 import type { FaqAccordionEntry } from "@/components/framer/FaqAccordionGroup";
 import { ArmAnchorMenu } from "@/components/marketing/ArmAnchorMenu";
 import { EDUCATION_FAQ } from "@/lib/auditFaqContent";
@@ -144,12 +143,16 @@ const Landing = () => {
     return featuredEvent ?? null;
   }, [featuredEvent]);
 
-  const showHero = !studio || focus === "hero";
-  const showOfferings = !studio || focus === "offerings";
-  const showFaq = !studio || focus === "faq";
-  const showPricing = !studio || focus === "pricing";
-  const showOutro = !studio || focus === "outro";
-  const showRest = !studio;
+  /** Heritage hero panel targets /heritage — never blank education home in studio mode. */
+  const studioExclusive = studio && focus !== "heritageHero";
+  const landingFocus = studioExclusive ? focus : "hero";
+
+  const showHero = !studioExclusive || landingFocus === "hero";
+  const showOfferings = !studioExclusive || landingFocus === "offerings";
+  const showFaq = !studioExclusive || landingFocus === "faq";
+  const showPricing = !studioExclusive || landingFocus === "pricing";
+  const showOutro = !studioExclusive || landingFocus === "outro";
+  const showRest = !studioExclusive;
 
   return (
     <div
@@ -161,15 +164,15 @@ const Landing = () => {
         links={EDUCATION_ARM_ANCHORS}
         className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-40"
       />
-      {showHero && hero ? (
+      {showHero ? (
         <Hero
-          headline={hero.heading}
-          paragraph={hero.subheading ?? ""}
-          ctaText={hero.ctaLabel ?? "Start Your Legacy"}
-          ctaLink={hero.ctaHref ?? BEIZA_LINKS.legacy.app}
-          reviews={hero.reviews ?? undefined}
+          headline={hero?.heading}
+          paragraph={hero?.subheading ?? ""}
+          ctaText={hero?.ctaLabel ?? "Start Your Legacy"}
+          ctaLink={hero?.ctaHref ?? BEIZA_LINKS.legacy.app}
+          reviews={hero?.reviews ?? undefined}
           backgroundImage={resolveHeroBackgroundSrc(
-            hero.backgroundMedia?.src,
+            hero?.backgroundMedia?.src,
             BRAND_IMAGES.homepageHero,
           )}
           backgroundPosition={`${studioState.hero.posX}% ${studioState.hero.posY}%`}
@@ -220,15 +223,7 @@ const Landing = () => {
                 : undefined
             }
           >
-            <FaqDarkMobileSection
-              title="FAQs"
-              items={homeFaqItems}
-              className="min-[810px]:hidden"
-            />
-            <HomeFaqSection
-              items={homeFaqItems}
-              className="max-[809px]:hidden"
-            />
+            <HomeFaqSection items={homeFaqItems} />
           </div>
         ) : null}
 

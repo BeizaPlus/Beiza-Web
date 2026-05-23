@@ -1,12 +1,5 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { FaqDarkMobileSection } from "@/components/marketing/FaqDarkMobileSection";
+import { FaqAccordionGroup, type FaqAccordionEntry } from "@/components/framer/FaqAccordionGroup";
 import { cn } from "@/lib/utils";
-import type { FaqAccordionEntry } from "@/components/framer/FaqAccordionGroup";
 
 type FaqItem = { q: string; a: string };
 
@@ -18,6 +11,7 @@ type Props = {
   variant?: "light" | "dark";
 };
 
+/** Site-wide FAQ block — linear accordion with plus/minus icons (no staircase / chevron variants). */
 export function FaqStaircaseSection({
   id = "faqs",
   title = "FAQs",
@@ -32,55 +26,28 @@ export function FaqStaircaseSection({
     answer: item.a,
   }));
 
-  return (
-    <div id={id} className={cn("scroll-mt-24", className)}>
-      <FaqDarkMobileSection
-        title={title}
-        items={accordionItems}
-        className="min-[810px]:hidden"
-      />
+  if (items.length === 0) return null;
 
-      <section className={cn("py-16 max-[809px]:hidden", dark ? "bg-black" : undefined)}>
-        <div className="mx-auto max-w-2xl px-[var(--beiza-site-padding-x,1.25rem)]">
-          <p
-            className={cn(
-              "mb-6 font-manrope text-xs uppercase tracking-[0.2em]",
-              dark ? "text-white/50" : "text-[#666666]",
-            )}
-          >
-            {title}
-          </p>
-          <Accordion type="single" collapsible className="space-y-1">
-            {items.map((item, i) => (
-              <AccordionItem
-                key={item.q}
-                value={`faq-${i}`}
-                className={cn(
-                  "border-0 border-b",
-                  dark ? "border-white/15" : "border-[#e8e2d8]",
-                )}
-              >
-                <AccordionTrigger
-                  className={cn(
-                    "py-4 text-left text-base font-medium hover:no-underline",
-                    dark ? "text-white" : "text-[#2c2824]",
-                  )}
-                >
-                  {item.q}
-                </AccordionTrigger>
-                <AccordionContent
-                  className={cn(
-                    "pb-4 text-sm leading-relaxed",
-                    dark ? "text-white/70" : "text-[#666666]",
-                  )}
-                >
-                  {item.a}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </section>
-    </div>
+  return (
+    <section
+      id={id}
+      className={cn(
+        "scroll-mt-24 py-16",
+        dark ? "bg-black text-white" : "bg-white text-black",
+        className,
+      )}
+    >
+      <div className="mx-auto max-w-5xl px-[var(--beiza-site-padding-x,1.25rem)] sm:px-6">
+        <p
+          className={cn(
+            "mb-8 font-manrope text-xs uppercase tracking-[0.2em]",
+            dark ? "text-white/50" : "text-[#666666]",
+          )}
+        >
+          {title}
+        </p>
+        <FaqAccordionGroup items={accordionItems} variant={variant} />
+      </div>
+    </section>
   );
 }

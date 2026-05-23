@@ -7,6 +7,21 @@ import { migrateCopyOffsetFields } from "@/lib/copyLayoutOffset";
 
 export type StudioFocus = "hero" | "heritageHero" | "offerings" | "faq" | "pricing" | "outro";
 
+const STUDIO_FOCUS_VALUES: StudioFocus[] = [
+  "hero",
+  "heritageHero",
+  "offerings",
+  "faq",
+  "pricing",
+  "outro",
+];
+
+export function normalizeStudioFocus(value: unknown): StudioFocus {
+  return STUDIO_FOCUS_VALUES.includes(value as StudioFocus)
+    ? (value as StudioFocus)
+    : "hero";
+}
+
 export type LandingLayoutStudioState = {
   focus: StudioFocus;
   hero: {
@@ -41,6 +56,7 @@ export function mergeStudioState(partial: Partial<LandingLayoutStudioState>): La
   return {
     ...DEFAULT_STUDIO_STATE,
     ...partial,
+    focus: normalizeStudioFocus(partial.focus ?? DEFAULT_STUDIO_STATE.focus),
     hero: {
       ...DEFAULT_STUDIO_STATE.hero,
       ...migrateCopyOffsetFields(partial.hero ?? {}),

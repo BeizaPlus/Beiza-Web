@@ -99,8 +99,9 @@ export function LegacyLayout() {
   const isTreeRoute = location.pathname === "/legacy/circle";
   const treeFullscreen = isTreeRoute && (signedIn || studioPreview);
   const isRecordRoute = location.pathname.startsWith(BEIZA_LINKS.legacy.recordStation);
-  /** Logged out: record sign-in on every tab — unless layout studio (preview real pages). */
-  const recordSignInShell = !signedIn && !sessionLoading && !studioPreview;
+  /** Logged out: cinematic record sign-in only on /legacy/record — other tabs render their own pages. */
+  const recordSignInShell =
+    !signedIn && !sessionLoading && !studioPreview && isRecordRoute;
   const pageStudioId =
     signedIn || studioPreview
       ? resolveLegacyPageStudioId(location.pathname)

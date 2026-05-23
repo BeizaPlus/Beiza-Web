@@ -11,10 +11,17 @@ export type FaqAccordionEntry = {
 type Props = {
   items: readonly FaqAccordionEntry[];
   className?: string;
+  variant?: "light" | "dark";
+  /** false = Prince original (each row toggles independently). true = only one open. */
+  exclusive?: boolean;
 };
 
-/** Home FAQ list — one item open at a time; uses `FAQItem` visuals and motion. */
-export function FaqAccordionGroup({ items, className }: Props) {
+export function FaqAccordionGroup({
+  items,
+  className,
+  variant = "light",
+  exclusive = false,
+}: Props) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
@@ -24,8 +31,14 @@ export function FaqAccordionGroup({ items, className }: Props) {
           key={item.id ?? item.question}
           question={item.question}
           answer={item.answer}
-          isOpen={openIndex === index}
-          onToggle={() => setOpenIndex((current) => (current === index ? null : index))}
+          variant={variant}
+          {...(exclusive
+            ? {
+                isOpen: openIndex === index,
+                onToggle: () =>
+                  setOpenIndex((current) => (current === index ? null : index)),
+              }
+            : {})}
         />
       ))}
     </div>

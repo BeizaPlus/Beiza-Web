@@ -4,15 +4,16 @@ export const STUDIO_PANEL_SHARED_POS_KEY = "beiza-studio-panel-shared-pos";
 const PANEL_W = 352;
 const PANEL_MIN_TOP = 48;
 
-/** PANELS dock + Layout studio toggle — always on the current monitor (never off-screen). */
+/** PANELS dock + Layout studio toggle — bottom-right of the current viewport (easy to spot). */
 export function studioControlsDockPosition(): { x: number; y: number } {
   if (typeof window === "undefined") {
     return { x: 16, y: 16 };
   }
   const margin = 16;
-  const dockHeight = 200;
+  const dockWidth = 300;
+  const dockHeight = 220;
   return {
-    x: margin,
+    x: Math.max(margin, window.innerWidth - dockWidth - margin),
     y: Math.max(margin, window.innerHeight - dockHeight - margin),
   };
 }

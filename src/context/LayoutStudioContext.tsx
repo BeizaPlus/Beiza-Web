@@ -50,10 +50,16 @@ const LayoutStudioContext = createContext<LayoutStudioContextValue | null>(null)
 const STORAGE_KEY = "beiza-layout-studio-master-open";
 
 function readMasterOpen(): boolean {
+  if (typeof window === "undefined") return false;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw === "0") return false;
     if (raw === "1") return true;
+    // First visit: show HUD by default when studio mode is on (?studio=1 or localhost).
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("studio") === "1") return true;
+    const host = window.location.hostname;
+    if (host === "localhost" || host === "127.0.0.1") return true;
   } catch {
     /* ignore */
   }
@@ -225,11 +231,14 @@ function LayoutStudioControls({
 
   const controls = (
     <div
-      className="fixed z-[9998] flex max-w-[min(100vw-2rem,20rem)] flex-col items-start gap-2"
+      className="fixed z-[10060] flex max-w-[min(100vw-2rem,20rem)] flex-col items-end gap-2"
       data-beiza-layout-studio-controls
       style={{ left: dockPos.x, top: dockPos.y }}
       title="Layout studio — open panels here, then drag panel headers to your second screen"
     >
+      <p className="rounded-md border border-[#E6A817]/40 bg-black/90 px-2 py-1 text-[9px] font-semibold uppercase tracking-wider text-[#f5c518] shadow-lg">
+        Studio controls
+      </p>
       {panels.length > 0 ? (
         <div
           className="flex w-full flex-col gap-1.5 rounded-lg border border-white/15 bg-black/90 p-2 shadow-lg backdrop-blur-sm"

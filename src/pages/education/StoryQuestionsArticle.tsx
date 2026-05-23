@@ -1,11 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { FaqAccordionGroup, type FaqAccordionEntry } from "@/components/framer/FaqAccordionGroup";
 import { getAdinkraById } from "@/lib/adinkra";
 import { legacyBody, legacyDisplay } from "@/lib/legacyLandingFonts";
 import {
@@ -175,21 +170,17 @@ export default function StoryQuestionsArticle() {
         </section>
 
         <section className="mt-20">
-          <h2 className={cn(legacyDisplay, "mb-6 text-xl font-light")}>Frequently asked</h2>
-          <Accordion type="single" collapsible>
-            {ARTICLE_FAQ.map((item, i) => (
-              <AccordionItem key={item.q} value={`a-faq-${i}`} className="border-[#e8e2d8]">
-                <AccordionTrigger
-                  className={cn(legacyBody, "text-left font-normal hover:no-underline", MUTED)}
-                >
-                  {item.q}
-                </AccordionTrigger>
-                <AccordionContent className={cn(legacyBody, "text-sm font-light leading-relaxed", MUTED)}>
-                  {item.a}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+          <h2 className={cn(legacyDisplay, "mb-8 text-xl font-light")}>Frequently asked</h2>
+          <FaqAccordionGroup
+            items={ARTICLE_FAQ.map(
+              (item, i): FaqAccordionEntry => ({
+                id: `article-faq-${i}`,
+                question: item.q,
+                answer: item.a,
+              }),
+            )}
+            variant="light"
+          />
         </section>
       </article>
     </div>
