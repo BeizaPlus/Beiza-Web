@@ -58,11 +58,7 @@ function InstagramReelCard({
       )}
     >
       <div className="relative aspect-[9/16] overflow-hidden rounded-2xl border border-white/10 bg-black">
-        {cinematic ? (
-          <div className="pointer-events-none absolute inset-0 z-0">
-            <InstagramReelPoster post={post} />
-          </div>
-        ) : post.posterSrc ? (
+        {post.posterSrc ? (
           <img
             src={post.posterSrc}
             alt=""
@@ -70,6 +66,10 @@ function InstagramReelCard({
             loading="lazy"
             decoding="async"
           />
+        ) : cinematic ? (
+          <div className="pointer-events-none absolute inset-0 z-0">
+            <InstagramReelPoster post={post} />
+          </div>
         ) : null}
 
         <div ref={onActivate} className="absolute inset-0 z-10 overflow-hidden bg-black">
@@ -97,7 +97,7 @@ function InstagramReelCard({
                 const container = e.currentTarget.parentElement as HTMLDivElement | null;
                 onActivate(container);
               }}
-              className="group absolute inset-0 flex cursor-pointer items-center justify-center bg-black/20 transition hover:bg-black/35"
+              className="group absolute inset-0 flex cursor-pointer items-center justify-center bg-black/10 transition hover:bg-black/25"
               aria-label={`Play ${post.label}`}
             >
               <span className="flex h-16 w-16 items-center justify-center rounded-full bg-black/55 ring-1 ring-white/25 transition group-hover:scale-105 group-hover:bg-black/70">
