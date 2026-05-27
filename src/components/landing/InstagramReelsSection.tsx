@@ -3,7 +3,6 @@ import { InstagramReelPoster } from "@/components/landing/InstagramReelPoster";
 import { useDraggableScroll } from "@/hooks/useDraggableScroll";
 import { HISTORY_SERIES_EPISODES, type HistorySeriesEpisode } from "@/lib/instagramHistorySeries";
 import { instagramEmbedSrc } from "@/lib/instagramEmbed";
-import { LAYOUT_TW } from "@/lib/layoutBreakpoints";
 import { cn } from "@/lib/utils";
 
 export type InstagramPost = {
@@ -14,8 +13,9 @@ export type InstagramPost = {
   posterSrc?: string;
 };
 
-/** Crop Instagram header chrome on embed player. */
-const EMBED_TOP_CROP_PX = 54;
+/** Crop Instagram chrome; scale fills 9:16 frame edge-to-edge. */
+const EMBED_TOP_CROP_PX = 58;
+const EMBED_SCALE = 1.14;
 
 function isHistoryEpisode(post: InstagramPost): post is HistorySeriesEpisode {
   return "eraLabel" in post && "backdrop" in post;
@@ -39,12 +39,12 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
   return (
     <article
       className={cn(
-        "flex w-[min(88vw,280px)] shrink-0 snap-center flex-col",
-        "min-[810px]:w-[min(44vw,300px)]",
-        "min-[1200px]:w-[300px]",
+        "flex w-[min(78vw,260px)] shrink-0 snap-center flex-col",
+        "min-[810px]:w-[min(34vw,280px)]",
+        "min-[1200px]:w-[280px]",
       )}
     >
-      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 bg-black">
+      <div className="relative aspect-[9/16] overflow-hidden rounded-2xl border border-white/10 bg-black">
         {cinematic ? (
           <div className="pointer-events-none absolute inset-0 z-0">
             <InstagramReelPoster post={post} />
@@ -59,7 +59,7 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
           />
         ) : null}
 
-        <div className="absolute inset-0 z-10 overflow-hidden bg-transparent">
+        <div className="absolute inset-0 z-10 overflow-hidden bg-black">
           <iframe
             key={embedSrc}
             src={embedSrc}
@@ -69,11 +69,12 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
             referrerPolicy="strict-origin-when-cross-origin"
             allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen"
             allowFullScreen
-            className="pointer-events-auto absolute left-1/2 top-0 border-0 bg-transparent"
+            className="pointer-events-auto absolute left-1/2 top-0 border-0 bg-black"
             style={{
-              width: "min(340px, 100%)",
+              width: "100%",
               height: `calc(100% + ${EMBED_TOP_CROP_PX}px)`,
-              transform: `translate(-50%, -${EMBED_TOP_CROP_PX}px)`,
+              transform: `translate(-50%, -${EMBED_TOP_CROP_PX}px) scale(${EMBED_SCALE})`,
+              transformOrigin: "top center",
             }}
           />
         </div>
@@ -140,7 +141,7 @@ export function InstagramReelsSection({
             data-draggable
             className={cn(
               "mt-7 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2",
-              "pl-[max(0px,calc((100vw-min(88vw,280px))/2-var(--beiza-site-padding-x,1.25rem)))]",
+              "pl-[max(0px,calc((100vw-min(78vw,260px))/2-var(--beiza-site-padding-x,1.25rem)))]",
               "pr-[max(1rem,var(--beiza-site-padding-x,1.25rem))]",
               "min-[810px]:gap-4 min-[810px]:pl-0 min-[810px]:pr-0",
               "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
