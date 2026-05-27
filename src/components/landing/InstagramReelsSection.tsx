@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { InstagramReelPoster } from "@/components/landing/InstagramReelPoster";
 import { useDraggableScroll } from "@/hooks/useDraggableScroll";
@@ -33,16 +32,7 @@ function InstagramGlyph({ className }: { className?: string }) {
   );
 }
 
-function PlayGlyph() {
-  return (
-    <svg viewBox="0 0 24 24" className="ml-0.5 h-7 w-7 fill-white" aria-hidden>
-      <path d="M8 5v14l11-7z" />
-    </svg>
-  );
-}
-
 function InstagramReelCard({ post }: { post: InstagramPost }) {
-  const [playing, setPlaying] = useState(false);
   const cinematic = isHistoryEpisode(post);
   const embedSrc = instagramEmbedSrc(post.url, post.id);
 
@@ -55,52 +45,38 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
       )}
     >
       <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 bg-black">
-        {playing ? (
-          <div className="absolute inset-0 overflow-hidden bg-black">
-            <iframe
-              key={embedSrc}
-              src={embedSrc}
-              title={`Instagram ${post.label}`}
-              loading="eager"
-              scrolling="no"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen"
-              allowFullScreen
-              className="pointer-events-auto absolute left-1/2 top-0 border-0"
-              style={{
-                width: "min(340px, 100%)",
-                height: `calc(100% + ${EMBED_TOP_CROP_PX}px)`,
-                transform: `translate(-50%, -${EMBED_TOP_CROP_PX}px)`,
-              }}
-            />
+        {cinematic ? (
+          <div className="pointer-events-none absolute inset-0 z-0">
+            <InstagramReelPoster post={post} />
           </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setPlaying(true)}
-            className="group absolute inset-0 flex w-full touch-manipulation items-center justify-center"
-            aria-label={`Play ${post.label}`}
-          >
-            {cinematic ? (
-              <InstagramReelPoster post={post} />
-            ) : post.posterSrc ? (
-              <>
-                <img
-                  src={post.posterSrc}
-                  alt=""
-                  className="absolute inset-0 h-full w-full object-cover"
-                />
-                <div className="absolute inset-0 bg-black/35" aria-hidden />
-              </>
-            ) : (
-              <div className="absolute inset-0 bg-[#0a0a0a]" aria-hidden />
-            )}
+        ) : post.posterSrc ? (
+          <img
+            src={post.posterSrc}
+            alt=""
+            className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        ) : null}
 
-            <span className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/80 bg-black/50 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-[3px] transition group-active:scale-95 min-[810px]:group-hover:scale-105">
-              <PlayGlyph />
-            </span>
-          </button>
-        )}
+        <div className="absolute inset-0 z-10 overflow-hidden bg-transparent">
+          <iframe
+            key={embedSrc}
+            src={embedSrc}
+            title={`Instagram ${post.label}`}
+            loading="eager"
+            scrolling="no"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen"
+            allowFullScreen
+            className="pointer-events-auto absolute left-1/2 top-0 border-0 bg-transparent"
+            style={{
+              width: "min(340px, 100%)",
+              height: `calc(100% + ${EMBED_TOP_CROP_PX}px)`,
+              transform: `translate(-50%, -${EMBED_TOP_CROP_PX}px)`,
+            }}
+          />
+        </div>
       </div>
 
       <a
@@ -129,7 +105,7 @@ type InstagramReelsSectionProps = {
 export function InstagramReelsSection({
   id = "history-reels",
   title = "Watch the full story episodes",
-  description = "Tap play to watch each episode here, or open the post on Instagram.",
+  description = "Episodes load inline — scroll the rail or open any post on Instagram.",
   variant = "bare",
   posts = HISTORY_SERIES_EPISODES,
   className,
