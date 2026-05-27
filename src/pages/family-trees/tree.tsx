@@ -96,6 +96,7 @@ export default function FamilyTreeCanvasPage() {
       recordings={payload.recordings}
       treeEdges={payload.treeEdges ?? []}
       healthConditions={payload.healthConditions ?? []}
+      personTraits={payload.personTraits ?? []}
       persistViaApi
       backHref={BEIZA_LINKS.circle.directory}
       showInviteBar

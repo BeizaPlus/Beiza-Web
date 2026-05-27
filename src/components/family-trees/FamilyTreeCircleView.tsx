@@ -23,6 +23,7 @@ import type {
   FamilyPersonProfilePatch,
   LegacyRecording,
   PersonHealthCondition,
+  PersonTrait,
   RecordingPersonLink,
 } from "@/lib/legacy/types";
 import { useToast } from "@/hooks/use-toast";
@@ -37,6 +38,7 @@ type FamilyTreeCircleViewProps = {
   recordings: LegacyRecording[];
   treeEdges?: TreeEdgeRow[];
   healthConditions?: PersonHealthCondition[];
+  personTraits?: PersonTrait[];
   persistViaApi?: boolean;
   backHref?: string;
   /** Canvas URL used when returning from a linked memoir (defaults to /circle/:id/tree). */
@@ -54,6 +56,7 @@ export function FamilyTreeCircleView({
   recordings,
   treeEdges = [],
   healthConditions = [],
+  personTraits = [],
   persistViaApi = false,
   backHref = BEIZA_LINKS.circle.directory,
   treeHref,
@@ -265,6 +268,15 @@ export function FamilyTreeCircleView({
         onSiblingOrdersSave={handleSiblingOrdersSave}
         onSetTreeLeader={handleSetTreeLeader}
         healthConditions={healthConditions}
+        personTraits={personTraits}
+        memoryCountByPersonId={Object.fromEntries(
+          links
+            .filter((l) => l.link_type === "about")
+            .reduce((acc, l) => {
+              acc.set(l.person_id, (acc.get(l.person_id) ?? 0) + 1);
+              return acc;
+            }, new Map<string, number>()),
+        )}
       />
       {persistViaApi ? <TreePersonaChat circleId={circleId} /> : null}
     </TreeAppShell>

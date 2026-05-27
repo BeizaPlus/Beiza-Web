@@ -6,6 +6,7 @@ import type {
   FamilyPerson,
   MemoryAboutChoice,
   PersonBiographyFragment,
+  PersonTrait,
   RecordingPersonLink,
 } from "@/lib/legacy/types";
 import { sortBiographyFragments } from "@/lib/legacy/familyTree";
@@ -238,4 +239,27 @@ export function useTreeEdges(circleId?: string) {
     },
     enabled: Boolean(supabase && circleId),
   });
+}
+
+export function usePersonTraits(circleId?: string) {
+  const studio = isLegacyStudioPreview();
+  const effectiveId = circleId ?? (studio ? STUDIO_MOCK_CIRCLE_ID : undefined);
+  const query = useQuery({
+    queryKey: ["legacy", "person-traits", effectiveId],
+    queryFn: async () => {
+      if (studio) return [] as PersonTrait[];
+      if (!circleId) return [] as PersonTrait[];
+      const { data, error } = await supabase!
+        .from("person_traits")
+        .select("*")
+        .eq("circle_id", circleId);
+      if (error) throw error;
+      return (data ?? []) as PersonTrait[];
+    },
+    enabled: Boolean(supabase && effectiveId) && !studio,
+  });
+  if (studio) {
+    return { ...query, data: [] as PersonTrait[], isLoading: false, isFetching: false };
+  }
+  return query;
 }

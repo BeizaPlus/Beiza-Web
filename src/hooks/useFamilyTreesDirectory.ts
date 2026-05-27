@@ -52,7 +52,7 @@ export type CircleTreePayload = {
   links: import("@/lib/legacy/types").RecordingPersonLink[];
   treeEdges?: import("@/lib/legacy/treeRelationships").TreeEdgeRow[];
   healthConditions?: import("@/lib/legacy/types").PersonHealthCondition[];
-  personTraits?: { id: string; person_id: string; category: string; trait: string }[];
+  personTraits?: import("@/lib/legacy/types").PersonTrait[];
   memberCount: number;
   memoryCount: number;
 };

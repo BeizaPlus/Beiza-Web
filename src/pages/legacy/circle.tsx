@@ -6,6 +6,7 @@ import { FamilyTreeCircleView } from "@/components/family-trees/FamilyTreeCircle
 import { useLegacyRecordings, useMyLegacyCircle } from "@/hooks/useLegacy";
 import {
   useFamilyPeople,
+  usePersonTraits,
   useRecordingPersonLinks,
   useSyncCirclePeople,
   useTreeEdges,
@@ -21,6 +22,7 @@ export default function LegacyCirclePage() {
   const { data: links = [] } = useRecordingPersonLinks(circle?.id);
   const { data: recordings = [] } = useLegacyRecordings(circle?.id);
   const { data: treeEdges = [] } = useTreeEdges(circle?.id);
+  const { data: personTraits = [] } = usePersonTraits(circle?.id);
   const syncPeople = useSyncCirclePeople();
 
   useEffect(() => {
@@ -79,6 +81,7 @@ export default function LegacyCirclePage() {
       links={links}
       recordings={recordings}
       treeEdges={treeEdges}
+      personTraits={personTraits}
       backHref={BEIZA_LINKS.legacy.app}
       treeHref={BEIZA_LINKS.legacy.circle}
     />

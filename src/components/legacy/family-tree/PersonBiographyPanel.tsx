@@ -23,8 +23,13 @@ import { dispatchBeizaTreeUpdated } from "@/lib/legacy/personaEvents";
 import { SiblingOrderSection } from "@/components/legacy/family-tree/SiblingOrderSection";
 import { PersonHealthSection } from "@/components/legacy/family-tree/PersonHealthSection";
 import { PersonPatternsSection } from "@/components/legacy/family-tree/PersonPatternsSection";
+import { PersonStrengthsRadar } from "@/components/legacy/family-tree/PersonStrengthsRadar";
 import { PersonPanelTabs, type PersonPanelTab } from "@/components/legacy/family-tree/PersonPanelTabs";
-import type { PersonHealthCondition } from "@/lib/legacy/types";
+import type { PersonHealthCondition, PersonTrait } from "@/lib/legacy/types";
+import {
+  mergeTraitBuckets,
+  type PersonTraitBuckets,
+} from "@/lib/legacy/familyStrengths";
 import { savePersonPhoto } from "@/lib/legacy/treeCanvasPersistence";
 import { supabase } from "@/lib/supabaseClient";
 import { useToast } from "@/hooks/use-toast";
@@ -34,14 +39,14 @@ import { cn } from "@/lib/utils";
 
 type MemoriesState = "loading" | "loaded" | "empty" | "error";
 
-type PersonTraits = {
-  known_for: string[];
-  physical_traits: string[];
-  personality_traits: string[];
-  gift_traits: string[];
-};
-
 const TRAITS_STORAGE_KEY = "beiza_person_traits_v1";
+
+const EMPTY_TRAITS: PersonTraitBuckets = {
+  known_for: [],
+  physical_traits: [],
+  personality_traits: [],
+  gift_traits: [],
+};
 
 type PersonBiographyPanelProps = {
   person: FamilyPerson | null;
@@ -58,6 +63,8 @@ type PersonBiographyPanelProps = {
   ) => Promise<void>;
   onSetTreeLeader?: (personId: string) => Promise<void>;
   healthConditions?: PersonHealthCondition[];
+  personTraits?: PersonTrait[];
+  memoryCountByPersonId?: Record<string, number>;
 };
 
 const FIELD_INPUT_CLASS =
@@ -66,20 +73,18 @@ const FIELD_INPUT_CLASS =
 const SECTION_LABEL_CLASS =
   "font-manrope text-[10px] font-normal uppercase tracking-[0.2em] text-[#333333]";
 
-function loadTraits(personId: string): PersonTraits {
-  if (typeof window === "undefined") {
-    return { known_for: [], physical_traits: [], personality_traits: [], gift_traits: [] };
-  }
+function loadTraits(personId: string): PersonTraitBuckets {
+  if (typeof window === "undefined") return { ...EMPTY_TRAITS };
   try {
     const raw = localStorage.getItem(`${TRAITS_STORAGE_KEY}_${personId}`);
-    if (!raw) return { known_for: [], physical_traits: [], personality_traits: [], gift_traits: [] };
-    return JSON.parse(raw) as PersonTraits;
+    if (!raw) return { ...EMPTY_TRAITS };
+    return JSON.parse(raw) as PersonTraitBuckets;
   } catch {
-    return { known_for: [], physical_traits: [], personality_traits: [], gift_traits: [] };
+    return { ...EMPTY_TRAITS };
   }
 }
 
-function saveTraits(personId: string, traits: PersonTraits) {
+function saveTraits(personId: string, traits: PersonTraitBuckets) {
   localStorage.setItem(`${TRAITS_STORAGE_KEY}_${personId}`, JSON.stringify(traits));
 }
 
@@ -327,6 +332,7 @@ function PanelShell({
   onSetTreeLeader,
   traits,
   onTraitsChange,
+  memoryCount,
   traitsOpen,
   onTraitsOpenChange,
   fragments,
@@ -347,8 +353,9 @@ function PanelShell({
   onSaveField: (patch: FamilyPersonProfilePatch) => Promise<void>;
   onPhotoPick: (file: File) => void;
   onSetTreeLeader?: (personId: string) => Promise<void>;
-  traits: PersonTraits;
-  onTraitsChange: (traits: PersonTraits) => void;
+  traits: PersonTraitBuckets;
+  onTraitsChange: (traits: PersonTraitBuckets) => void;
+  memoryCount: number;
   traitsOpen: boolean;
   onTraitsOpenChange: (open: boolean) => void;
   fragments: PersonBiographyFragment[];
@@ -502,6 +509,13 @@ function PanelShell({
         {activeTab === "patterns" && <PersonPatternsSection circleId={circleId} />}
         {activeTab === "profile" && (
           <>
+        <PersonStrengthsRadar
+          person={localPerson}
+          traits={traits}
+          memoryCount={memoryCount}
+          className="mb-6"
+        />
+
         <SectionHeader title="Identity" />
 
         <ProfileField label="Full name">
@@ -832,6 +846,8 @@ export function PersonBiographyPanel({
   onSiblingOrdersSave,
   onSetTreeLeader,
   healthConditions = [],
+  personTraits = [],
+  memoryCountByPersonId = {},
 }: PersonBiographyPanelProps) {
   const editable = Boolean(onProfileSave);
   const useApi = persistViaApi;
@@ -844,19 +860,16 @@ export function PersonBiographyPanel({
   const [savedFlash, setSavedFlash] = useState(false);
   const [activeTab, setActiveTab] = useState<PersonPanelTab>("profile");
   const [traitsOpen, setTraitsOpen] = useState(false);
-  const [traits, setTraits] = useState<PersonTraits>({
-    known_for: [],
-    physical_traits: [],
-    personality_traits: [],
-    gift_traits: [],
-  });
+  const [traits, setTraits] = useState<PersonTraitBuckets>({ ...EMPTY_TRAITS });
 
   useEffect(() => {
     if (person) {
       setLocalPerson(person);
-      setTraits(loadTraits(person.id));
+      const local = loadTraits(person.id);
+      const rows = personTraits.filter((t) => t.person_id === person.id);
+      setTraits(mergeTraitBuckets(local, rows));
     }
-  }, [person]);
+  }, [person, personTraits]);
 
   const flashSaved = useCallback(() => {
     setSavedFlash(true);
@@ -874,7 +887,7 @@ export function PersonBiographyPanel({
   );
 
   const onTraitsChange = useCallback(
-    (next: PersonTraits) => {
+    (next: PersonTraitBuckets) => {
       if (!localPerson) return;
       setTraits(next);
       saveTraits(localPerson.id, next);
@@ -911,6 +924,8 @@ export function PersonBiographyPanel({
 
   if (!person || !localPerson) return null;
 
+  const memoryCount = memoryCountByPersonId[localPerson.id] ?? fragments.length;
+
   const panel = (
     <PanelShell
       editable={editable}
@@ -934,6 +949,7 @@ export function PersonBiographyPanel({
       activeTab={activeTab}
       onTabChange={setActiveTab}
       healthConditions={healthConditions}
+      memoryCount={memoryCount}
     />
   );
 

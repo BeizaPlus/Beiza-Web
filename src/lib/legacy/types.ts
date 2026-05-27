@@ -144,6 +144,17 @@ export interface PersonHealthCondition {
   created_at?: string;
 }
 
+export type PersonTraitCategory = "physical" | "personality" | "skills" | "known_for";
+
+export interface PersonTrait {
+  id: string;
+  circle_id: string;
+  person_id: string;
+  category: PersonTraitCategory;
+  trait: string;
+  created_at?: string;
+}
+
 export interface HealthPatternInsight {
   title: string;
   body: string;
