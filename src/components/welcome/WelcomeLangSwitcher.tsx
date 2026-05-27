@@ -24,7 +24,7 @@ export function WelcomeLangSwitcher({ isLight = false, rail, className }: Props)
   return (
     <nav
       className={cn(
-        "welcome-lang-switcher flex justify-center gap-6 py-3 pb-7 sm:hidden",
+        "welcome-lang-switcher flex max-[809px]:flex min-[810px]:hidden justify-center gap-6 py-3 pb-7",
         className,
       )}
       role="listbox"

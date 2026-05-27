@@ -9,8 +9,8 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
-import { useLocation } from "react-router-dom";
-import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
+import { Link, useLocation } from "react-router-dom";
+import { isLayoutStudioEnabled, isLegacyStudioPreview } from "@/lib/layoutStudio";
 import { loadSiteGuidesVisible, saveSiteGuidesVisible } from "@/lib/sitePaddingStudio";
 import { studioControlsDockPosition } from "@/lib/studioPanelPlacement";
 import { cn } from "@/lib/utils";
@@ -55,11 +55,9 @@ function readMasterOpen(): boolean {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw === "0") return false;
     if (raw === "1") return true;
-    // First visit: show HUD by default when studio mode is on (?studio=1 or localhost).
+    // Only auto-open panels when explicitly requested (?studio=1).
     const params = new URLSearchParams(window.location.search);
     if (params.get("studio") === "1") return true;
-    const host = window.location.hostname;
-    if (host === "localhost" || host === "127.0.0.1") return true;
   } catch {
     /* ignore */
   }
@@ -204,30 +202,55 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
     <LayoutStudioContext.Provider value={value}>
       {children}
       {enabled ? (
-        <LayoutStudioControls panels={studioPanels} masterOpen={masterOpen} setMasterOpen={setMasterOpen} />
+        <LayoutStudioControls
+          panels={studioPanels}
+          masterOpen={masterOpen}
+          setMasterOpen={setMasterOpen}
+          activePanelId={activePanelId}
+        />
       ) : null}
     </LayoutStudioContext.Provider>
   );
 }
 
+const RECORD_STUDIO_PHASE_LINKS = [
+  { label: "Sign-in", search: "recordShell=signin" },
+  { label: "Prepare", search: "recordShell=station&recordPhase=prepare" },
+  { label: "Upload", search: "recordShell=station&recordPhase=upload" },
+  { label: "Seal", search: "recordShell=station&recordPhase=seal" },
+] as const;
+
 function LayoutStudioControls({
   panels,
   masterOpen,
   setMasterOpen,
+  activePanelId,
 }: {
   panels: StudioPanelEntry[];
   masterOpen: boolean;
   setMasterOpen: (open: boolean) => void;
+  activePanelId: string | null;
 }) {
+  const location = useLocation();
   const { toggleMaster, dockAllPanels, openStudioPanel, guidesVisible, toggleGuides } =
     useLayoutStudio();
+  const showRecordPhases =
+    isLegacyStudioPreview() && location.pathname.startsWith("/legacy/record");
 
   const ensureMasterOpen = useCallback(() => {
     if (!masterOpen) setMasterOpen(true);
   }, [masterOpen, setMasterOpen]);
 
   const dockPos =
-    typeof window !== "undefined" ? studioControlsDockPosition() : { x: 16, y: 16 };
+    typeof window !== "undefined"
+      ? studioControlsDockPosition(activePanelId)
+      : { x: 16, y: 16 };
+
+  const studioParams = useCallback(() => {
+    const params = new URLSearchParams(location.search);
+    params.set("studio", "1");
+    return params;
+  }, [location.search]);
 
   const controls = (
     <div
@@ -285,6 +308,30 @@ function LayoutStudioControls({
               );
             })}
           </div>
+        </div>
+      ) : null}
+
+      {showRecordPhases ? (
+        <div className="flex w-full flex-wrap items-center gap-1 rounded-lg border border-white/15 bg-black/90 p-2 shadow-lg backdrop-blur-sm">
+          <span className="w-full px-0.5 text-[9px] font-semibold uppercase tracking-wider text-white/50">
+            Record flow
+          </span>
+          {RECORD_STUDIO_PHASE_LINKS.map((item) => {
+            const params = studioParams();
+            for (const part of item.search.split("&")) {
+              const [key, value] = part.split("=");
+              if (key) params.set(key, value ?? "");
+            }
+            return (
+              <Link
+                key={item.search}
+                to={{ pathname: location.pathname, search: `?${params.toString()}` }}
+                className="rounded-full bg-white/10 px-2 py-0.5 text-[10px] text-white hover:bg-primary/30 hover:text-primary"
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
       ) : null}
 

@@ -14,6 +14,7 @@ type Props = {
 
 /** Per-arm hamburger: anchor scroll within the current page. */
 export function ArmAnchorMenu({ links, className }: Props) {
+  const location = useLocation();
   const [open, setOpen] = useState(false);
 
   return (

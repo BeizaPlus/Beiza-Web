@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useRecordFlowOptional } from "@/components/legacy/recordFlowContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -32,6 +32,7 @@ import {
   recordMemorySubsetStyle,
   saveRecordMemoryStudioFrame,
 } from "@/lib/legacy/recordMemoryStudio";
+import { LegacyFarewellNudge } from "@/components/legacy/LegacyFarewellNudge";
 import { cn } from "@/lib/utils";
 
 const MIN_RECORD_SECONDS = 0;
@@ -231,7 +232,7 @@ export function RecordMemoryView({
 
   const recordFlow = useRecordFlowOptional();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!belowHero || !recordFlow) return;
     recordFlow.registerBridge({
       getSnapshot: () => ({
@@ -325,7 +326,8 @@ export function RecordMemoryView({
 
   const isHoldPhase = phase === "prepare" || phase === "recording";
 
-  const compact = belowHero || viewportCompact;
+  /** Station hero sync (`belowHero`) must not force phone layout on desktop. */
+  const compact = viewportCompact;
   const studioOn = isLayoutStudioEnabled() && compact;
   const studioCtx = useRecordLayoutStudio();
   const memoryFrame =
@@ -401,7 +403,7 @@ export function RecordMemoryView({
         <LegacyPlaybackRow recordedUri={recordedUri} durationSeconds={durationSeconds} />
       ) : null}
 
-      {isHoldPhase && !compact ? (
+      {isHoldPhase && !compact && !belowHero ? (
         <div className="flex flex-col items-center gap-4">
           <RecordingButton
             isRecording={phase === "recording"}
@@ -415,14 +417,14 @@ export function RecordMemoryView({
             <Button
               variant="ghost"
               size="sm"
-              className="gap-2 text-[#888888]"
+              className="gap-2 text-[#888888] hover:bg-[#E6A817]/10 hover:text-[#E6A817]"
               disabled={loadingPrompts || isRequestingMic}
               onClick={() => setPrompt(pickRandomStoryPrompt(prompt.id))}
             >
               {loadingPrompts ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <Sparkles className="h-4 w-4" />
+                <Sparkles className="h-4 w-4 text-[#E6A817]" />
               )}
               New prompt
             </Button>
@@ -434,14 +436,17 @@ export function RecordMemoryView({
         <Button
           variant="ghost"
           size="sm"
-          className={cn("h-8 gap-1.5 text-[11px] text-white/60 hover:text-white", "self-end")}
+          className={cn(
+            "h-8 gap-1.5 self-end text-[11px] text-white/60",
+            "hover:bg-white/10 hover:text-[#E6A817]",
+          )}
           disabled={loadingPrompts || isRequestingMic}
           onClick={() => setPrompt(pickRandomStoryPrompt(prompt.id))}
         >
           {loadingPrompts ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
           ) : (
-            <Sparkles className="h-3.5 w-3.5" />
+            <Sparkles className="h-3.5 w-3.5 text-[#E6A817]" />
           )}
           New prompt
         </Button>
@@ -612,9 +617,14 @@ function SealPanelBody({
           Open the vault
         </Button>
       ) : null}
-      <Button variant="ghost" className="w-full text-[#888888]" onClick={onAnother}>
+      <Button
+        variant="ghost"
+        className="w-full text-[#888888] hover:bg-[#E6A817]/10 hover:text-[#E6A817]"
+        onClick={onAnother}
+      >
         Record another memory
       </Button>
+      <LegacyFarewellNudge className="pt-2" />
     </>
   );
 }

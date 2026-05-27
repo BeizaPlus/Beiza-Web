@@ -141,7 +141,7 @@ function WelcomeLocaleRailMobile({
 
   return (
     <aside
-      className="pointer-events-none fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-40 sm:hidden"
+      className="pointer-events-none fixed bottom-[max(1rem,env(safe-area-inset-bottom))] right-4 z-40 max-[809px]:block min-[810px]:hidden"
       aria-label="Theme"
     >
       <div
@@ -177,7 +177,7 @@ function WelcomeLocaleRailDesktop({
 
   return (
     <aside
-      className="pointer-events-none fixed z-40 hidden origin-right sm:flex"
+      className="pointer-events-none fixed z-40 hidden origin-right min-[810px]:flex"
       style={asidePosition}
       aria-label="Language"
     >

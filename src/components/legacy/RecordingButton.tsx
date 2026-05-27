@@ -32,7 +32,7 @@ export function RecordingButton({
           disabled && "cursor-not-allowed opacity-50",
           isRecording
             ? "border-red-500/60 bg-[#1a0000] text-red-400 ring-4 ring-red-500/40 animate-pulse"
-            : "border-primary/40 bg-primary text-primary-foreground shadow-focus-ring",
+            : "border-[#E6A817]/40 bg-[#E6A817] text-[#0a0a0a] shadow-focus-ring",
         )}
       >
         {isRecording ? (

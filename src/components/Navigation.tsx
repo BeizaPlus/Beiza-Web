@@ -73,7 +73,10 @@ type NavigationProps = {
 const HEADER_NAV_LINKS: ProductNavLink[] = PRODUCT_NAV_LINKS;
 
 export const Navigation = ({ variant = "default" }: NavigationProps) => {
+  const location = useLocation();
   const recordOverlay = variant === "recordOverlay";
+  /** Transparent overlay nav — root redirect only (`/` → `/welcome`). All product pages use the locked sticky bar. */
+  const isLandingHero = !recordOverlay && location.pathname === "/";
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navLinks = HEADER_NAV_LINKS;
 
@@ -92,28 +95,43 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
         className={cn(
           recordOverlay
             ? "pointer-events-none fixed inset-x-0 top-0 z-[90] w-full border-0 bg-gradient-to-b from-black/75 via-black/35 to-transparent"
-            : "sticky top-0 z-40 w-full border-b border-white/5 bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20",
+            : isLandingHero
+              ? "pointer-events-none fixed inset-x-0 top-0 z-40 w-full border-0 bg-transparent"
+              : "sticky top-0 z-40 w-full border-b border-white/5 bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20",
         )}
       >
         <div
           className={cn(
             "pointer-events-auto w-full",
-            recordOverlay ? "py-3" : "py-4 sm:py-6",
+            recordOverlay ? "py-3" : isLandingHero ? "py-5 sm:py-6" : "py-4 sm:py-6",
             sitePaddingX,
           )}
         >
           <div className="flex min-w-0 items-center justify-between gap-3">
-            <BeizaLogoLink className="relative z-[100]" />
+            <BeizaLogoLink
+              className="relative z-[100]"
+              mascotClassName={isLandingHero ? "h-8 w-auto" : undefined}
+              wordmarkClassName={isLandingHero ? "h-5 w-auto" : undefined}
+            />
 
             <div className="hidden min-w-0 items-center gap-6 lg:flex lg:gap-10">
               {navLinks.map((link) => (
-                <NavItem key={link.id} link={link} />
+                <NavItem
+                  key={link.id}
+                  link={link}
+                  className={isLandingHero ? "pb-1 text-sm font-medium tracking-tight" : undefined}
+                />
               ))}
             </div>
 
             <div className="hidden shrink-0 lg:block">
               <Link to={CTA.href}>
-                <Button className="rounded-full bg-white px-5 py-2.5 font-manrope text-sm font-medium text-black hover:bg-white/90 sm:px-6 sm:py-3">
+                <Button
+                  className={cn(
+                    "rounded-full bg-white font-manrope text-sm font-medium text-black hover:bg-white/90",
+                    isLandingHero ? "px-5 py-2.5" : "px-5 py-2.5 sm:px-6 sm:py-3",
+                  )}
+                >
                   {CTA.label}
                 </Button>
               </Link>

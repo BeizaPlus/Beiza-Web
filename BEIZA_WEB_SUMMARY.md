@@ -2,9 +2,10 @@
 
 **Repo:** [BeizaPlus/Beiza-Web](https://github.com/BeizaPlus/Beiza-Web)  
 **Live:** https://beizaplus.com  
-**Stack:** Vite + React + Tailwind + Supabase · Vercel serverless API
+**Stack:** Vite + React + Tailwind + Supabase · Vercel serverless API  
+**Product brief:** [docs/product/PHILOSOPHY-UX-BRIEF.md](docs/product/PHILOSOPHY-UX-BRIEF.md)
 
-Last updated: 22 May 2026 · branch `main`
+Last updated: 27 May 2026 · branch `main`
 
 ---
 

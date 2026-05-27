@@ -1,15 +1,29 @@
-/** Education home (`/home`) — culture & legacy, not farewell/loss framing. */
+/**
+ * Education home (`/home`) — death-free zone.
+ * Constants: `productPhilosophy.ts` · Brief: `docs/product/PHILOSOPHY-UX-BRIEF.md`
+ */
+import {
+  DEATH_FREE_ZONE_PATTERN,
+  EDUCATION_HERO_HEADING,
+  EDUCATION_HERO_SUBHEADING,
+  LEGACY_MARKETING_HEADING_PATTERN,
+} from "@/lib/productPhilosophy";
 
-export const EDUCATION_HERO_SUBHEADING =
-  "Learn your roots, record your family's voice, and carry symbols forward — Ghana-first, open to families everywhere.";
+export { EDUCATION_HERO_HEADING, EDUCATION_HERO_SUBHEADING };
 
-const LOSS_OR_FAREWELL_PATTERN =
-  /\b(loss|goodbye|farewells?|grief|memorial|passed away|life well lived|never been about loss)\b/i;
+/** Replace farewell/loss or old marketing hero titles on education home. */
+export function educationHeroHeading(incoming?: string | null): string {
+  const text = incoming?.trim();
+  if (!text || DEATH_FREE_ZONE_PATTERN.test(text) || LEGACY_MARKETING_HEADING_PATTERN.test(text)) {
+    return EDUCATION_HERO_HEADING;
+  }
+  return text;
+}
 
 /** Replace farewell/loss hero copy with education-first messaging. */
 export function educationHeroSubheading(incoming?: string | null): string {
   const text = incoming?.trim();
-  if (!text || LOSS_OR_FAREWELL_PATTERN.test(text)) {
+  if (!text || DEATH_FREE_ZONE_PATTERN.test(text)) {
     return EDUCATION_HERO_SUBHEADING;
   }
   return text;

@@ -25,6 +25,8 @@ type RecordFlowBridge = {
 
 type RecordFlowContextValue = {
   snapshot: RecordFlowSnapshot;
+  /** True once RecordMemoryView registers mic handlers (hero CTA can record). */
+  bridgeReady: boolean;
   requestStart: () => void;
   registerBridge: (bridge: RecordFlowBridge | null) => void;
   syncSnapshot: () => void;
@@ -44,6 +46,7 @@ const RecordFlowContext = createContext<RecordFlowContextValue | null>(null);
 
 export function RecordFlowProvider({ children }: { children: ReactNode }) {
   const bridgeRef = useRef<RecordFlowBridge | null>(null);
+  const [bridgeReady, setBridgeReady] = useState(false);
   const [snapshot, setSnapshot] = useState<RecordFlowSnapshot>(initialSnapshot);
 
   const syncSnapshot = useCallback(() => {
@@ -53,6 +56,7 @@ export function RecordFlowProvider({ children }: { children: ReactNode }) {
   const registerBridge = useCallback(
     (bridge: RecordFlowBridge | null) => {
       bridgeRef.current = bridge;
+      setBridgeReady(!!bridge);
       if (bridge) setSnapshot(bridge.getSnapshot());
       else setSnapshot(initialSnapshot());
     },
@@ -65,8 +69,8 @@ export function RecordFlowProvider({ children }: { children: ReactNode }) {
   }, [syncSnapshot]);
 
   const value = useMemo(
-    () => ({ snapshot, requestStart, registerBridge, syncSnapshot }),
-    [snapshot, requestStart, registerBridge, syncSnapshot],
+    () => ({ snapshot, bridgeReady, requestStart, registerBridge, syncSnapshot }),
+    [snapshot, bridgeReady, requestStart, registerBridge, syncSnapshot],
   );
 
   return <RecordFlowContext.Provider value={value}>{children}</RecordFlowContext.Provider>;

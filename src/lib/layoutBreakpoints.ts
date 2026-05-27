@@ -34,6 +34,14 @@ export const LAYOUT_BREAKPOINT_MQ = {
   desktop: `(min-width: ${FRAMER_LAYOUT_BREAKPOINTS.desktopMinPx}px)`,
 } as const;
 
+/** Tailwind class fragments — always match Framer tiers (do not use `sm:` / `md:` for product layout). */
+export const LAYOUT_TW = {
+  phoneOnly: "max-[809px]",
+  tabletUp: "min-[810px]",
+  desktopUp: "min-[1200px]",
+  legacyRailClearance: "min-[810px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
+} as const;
+
 /** @deprecated use LayoutStudioBreakpoint */
 export function isLayoutStudioPhone(widthPx: number): boolean {
   return widthPx <= FRAMER_LAYOUT_BREAKPOINTS.phoneMaxPx;

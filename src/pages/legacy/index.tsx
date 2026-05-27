@@ -8,6 +8,7 @@ import { FamilyTreeMobileFocus } from "@/components/legacy/family-tree/FamilyTre
 import { Mic, Users } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { FaqStaircaseSection } from "@/components/marketing/FaqStaircaseSection";
+import { LegacyFarewellNudge } from "@/components/legacy/LegacyFarewellNudge";
 import { RECORDING_HOME_FAQ } from "@/lib/auditFaqContent";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
@@ -111,6 +112,8 @@ export default function LegacyHomePage() {
           Recover a voice →
         </Link>
       </p>
+
+      <LegacyFarewellNudge className="pt-2" />
 
       <FaqStaircaseSection id="faqs" items={RECORDING_HOME_FAQ} variant="dark" className="pt-4" />
     </div>

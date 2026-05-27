@@ -73,7 +73,8 @@ export function LegacyNavStudio({
     saveLegacyNavStudioFrame(next);
   };
 
-  const appliedFrame = frame;
+  /** Dev/studio positions stay in localStorage — production uses canonical rail placement. */
+  const appliedFrame = studioEnabled ? frame : { ...LEGACY_NAV_STUDIO_DEFAULTS };
 
 
 

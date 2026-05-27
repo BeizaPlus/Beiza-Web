@@ -30,9 +30,9 @@ export const FALLBACK_SITE_SETTINGS = {
   phonePrimary: "+233 55 900 0111",
   emailPrimary: "hello@beiza.tv",
   calendlyUrl: "https://calendly.com",
-  heroHeading: "Build Intentional Legacy",
+  heroHeading: "This is where you come from.",
   heroSubheading:
-    "Learn your roots, record your family's voice, and carry symbols forward — Ghana-first, open to families everywhere.",
+    "Learn your roots, record your family's voice, and carry the symbols of your people forward.",
   heroCtaLabel: "Start Your Legacy",
   heroCtaHref: BEIZA_LINKS.legacy.app,
   heroBackgroundImage: MEDIA_ASSETS.home.adinkraHero.src,

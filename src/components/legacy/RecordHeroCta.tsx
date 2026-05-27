@@ -153,7 +153,7 @@ export function RecordHeroCta({ textAlign = "left", studioSubset = false }: Reco
           <div className="[&_p]:text-white/70">
             <RecordingButton
               isRecording={phase === "recording"}
-              disabled={snapshot?.isRequestingMic || !flow}
+              disabled={snapshot?.isRequestingMic || !flow?.bridgeReady}
               onPress={startRecording}
               compact
               hideCaption

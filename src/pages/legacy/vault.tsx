@@ -5,6 +5,7 @@ import { LegacyVaultCategorySection } from "@/components/legacy/LegacyVaultCateg
 import { LegacyVaultPlusUpsell } from "@/components/legacy/LegacyVaultPlusUpsell";
 import { LegacyVaultSequencePlayer } from "@/components/legacy/LegacyVaultSequencePlayer";
 import { LegacyKeeperUpsellDialog } from "@/components/legacy/LegacyKeeperUpsellDialog";
+import { LegacyFarewellNudge } from "@/components/legacy/LegacyFarewellNudge";
 import {
   ensureRecordingShareToken,
   useDeleteLegacyRecording,
@@ -202,6 +203,8 @@ export default function LegacyVaultPage() {
           </div>
 
           {!canDelete ? <LegacyVaultPlusUpsell /> : null}
+
+          <LegacyFarewellNudge className="pt-8" />
         </>
       )}
 

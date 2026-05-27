@@ -64,7 +64,7 @@ function LegacyRecordRoute({
         <LegacyTabRail />
         <ArmAnchorMenu
           links={LEGACY_ARM_ANCHORS}
-          className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-[60] min-[1200px]:right-[calc(5.5rem+var(--beiza-site-padding-x))]"
+          className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-[60] hidden min-[810px]:block min-[1200px]:right-[calc(5.5rem+var(--beiza-site-padding-x))]"
         />
         </div>
       </RecordFlowProvider>
@@ -163,10 +163,10 @@ export function LegacyLayout() {
         <LegacyTabRail />
         <ArmAnchorMenu
           links={LEGACY_ARM_ANCHORS}
-          className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-[60] min-[1200px]:right-[calc(5.5rem+var(--beiza-site-padding-x))]"
+          className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-[60] hidden min-[810px]:block min-[1200px]:right-[calc(5.5rem+var(--beiza-site-padding-x))]"
         />
 
-        <main className="relative min-h-[calc(100dvh-8.5rem)] overflow-visible px-[var(--beiza-site-padding-x,1.25rem)] pb-24 pt-4 sm:min-h-[calc(100dvh-10.5rem)] sm:pb-28 min-[1200px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]">
+        <main className="relative min-h-[calc(100dvh-8.5rem)] overflow-visible px-[var(--beiza-site-padding-x,1.25rem)] pb-24 pt-4 sm:min-h-[calc(100dvh-10.5rem)] sm:pb-28 min-[810px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]">
           <PageLayoutStudioZone
             pageId={pageStudioId}
             className="w-full py-4 sm:py-6"

@@ -25,12 +25,12 @@ export function useWelcomeLocaleSceneWheel(rootRef: RefObject<HTMLElement | null
 
     const onWheel = (e: WheelEvent) => {
       if (shouldIgnoreWelcomeWheelTarget(e.target)) return;
-      e.preventDefault();
-
       if (localePinned || Date.now() < cooldownUntil) return;
 
       accumulated += e.deltaY;
       if (Math.abs(accumulated) < WHEEL_THRESHOLD) return;
+
+      e.preventDefault();
 
       const direction: 1 | -1 = accumulated > 0 ? 1 : -1;
       accumulated = 0;

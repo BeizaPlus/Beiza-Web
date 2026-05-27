@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import { useNavigate } from "react-router-dom";
 import { useLayoutStudioBreakpoint } from "@/hooks/useLayoutStudioViewport";
 import { useWelcomeSnapPath } from "@/hooks/useWelcomeSnapPath";
 import {
@@ -91,12 +90,10 @@ import {
 
 } from "@/lib/welcomeStudio";
 
-import { MEDIA_ASSETS } from "@/lib/mediaAssets";
-import { handleWelcomeHomeClick, WELCOME_HOME_PATH } from "@/lib/welcomeHomeNav";
+import { BeizaLogoLink } from "@/components/BeizaLogoLink";
+import { WELCOME_HOME_RESET_EVENT } from "@/lib/welcomeHomeNav";
 import { cn } from "@/lib/utils";
 
-const BEIZA_LOGO = "/Beiza_White.svg";
-const BEIZA_MASCOT = MEDIA_ASSETS.brand.mascotHead.src;
 
 
 
@@ -757,7 +754,6 @@ const subtitleVariants = {
 };
 
 export default function WelcomeGate() {
-  const navigate = useNavigate();
   const welcomeRootRef = useRef<HTMLDivElement>(null);
   const cardsScrollRef = useRef<HTMLDivElement>(null);
   const layoutBreakpoint = useLayoutStudioBreakpoint();
@@ -769,6 +765,14 @@ export default function WelcomeGate() {
 
   const isPhone = layoutBreakpoint === "phone";
   useWelcomeLocaleSceneWheel(welcomeRootRef, ready && !isPhone);
+
+  useEffect(() => {
+    const onHomeReset = () => {
+      cardsScrollRef.current?.scrollTo({ left: 0, behavior: "smooth" });
+    };
+    window.addEventListener(WELCOME_HOME_RESET_EVENT, onHomeReset);
+    return () => window.removeEventListener(WELCOME_HOME_RESET_EVENT, onHomeReset);
+  }, []);
 
   useEffect(() => {
     setTheme(getStoredWelcomeTheme());
@@ -858,38 +862,13 @@ export default function WelcomeGate() {
           variants={{ hidden: {}, show: {} }}
         >
           <motion.div variants={heroVariants} className="flex flex-col items-center">
-            {studio.useMascot ? (
-              <a
-                href={WELCOME_HOME_PATH}
-                onClick={(e) => handleWelcomeHomeClick(e, navigate)}
-                className="relative z-[10] mx-auto mb-2 inline-block cursor-pointer"
-                aria-label="Beiza welcome"
-              >
-                <img
-                  src={BEIZA_MASCOT}
-                  alt=""
-                  aria-hidden
-                  className="pointer-events-none object-contain"
-                  style={{ height: `${logoHeightRem}rem`, width: `${logoHeightRem}rem` }}
-                  draggable={false}
-                />
-              </a>
-            ) : (
-              <a
-                href={WELCOME_HOME_PATH}
-                onClick={(e) => handleWelcomeHomeClick(e, navigate)}
-                className="relative z-[10] mx-auto mb-2 inline-block cursor-pointer"
-                aria-label="Beiza welcome"
-              >
-                <img
-                  src={BEIZA_LOGO}
-                  alt="Beiza"
-                  className={cn("pointer-events-none mx-auto w-auto", isLight && "invert")}
-                  style={{ height: `${logoHeightRem}rem` }}
-                  draggable={false}
-                />
-              </a>
-            )}
+            <BeizaLogoLink
+              variant={studio.useMascot ? "full" : "wordmark"}
+              logoHeightRem={logoHeightRem}
+              className="relative z-[10] mx-auto mb-2"
+              mascotClassName="object-contain"
+              wordmarkClassName={cn("object-contain", isLight && "invert")}
+            />
             <p
               className={cn(
                 "text-[10px] font-medium uppercase tracking-[0.32em]",

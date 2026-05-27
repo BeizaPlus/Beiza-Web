@@ -40,8 +40,10 @@ export function useLegacyTabNavigate() {
         return;
       }
 
-      if (location.pathname === href) {
+      if (location.pathname === href || location.pathname === href.replace(/\/$/, "")) {
         e.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
       }
     },
     [location.pathname, studioCtx, studioOn],

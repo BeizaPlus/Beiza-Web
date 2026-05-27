@@ -133,9 +133,9 @@ export function RecordStationViewport({
             "relative z-10 flex h-full min-h-0 w-full",
             "justify-center items-center",
             "px-[var(--beiza-site-padding-x,0.75rem)]",
-            "min-[1200px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
+            "min-[810px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
             "max-[809px]:pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] max-[809px]:pt-4",
-            textRight ? "min-[1200px]:justify-end" : "min-[1200px]:justify-start",
+            textRight ? "min-[810px]:justify-end" : "min-[810px]:justify-start",
           )}
         >
           {recordStationColumn({
@@ -155,9 +155,9 @@ export function RecordStationViewport({
             "relative z-10 flex h-full min-h-0 w-full",
             "justify-center items-center",
             "px-[var(--beiza-site-padding-x,0.75rem)]",
-            "min-[1200px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
+            "min-[810px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
             "max-[809px]:pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] max-[809px]:pt-4",
-            textRight ? "min-[1200px]:justify-end" : "min-[1200px]:justify-start",
+            textRight ? "min-[810px]:justify-end" : "min-[810px]:justify-start",
           )}
         >
           {recordStationColumn({
@@ -264,7 +264,7 @@ function recordStationColumn({
                 "min-h-0 w-full min-w-0 max-w-full",
                 "px-[var(--record-hud-inset-x,2vw)]",
                 "pb-[var(--record-hud-inset-bottom,4vh)]",
-                "min-[1200px]:pr-[max(var(--record-hud-inset-x,2vw),5.5rem)]",
+                "min-[810px]:pr-[max(var(--record-hud-inset-x,2vw),5.5rem)]",
                 stationExpanded
                   ? "flex-none overflow-visible"
                   : signedIn

@@ -4,6 +4,15 @@
  * Site padding (bottom-right): boundary --beiza-site-padding-x + inner --beiza-content-indent.
  * Heritage (/farewell) is the reference. Yellow guides when studio is on.
  */
+const PRODUCTION_HOST_SUFFIXES = ["beizaplus.com", "beiza.tv"] as const;
+
+function isProductionHostname(hostname: string): boolean {
+  const host = hostname.toLowerCase();
+  return PRODUCTION_HOST_SUFFIXES.some(
+    (suffix) => host === suffix || host.endsWith(`.${suffix}`),
+  );
+}
+
 export function isLayoutStudioEnabled(): boolean {
   if (typeof window === "undefined") {
     return false;
@@ -13,10 +22,11 @@ export function isLayoutStudioEnabled(): boolean {
   if (params.get("studio") === "0") return false;
   if (params.get("studio") === "1") return true;
 
-  // Production / preview deploys: off unless ?studio=1 above
-  if (import.meta.env.PROD) return false;
-
   const host = window.location.hostname;
+
+  // Live domains + Vercel builds: off unless ?studio=1 above
+  if (import.meta.env.PROD || isProductionHostname(host)) return false;
+
   return host === "localhost" || host === "127.0.0.1";
 }
 

@@ -36,7 +36,7 @@ import {
 } from "@/hooks/usePublicContent";
 import { FALLBACK_HERO_LANDING } from "@/lib/fallbackContent";
 import { allowStaticContentFallback } from "@/lib/contentPolicy";
-import { educationHeroSubheading } from "@/lib/educationPageCopy";
+import { educationHeroHeading, educationHeroSubheading } from "@/lib/educationPageCopy";
 
 const iconMap: Record<string, JSX.Element> = {
   palette: <Palette className="h-5 w-5" strokeWidth={1.5} />,
@@ -62,11 +62,13 @@ const Landing = () => {
 
   const hero = useMemo(() => {
     const educationSubheading = (raw?: string | null) => educationHeroSubheading(raw);
+    const educationHeading = (raw?: string | null) => educationHeroHeading(raw);
 
     // Priority: 1. Database hero_sections, 2. Site settings, 3. Static fallback
     if (heroSection) {
       return {
         ...heroSection,
+        heading: educationHeading(heroSection.heading),
         subheading: educationSubheading(heroSection.subheading),
       };
     }
@@ -76,7 +78,7 @@ const Landing = () => {
     {
       return {
         slug: "landing-hero",
-        heading: siteSettings.heroHeading,
+        heading: educationHeading(siteSettings.heroHeading),
         subheading: educationSubheading(siteSettings.heroSubheading),
         ctaLabel: siteSettings.heroCtaLabel ?? null,
         ctaHref: siteSettings.heroCtaHref ?? null,
@@ -94,7 +96,7 @@ const Landing = () => {
 
     return {
       slug: FALLBACK_HERO_LANDING.slug,
-      heading: FALLBACK_HERO_LANDING.heading,
+      heading: educationHeading(FALLBACK_HERO_LANDING.heading),
       subheading: educationSubheading(FALLBACK_HERO_LANDING.subheading),
       ctaLabel: FALLBACK_HERO_LANDING.ctaLabel,
       ctaHref: FALLBACK_HERO_LANDING.ctaHref,
@@ -154,7 +156,7 @@ const Landing = () => {
       <Navigation />
       <ArmAnchorMenu
         links={EDUCATION_ARM_ANCHORS}
-        className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-40"
+        className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-40 hidden min-[810px]:block"
       />
       {showHero ? (
         <Hero
