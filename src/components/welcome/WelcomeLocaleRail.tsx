@@ -17,6 +17,9 @@ import {
 import { useWelcomeLocaleRailBehavior } from "@/hooks/useWelcomeLocaleRailBehavior";
 import { useWelcomeMobileLayout } from "@/hooks/useWelcomeViewport";
 
+/** Approved welcome handoff — side rail always lists GH + EN/ES/FR/CN (not studio-toggleable). */
+const SHOW_ALL_WELCOME_LOCALE_CODES = true;
+
 type WelcomeLocaleRailProps = {
   isLight?: boolean;
   theme: WelcomeTheme;
@@ -208,12 +211,12 @@ function WelcomeLocaleRailDesktop({
                     minHeight: dotAxisPx,
                     gap: isActive
                       ? rail.labelToDotGapPx
-                      : rail.showInactiveCodes
+                      : SHOW_ALL_WELCOME_LOCALE_CODES
                         ? rail.inactiveLabelGapPx
                         : 0,
                   }}
                 >
-                  {(isActive || rail.showInactiveCodes) && (
+                  {(isActive || SHOW_ALL_WELCOME_LOCALE_CODES) && (
                     <span
                       className="flex shrink-0 items-center"
                       style={{

@@ -30,7 +30,7 @@ export type LocaleRailLayout = {
   sunIconPx: number;
   /** Auto-advance interval when locale is not pinned (seconds) */
   autoRotateSec: number;
-  /** Studio aid: show GH/EN/… beside gray dots (off in production handoff) */
+  /** Show EN/ES/FR/CN beside gray dots (locked on in canonical handoff) */
   showInactiveCodes: boolean;
   /** Shift whole rail cluster left (+) or right (-) from right anchor (rem) */
   railNudgeXRem: number;
@@ -215,7 +215,27 @@ function normalizeLocaleRailLayout(
   if (raw?.activeDotSizePx === undefined) {
     base.activeDotSizePx = Math.max(base.dotSizePx + 4, Math.round(base.dotSizePx * 1.33));
   }
+  // Approved welcome rail — never let an old studio blob hide inactive locale codes.
+  base.showInactiveCodes = DEFAULT_STUDIO_GLOBAL.localeRail.showInactiveCodes;
   return base;
+}
+
+/** Heal localStorage overrides that fight shipped welcome-gate-canonical.json */
+function reconcileWelcomeStudioWithCanonical(stored: WelcomeStudioStore): WelcomeStudioStore {
+  const canonicalRail = DEFAULT_STUDIO_GLOBAL.localeRail;
+  if (stored.global.localeRail.showInactiveCodes === canonicalRail.showInactiveCodes) {
+    return stored;
+  }
+  return {
+    ...stored,
+    global: {
+      ...stored.global,
+      localeRail: {
+        ...stored.global.localeRail,
+        showInactiveCodes: canonicalRail.showInactiveCodes,
+      },
+    },
+  };
 }
 
 function normalizeGlobal(raw: Partial<StudioGlobal> | undefined): StudioGlobal {
@@ -340,7 +360,12 @@ export function loadWelcomeStudioStore(): WelcomeStudioStore {
   try {
     const stored = localStorage.getItem(STUDIO_KEY);
     if (!stored) return DEFAULT_STUDIO_STORE;
-    return parseWelcomeStudioJson(stored);
+    const parsed = parseWelcomeStudioJson(stored);
+    const reconciled = reconcileWelcomeStudioWithCanonical(parsed);
+    if (reconciled !== parsed) {
+      saveWelcomeStudioStore(reconciled);
+    }
+    return reconciled;
   } catch {
     return DEFAULT_STUDIO_STORE;
   }
