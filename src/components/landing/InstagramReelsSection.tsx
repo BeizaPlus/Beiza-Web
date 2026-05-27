@@ -14,8 +14,12 @@ export type InstagramPost = {
 };
 
 /** Crop Instagram chrome; scale fills 9:16 frame edge-to-edge. */
-const EMBED_TOP_CROP_PX = 58;
-const EMBED_SCALE = 1.14;
+const EMBED_TOP_CROP_PX = 62;
+const EMBED_BOTTOM_CROP_PX = 72;
+/** ~110% vertical; slightly wider on X to kill IG side letterbox */
+const EMBED_SCALE_X = 1.18;
+const EMBED_SCALE_Y = 1.1;
+const EMBED_WIDTH_PERCENT = 110;
 
 function isHistoryEpisode(post: InstagramPost): post is HistorySeriesEpisode {
   return "eraLabel" in post && "backdrop" in post;
@@ -71,9 +75,9 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
             allowFullScreen
             className="pointer-events-auto absolute left-1/2 top-0 border-0 bg-black"
             style={{
-              width: "100%",
-              height: `calc(100% + ${EMBED_TOP_CROP_PX}px)`,
-              transform: `translate(-50%, -${EMBED_TOP_CROP_PX}px) scale(${EMBED_SCALE})`,
+              width: `${EMBED_WIDTH_PERCENT}%`,
+              height: `calc(${EMBED_WIDTH_PERCENT}% + ${EMBED_TOP_CROP_PX + EMBED_BOTTOM_CROP_PX}px)`,
+              transform: `translate(-50%, -${EMBED_TOP_CROP_PX}px) scale(${EMBED_SCALE_X}, ${EMBED_SCALE_Y})`,
               transformOrigin: "top center",
             }}
           />

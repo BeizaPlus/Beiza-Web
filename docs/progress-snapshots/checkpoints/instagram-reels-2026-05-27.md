@@ -90,8 +90,10 @@ File: `src/components/landing/InstagramReelsSection.tsx`
 | Card width (phone) | `min(78vw, 260px)` |
 | Card width (tablet) | `min(34vw, 280px)` |
 | Card width (desktop) | `280px` |
-| `EMBED_TOP_CROP_PX` | `58` |
-| `EMBED_SCALE` | `1.14` |
+| `EMBED_TOP_CROP_PX` | `62` |
+| `EMBED_BOTTOM_CROP_PX` | `72` |
+| `EMBED_SCALE` | `1.1` (110%) |
+| `EMBED_WIDTH_PERCENT` | `110` |
 | Playback | Inline iframe on load (no click-to-play gate) |
 
 ### Breakpoints (do not regress)
