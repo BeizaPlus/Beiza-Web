@@ -6,8 +6,8 @@ Use this file to restore the site to the state after Chloe vs History reels, des
 
 | Field | Value |
 |-------|--------|
-| **Commit** | `853c086322c285022aef530c35f2f03c34c9bf74` |
-| **Short** | `853c086` |
+| **Commit** | `78c21536afdb8f3657c9e63ef903f16ee840519e` |
+| **Short** | `78c2153` |
 | **Tag** | `checkpoint/instagram-reels-2026-05-27` |
 | **Branch** | `main` |
 | **Remote** | `https://github.com/BeizaPlus/Beiza-Web.git` |
@@ -26,7 +26,7 @@ git checkout checkpoint/instagram-reels-2026-05-27
 ```bash
 git fetch origin
 git checkout main
-git reset --hard 853c086
+git reset --hard 78c2153
 git push origin main
 ```
 
@@ -50,6 +50,9 @@ After any reset on `main`, Vercel will redeploy from that commit automatically.
 | `e51e6dc` | Fix desktop breakpoints — literal `min-[810px]:` Tailwind classes (not template literals) |
 | `1256d1f` | Wire all 12 reels from scraped dataset JSON |
 | `853c086` | Reel cards `aspect-[9/16]`, embed zoom `1.14×`, less letterboxing |
+| `b7668da` | Only one reel plays at a time |
+| `56beea6` | Remove Instagram iframe overlay by switching active playback to native video |
+| `78c2153` | Show real thumbnails on inactive reel cards |
 
 ---
 
@@ -59,7 +62,7 @@ After any reset on `main`, Vercel will redeploy from that commit automatically.
 
 - **Source data:** `src/data/chloe-vs-history-reels.json` (from Apify scrape `dataset_instagram-reel-scraper_2026-05-27`)
 - **Episode builder:** `src/lib/instagramHistorySeries.ts` → `HISTORY_SERIES_EPISODES`
-- **Embed helper:** `src/lib/instagramEmbed.ts` — `/reel/{shortCode}/embed/`
+- **Video sources:** `src/data/chloe-vs-history-reels.json` includes `videoSrc` from scrape
 - **UI:** `src/components/landing/InstagramReelsSection.tsx`, `InstagramReelPoster.tsx`
 - **Landing:** `/home` education section uses default `posts={HISTORY_SERIES_EPISODES}`
 
@@ -90,11 +93,10 @@ File: `src/components/landing/InstagramReelsSection.tsx`
 | Card width (phone) | `min(78vw, 260px)` |
 | Card width (tablet) | `min(34vw, 280px)` |
 | Card width (desktop) | `280px` |
-| `EMBED_TOP_CROP_PX` | `62` |
-| `EMBED_BOTTOM_CROP_PX` | `72` |
-| `EMBED_SCALE` | `1.1` (110%) |
-| `EMBED_WIDTH_PERCENT` | `110` |
-| Playback | Inline iframe on load (no click-to-play gate) |
+| Playback | Native `<video>` player from scraped `videoSrc` (no Instagram overlay) |
+| Active behavior | Clicking play smooth-scrolls card to center |
+| Concurrency | One active reel at a time (new play stops prior reel) |
+| Inactive cards | Show scraped thumbnails with play overlay |
 
 ### Breakpoints (do not regress)
 
@@ -120,7 +122,6 @@ File: `src/lib/layoutBreakpoints.ts`
 ```
 src/data/chloe-vs-history-reels.json
 src/lib/instagramHistorySeries.ts
-src/lib/instagramEmbed.ts
 src/lib/mediaAssets.ts
 src/components/landing/InstagramReelsSection.tsx
 src/components/landing/InstagramReelPoster.tsx
@@ -139,7 +140,7 @@ public/images/beiza-history-series-reel-texture.png
 node -e "
 const fs=require('fs');
 const d=JSON.parse(fs.readFileSync('C:/Users/steve/Downloads/dataset_instagram-reel-scraper_2026-05-27_07-36-29-389.json','utf8'));
-const slim=d.map(r=>({shortCode:r.shortCode,url:r.url,caption:(r.caption||'').split('\\n')[0].slice(0,120),poster:(r.images&&r.images[0])||(r.displayUrl)||null}));
+const slim=d.map(r=>({shortCode:r.shortCode,url:r.url,caption:(r.caption||'').split('\\n')[0].slice(0,120),poster:(r.images&&r.images[0])||(r.displayUrl)||null,videoSrc:r.videoUrl||null,videoDurationSec: typeof r.videoDuration==='number'? r.videoDuration : null}));
 fs.writeFileSync('src/data/chloe-vs-history-reels.json', JSON.stringify(slim,null,2));
 "
 ```
@@ -148,8 +149,8 @@ fs.writeFileSync('src/data/chloe-vs-history-reels.json', JSON.stringify(slim,nul
 
 ## Known limitations at this checkpoint
 
-- Instagram embed autoplay is controlled by Instagram/browser — may require tap on some devices.
-- Scraped CDN poster URLs can 404 after expiry; fallback texture in `mediaAssets`.
+- Native video playback depends on scraped CDN `videoSrc` URLs remaining valid.
+- Scraped poster URLs can 404 after expiry; fallback texture in `mediaAssets`.
 - Only episode 0 has a permanent local AI poster; episodes 1–11 not batch-generated yet.
 
 ---
