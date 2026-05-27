@@ -125,7 +125,7 @@ export const DEFAULT_LOCALE_RAIL_LAYOUT: LocaleRailLayout = {
   sunSizePx: 78,
   sunIconPx: 32,
   autoRotateSec: 5,
-  showInactiveCodes: false,
+  showInactiveCodes: true,
   railNudgeXRem: 0,
   labelNudgeXRem: 0,
   axisNudgeXRem: 0,

@@ -30,7 +30,7 @@ To lock local tweaks into the repo:
 
 - **Header:** BEIZA wordmark only (`useMascot: false`), tagline, subheading (“Where would you like to begin?” / locale equivalent)
 - **Cards (desktop):** 3-column grid — Education · Legacy · Farewell
-- **Locale rail:** Right edge — GH, EN, ES, FR, CN (+ theme toggle)
+- **Locale rail:** Right edge — active row shows flag + **GH** + gold dot; inactive **EN / ES / FR / CN** stay visible in grey with grey dots; sun toggle below (`showInactiveCodes: true`)
 - **Studio (dev only):** Bottom-right dock — Site bounds, Welcome studio, Layout studio
 
 ## Global defaults (canonical)

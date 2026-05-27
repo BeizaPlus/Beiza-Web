@@ -231,9 +231,14 @@ function WelcomeLocaleRailDesktop({
                       )}
                       <span
                         className={cn(
-                          "shrink-0 font-bold leading-none tracking-wide",
-                          isLight ? "text-black" : "text-white",
-                          !isActive && "opacity-40",
+                          "shrink-0 font-bold leading-none tracking-[0.06em]",
+                          isActive
+                            ? isLight
+                              ? "text-black"
+                              : "text-white"
+                            : isLight
+                              ? "text-black/45"
+                              : "text-[#8f8f8f]",
                         )}
                         style={{ fontSize: rail.labelFontPx }}
                       >
