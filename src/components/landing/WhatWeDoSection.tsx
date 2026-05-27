@@ -84,9 +84,17 @@ type WhatWeDoSectionProps = {
   className?: string;
   style?: CSSProperties;
   id?: string;
+  showLocaleToggle?: boolean;
 };
 
-export function WhatWeDoSection({ offerings, mockupSrc, className, style, id }: WhatWeDoSectionProps) {
+export function WhatWeDoSection({
+  offerings,
+  mockupSrc,
+  className,
+  style,
+  id,
+  showLocaleToggle = true,
+}: WhatWeDoSectionProps) {
   const [locale, setLocale] = useState<LegacyLocale>("global");
   const [mockupFailed, setMockupFailed] = useState(false);
   const localeScrollRef = useDraggableScroll();
@@ -116,13 +124,15 @@ export function WhatWeDoSection({ offerings, mockupSrc, className, style, id }: 
         align="center"
       />
 
-      <div
-        ref={localeScrollRef}
-        data-draggable
-        className="mt-8 flex justify-center overflow-x-auto px-1 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-      >
-        <LocaleToggle locale={locale} onChange={setLocaleAndSave} />
-      </div>
+      {showLocaleToggle ? (
+        <div
+          ref={localeScrollRef}
+          data-draggable
+          className="mt-8 flex justify-center overflow-x-auto px-1 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        >
+          <LocaleToggle locale={locale} onChange={setLocaleAndSave} />
+        </div>
+      ) : null}
 
       <div className="mx-auto mt-6 max-w-2xl px-2 text-center">
         <p className="text-base leading-relaxed text-subtle">{copy.description}</p>

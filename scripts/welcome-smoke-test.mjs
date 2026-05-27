@@ -4,7 +4,7 @@
  */
 import { chromium } from "playwright";
 
-const base = process.env.SMOKE_SITE_URL ?? "http://127.0.0.1:8080";
+const base = process.env.SMOKE_SITE_URL ?? "http://localhost:8080";
 const results = { passed: [], failed: [], warned: [] };
 
 function pass(label) {
@@ -53,7 +53,9 @@ async function auditWelcome(page, route) {
     else fail(`${route} missing copy`, text);
   }
 
-  const logo = page.locator('img[alt="Beiza"], img[src*="Beiza"]');
+  const logo = page.locator(
+    'a[aria-label="Beiza welcome"], img[alt="Beiza"], img[src*="Beiza_White"], img[src*="beiza-mascot"]',
+  );
   if ((await logo.count()) > 0) pass(`${route} Beiza logo or mascot`);
   else fail(`${route} logo missing`);
 
@@ -91,7 +93,7 @@ async function auditWelcome(page, route) {
     pass(`${route} one viewport (no page scroll)`);
   } else fail(`${route} viewport lock`, JSON.stringify(pageScroll));
 
-  const grid = page.locator("main .grid");
+  const grid = page.locator(".welcome-cards-row");
   const box = await grid.boundingBox();
   if (box && box.width > 200) pass(`${route} three-card grid (${Math.round(box.width)}px)`);
   else fail(`${route} card grid`, box ? `width ${box.width}` : "missing");

@@ -32,7 +32,7 @@ export const FALLBACK_SITE_SETTINGS = {
   calendlyUrl: "https://calendly.com",
   heroHeading: "Build Intentional Legacy",
   heroSubheading:
-    "It has never been about loss — it has always been about legacy. Every story, every voice, every design is our way of saying: their story, kept forever.",
+    "Learn your roots, record your family's voice, and carry symbols forward — Ghana-first, open to families everywhere.",
   heroCtaLabel: "Start Your Legacy",
   heroCtaHref: BEIZA_LINKS.legacy.app,
   heroBackgroundImage: MEDIA_ASSETS.home.adinkraHero.src,

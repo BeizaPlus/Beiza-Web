@@ -22,6 +22,7 @@ import {
 } from "@/components/dev/heroLayoutStudioState";
 import { BRAND_IMAGES } from "@/lib/brandImages";
 import { WhiteSwanFilmEmbed } from "@/components/heritage/WhiteSwanFilmEmbed";
+import { InstagramReelsSection } from "@/components/landing/InstagramReelsSection";
 import { CasketIcon } from "@/components/icons/CasketIcon";
 import { cn } from "@/lib/utils";
 import {
@@ -339,7 +340,24 @@ export default function HeritagePage() {
         </div>
       </section>
 
-      {/* 4. Two ways in */}
+      {/* 4. Farewell events reel rail (locked style inset) */}
+      <section id="farewell-events" className={cn("scroll-mt-24", marketingSection, siteBounds)}>
+        <div className={siteBoundedContainer}>
+          <p className="text-eyebrow text-center text-primary">Farewell Events · Locked Collection</p>
+          <p className="mx-auto mt-3 max-w-2xl text-center text-sm leading-relaxed text-subtle">
+            This reel strip stays inside Beiza for immersive playback. If viewers want comments or profile interaction,
+            they can tap the Instagram icon on a reel.
+          </p>
+          <InstagramReelsSection
+            id="farewell-events-reels"
+            title="Because their story deserves to be unforgettable."
+            description="Scrollable farewell-event videos, embedded in-page."
+            insetPanel
+          />
+        </div>
+      </section>
+
+      {/* 5. Two ways in */}
       <section className={cn(marketingSection, siteBounds)}>
         <div className="mx-auto max-w-4xl text-center">
           <h2 className="text-display-lg text-white">Two ways in.</h2>
@@ -392,7 +410,7 @@ export default function HeritagePage() {
         </div>
       </section>
 
-      {/* 5. Consultation */}
+      {/* 6. Consultation */}
       <section
         id="plan-farewell"
         className={cn("scroll-mt-24 border-t border-border bg-background", marketingSection, siteBounds)}
@@ -495,7 +513,7 @@ export default function HeritagePage() {
 
       <FaqStaircaseSection id="farewell-faqs" items={FAREWELL_FAQ} variant="dark" />
 
-      {/* 6. Closing */}
+      {/* 7. Closing */}
       <section className={cn("bg-secondary/30 py-20 text-center", marketingSection, siteBounds)}>
         <blockquote className="mx-auto max-w-[560px] text-[22px] italic leading-relaxed text-muted-foreground">
           Gye Nyame. Except God, nothing is greater — not even forgetting.

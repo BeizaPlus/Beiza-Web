@@ -273,7 +273,7 @@ export function faqPageJsonLd() {
         name: "What is intentional legacy?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Intentional legacy means choosing to preserve voices, stories, and cultural symbols before they are lost — not only after a loss.",
+          text: "Intentional legacy means choosing to preserve voices, stories, and cultural symbols while your family is here — and passing them on for generations.",
         },
       },
     ],

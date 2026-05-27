@@ -6,23 +6,18 @@ import { LegacyCurationPricing } from "@/components/landing/LegacyCurationPricin
 import { AboutSection } from "@/components/AboutSection";
 import { LegacyOutro } from "@/components/landing/LegacyOutro";
 import { WhatWeDoSection } from "@/components/landing/WhatWeDoSection";
+import { EducationTopLocaleSwitcher } from "@/components/landing/EducationTopLocaleSwitcher";
 import {
   LandingLayoutStudioPanel,
   useLandingLayoutStudio,
 } from "@/components/dev/LandingLayoutStudio";
 import { copyOffsetStyle } from "@/lib/copyLayoutOffset";
-import { useHeroLayoutStudio } from "@/components/dev/HeroLayoutStudio";
-import { heroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { saveStudioState, studioCssVars } from "@/components/dev/landingLayoutStudioState";
-import { SectionHeader } from "@/components/framer/SectionHeader";
-import { FullBleedHero } from "@/components/FullBleedHero";
-import { VoicesThatStayedSection } from "@/components/landing/VoicesThatStayedSection";
 import { BRAND_IMAGES, HERO_OVERLAY_GRADIENT } from "@/lib/brandImages";
 import { resolveHeroBackgroundSrc } from "@/lib/resolveHeroImage";
 import { MEDIA_ASSETS } from "@/lib/mediaAssets";
-import { CTAButton } from "@/components/framer/CTAButton";
 import { HomeFaqSection } from "@/components/framer/HomeFaqSection";
 import type { FaqAccordionEntry } from "@/components/framer/FaqAccordionGroup";
 import { ArmAnchorMenu } from "@/components/marketing/ArmAnchorMenu";
@@ -30,16 +25,18 @@ import { EDUCATION_FAQ } from "@/lib/auditFaqContent";
 import { EDUCATION_ARM_ANCHORS } from "@/lib/armNavLinks";
 import { ProductsPanel } from "@/components/shopify/ProductsPanel";
 import { AdZone } from "@/components/AdZone";
+import { CulturePdfLeadSection } from "@/components/landing/CulturePdfLeadSection";
+import { AdinkraSymbolsListSection } from "@/components/landing/AdinkraSymbolsListSection";
 import { Palette, Heart, FileText, Monitor, Box, Cloud, Sparkles } from "lucide-react";
 import {
   useFaqs,
-  useFeaturedEvent,
   useHeroSection,
   useOfferings,
   useSiteSettings,
 } from "@/hooks/usePublicContent";
 import { FALLBACK_HERO_LANDING } from "@/lib/fallbackContent";
 import { allowStaticContentFallback } from "@/lib/contentPolicy";
+import { educationHeroSubheading } from "@/lib/educationPageCopy";
 
 const iconMap: Record<string, JSX.Element> = {
   palette: <Palette className="h-5 w-5" strokeWidth={1.5} />,
@@ -52,27 +49,26 @@ const iconMap: Record<string, JSX.Element> = {
 
 const resolveIcon = (iconKey?: string | null) => iconMap[iconKey ?? ""] ?? <Sparkles className="h-5 w-5" strokeWidth={1.5} />;
 
-/** Re-enable when featured-event Experience flow is ready. */
-const SHOW_FEATURED_EVENT_EXPERIENCE_CTA = false;
-
 const Landing = () => {
   const studioPanelEnabled = isLayoutStudioEnabled();
   const { panelEnabled: studio, state: studioState, setState: setStudioState } =
     useLandingLayoutStudio(studioPanelEnabled);
-  const { frame: eventsHeroFrame } = useHeroLayoutStudio("events");
   const focus = studio ? studioState.focus : null;
 
   const { data: heroSection } = useHeroSection("landing-hero");
   const { data: siteSettings } = useSiteSettings();
   const { data: offerings = [] } = useOfferings();
   const { data: faqs = [] } = useFaqs();
-  const { data: featuredEvent } = useFeaturedEvent();
 
   const hero = useMemo(() => {
+    const educationSubheading = (raw?: string | null) => educationHeroSubheading(raw);
+
     // Priority: 1. Database hero_sections, 2. Site settings, 3. Static fallback
-    if (heroSection)
-    {
-      return heroSection;
+    if (heroSection) {
+      return {
+        ...heroSection,
+        subheading: educationSubheading(heroSection.subheading),
+      };
     }
 
     // Use site settings if available
@@ -81,7 +77,7 @@ const Landing = () => {
       return {
         slug: "landing-hero",
         heading: siteSettings.heroHeading,
-        subheading: siteSettings.heroSubheading ?? null,
+        subheading: educationSubheading(siteSettings.heroSubheading),
         ctaLabel: siteSettings.heroCtaLabel ?? null,
         ctaHref: siteSettings.heroCtaHref ?? null,
         backgroundMedia: siteSettings.heroBackgroundImage ? {
@@ -99,7 +95,7 @@ const Landing = () => {
     return {
       slug: FALLBACK_HERO_LANDING.slug,
       heading: FALLBACK_HERO_LANDING.heading,
-      subheading: FALLBACK_HERO_LANDING.subheading,
+      subheading: educationSubheading(FALLBACK_HERO_LANDING.subheading),
       ctaLabel: FALLBACK_HERO_LANDING.ctaLabel,
       ctaHref: FALLBACK_HERO_LANDING.ctaHref,
       backgroundMedia: FALLBACK_HERO_LANDING.backgroundMedia,
@@ -138,10 +134,6 @@ const Landing = () => {
       answer: item.a,
     }));
   }, [faqList]);
-
-  const event = useMemo(() => {
-    return featuredEvent ?? null;
-  }, [featuredEvent]);
 
   /** Heritage hero panel targets /heritage — never blank education home in studio mode. */
   const studioExclusive = studio && focus !== "heritageHero";
@@ -186,6 +178,9 @@ const Landing = () => {
       ) : null}
 
       <main className="flex flex-col pb-24 lg:pb-32">
+        {showRest ? <EducationTopLocaleSwitcher /> : null}
+        {showRest ? <CulturePdfLeadSection /> : null}
+        {showRest ? <AdinkraSymbolsListSection /> : null}
         {showRest ? (
           <div className="mx-auto mt-8 w-full max-w-6xl px-6">
             <AdZone placement="home_hero" />
@@ -195,6 +190,7 @@ const Landing = () => {
           <WhatWeDoSection
             offerings={offeringsList}
             mockupSrc={MEDIA_ASSETS.home.productLeaderMockup.src}
+            showLocaleToggle={false}
             style={
               studio
                 ? {
@@ -205,8 +201,6 @@ const Landing = () => {
             }
           />
         ) : null}
-
-        {showRest ? <VoicesThatStayedSection id="cultural-films" /> : null}
 
         {showRest ? <AboutSection /> : null}
 
@@ -224,33 +218,6 @@ const Landing = () => {
             }
           >
             <HomeFaqSection items={homeFaqItems} />
-          </div>
-        ) : null}
-
-        {showRest && event ? (
-          <div style={heroStudioCssVars(eventsHeroFrame) as CSSProperties}>
-          <FullBleedHero
-            imageSrc={event.heroMedia?.src ?? BRAND_IMAGES.eventsStoriesHero}
-            imageAlt={event.heroMedia?.alt ?? event.title ?? "Featured celebration"}
-            frame={eventsHeroFrame}
-          >
-            <div className="max-w-xl text-left">
-              <SectionHeader
-                eyebrow="Events"
-                title="Because their story deserves to be unforgettable."
-                description={
-                  event.description ??
-                  "Explore our featured celebration to see how we transform memories into immersive experiences."
-                }
-                variant="dark"
-              />
-              {SHOW_FEATURED_EVENT_EXPERIENCE_CTA ? (
-                <div className="mt-8">
-                  <CTAButton to={BEIZA_LINKS.marketing.memoirs} label="Experience" />
-                </div>
-              ) : null}
-            </div>
-          </FullBleedHero>
           </div>
         ) : null}
 
