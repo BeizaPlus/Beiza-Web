@@ -1,3 +1,4 @@
+import { useCallback, useState } from "react";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { InstagramReelPoster } from "@/components/landing/InstagramReelPoster";
 import { useDraggableScroll } from "@/hooks/useDraggableScroll";
@@ -36,7 +37,23 @@ function InstagramGlyph({ className }: { className?: string }) {
   );
 }
 
-function InstagramReelCard({ post }: { post: InstagramPost }) {
+function PlayGlyph() {
+  return (
+    <svg viewBox="0 0 24 24" className="ml-0.5 h-8 w-8 fill-white drop-shadow-md" aria-hidden>
+      <path d="M8 5v14l11-7z" />
+    </svg>
+  );
+}
+
+function InstagramReelCard({
+  post,
+  isActive,
+  onActivate,
+}: {
+  post: InstagramPost;
+  isActive: boolean;
+  onActivate: () => void;
+}) {
   const cinematic = isHistoryEpisode(post);
   const embedSrc = instagramEmbedSrc(post.url, post.id);
 
@@ -64,23 +81,36 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
         ) : null}
 
         <div className="absolute inset-0 z-10 overflow-hidden bg-black">
-          <iframe
-            key={embedSrc}
-            src={embedSrc}
-            title={`Instagram ${post.label}`}
-            loading="eager"
-            scrolling="no"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen"
-            allowFullScreen
-            className="pointer-events-auto absolute left-1/2 top-0 border-0 bg-black"
-            style={{
-              width: `${EMBED_WIDTH_PERCENT}%`,
-              height: `calc(${EMBED_WIDTH_PERCENT}% + ${EMBED_TOP_CROP_PX + EMBED_BOTTOM_CROP_PX}px)`,
-              transform: `translate(-50%, -${EMBED_TOP_CROP_PX}px) scale(${EMBED_SCALE_X}, ${EMBED_SCALE_Y})`,
-              transformOrigin: "top center",
-            }}
-          />
+          {isActive ? (
+            <iframe
+              key={embedSrc}
+              src={embedSrc}
+              title={`Instagram ${post.label}`}
+              loading="eager"
+              scrolling="no"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen"
+              allowFullScreen
+              className="pointer-events-auto absolute left-1/2 top-0 border-0 bg-black"
+              style={{
+                width: `${EMBED_WIDTH_PERCENT}%`,
+                height: `calc(${EMBED_WIDTH_PERCENT}% + ${EMBED_TOP_CROP_PX + EMBED_BOTTOM_CROP_PX}px)`,
+                transform: `translate(-50%, -${EMBED_TOP_CROP_PX}px) scale(${EMBED_SCALE_X}, ${EMBED_SCALE_Y})`,
+                transformOrigin: "top center",
+              }}
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={onActivate}
+              className="group absolute inset-0 flex cursor-pointer items-center justify-center bg-black/20 transition hover:bg-black/35"
+              aria-label={`Play ${post.label}`}
+            >
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-black/55 ring-1 ring-white/25 transition group-hover:scale-105 group-hover:bg-black/70">
+                <PlayGlyph />
+              </span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -110,13 +140,17 @@ type InstagramReelsSectionProps = {
 export function InstagramReelsSection({
   id = "history-reels",
   title = "Watch the full story episodes",
-  description = "Episodes load inline — scroll the rail or open any post on Instagram.",
+  description = "Tap play on an episode — only one plays at a time.",
   variant = "bare",
   posts = HISTORY_SERIES_EPISODES,
   className,
 }: InstagramReelsSectionProps) {
   const rowRef = useDraggableScroll();
   const isPanel = variant === "panel";
+  const [activePostId, setActivePostId] = useState<string | null>(null);
+  const activatePost = useCallback((postId: string) => {
+    setActivePostId(postId);
+  }, []);
 
   if (posts.length === 0) return null;
 
@@ -152,7 +186,12 @@ export function InstagramReelsSection({
             )}
           >
             {posts.map((post) => (
-              <InstagramReelCard key={post.id} post={post} />
+              <InstagramReelCard
+                key={post.id}
+                post={post}
+                isActive={activePostId === post.id}
+                onActivate={() => activatePost(post.id)}
+              />
             ))}
           </div>
         </div>
