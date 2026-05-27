@@ -146,13 +146,13 @@ export function WhatWeDoSection({
           <div
             className={cn(
               "mt-12 grid w-full grid-cols-1 gap-6",
-              `${LAYOUT_TW.tabletUp}:grid-cols-[58%_38%] ${LAYOUT_TW.tabletUp}:items-stretch ${LAYOUT_TW.tabletUp}:gap-[4%]`,
+              "min-[810px]:grid-cols-[58%_38%] min-[810px]:items-stretch min-[810px]:gap-[4%]",
             )}
           >
             <div
               className={cn(
                 "grid w-full grid-cols-1 gap-[4%] sm:auto-rows-fr",
-                `${LAYOUT_TW.tabletUp}:grid-cols-2`,
+                "min-[810px]:grid-cols-2",
               )}
             >
               {offerings
@@ -170,7 +170,7 @@ export function WhatWeDoSection({
             <div
               className={cn(
                 "relative min-h-[20rem] w-full overflow-hidden rounded-lg border border-white/10 sm:min-h-[24rem]",
-                `${LAYOUT_TW.tabletUp}:min-h-0 ${LAYOUT_TW.tabletUp}:h-full`,
+                "min-[810px]:min-h-0 min-[810px]:h-full",
               )}
               aria-label="Product preview"
             >

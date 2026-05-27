@@ -118,7 +118,7 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
             <div
               className={cn(
                 "hidden min-w-0 items-center gap-6",
-                `${LAYOUT_TW.tabletUp}:flex ${LAYOUT_TW.tabletUp}:gap-10`,
+                "min-[810px]:flex min-[810px]:gap-10",
               )}
             >
               {navLinks.map((link) => (
@@ -130,7 +130,7 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
               ))}
             </div>
 
-            <div className={cn("hidden shrink-0", `${LAYOUT_TW.tabletUp}:block`)}>
+            <div className={cn("hidden shrink-0", "min-[810px]:block")}>
               <Link to={CTA.href}>
                 <Button
                   className={cn(
@@ -145,7 +145,7 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
 
             <button
               type="button"
-              className={cn("shrink-0 text-white", `${LAYOUT_TW.tabletUp}:hidden`)}
+              className={cn("shrink-0 text-white", "min-[810px]:hidden")}
               aria-label={drawerOpen ? "Close menu" : "Open menu"}
               onClick={() => setDrawerOpen((o) => !o)}
             >
@@ -156,7 +156,7 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
       </nav>
 
       {drawerOpen ? (
-        <div className={cn("fixed inset-0 z-50", `${LAYOUT_TW.tabletUp}:hidden`)} role="dialog" aria-modal="true">
+        <div className={cn("fixed inset-0 z-50", "min-[810px]:hidden")} role="dialog" aria-modal="true">
           <button
             type="button"
             className="absolute inset-0 bg-black/80"

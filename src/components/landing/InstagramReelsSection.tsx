@@ -50,8 +50,8 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
     <article
       className={cn(
         "flex w-[min(88vw,280px)] shrink-0 snap-center flex-col",
-        `${LAYOUT_TW.tabletUp}:w-[min(44vw,300px)]`,
-        `${LAYOUT_TW.desktopUp}:w-[300px]`,
+        "min-[810px]:w-[min(44vw,300px)]",
+        "min-[1200px]:w-[300px]",
       )}
     >
       <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 bg-black">
@@ -166,7 +166,7 @@ export function InstagramReelsSection({
               "mt-7 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2",
               "pl-[max(0px,calc((100vw-min(88vw,280px))/2-var(--beiza-site-padding-x,1.25rem)))]",
               "pr-[max(1rem,var(--beiza-site-padding-x,1.25rem))]",
-              `${LAYOUT_TW.tabletUp}:gap-4 ${LAYOUT_TW.tabletUp}:pl-0 ${LAYOUT_TW.tabletUp}:pr-0`,
+              "min-[810px]:gap-4 min-[810px]:pl-0 min-[810px]:pr-0",
               "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
             )}
           >

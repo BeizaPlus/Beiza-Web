@@ -24,7 +24,7 @@ export function ArmAnchorMenu({ links, className }: Props) {
   }
 
   return (
-    <div className={cn("relative hidden", `${LAYOUT_TW.phoneOnly}:block`, className)}>
+    <div className={cn("relative hidden", "max-[809px]:block", className)}>
       <button
         type="button"
         className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/80 text-white backdrop-blur-sm"
