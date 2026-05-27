@@ -1,6 +1,8 @@
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { BeizaCircleMark } from "@/components/family-trees/BeizaCircleMark";
+import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { ADINKRA_SYMBOLS } from "@/lib/adinkra";
+import { ArrowUpRight, Mail } from "lucide-react";
 
 type CulturalSymbol = {
   id: string;
@@ -20,7 +22,7 @@ export function AdinkraSymbolsListSection() {
     // Ghana first: this is the “obviously Ghana” anchor before Adinkra.
     GHANA_BLACK_STAR,
     ...ADINKRA_SYMBOLS.map((s) => ({ id: s.id, name: s.name, meaning: s.meaning })),
-  ];
+  ].slice(0, 9);
 
   return (
     <section id="symbols" className="scroll-mt-24 mx-auto w-full max-w-6xl px-6">
@@ -34,7 +36,7 @@ export function AdinkraSymbolsListSection() {
         />
 
         <div
-          className="mt-7 grid gap-5 min-[810px]:grid-cols-2 min-[1200px]:grid-cols-4"
+          className="mt-7 grid gap-5 min-[640px]:grid-cols-2 min-[1200px]:grid-cols-4"
         >
           {symbols.map((symbol) => (
             <article key={symbol.id} className="min-h-[88px] p-1">
@@ -49,6 +51,25 @@ export function AdinkraSymbolsListSection() {
               </div>
             </article>
           ))}
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center gap-3">
+          <a
+            href={BEIZA_LINKS.marketing.blog}
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:border-[#E6A817]/60 hover:text-[#E6A817]"
+            aria-label="Read more on the Beiza blog"
+          >
+            Read more
+            <ArrowUpRight className="h-4 w-4" aria-hidden />
+          </a>
+          <a
+            href="#culture-symbol-pdfs"
+            className="inline-flex items-center gap-2 rounded-full border border-[#E6A817]/35 bg-[#E6A817]/10 px-4 py-2 text-sm font-semibold text-[#f5c518] transition hover:bg-[#E6A817]/20"
+            aria-label="Join email list to download full guides"
+          >
+            Email list for full download
+            <Mail className="h-4 w-4" aria-hidden />
+          </a>
         </div>
       </div>
     </section>
