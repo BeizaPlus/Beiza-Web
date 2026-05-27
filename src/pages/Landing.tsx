@@ -15,7 +15,7 @@ import { copyOffsetStyle } from "@/lib/copyLayoutOffset";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { saveStudioState, studioCssVars } from "@/components/dev/landingLayoutStudioState";
-import { BRAND_IMAGES, HERO_OVERLAY_GRADIENT } from "@/lib/brandImages";
+import { BRAND_IMAGES } from "@/lib/brandImages";
 import { resolveHeroBackgroundSrc } from "@/lib/resolveHeroImage";
 import { HomeFaqSection } from "@/components/framer/HomeFaqSection";
 import type { FaqAccordionEntry } from "@/components/framer/FaqAccordionGroup";
@@ -173,7 +173,6 @@ const Landing = () => {
           )}
           backgroundPosition={`${studioState.hero.posX}% ${studioState.hero.posY}%`}
           backgroundScale={studioState.hero.scale}
-          overlayStyle={{ background: HERO_OVERLAY_GRADIENT }}
           copyOffsetStyle={copyOffsetStyle({
             offsetX: studioState.hero.copyOffsetX,
             offsetY: studioState.hero.copyOffsetY,
@@ -182,10 +181,14 @@ const Landing = () => {
       ) : null}
 
       <main className="flex flex-col pb-24 lg:pb-32">
-        {showRest ? (
-          <InstagramReelsSection id="cultural-films" variant="bare" className="mt-8 md:mt-12" />
-        ) : null}
         {showLocaleRail ? <EducationTopLocaleSwitcher /> : null}
+        {showRest ? (
+          <InstagramReelsSection
+            id="cultural-films"
+            variant="bare"
+            className="mt-6 min-[810px]:mt-8"
+          />
+        ) : null}
         {showRest ? <AdinkraSymbolsListSection /> : null}
         {showRest ? <CulturePdfLeadSection /> : null}
         {showRest ? (

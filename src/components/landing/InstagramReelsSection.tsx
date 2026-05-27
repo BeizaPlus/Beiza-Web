@@ -3,6 +3,8 @@ import { SectionHeader } from "@/components/framer/SectionHeader";
 import { InstagramReelPoster } from "@/components/landing/InstagramReelPoster";
 import { useDraggableScroll } from "@/hooks/useDraggableScroll";
 import { HISTORY_SERIES_EPISODES, type HistorySeriesEpisode } from "@/lib/instagramHistorySeries";
+import { instagramEmbedSrc } from "@/lib/instagramEmbed";
+import { LAYOUT_TW } from "@/lib/layoutBreakpoints";
 import { cn } from "@/lib/utils";
 
 export type InstagramPost = {
@@ -13,15 +15,11 @@ export type InstagramPost = {
   posterSrc?: string;
 };
 
-/** Crop Instagram embed chrome without internal scrollbars. */
+/** Crop Instagram header chrome on embed player. */
 const EMBED_TOP_CROP_PX = 54;
 
 function isHistoryEpisode(post: InstagramPost): post is HistorySeriesEpisode {
   return "eraLabel" in post && "backdrop" in post;
-}
-
-function embedUrl(url: string) {
-  return `${url.replace(/\/$/, "")}/embed/captioned/`;
 }
 
 function InstagramGlyph({ className }: { className?: string }) {
@@ -46,29 +44,33 @@ function PlayGlyph() {
 function InstagramReelCard({ post }: { post: InstagramPost }) {
   const [playing, setPlaying] = useState(false);
   const cinematic = isHistoryEpisode(post);
+  const embedSrc = instagramEmbedSrc(post.url, post.id);
 
   return (
-    <article className="flex w-[min(85vw,300px)] shrink-0 snap-start flex-col sm:w-[min(42vw,300px)]">
-      <div
-        className={cn(
-          "relative aspect-[4/5] overflow-hidden rounded-2xl border bg-black",
-          cinematic ? "border-white/10" : "border-white/10",
-        )}
-      >
+    <article
+      className={cn(
+        "flex w-[min(88vw,280px)] shrink-0 snap-center flex-col",
+        `${LAYOUT_TW.tabletUp}:w-[min(44vw,300px)]`,
+        `${LAYOUT_TW.desktopUp}:w-[300px]`,
+      )}
+    >
+      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 bg-black">
         {playing ? (
-          <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden bg-black">
             <iframe
-              src={embedUrl(post.url)}
+              key={embedSrc}
+              src={embedSrc}
               title={`Instagram ${post.label}`}
-              loading="lazy"
+              loading="eager"
               scrolling="no"
               referrerPolicy="strict-origin-when-cross-origin"
               allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen"
               allowFullScreen
-              className="pointer-events-auto absolute left-0 top-0 w-full border-0"
+              className="pointer-events-auto absolute left-1/2 top-0 border-0"
               style={{
+                width: "min(340px, 100%)",
                 height: `calc(100% + ${EMBED_TOP_CROP_PX}px)`,
-                transform: `translateY(-${EMBED_TOP_CROP_PX}px)`,
+                transform: `translate(-50%, -${EMBED_TOP_CROP_PX}px)`,
               }}
             />
           </div>
@@ -76,7 +78,7 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
           <button
             type="button"
             onClick={() => setPlaying(true)}
-            className="absolute inset-0 flex w-full items-center justify-center"
+            className="group absolute inset-0 flex w-full touch-manipulation items-center justify-center"
             aria-label={`Play ${post.label}`}
           >
             {cinematic ? (
@@ -94,7 +96,7 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
               <div className="absolute inset-0 bg-[#0a0a0a]" aria-hidden />
             )}
 
-            <span className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/80 bg-black/50 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-[3px] transition group-hover:scale-105">
+            <span className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/80 bg-black/50 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-[3px] transition group-active:scale-95 min-[810px]:group-hover:scale-105">
               <PlayGlyph />
             </span>
           </button>
@@ -104,8 +106,8 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
       <a
         href={post.url}
         target="_blank"
-        rel="noreferrer"
-        className="mt-3 flex justify-center text-[#E6A817] transition hover:text-[#f0bc3a]"
+        rel="noreferrer noopener"
+        className="mt-3 flex min-h-[44px] items-center justify-center text-[#E6A817] transition hover:text-[#f0bc3a]"
         aria-label={`Open ${post.label} on Instagram`}
       >
         <InstagramGlyph className="h-5 w-5" />
@@ -119,8 +121,8 @@ type InstagramReelsSectionProps = {
   title?: string;
   description?: string;
   variant?: "panel" | "bare";
-  /** Required — education home passes {@link HISTORY_SERIES_EPISODES}; never reuse on farewell. */
-  posts: InstagramPost[];
+  /** Education home uses {@link HISTORY_SERIES_EPISODES}. */
+  posts?: InstagramPost[];
   className?: string;
 };
 
@@ -129,7 +131,7 @@ export function InstagramReelsSection({
   title = "Watch the full story episodes",
   description = "Tap play to watch each episode here, or open the post on Instagram.",
   variant = "bare",
-  posts,
+  posts = HISTORY_SERIES_EPISODES,
   className,
 }: InstagramReelsSectionProps) {
   const rowRef = useDraggableScroll();
@@ -147,7 +149,7 @@ export function InstagramReelsSection({
         <div
           className={cn(
             isPanel && "rounded-[24px] border border-white/10 bg-black px-4 py-10 md:px-6",
-            !isPanel && "py-8 md:py-10",
+            !isPanel && "py-8 min-[810px]:py-10",
           )}
         >
           <SectionHeader
@@ -161,7 +163,10 @@ export function InstagramReelsSection({
             ref={rowRef}
             data-draggable
             className={cn(
-              "mt-7 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-1",
+              "mt-7 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2",
+              "pl-[max(0px,calc((100vw-min(88vw,280px))/2-var(--beiza-site-padding-x,1.25rem)))]",
+              "pr-[max(1rem,var(--beiza-site-padding-x,1.25rem))]",
+              `${LAYOUT_TW.tabletUp}:gap-4 ${LAYOUT_TW.tabletUp}:pl-0 ${LAYOUT_TW.tabletUp}:pr-0`,
               "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
             )}
           >
