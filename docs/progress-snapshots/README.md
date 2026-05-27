@@ -1,5 +1,18 @@
 # Beiza website progress snapshots
 
+## Revert checkpoints (git tags)
+
+| Tag | Doc | When |
+|-----|-----|------|
+| `checkpoint/instagram-reels-2026-05-27` | [checkpoints/instagram-reels-2026-05-27.md](./checkpoints/instagram-reels-2026-05-27.md) | 12 Chloe vs History reels, 9:16 cards, desktop breakpoints |
+
+```bash
+git fetch origin --tags
+git checkout checkpoint/instagram-reels-2026-05-27
+```
+
+---
+
 Full-page PNG captures to track design and copy iteration over time.
 
 | File | Source |
