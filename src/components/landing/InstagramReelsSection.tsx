@@ -52,7 +52,7 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
       <div
         className={cn(
           "relative aspect-[4/5] overflow-hidden rounded-2xl border bg-black",
-          cinematic ? "border-[#E6A817]/25 shadow-[0_20px_50px_-24px_rgba(230,168,23,0.45)]" : "border-white/10",
+          cinematic ? "border-white/10" : "border-white/10",
         )}
       >
         {playing ? (
@@ -62,7 +62,9 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
               title={`Instagram ${post.label}`}
               loading="lazy"
               scrolling="no"
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen"
+              allowFullScreen
               className="pointer-events-auto absolute left-0 top-0 w-full border-0"
               style={{
                 height: `calc(100% + ${EMBED_TOP_CROP_PX}px)`,
