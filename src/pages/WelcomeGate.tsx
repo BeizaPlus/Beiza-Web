@@ -936,7 +936,7 @@ export default function WelcomeGate() {
         >
           <motion.div variants={heroVariants} className="flex flex-col items-center">
             <BeizaLogoLink
-              variant={studio.useMascot ? "full" : "wordmark"}
+              variant="wordmark"
               logoHeightRem={logoHeightRem}
               className="relative z-[10] mx-auto mb-2"
               mascotClassName="object-contain"
