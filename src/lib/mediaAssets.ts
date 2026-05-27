@@ -28,6 +28,11 @@ export const MEDIA_ASSETS = {
       alt: "Adinkra heritage — hands holding legacy symbols for intentional family storytelling",
       seoTitle: "Build intentional legacy — Adinkra hero",
     },
+    historySeriesReelTexture: {
+      src: I("beiza-history-series-reel-texture.png"),
+      alt: "Beiza history series — cinematic reel thumbnail texture",
+      seoTitle: "Beiza history series reel texture",
+    },
     productLeaderMockup: {
       src: I("beiza-storyworth-home-product-leader-mockup.png"),
       alt: "Beiza legacy product — family circle and memoir tools like Storyworth for generations",

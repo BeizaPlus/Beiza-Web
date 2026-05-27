@@ -13,7 +13,9 @@ export type HistorySeriesEpisode = InstagramPost & {
   glow: string;
 };
 
-const REEL_TEXTURE = MEDIA_ASSETS.home.historySeriesReelTexture.src;
+const REEL_TEXTURE =
+  MEDIA_ASSETS.home.historySeriesReelTexture?.src ??
+  "/images/beiza-history-series-reel-texture.png";
 
 /** Episode 0 — OpenAI poster trial (approve before batch-generating the rest). */
 const REEL_EP00_POSTER = "/images/beiza-history-series-reel-ep00-dvgzckrcje8.png";
