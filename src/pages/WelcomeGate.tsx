@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import { BookOpen, Feather, GraduationCap } from "lucide-react";
 
 import { WelcomePathCard } from "@/components/welcome/WelcomePathCard";
+import { WelcomeExplorePrompt } from "@/components/welcome/WelcomeExplorePrompt";
 
 import { WelcomeLangSwitcher } from "@/components/welcome/WelcomeLangSwitcher";
 import { WelcomeLocaleRail } from "@/components/welcome/WelcomeLocaleRail";
@@ -552,6 +553,16 @@ function WelcomeStudioPanel({
         <StudioAccordionSection value="layout" title="Page layout">
           <StudioSlider
             compact
+            label="Header top space (rem)"
+            value={studio.headerTopPaddingRem}
+            defaultValue={DEFAULT_STUDIO_GLOBAL.headerTopPaddingRem}
+            min={0.5}
+            max={6}
+            step={0.125}
+            onChange={(v) => patchGlobal({ headerTopPaddingRem: v })}
+          />
+          <StudioSlider
+            compact
             label="Logo scale"
             value={studio.logoScale}
             defaultValue={DEFAULT_STUDIO_GLOBAL.logoScale}
@@ -559,6 +570,56 @@ function WelcomeStudioPanel({
             max={3}
             step={0.05}
             onChange={(v) => patchGlobal({ logoScale: v })}
+          />
+          <StudioSlider
+            compact
+            label="Tagline (px)"
+            value={studio.taglineFontPx}
+            defaultValue={DEFAULT_STUDIO_GLOBAL.taglineFontPx}
+            min={7}
+            max={14}
+            step={1}
+            onChange={(v) => patchGlobal({ taglineFontPx: v })}
+          />
+          <StudioSlider
+            compact
+            label="Subheading (rem)"
+            value={studio.subheadingFontRem}
+            defaultValue={DEFAULT_STUDIO_GLOBAL.subheadingFontRem}
+            min={0.75}
+            max={1.5}
+            step={0.0625}
+            onChange={(v) => patchGlobal({ subheadingFontRem: v })}
+          />
+          <StudioSlider
+            compact
+            label="Card title (rem)"
+            value={studio.cardTitleRem}
+            defaultValue={DEFAULT_STUDIO_GLOBAL.cardTitleRem}
+            min={0.85}
+            max={1.75}
+            step={0.05}
+            onChange={(v) => patchGlobal({ cardTitleRem: v })}
+          />
+          <StudioSlider
+            compact
+            label="Card body (rem)"
+            value={studio.cardSubtitleRem}
+            defaultValue={DEFAULT_STUDIO_GLOBAL.cardSubtitleRem}
+            min={0.65}
+            max={1}
+            step={0.025}
+            onChange={(v) => patchGlobal({ cardSubtitleRem: v })}
+          />
+          <StudioSlider
+            compact
+            label="Card button (rem)"
+            value={studio.cardMetaRem}
+            defaultValue={DEFAULT_STUDIO_GLOBAL.cardMetaRem}
+            min={0.55}
+            max={0.85}
+            step={0.025}
+            onChange={(v) => patchGlobal({ cardMetaRem: v })}
           />
           <StudioSlider
             compact
@@ -817,6 +878,14 @@ export default function WelcomeGate() {
 
   const isLight = theme === "light";
   const logoHeightRem = 2 * studio.logoScale;
+  const welcomeTypographyStyle = {
+    "--welcome-header-pt": `${studio.headerTopPaddingRem}rem`,
+    "--welcome-tagline-px": `${studio.taglineFontPx}px`,
+    "--welcome-subheading-rem": `${studio.subheadingFontRem}rem`,
+    "--welcome-card-title-rem": `${studio.cardTitleRem}rem`,
+    "--welcome-card-subtitle-rem": `${studio.cardSubtitleRem}rem`,
+    "--welcome-card-meta-rem": `${studio.cardMetaRem}rem`,
+  } as CSSProperties;
 
   if (!ready) {
     return <div className="h-[100dvh] bg-black" />;
@@ -829,6 +898,7 @@ export default function WelcomeGate() {
         "flex h-[100dvh] max-h-[100dvh] min-h-0 flex-col overflow-hidden transition-colors duration-300",
         isLight ? "bg-[#f7f6f3] text-[#1a1816]" : "bg-black text-white",
       )}
+      style={welcomeTypographyStyle}
     >
       <WelcomeLocaleRail
         isLight={isLight}
@@ -844,7 +914,7 @@ export default function WelcomeGate() {
 
       <div
         className={cn(
-          "relative z-10 mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col siteBounds pb-4 pt-2",
+          "relative z-10 mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col siteBounds pb-4",
           "max-[809px]:px-3 min-[810px]:pb-6",
         )}
       >
@@ -856,7 +926,10 @@ export default function WelcomeGate() {
           transition={{ duration: 0.38, ease: "easeOut" }}
         >
         <motion.header
-          className="mx-auto flex w-full max-w-4xl shrink-0 flex-col items-center px-2 text-center max-[809px]:pt-1 min-[810px]:px-4"
+          className="mx-auto flex w-full max-w-4xl shrink-0 flex-col items-center px-2 text-center min-[810px]:px-4"
+          style={{
+            paddingTop: `max(${studio.headerTopPaddingRem}rem, env(safe-area-inset-top, 0px))`,
+          }}
           initial="hidden"
           animate="show"
           variants={{ hidden: {}, show: {} }}
@@ -871,9 +944,10 @@ export default function WelcomeGate() {
             />
             <p
               className={cn(
-                "text-[10px] font-medium uppercase tracking-[0.32em]",
+                "font-medium uppercase tracking-[0.32em]",
                 isLight ? "text-[#1a1816]/55" : "text-white/60",
               )}
+              style={{ fontSize: "var(--welcome-tagline-px)" }}
             >
               {copy.tagline}
             </p>
@@ -881,9 +955,10 @@ export default function WelcomeGate() {
           <motion.p
             variants={subtitleVariants}
             className={cn(
-              "mx-auto mt-3 max-w-2xl px-1 font-serif text-base font-normal italic leading-relaxed sm:mt-6 sm:text-lg md:text-xl",
+              "mx-auto mt-3 max-w-2xl px-1 font-serif font-normal italic leading-relaxed sm:mt-5",
               isLight ? "text-[#1a1816]/90" : "text-white/95",
             )}
+            style={{ fontSize: "var(--welcome-subheading-rem)" }}
           >
             {copy.subheading}
           </motion.p>
@@ -990,6 +1065,8 @@ export default function WelcomeGate() {
         </main>
         </motion.div>
       </div>
+
+      <WelcomeExplorePrompt isLight={isLight} />
 
       {studioEnabled && (
         <WelcomeStudioPanel store={store} locale={locale} studio={studio} onStoreChange={setStore} />

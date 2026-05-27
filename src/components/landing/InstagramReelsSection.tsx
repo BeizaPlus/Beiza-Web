@@ -1,30 +1,27 @@
 import { useState } from "react";
 import { SectionHeader } from "@/components/framer/SectionHeader";
+import { InstagramReelPoster } from "@/components/landing/InstagramReelPoster";
 import { useDraggableScroll } from "@/hooks/useDraggableScroll";
+import { HISTORY_SERIES_EPISODES, type HistorySeriesEpisode } from "@/lib/instagramHistorySeries";
 import { cn } from "@/lib/utils";
 
 export type InstagramPost = {
   id: string;
   url: string;
   label: string;
-  /** Optional poster — drop in later; click still loads the embed. */
+  /** Optional poster image beneath the cinematic frame */
   posterSrc?: string;
 };
 
 /** Crop Instagram embed chrome without internal scrollbars. */
 const EMBED_TOP_CROP_PX = 54;
 
-const INSTAGRAM_POSTS: InstagramPost[] = [
-  { id: "DU8xKfXDnxl", url: "https://www.instagram.com/p/DU8xKfXDnxl/", label: "Episode 0" },
-  { id: "DYurOfXuasO", url: "https://www.instagram.com/p/DYurOfXuasO/", label: "Episode 1" },
-  { id: "DYIJNV7O-s1", url: "https://www.instagram.com/p/DYIJNV7O-s1/", label: "Episode 2" },
-  { id: "DX4pN1wOgAy", url: "https://www.instagram.com/p/DX4pN1wOgAy/", label: "Episode 3" },
-  { id: "DXjMHBoDkIf", url: "https://www.instagram.com/p/DXjMHBoDkIf/", label: "Episode 4" },
-  { id: "DWmbV_QDjWK", url: "https://www.instagram.com/p/DWmbV_QDjWK/", label: "Episode 5" },
-];
+function isHistoryEpisode(post: InstagramPost): post is HistorySeriesEpisode {
+  return "eraLabel" in post && "backdrop" in post;
+}
 
 function embedUrl(url: string) {
-  return `${url.replace(/\/$/, "")}/embed/`;
+  return `${url.replace(/\/$/, "")}/embed/captioned/`;
 }
 
 function InstagramGlyph({ className }: { className?: string }) {
@@ -48,10 +45,16 @@ function PlayGlyph() {
 
 function InstagramReelCard({ post }: { post: InstagramPost }) {
   const [playing, setPlaying] = useState(false);
+  const cinematic = isHistoryEpisode(post);
 
   return (
     <article className="flex w-[min(85vw,300px)] shrink-0 snap-start flex-col sm:w-[min(42vw,300px)]">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-2xl border border-white/10 bg-black">
+      <div
+        className={cn(
+          "relative aspect-[4/5] overflow-hidden rounded-2xl border bg-black",
+          cinematic ? "border-[#E6A817]/25 shadow-[0_20px_50px_-24px_rgba(230,168,23,0.45)]" : "border-white/10",
+        )}
+      >
         {playing ? (
           <div className="absolute inset-0 overflow-hidden">
             <iframe
@@ -74,16 +77,22 @@ function InstagramReelCard({ post }: { post: InstagramPost }) {
             className="absolute inset-0 flex w-full items-center justify-center"
             aria-label={`Play ${post.label}`}
           >
-            {post.posterSrc ? (
-              <img
-                src={post.posterSrc}
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover"
-              />
+            {cinematic ? (
+              <InstagramReelPoster post={post} />
+            ) : post.posterSrc ? (
+              <>
+                <img
+                  src={post.posterSrc}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/35" aria-hidden />
+              </>
             ) : (
               <div className="absolute inset-0 bg-[#0a0a0a]" aria-hidden />
             )}
-            <span className="relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/75 bg-black/45 backdrop-blur-[2px]">
+
+            <span className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full border-2 border-white/80 bg-black/50 shadow-[0_8px_32px_rgba(0,0,0,0.5)] backdrop-blur-[3px] transition group-hover:scale-105">
               <PlayGlyph />
             </span>
           </button>
@@ -107,22 +116,24 @@ type InstagramReelsSectionProps = {
   id?: string;
   title?: string;
   description?: string;
-  /** Farewell: inset panel. Education home: bare reel rail only. */
   variant?: "panel" | "bare";
-  posts?: InstagramPost[];
+  /** Required — education home passes {@link HISTORY_SERIES_EPISODES}; never reuse on farewell. */
+  posts: InstagramPost[];
   className?: string;
 };
 
 export function InstagramReelsSection({
   id = "history-reels",
   title = "Watch the full story episodes",
-  description = "Playable reels from the history channel. Swipe or drag through each episode, then open any post directly on Instagram.",
+  description = "Tap play to watch each episode here, or open the post on Instagram.",
   variant = "bare",
-  posts = INSTAGRAM_POSTS,
+  posts,
   className,
 }: InstagramReelsSectionProps) {
   const rowRef = useDraggableScroll();
   const isPanel = variant === "panel";
+
+  if (posts.length === 0) return null;
 
   return (
     <section id={id} className={cn("w-full scroll-mt-24", className)}>

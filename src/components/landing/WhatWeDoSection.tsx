@@ -63,6 +63,14 @@ function isLegacyLocale(value: string | null): value is LegacyLocale {
   return value === "global" || value === "ghana" || value === "spanish" || value === "french";
 }
 
+/** Marketing offering — not shown on education home. */
+function isLegacyGalleriesOffering(item: OfferingCard): boolean {
+  return (
+    item.id === "fallback-offering-galleries" ||
+    item.title.trim().toLowerCase() === "legacy galleries"
+  );
+}
+
 type WhatWeDoSectionProps = {
   offerings: OfferingCard[];
   mockupSrc?: string | null;
@@ -133,16 +141,6 @@ export function WhatWeDoSection({
         {educationSimple ? (
           <div className="mx-auto mt-10 w-full max-w-4xl">
             <RecordStationCuriosityLoop />
-            <ul className="mt-8 grid gap-3 text-center sm:grid-cols-3 sm:text-left">
-              {offerings.slice(0, 3).map((item) => (
-                <li key={item.id} className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3">
-                  <p className="text-sm font-medium text-white">{item.title}</p>
-                  {item.description ? (
-                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{item.description}</p>
-                  ) : null}
-                </li>
-              ))}
-            </ul>
           </div>
         ) : (
           <div
@@ -157,14 +155,16 @@ export function WhatWeDoSection({
                 `${LAYOUT_TW.tabletUp}:grid-cols-2`,
               )}
             >
-              {offerings.map((feature) => (
-                <FeatureCard
-                  key={feature.id}
-                  title={feature.title}
-                  description={feature.description ?? ""}
-                  icon={feature.icon}
-                />
-              ))}
+              {offerings
+                .filter((feature) => !isLegacyGalleriesOffering(feature))
+                .map((feature) => (
+                  <FeatureCard
+                    key={feature.id}
+                    title={feature.title}
+                    description={feature.description ?? ""}
+                    icon={feature.icon}
+                  />
+                ))}
             </div>
 
             <div

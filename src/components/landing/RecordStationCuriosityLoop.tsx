@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 const FRAMES = [
   MEDIA_ASSETS.record.ghanaMarmah,
   MEDIA_ASSETS.record.studioLandscape,
-  MEDIA_ASSETS.offerings.legacyGalleries,
 ] as const;
 
 const CYCLE_MS = 5200;
