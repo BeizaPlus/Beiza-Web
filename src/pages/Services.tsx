@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FeatureCard } from "@/components/framer/FeatureCard";
@@ -74,7 +73,6 @@ const Services = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
       <main className="space-y-24 pb-24 pt-28 lg:space-y-32 lg:pb-32">
         <section className="mx-auto max-w-6xl px-6 text-center">
           <SectionHeader

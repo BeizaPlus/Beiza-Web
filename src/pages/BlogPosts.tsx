@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { Footer } from "@/components/Footer";
-import { Navigation } from "@/components/Navigation";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { useBlogPosts, type BlogPost } from "@/hooks/usePublicContent";
 import { AdZone } from "@/components/AdZone";
@@ -61,7 +60,6 @@ const BlogPosts = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
       <main className="flex flex-col pb-24 pt-4 lg:pb-32">
         <section className="mx-auto max-w-4xl px-6 py-8 lg:py-12">
           <SectionHeader

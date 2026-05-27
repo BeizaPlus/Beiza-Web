@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { CircleCardVisual } from "@/components/family-trees/CircleCardVisual";
 import { usePublicFamilyCircles } from "@/hooks/useFamilyTreesDirectory";
@@ -19,7 +18,6 @@ export default function FamilyTreesDirectoryPage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navigation />
       <main className={`${marketingSection} border-t border-[#1a1a1a]`}>
         <div className={marketingContainer}>
           <p className="text-eyebrow text-[#555555]">PRIVATE CIRCLES</p>

@@ -20,7 +20,7 @@ export function StudioModeBanner() {
   };
 
   return (
-    <div className="pointer-events-none fixed left-0 right-0 top-[var(--record-site-nav-h,4.5rem)] z-[55] flex justify-center px-2">
+    <div className="pointer-events-none fixed left-0 right-0 top-[var(--site-header-h,5.5rem)] z-[55] flex justify-center px-2">
       <div className="pointer-events-auto flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-primary/40 bg-black/90 px-3 py-1.5 font-manrope text-[10px] text-white/90 shadow-lg backdrop-blur-sm">
         <span className="font-semibold uppercase tracking-wide text-primary">Studio</span>
         <span className="text-white/50">·</span>

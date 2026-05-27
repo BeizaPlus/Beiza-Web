@@ -28,7 +28,7 @@ export function useLayoutStudioBreakpoint(): LayoutStudioBreakpoint {
   return breakpoint;
 }
 
-/** True only on phone tier (≤809px) — record/welcome compact layouts */
+/** True only on phone tier (≤639px) — record/welcome compact layouts */
 export function useLayoutStudioPhone(): boolean {
   const bp = useLayoutStudioBreakpoint();
   return bp === "phone";

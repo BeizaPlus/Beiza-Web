@@ -1,22 +1,22 @@
 {
-  "base": "http://127.0.0.1:8081",
+  "base": "http://127.0.0.1:8080",
   "stamp": "2026-05-27",
-  "passed": 48,
-  "failed": 1,
-  "total": 49,
+  "passed": 0,
+  "failed": 48,
+  "total": 48,
   "results": [
     {
       "path": "/",
       "label": "Welcome gate",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
           "ok": true,
           "msg": "HTTP 200"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -27,22 +27,22 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/welcome",
+      "finalUrl": "/",
       "screenshot": "01-root.png",
       "errors": []
     },
     {
       "path": "/welcome",
       "label": "Welcome alias",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -60,15 +60,15 @@
     {
       "path": "/home",
       "label": "Education home",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -86,19 +86,19 @@
     {
       "path": "/education",
       "label": "Education redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /home"
+          "ok": false,
+          "msg": "Expected redirect to /home, got /education"
         },
         {
           "ok": true,
@@ -109,22 +109,22 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/home",
+      "finalUrl": "/education",
       "screenshot": "04-education.png",
       "errors": []
     },
     {
       "path": "/education/story-questions",
       "label": "Story questions",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -142,19 +142,19 @@
     {
       "path": "/gallery",
       "label": "Gallery redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /circle"
+          "ok": false,
+          "msg": "Expected redirect to /circle, got /gallery"
         },
         {
           "ok": true,
@@ -165,26 +165,26 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/circle",
+      "finalUrl": "/gallery",
       "screenshot": "06-gallery.png",
       "errors": []
     },
     {
       "path": "/vault",
       "label": "Vault redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /legacy/vault"
+          "ok": false,
+          "msg": "Expected redirect to /legacy/vault, got /vault"
         },
         {
           "ok": true,
@@ -195,26 +195,26 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/legacy/vault",
+      "finalUrl": "/vault",
       "screenshot": "07-vault.png",
       "errors": []
     },
     {
       "path": "/record",
       "label": "Record redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /legacy/record"
+          "ok": false,
+          "msg": "Expected redirect to /legacy/record, got /record"
         },
         {
           "ok": true,
@@ -225,22 +225,22 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/legacy/record",
+      "finalUrl": "/record",
       "screenshot": "08-record.png",
       "errors": []
     },
     {
       "path": "/recover",
       "label": "Recover",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -258,15 +258,15 @@
     {
       "path": "/circle",
       "label": "Circle directory",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -284,19 +284,19 @@
     {
       "path": "/family-trees",
       "label": "Family trees redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /circle"
+          "ok": false,
+          "msg": "Expected redirect to /circle, got /family-trees"
         },
         {
           "ok": true,
@@ -307,22 +307,22 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/circle",
+      "finalUrl": "/family-trees",
       "screenshot": "11-family-trees.png",
       "errors": []
     },
     {
       "path": "/contact",
       "label": "Contact",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -340,15 +340,15 @@
     {
       "path": "/events",
       "label": "Events",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -366,15 +366,15 @@
     {
       "path": "/blog",
       "label": "Blog index",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -392,15 +392,15 @@
     {
       "path": "/memoirs",
       "label": "Memoirs index",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -418,15 +418,15 @@
     {
       "path": "/pricing",
       "label": "Pricing",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -444,15 +444,15 @@
     {
       "path": "/vault/explore",
       "label": "Vault explore",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -470,15 +470,15 @@
     {
       "path": "/download",
       "label": "Download",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -496,15 +496,15 @@
     {
       "path": "/order-confirmation",
       "label": "Order confirmation",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -522,15 +522,15 @@
     {
       "path": "/heritage",
       "label": "Heritage legacy landing",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -548,15 +548,15 @@
     {
       "path": "/farewell",
       "label": "Farewell heritage",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -574,19 +574,19 @@
     {
       "path": "/white-swan",
       "label": "White swan redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /farewell"
+          "ok": false,
+          "msg": "Expected redirect to /farewell, got /white-swan"
         },
         {
           "ok": true,
@@ -597,26 +597,26 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/farewell",
+      "finalUrl": "/white-swan",
       "screenshot": "22-white-swan.png",
       "errors": []
     },
     {
       "path": "/booklet",
       "label": "Booklet redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /memoirs"
+          "ok": false,
+          "msg": "Expected redirect to /memoirs, got /booklet"
         },
         {
           "ok": true,
@@ -627,26 +627,26 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/memoirs",
+      "finalUrl": "/booklet",
       "screenshot": "23-booklet.png",
       "errors": []
     },
     {
       "path": "/packet",
       "label": "Packet redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /legacy/family"
+          "ok": false,
+          "msg": "Expected redirect to /legacy/family, got /packet"
         },
         {
           "ok": true,
@@ -657,26 +657,26 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/legacy/family",
+      "finalUrl": "/packet",
       "screenshot": "24-packet.png",
       "errors": []
     },
     {
       "path": "/services",
       "label": "Services redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /contact"
+          "ok": false,
+          "msg": "Expected redirect to /contact, got /services"
         },
         {
           "ok": true,
@@ -687,22 +687,22 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/contact",
+      "finalUrl": "/services",
       "screenshot": "25-services.png",
       "errors": []
     },
     {
       "path": "/legacy",
       "label": "Legacy home",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -720,15 +720,15 @@
     {
       "path": "/legacy/record",
       "label": "Legacy record",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -746,15 +746,15 @@
     {
       "path": "/legacy/vault",
       "label": "Legacy vault",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -772,15 +772,15 @@
     {
       "path": "/legacy/family",
       "label": "Legacy family invite",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -798,15 +798,15 @@
     {
       "path": "/legacy/circle",
       "label": "Legacy circle",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -824,15 +824,15 @@
     {
       "path": "/in/heritage",
       "label": "IN heritage",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -850,15 +850,15 @@
     {
       "path": "/in/farewell",
       "label": "IN farewell",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -876,15 +876,15 @@
     {
       "path": "/la/heritage",
       "label": "LA heritage",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -902,15 +902,15 @@
     {
       "path": "/la/farewell",
       "label": "LA farewell",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -928,15 +928,15 @@
     {
       "path": "/zh/heritage",
       "label": "ZH heritage",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -954,15 +954,15 @@
     {
       "path": "/zh/farewell",
       "label": "ZH farewell",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -980,15 +980,15 @@
     {
       "path": "/br/heritage",
       "label": "BR heritage",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -1006,15 +1006,15 @@
     {
       "path": "/br/farewell",
       "label": "BR farewell",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -1032,15 +1032,15 @@
     {
       "path": "/fr/heritage",
       "label": "FR heritage",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -1058,15 +1058,15 @@
     {
       "path": "/fr/farewell",
       "label": "FR farewell",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -1084,15 +1084,15 @@
     {
       "path": "/af/heritage",
       "label": "AF heritage",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -1110,15 +1110,15 @@
     {
       "path": "/af/farewell",
       "label": "AF farewell",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
           "ok": true,
@@ -1136,19 +1136,19 @@
     {
       "path": "/in/education",
       "label": "IN education redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /home"
+          "ok": false,
+          "msg": "Expected redirect to /home, got /in/education"
         },
         {
           "ok": true,
@@ -1159,26 +1159,26 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/home",
+      "finalUrl": "/in/education",
       "screenshot": "43-in-education.png",
       "errors": []
     },
     {
       "path": "/la/education",
       "label": "LA education redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /home"
+          "ok": false,
+          "msg": "Expected redirect to /home, got /la/education"
         },
         {
           "ok": true,
@@ -1189,26 +1189,26 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/home",
+      "finalUrl": "/la/education",
       "screenshot": "44-la-education.png",
       "errors": []
     },
     {
       "path": "/zh/education",
       "label": "ZH education redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /home"
+          "ok": false,
+          "msg": "Expected redirect to /home, got /zh/education"
         },
         {
           "ok": true,
@@ -1219,26 +1219,26 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/home",
+      "finalUrl": "/zh/education",
       "screenshot": "45-zh-education.png",
       "errors": []
     },
     {
       "path": "/br/education",
       "label": "BR education redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /home"
+          "ok": false,
+          "msg": "Expected redirect to /home, got /br/education"
         },
         {
           "ok": true,
@@ -1249,26 +1249,26 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/home",
+      "finalUrl": "/br/education",
       "screenshot": "46-br-education.png",
       "errors": []
     },
     {
       "path": "/fr/education",
       "label": "FR education redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /home"
+          "ok": false,
+          "msg": "Expected redirect to /home, got /fr/education"
         },
         {
           "ok": true,
@@ -1279,26 +1279,26 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/home",
+      "finalUrl": "/fr/education",
       "screenshot": "47-fr-education.png",
       "errors": []
     },
     {
       "path": "/af/education",
       "label": "AF education redirect",
-      "ok": true,
+      "ok": false,
       "checks": [
         {
-          "ok": true,
-          "msg": "HTTP 200"
+          "ok": false,
+          "msg": "HTTP 404"
         },
         {
-          "ok": true,
-          "msg": "Page rendered content"
+          "ok": false,
+          "msg": "Empty or crashed page (#root)"
         },
         {
-          "ok": true,
-          "msg": "Redirect → /home"
+          "ok": false,
+          "msg": "Expected redirect to /home, got /af/education"
         },
         {
           "ok": true,
@@ -1309,22 +1309,8 @@
           "msg": "Screenshot saved"
         }
       ],
-      "finalUrl": "/home",
+      "finalUrl": "/af/education",
       "screenshot": "48-af-education.png",
-      "errors": []
-    },
-    {
-      "path": "/downloads/adinkra-symbols-starter-guide.pdf",
-      "label": "Crawled from seeds",
-      "ok": false,
-      "checks": [
-        {
-          "ok": false,
-          "msg": "page.goto: Download is starting\nCall log:\n  - navigating to \"http://127.0.0.1:8081/downloads/adinkra-symbols-starter-guide.pdf?studio=0\", waiting until \"domcontentloaded\"\n"
-        }
-      ],
-      "finalUrl": "",
-      "screenshot": "",
       "errors": []
     }
   ]

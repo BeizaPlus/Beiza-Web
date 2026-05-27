@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { legacySurface, marketingContainer } from "@/lib/brandUi";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
@@ -20,7 +19,6 @@ export default function VaultExplore() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
       <main className={cn(marketingContainer, "py-16")}>
         <header className="max-w-2xl">
           <p className="text-eyebrow">Beiza Legacy</p>

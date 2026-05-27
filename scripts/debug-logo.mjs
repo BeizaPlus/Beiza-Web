@@ -1,0 +1,11 @@
+import { chromium } from "playwright";
+const base = process.env.SMOKE_SITE_URL ?? "http://127.0.0.1:4173";
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage();
+const errors = [];
+page.on("pageerror", (e) => errors.push(String(e)));
+await page.goto(`${base}/home?studio=0`, { waitUntil: "domcontentloaded", timeout: 60000 });
+await page.waitForTimeout(5000);
+console.log("errors", errors);
+console.log("root html len", (await page.locator("#root").innerHTML()).length);
+await browser.close();

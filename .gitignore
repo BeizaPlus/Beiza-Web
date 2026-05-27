@@ -28,6 +28,9 @@ dist-ssr
 
 tmp/
 .venv
+
+# Local backup archives (keep out of git — GitHub 100MB file limit)
+artifacts/*.zip
 b80d662c-4d92-429b-9db2-712aca4a365c
 
 .env

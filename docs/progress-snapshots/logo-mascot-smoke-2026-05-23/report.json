@@ -1,0 +1,243 @@
+{
+  "base": "http://127.0.0.1:8080",
+  "passed": 10,
+  "failed": 4,
+  "results": [
+    {
+      "path": "/home",
+      "label": "Education home",
+      "ok": false,
+      "checks": [
+        {
+          "ok": false,
+          "msg": "No Beiza logo link (aria-label=Beiza home)"
+        }
+      ],
+      "screenshot": "home-after-welcome.png"
+    },
+    {
+      "path": "/legacy/record",
+      "label": "Legacy record",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "Logo link found in header"
+        },
+        {
+          "ok": true,
+          "msg": "href → /welcome"
+        },
+        {
+          "ok": true,
+          "msg": "Click navigates to /welcome"
+        }
+      ],
+      "screenshot": "legacy-record-after-welcome.png"
+    },
+    {
+      "path": "/legacy/vault",
+      "label": "Legacy vault",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "Logo link found in header"
+        },
+        {
+          "ok": true,
+          "msg": "href → /welcome"
+        },
+        {
+          "ok": true,
+          "msg": "Click navigates to /welcome"
+        }
+      ],
+      "screenshot": "legacy-vault-after-welcome.png"
+    },
+    {
+      "path": "/legacy/circle",
+      "label": "Legacy circle",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "Logo link found in header"
+        },
+        {
+          "ok": true,
+          "msg": "href → /welcome"
+        },
+        {
+          "ok": true,
+          "msg": "Click navigates to /welcome"
+        }
+      ],
+      "screenshot": "legacy-circle-after-welcome.png"
+    },
+    {
+      "path": "/legacy/family",
+      "label": "Legacy family",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "Logo link found in header"
+        },
+        {
+          "ok": true,
+          "msg": "href → /welcome"
+        },
+        {
+          "ok": true,
+          "msg": "Click navigates to /welcome"
+        }
+      ],
+      "screenshot": "legacy-family-after-welcome.png"
+    },
+    {
+      "path": "/heritage",
+      "label": "Heritage landing",
+      "ok": false,
+      "checks": [
+        {
+          "ok": false,
+          "msg": "No Beiza logo link (aria-label=Beiza home)"
+        }
+      ],
+      "screenshot": "heritage-after-welcome.png"
+    },
+    {
+      "path": "/farewell",
+      "label": "Farewell",
+      "ok": false,
+      "checks": [
+        {
+          "ok": false,
+          "msg": "No Beiza logo link (aria-label=Beiza home)"
+        }
+      ],
+      "screenshot": "farewell-after-welcome.png"
+    },
+    {
+      "path": "/pricing",
+      "label": "Pricing",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "Logo link found in header"
+        },
+        {
+          "ok": true,
+          "msg": "href → /welcome"
+        },
+        {
+          "ok": true,
+          "msg": "Click navigates to /welcome"
+        }
+      ],
+      "screenshot": "pricing-after-welcome.png"
+    },
+    {
+      "path": "/contact",
+      "label": "Contact",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "Logo link found in header"
+        },
+        {
+          "ok": true,
+          "msg": "href → /welcome"
+        },
+        {
+          "ok": true,
+          "msg": "Click navigates to /welcome"
+        }
+      ],
+      "screenshot": "contact-after-welcome.png"
+    },
+    {
+      "path": "/blog",
+      "label": "Blog",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "Logo link found in header"
+        },
+        {
+          "ok": true,
+          "msg": "href → /welcome"
+        },
+        {
+          "ok": true,
+          "msg": "Click navigates to /welcome"
+        }
+      ],
+      "screenshot": "blog-after-welcome.png"
+    },
+    {
+      "path": "/events",
+      "label": "Events",
+      "ok": false,
+      "checks": [
+        {
+          "ok": false,
+          "msg": "No Beiza logo link (aria-label=Beiza home)"
+        }
+      ],
+      "screenshot": "events-after-welcome.png"
+    },
+    {
+      "path": "/circle",
+      "label": "Circle directory",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "Logo link found in header"
+        },
+        {
+          "ok": true,
+          "msg": "href → /welcome"
+        },
+        {
+          "ok": true,
+          "msg": "Click navigates to /welcome"
+        }
+      ],
+      "screenshot": "circle-after-welcome.png"
+    },
+    {
+      "path": "/welcome",
+      "label": "Welcome gate mascot",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "Welcome mascot link found"
+        },
+        {
+          "ok": true,
+          "msg": "Stays on /welcome after mascot click"
+        }
+      ],
+      "screenshot": "welcome-mascot.png"
+    },
+    {
+      "path": "/",
+      "label": "Root redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "/ redirects to /welcome"
+        }
+      ],
+      "screenshot": "root-redirect.png"
+    }
+  ]
+}

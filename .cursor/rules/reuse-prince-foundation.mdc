@@ -1,0 +1,36 @@
+---
+description: Reuse Prince's existing pages, hooks, routes, and styles — never build from scratch
+alwaysApply: true
+---
+
+# Reuse Prince's Foundation (Never Rebuild)
+
+Prince (blackprince001) built the core system. **Do not rebuild — port and extend.**
+
+Before creating any new page or component, run:
+
+```bash
+git show c1dda0c --name-only
+git show af39640 --name-only
+git show 67a2b02 --name-only
+```
+
+Find the closest existing page or component, then copy structure, reuse hooks, keep layout intact.
+
+## Rules
+
+1. **Templates** — Memoir/biography detail, blog post, events, product pages exist. Check if one fits before building.
+2. **Data hooks** — Supabase fetch hooks exist. Reuse them; do not write new fetch logic from scratch.
+3. **Routing** — Extend `src/App.tsx` only. Never add a new router setup.
+4. **Styling** — Inherit Tailwind config and global CSS. No new fonts or global CSS.
+5. **Components** — Compose `AboutSection`, `ContactHero`, `CanvasGallery`, nav, footer. Do not rewrite.
+
+## Education, Legacy landing, Farewell
+
+- Find Prince's memoir/biography template
+- Port layout; swap content and data source
+- Keep his component structure
+
+## Gate (before any new page)
+
+**Did Prince already build something close to this?** If yes → port it. **Never start from scratch.**

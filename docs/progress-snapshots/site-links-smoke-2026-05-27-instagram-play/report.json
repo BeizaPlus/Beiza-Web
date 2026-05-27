@@ -1,0 +1,1331 @@
+{
+  "base": "http://127.0.0.1:8090",
+  "stamp": "2026-05-27-instagram-play",
+  "passed": 48,
+  "failed": 1,
+  "total": 49,
+  "results": [
+    {
+      "path": "/",
+      "label": "Welcome gate",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/welcome",
+      "screenshot": "01-root.png",
+      "errors": []
+    },
+    {
+      "path": "/welcome",
+      "label": "Welcome alias",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/welcome",
+      "screenshot": "02-welcome.png",
+      "errors": []
+    },
+    {
+      "path": "/home",
+      "label": "Education home",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/home",
+      "screenshot": "03-home.png",
+      "errors": []
+    },
+    {
+      "path": "/education",
+      "label": "Education redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /home"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/home",
+      "screenshot": "04-education.png",
+      "errors": []
+    },
+    {
+      "path": "/education/story-questions",
+      "label": "Story questions",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/education/story-questions",
+      "screenshot": "05-education-story-questions.png",
+      "errors": []
+    },
+    {
+      "path": "/gallery",
+      "label": "Gallery redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /circle"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/circle",
+      "screenshot": "06-gallery.png",
+      "errors": []
+    },
+    {
+      "path": "/vault",
+      "label": "Vault redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /legacy/vault"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/legacy/vault",
+      "screenshot": "07-vault.png",
+      "errors": []
+    },
+    {
+      "path": "/record",
+      "label": "Record redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /legacy/record"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/legacy/record",
+      "screenshot": "08-record.png",
+      "errors": []
+    },
+    {
+      "path": "/recover",
+      "label": "Recover",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/recover",
+      "screenshot": "09-recover.png",
+      "errors": []
+    },
+    {
+      "path": "/circle",
+      "label": "Circle directory",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/circle",
+      "screenshot": "10-circle.png",
+      "errors": []
+    },
+    {
+      "path": "/family-trees",
+      "label": "Family trees redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /circle"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/circle",
+      "screenshot": "11-family-trees.png",
+      "errors": []
+    },
+    {
+      "path": "/contact",
+      "label": "Contact",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/contact",
+      "screenshot": "12-contact.png",
+      "errors": []
+    },
+    {
+      "path": "/events",
+      "label": "Events",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/events",
+      "screenshot": "13-events.png",
+      "errors": []
+    },
+    {
+      "path": "/blog",
+      "label": "Blog index",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/blog",
+      "screenshot": "14-blog.png",
+      "errors": []
+    },
+    {
+      "path": "/memoirs",
+      "label": "Memoirs index",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/memoirs",
+      "screenshot": "15-memoirs.png",
+      "errors": []
+    },
+    {
+      "path": "/pricing",
+      "label": "Pricing",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/pricing",
+      "screenshot": "16-pricing.png",
+      "errors": []
+    },
+    {
+      "path": "/vault/explore",
+      "label": "Vault explore",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/vault/explore",
+      "screenshot": "17-vault-explore.png",
+      "errors": []
+    },
+    {
+      "path": "/download",
+      "label": "Download",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/download",
+      "screenshot": "18-download.png",
+      "errors": []
+    },
+    {
+      "path": "/order-confirmation",
+      "label": "Order confirmation",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/order-confirmation",
+      "screenshot": "19-order-confirmation.png",
+      "errors": []
+    },
+    {
+      "path": "/heritage",
+      "label": "Heritage legacy landing",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/heritage",
+      "screenshot": "20-heritage.png",
+      "errors": []
+    },
+    {
+      "path": "/farewell",
+      "label": "Farewell heritage",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/farewell",
+      "screenshot": "21-farewell.png",
+      "errors": []
+    },
+    {
+      "path": "/white-swan",
+      "label": "White swan redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /farewell"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/farewell",
+      "screenshot": "22-white-swan.png",
+      "errors": []
+    },
+    {
+      "path": "/booklet",
+      "label": "Booklet redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /memoirs"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/memoirs",
+      "screenshot": "23-booklet.png",
+      "errors": []
+    },
+    {
+      "path": "/packet",
+      "label": "Packet redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /legacy/family"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/legacy/family",
+      "screenshot": "24-packet.png",
+      "errors": []
+    },
+    {
+      "path": "/services",
+      "label": "Services redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /contact"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/contact",
+      "screenshot": "25-services.png",
+      "errors": []
+    },
+    {
+      "path": "/legacy",
+      "label": "Legacy home",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/legacy",
+      "screenshot": "26-legacy.png",
+      "errors": []
+    },
+    {
+      "path": "/legacy/record",
+      "label": "Legacy record",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/legacy/record",
+      "screenshot": "27-legacy-record.png",
+      "errors": []
+    },
+    {
+      "path": "/legacy/vault",
+      "label": "Legacy vault",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/legacy/vault",
+      "screenshot": "28-legacy-vault.png",
+      "errors": []
+    },
+    {
+      "path": "/legacy/family",
+      "label": "Legacy family invite",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/legacy/family",
+      "screenshot": "29-legacy-family.png",
+      "errors": []
+    },
+    {
+      "path": "/legacy/circle",
+      "label": "Legacy circle",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/legacy/circle",
+      "screenshot": "30-legacy-circle.png",
+      "errors": []
+    },
+    {
+      "path": "/in/heritage",
+      "label": "IN heritage",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/in/heritage",
+      "screenshot": "31-in-heritage.png",
+      "errors": []
+    },
+    {
+      "path": "/in/farewell",
+      "label": "IN farewell",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/in/farewell",
+      "screenshot": "32-in-farewell.png",
+      "errors": []
+    },
+    {
+      "path": "/la/heritage",
+      "label": "LA heritage",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/la/heritage",
+      "screenshot": "33-la-heritage.png",
+      "errors": []
+    },
+    {
+      "path": "/la/farewell",
+      "label": "LA farewell",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/la/farewell",
+      "screenshot": "34-la-farewell.png",
+      "errors": []
+    },
+    {
+      "path": "/zh/heritage",
+      "label": "ZH heritage",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/zh/heritage",
+      "screenshot": "35-zh-heritage.png",
+      "errors": []
+    },
+    {
+      "path": "/zh/farewell",
+      "label": "ZH farewell",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/zh/farewell",
+      "screenshot": "36-zh-farewell.png",
+      "errors": []
+    },
+    {
+      "path": "/br/heritage",
+      "label": "BR heritage",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/br/heritage",
+      "screenshot": "37-br-heritage.png",
+      "errors": []
+    },
+    {
+      "path": "/br/farewell",
+      "label": "BR farewell",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/br/farewell",
+      "screenshot": "38-br-farewell.png",
+      "errors": []
+    },
+    {
+      "path": "/fr/heritage",
+      "label": "FR heritage",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/fr/heritage",
+      "screenshot": "39-fr-heritage.png",
+      "errors": []
+    },
+    {
+      "path": "/fr/farewell",
+      "label": "FR farewell",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/fr/farewell",
+      "screenshot": "40-fr-farewell.png",
+      "errors": []
+    },
+    {
+      "path": "/af/heritage",
+      "label": "AF heritage",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/af/heritage",
+      "screenshot": "41-af-heritage.png",
+      "errors": []
+    },
+    {
+      "path": "/af/farewell",
+      "label": "AF farewell",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/af/farewell",
+      "screenshot": "42-af-farewell.png",
+      "errors": []
+    },
+    {
+      "path": "/in/education",
+      "label": "IN education redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /home"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/home",
+      "screenshot": "43-in-education.png",
+      "errors": []
+    },
+    {
+      "path": "/la/education",
+      "label": "LA education redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /home"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/home",
+      "screenshot": "44-la-education.png",
+      "errors": []
+    },
+    {
+      "path": "/zh/education",
+      "label": "ZH education redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /home"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/home",
+      "screenshot": "45-zh-education.png",
+      "errors": []
+    },
+    {
+      "path": "/br/education",
+      "label": "BR education redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /home"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/home",
+      "screenshot": "46-br-education.png",
+      "errors": []
+    },
+    {
+      "path": "/fr/education",
+      "label": "FR education redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /home"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/home",
+      "screenshot": "47-fr-education.png",
+      "errors": []
+    },
+    {
+      "path": "/af/education",
+      "label": "AF education redirect",
+      "ok": true,
+      "checks": [
+        {
+          "ok": true,
+          "msg": "HTTP 200"
+        },
+        {
+          "ok": true,
+          "msg": "Page rendered content"
+        },
+        {
+          "ok": true,
+          "msg": "Redirect → /home"
+        },
+        {
+          "ok": true,
+          "msg": "No page errors"
+        },
+        {
+          "ok": true,
+          "msg": "Screenshot saved"
+        }
+      ],
+      "finalUrl": "/home",
+      "screenshot": "48-af-education.png",
+      "errors": []
+    },
+    {
+      "path": "/downloads/adinkra-symbols-starter-guide.pdf",
+      "label": "Crawled from seeds",
+      "ok": false,
+      "checks": [
+        {
+          "ok": false,
+          "msg": "page.goto: Download is starting\nCall log:\n  - navigating to \"http://127.0.0.1:8090/downloads/adinkra-symbols-starter-guide.pdf?studio=0\", waiting until \"domcontentloaded\"\n"
+        }
+      ],
+      "finalUrl": "",
+      "screenshot": "",
+      "errors": []
+    }
+  ]
+}

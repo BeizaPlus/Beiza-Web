@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { CulturalImmersionHero } from "@/components/education/CulturalImmersionHero";
 import { ADINKRA_SYMBOLS } from "@/lib/adinkra";
@@ -17,7 +16,6 @@ type EducationPageProps = {
 export default function EducationPage({ locale = "black-american" }: EducationPageProps) {
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
       <PageLayoutStudioZone pageId="education" applyMaxWidth={false} copyLiftTarget="children">
         <main>
           <CulturalImmersionHero locale={locale} />

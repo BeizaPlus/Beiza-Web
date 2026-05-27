@@ -186,7 +186,7 @@ const Landing = () => {
           <InstagramReelsSection
             id="cultural-films"
             variant="bare"
-            className="mt-6 min-[810px]:mt-8"
+            className="mt-6 min-[640px]:mt-8"
           />
         ) : null}
         {showRest ? <AdinkraSymbolsListSection /> : null}

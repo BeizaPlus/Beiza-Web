@@ -29,8 +29,8 @@ export function LegacyTabRail() {
       <nav
         className={cn(
           "items-center gap-1 rounded-full border border-white/10 bg-black/80 p-2 shadow-lg backdrop-blur-sm",
-          "flex flex-row max-[809px]:px-2.5 max-[809px]:py-2",
-          "min-[810px]:flex-col",
+          "flex flex-row max-[639px]:px-2.5 max-[639px]:py-2",
+          "min-[640px]:flex-col",
         )}
         aria-label="Legacy"
       >
@@ -48,7 +48,7 @@ export function LegacyTabRail() {
               onClick={(e) => goToTab(item.href, e)}
               className={cn(
                 "flex items-center justify-center rounded-full transition-colors",
-                "h-9 w-9 max-[809px]:h-10 max-[809px]:w-10 min-[810px]:h-10 min-[810px]:w-10",
+                "h-9 w-9 max-[639px]:h-10 max-[639px]:w-10 min-[640px]:h-10 min-[640px]:w-10",
                 active
                   ? "bg-white text-black shadow-sm"
                   : "text-white/55 hover:bg-white/10 hover:text-white/90",

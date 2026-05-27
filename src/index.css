@@ -70,8 +70,8 @@ html {
     --transition-studio: cubic-bezier(0.12, 0.23, 0.5, 1);
   }
 
-  /* Framer tiers: phone ≤809 · tablet 810–1199 · desktop ≥1200 */
-  @media (min-width: 810px) {
+  /* Framer tiers: phone ≤639 · tablet 640–1199 · desktop ≥1200 */
+  @media (min-width: 640px) {
     :root {
       --beiza-site-padding-x: 1.5rem;
       --beiza-content-indent: 0.5rem;
@@ -91,7 +91,7 @@ html {
     --beiza-content-indent: var(--beiza-studio-indent-phone, 0rem);
   }
 
-  @media (min-width: 810px) {
+  @media (min-width: 640px) {
     html[data-beiza-studio-padding] {
       --beiza-site-padding-x: var(--beiza-studio-pad-x-tablet, 1.5rem);
       --beiza-content-indent: var(--beiza-studio-indent-tablet, 0rem);
@@ -382,6 +382,14 @@ html {
     font-weight: 600;
     letter-spacing: -0.042em;
     line-height: 1.04;
+  }
+
+  .text-hero-cinematic {
+    font-family: 'Manrope', 'Inter', sans-serif;
+    font-size: clamp(3.5rem, 8.2vw, 6.875rem);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
   }
 
   .text-display-lg {
@@ -835,6 +843,26 @@ html {
     outline-offset: 2px;
   }
 
+  .button-pill-lg {
+    padding: 1rem 1.85rem;
+    font-size: 1.02rem;
+  }
+
+  .hero-overlay-cinematic {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        105deg,
+        rgba(0, 0, 0, 0.92) 0%,
+        rgba(0, 0, 0, 0.72) 32%,
+        rgba(0, 0, 0, 0.28) 58%,
+        rgba(0, 0, 0, 0.08) 78%,
+        rgba(0, 0, 0, 0.18) 100%
+      ),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, transparent 42%),
+      radial-gradient(ellipse 70% 55% at 72% 48%, rgba(0, 0, 0, 0.15) 0%, transparent 68%);
+  }
+
   .hero-overlay {
     position: absolute;
     inset: 0;
@@ -945,7 +973,7 @@ html {
 }
 
 /* /legacy/record — mobile: bottom horizontal tab rail (studio rail stays md+) */
-@media (max-width: 809px) {
+@media (max-width: 639px) {
   .legacy-record-tab-rail.legacy-nav-studio {
     left: 50% !important;
     top: auto !important;
@@ -973,8 +1001,8 @@ html.record-route:has(.record-memory-expanded) body {
   overflow-y: auto !important;
 }
 
-/* Welcome gate — mobile path cards: horizontal swipe, one card + peek (≤809px) */
-@media (max-width: 809px) {
+/* Welcome gate — mobile path cards: horizontal swipe, one card + peek (≤639px) */
+@media (max-width: 639px) {
   .welcome-cards-row {
     display: flex;
     flex-direction: row;
@@ -1019,7 +1047,7 @@ html.record-route:has(.record-memory-expanded) body {
 .record-page-shell:has(.record-memory-expanded) .record-station-viewport-expanded {
   position: relative;
   inset: auto;
-  min-height: calc(100dvh - var(--record-site-nav-h, 4.5rem));
+  min-height: calc(100dvh - var(--site-header-h, 5.5rem));
   height: auto;
 }
 

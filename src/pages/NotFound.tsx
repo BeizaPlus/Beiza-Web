@@ -1,6 +1,5 @@
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { CTAButton } from "@/components/framer/CTAButton";
 import { Home, ArrowLeft } from "lucide-react";
@@ -15,7 +14,6 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
       <main className="flex min-h-[calc(100vh-200px)] items-center justify-center px-6 py-24">
         <div className="glass-panel flex max-w-2xl flex-col items-center gap-8 rounded-[32px] border border-white/10 p-12 text-center md:p-16">
           <div className="flex flex-col items-center gap-4">

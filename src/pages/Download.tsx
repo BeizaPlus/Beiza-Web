@@ -5,7 +5,6 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -83,7 +82,6 @@ const Download = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background text-foreground">
-        <Navigation />
         <main className="mx-auto max-w-2xl px-6 py-24">
           <div className="text-center text-white/60">Loading download...</div>
         </main>
@@ -95,7 +93,6 @@ const Download = () => {
   if (error || !asset) {
     return (
       <div className="min-h-screen bg-background text-foreground">
-        <Navigation />
         <main className="mx-auto max-w-2xl px-6 py-24">
           <Card className="border-rose-400/40 bg-rose-500/10 text-white">
             <CardHeader>
@@ -122,7 +119,6 @@ const Download = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
       <main className="mx-auto max-w-2xl px-6 py-24">
         <Card className="border-white/10 bg-white/5 text-white">
           <CardHeader>

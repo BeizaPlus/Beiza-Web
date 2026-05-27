@@ -26,7 +26,7 @@ export type RecordPageStudioFrame = HeritageHeroFrame & {
   emailMaxWidthRem: number;
   /** Subtitle paragraph max width (rem) */
   subtitleMaxWidthRem: number;
-  /** Phone (≤809px) */
+  /** Phone (≤639px) */
   offsetXPhone: number;
   offsetYPhone: number;
   copyLiftPhone: number;

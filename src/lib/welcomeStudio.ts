@@ -64,7 +64,7 @@ export type ToolbarControlsLayout = {
   controlsButtonGapPx: number;
 };
 
-/** Phone (≤809px) — horizontal swipe carousel (one card + peek). */
+/** Phone (≤639px) — horizontal swipe carousel (one card + peek). */
 export type WelcomePhoneLayout = {
   /** Card width as % of viewport — ~82vw shows a peek of the next card */
   cardWidthVw: number;
@@ -91,6 +91,13 @@ export type StudioGlobal = {
   showIconCircleBg: boolean;
   logoScale: number;
   useMascot: boolean;
+  /** Space below browser chrome before logo (rem) */
+  headerTopPaddingRem: number;
+  taglineFontPx: number;
+  subheadingFontRem: number;
+  cardTitleRem: number;
+  cardSubtitleRem: number;
+  cardMetaRem: number;
   lockCardLinks: boolean;
   /** Dark pill track behind the vertical language column */
   showLocaleRailBg: boolean;
@@ -231,6 +238,25 @@ function normalizeGlobal(raw: Partial<StudioGlobal> | undefined): StudioGlobal {
     copyOffsetX: rest.copyOffsetX ?? migrated.offsetX ?? 0,
     copyOffsetY: rest.copyOffsetY ?? migrated.offsetY ?? 0,
     copyLift,
+    headerTopPaddingRem:
+      typeof rest.headerTopPaddingRem === "number"
+        ? rest.headerTopPaddingRem
+        : DEFAULT_STUDIO_GLOBAL.headerTopPaddingRem,
+    taglineFontPx:
+      typeof rest.taglineFontPx === "number" ? rest.taglineFontPx : DEFAULT_STUDIO_GLOBAL.taglineFontPx,
+    subheadingFontRem:
+      typeof rest.subheadingFontRem === "number"
+        ? rest.subheadingFontRem
+        : DEFAULT_STUDIO_GLOBAL.subheadingFontRem,
+    cardTitleRem:
+      typeof rest.cardTitleRem === "number" ? rest.cardTitleRem : DEFAULT_STUDIO_GLOBAL.cardTitleRem,
+    cardSubtitleRem:
+      typeof rest.cardSubtitleRem === "number"
+        ? rest.cardSubtitleRem
+        : DEFAULT_STUDIO_GLOBAL.cardSubtitleRem,
+    cardMetaRem:
+      typeof rest.cardMetaRem === "number" ? rest.cardMetaRem : DEFAULT_STUDIO_GLOBAL.cardMetaRem,
+    useMascot: typeof rest.useMascot === "boolean" ? rest.useMascot : DEFAULT_STUDIO_GLOBAL.useMascot,
     toolbar,
     localeRail: normalizeLocaleRailLayout(localeRailRaw, toolbarRaw),
     phone: normalizePhoneLayout(phoneRaw),

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Beiza site links smoke — 2026-05-23</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #0a0a0a; color: #eee; margin: 0; padding: 24px; }
+    h1 { font-size: 1.25rem; }
+    .summary { margin-bottom: 24px; padding: 16px; background: #141414; border-radius: 8px; }
+    .ok { color: #6ee7a0; } .fail { color: #f87171; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+    .card { background: #111; border: 1px solid #222; border-radius: 10px; padding: 14px; }
+    .fail-card { border-color: #522; }
+    img { width: 100%; border-radius: 6px; margin-top: 10px; border: 1px solid #333; }
+    code { font-size: 12px; color: #aaa; }
+    ul { margin: 8px 0; padding-left: 18px; font-size: 12px; }
+    li { margin: 2px 0; }
+  </style>
+</head>
+<body>
+  <h1>Beiza full-site link smoke</h1>
+  <div class="summary">
+    <p><strong>Base:</strong> http://127.0.0.1:8080</p>
+    <p><strong>Date:</strong> 2026-05-23</p>
+    <p><strong>Result:</strong> <span class="ok">39 passed</span>, <span class="fail">9 failed</span> (48 total)</p>
+  </div>
+  <div class="grid"><article class="card ">
+        <h2><span class="ok">PASS</span> Welcome gate</h2>
+        <p><code>/</code> → <code>/welcome</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="01-root.png"><img src="01-root.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Welcome alias</h2>
+        <p><code>/welcome</code> → <code>/welcome</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="02-welcome.png"><img src="02-welcome.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Education home</h2>
+        <p><code>/home</code> → <code>/home</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="03-home.png"><img src="03-home.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card fail-card">
+        <h2><span class="fail">FAIL</span> Education redirect</h2>
+        <p><code>/education</code> → <code>/home</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="fail">Empty or crashed page (#root)</li><li class="ok">Redirect → /home</li><li class="fail">JS errors: ReferenceError: studioPanel is not defined | ReferenceError: studioPanel is not defined</li><li class="ok">Screenshot saved</li></ul>
+        <a href="04-education.png"><img src="04-education.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Story questions</h2>
+        <p><code>/education/story-questions</code> → <code>/education/story-questions</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="05-education-story-questions.png"><img src="05-education-story-questions.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Gallery redirect</h2>
+        <p><code>/gallery</code> → <code>/circle</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">Redirect → /circle</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="06-gallery.png"><img src="06-gallery.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card fail-card">
+        <h2><span class="fail">FAIL</span> Vault redirect</h2>
+        <p><code>/vault</code> → <code>/legacy/record</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="fail">Expected redirect to /legacy/vault, got /legacy/record</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="07-vault.png"><img src="07-vault.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Record redirect</h2>
+        <p><code>/record</code> → <code>/legacy/record</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">Redirect → /legacy/record</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="08-record.png"><img src="08-record.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Recover</h2>
+        <p><code>/recover</code> → <code>/recover</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="09-recover.png"><img src="09-recover.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Circle directory</h2>
+        <p><code>/circle</code> → <code>/circle</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="10-circle.png"><img src="10-circle.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Family trees redirect</h2>
+        <p><code>/family-trees</code> → <code>/circle</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">Redirect → /circle</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="11-family-trees.png"><img src="11-family-trees.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Contact</h2>
+        <p><code>/contact</code> → <code>/contact</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="12-contact.png"><img src="12-contact.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Events</h2>
+        <p><code>/events</code> → <code>/events</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="13-events.png"><img src="13-events.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Blog index</h2>
+        <p><code>/blog</code> → <code>/blog</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="14-blog.png"><img src="14-blog.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Memoirs index</h2>
+        <p><code>/memoirs</code> → <code>/memoirs</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="15-memoirs.png"><img src="15-memoirs.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Pricing</h2>
+        <p><code>/pricing</code> → <code>/pricing</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="16-pricing.png"><img src="16-pricing.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Vault explore</h2>
+        <p><code>/vault/explore</code> → <code>/vault/explore</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="17-vault-explore.png"><img src="17-vault-explore.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Download</h2>
+        <p><code>/download</code> → <code>/download</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="18-download.png"><img src="18-download.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Order confirmation</h2>
+        <p><code>/order-confirmation</code> → <code>/order-confirmation</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="19-order-confirmation.png"><img src="19-order-confirmation.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Heritage legacy landing</h2>
+        <p><code>/heritage</code> → <code>/heritage</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="20-heritage.png"><img src="20-heritage.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Farewell heritage</h2>
+        <p><code>/farewell</code> → <code>/farewell</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="21-farewell.png"><img src="21-farewell.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> White swan redirect</h2>
+        <p><code>/white-swan</code> → <code>/farewell</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">Redirect → /farewell</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="22-white-swan.png"><img src="22-white-swan.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Booklet redirect</h2>
+        <p><code>/booklet</code> → <code>/memoirs</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">Redirect → /memoirs</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="23-booklet.png"><img src="23-booklet.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card fail-card">
+        <h2><span class="fail">FAIL</span> Packet redirect</h2>
+        <p><code>/packet</code> → <code>/legacy/record</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="fail">Expected redirect to /legacy/family, got /legacy/record</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="24-packet.png"><img src="24-packet.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Services redirect</h2>
+        <p><code>/services</code> → <code>/contact</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">Redirect → /contact</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="25-services.png"><img src="25-services.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Legacy home</h2>
+        <p><code>/legacy</code> → <code>/legacy</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="26-legacy.png"><img src="26-legacy.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Legacy record</h2>
+        <p><code>/legacy/record</code> → <code>/legacy/record</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="27-legacy-record.png"><img src="27-legacy-record.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Legacy vault</h2>
+        <p><code>/legacy/vault</code> → <code>/legacy/vault</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="28-legacy-vault.png"><img src="28-legacy-vault.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Legacy family invite</h2>
+        <p><code>/legacy/family</code> → <code>/legacy/family</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="29-legacy-family.png"><img src="29-legacy-family.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> Legacy circle</h2>
+        <p><code>/legacy/circle</code> → <code>/legacy/circle</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="30-legacy-circle.png"><img src="30-legacy-circle.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> IN heritage</h2>
+        <p><code>/in/heritage</code> → <code>/in/heritage</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="31-in-heritage.png"><img src="31-in-heritage.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> IN farewell</h2>
+        <p><code>/in/farewell</code> → <code>/in/farewell</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="32-in-farewell.png"><img src="32-in-farewell.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> LA heritage</h2>
+        <p><code>/la/heritage</code> → <code>/la/heritage</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="33-la-heritage.png"><img src="33-la-heritage.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> LA farewell</h2>
+        <p><code>/la/farewell</code> → <code>/la/farewell</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="34-la-farewell.png"><img src="34-la-farewell.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> ZH heritage</h2>
+        <p><code>/zh/heritage</code> → <code>/zh/heritage</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="35-zh-heritage.png"><img src="35-zh-heritage.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> ZH farewell</h2>
+        <p><code>/zh/farewell</code> → <code>/zh/farewell</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="36-zh-farewell.png"><img src="36-zh-farewell.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> BR heritage</h2>
+        <p><code>/br/heritage</code> → <code>/br/heritage</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="37-br-heritage.png"><img src="37-br-heritage.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> BR farewell</h2>
+        <p><code>/br/farewell</code> → <code>/br/farewell</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="38-br-farewell.png"><img src="38-br-farewell.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> FR heritage</h2>
+        <p><code>/fr/heritage</code> → <code>/fr/heritage</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="39-fr-heritage.png"><img src="39-fr-heritage.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> FR farewell</h2>
+        <p><code>/fr/farewell</code> → <code>/fr/farewell</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="40-fr-farewell.png"><img src="40-fr-farewell.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> AF heritage</h2>
+        <p><code>/af/heritage</code> → <code>/af/heritage</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="41-af-heritage.png"><img src="41-af-heritage.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card ">
+        <h2><span class="ok">PASS</span> AF farewell</h2>
+        <p><code>/af/farewell</code> → <code>/af/farewell</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="ok">Page rendered content</li><li class="ok">No page errors</li><li class="ok">Screenshot saved</li></ul>
+        <a href="42-af-farewell.png"><img src="42-af-farewell.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card fail-card">
+        <h2><span class="fail">FAIL</span> IN education redirect</h2>
+        <p><code>/in/education</code> → <code>/home</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="fail">Empty or crashed page (#root)</li><li class="ok">Redirect → /home</li><li class="fail">JS errors: ReferenceError: studioPanel is not defined | ReferenceError: studioPanel is not defined</li><li class="ok">Screenshot saved</li></ul>
+        <a href="43-in-education.png"><img src="43-in-education.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card fail-card">
+        <h2><span class="fail">FAIL</span> LA education redirect</h2>
+        <p><code>/la/education</code> → <code>/home</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="fail">Empty or crashed page (#root)</li><li class="ok">Redirect → /home</li><li class="fail">JS errors: ReferenceError: studioPanel is not defined | ReferenceError: studioPanel is not defined</li><li class="ok">Screenshot saved</li></ul>
+        <a href="44-la-education.png"><img src="44-la-education.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card fail-card">
+        <h2><span class="fail">FAIL</span> ZH education redirect</h2>
+        <p><code>/zh/education</code> → <code>/home</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="fail">Empty or crashed page (#root)</li><li class="ok">Redirect → /home</li><li class="fail">JS errors: ReferenceError: studioPanel is not defined | ReferenceError: studioPanel is not defined</li><li class="ok">Screenshot saved</li></ul>
+        <a href="45-zh-education.png"><img src="45-zh-education.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card fail-card">
+        <h2><span class="fail">FAIL</span> BR education redirect</h2>
+        <p><code>/br/education</code> → <code>/home</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="fail">Empty or crashed page (#root)</li><li class="ok">Redirect → /home</li><li class="fail">JS errors: ReferenceError: studioPanel is not defined | ReferenceError: studioPanel is not defined</li><li class="ok">Screenshot saved</li></ul>
+        <a href="46-br-education.png"><img src="46-br-education.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card fail-card">
+        <h2><span class="fail">FAIL</span> FR education redirect</h2>
+        <p><code>/fr/education</code> → <code>/home</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="fail">Empty or crashed page (#root)</li><li class="ok">Redirect → /home</li><li class="fail">JS errors: ReferenceError: studioPanel is not defined | ReferenceError: studioPanel is not defined</li><li class="ok">Screenshot saved</li></ul>
+        <a href="47-fr-education.png"><img src="47-fr-education.png" alt="" loading="lazy" /></a>
+      </article>
+<article class="card fail-card">
+        <h2><span class="fail">FAIL</span> AF education redirect</h2>
+        <p><code>/af/education</code> → <code>/home</code></p>
+        <ul><li class="ok">HTTP 200</li><li class="fail">Empty or crashed page (#root)</li><li class="ok">Redirect → /home</li><li class="fail">JS errors: ReferenceError: studioPanel is not defined | ReferenceError: studioPanel is not defined</li><li class="ok">Screenshot saved</li></ul>
+        <a href="48-af-education.png"><img src="48-af-education.png" alt="" loading="lazy" /></a>
+      </article></div>
+</body>
+</html>

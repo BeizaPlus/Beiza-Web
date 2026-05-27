@@ -10,7 +10,9 @@ const FRAMES = [
   MEDIA_ASSETS.record.studioLandscape,
 ] as const;
 
-const CYCLE_MS = 5200;
+/** Keep each slide visible longer before crossfade (video-friendly pacing). */
+const CYCLE_MS = 9000;
+const FADE_MS = 1400;
 
 type RecordStationCuriosityLoopProps = {
   className?: string;
@@ -47,7 +49,7 @@ export function RecordStationCuriosityLoop({ className }: RecordStationCuriosity
           initial={{ opacity: 0, scale: 1.04 }}
           animate={{ opacity: 1, scale: 1.1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1.1, ease: [0.12, 0.23, 0.5, 1] }}
+          transition={{ duration: FADE_MS / 1000, ease: [0.12, 0.23, 0.5, 1] }}
         />
       </AnimatePresence>
 

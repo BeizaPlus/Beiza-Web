@@ -1,6 +1,5 @@
 import { type CSSProperties, type ReactNode } from "react";
 
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import {
@@ -47,7 +46,6 @@ const Events = () => {
       className="min-h-screen overflow-hidden bg-background text-foreground"
       style={heroStudioCssVars(heroFrame) as CSSProperties}
     >
-      <Navigation />
       {heroImageSrc ? (
       <FullBleedHero
         imageSrc={heroImageSrc}

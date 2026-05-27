@@ -6,7 +6,7 @@ import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 
 /** In-viewport station panel — hero holds sign-in / mic; upload + seal steps below. */
 /** Matches `index.css` record rail + welcome snap breakpoint. */
-const RECORD_PHONE_MEDIA = "(max-width: 809px)";
+const RECORD_PHONE_MEDIA = "(max-width: 639px)";
 
 export default function LegacyRecordPage() {
   const isPhone = useMediaQuery(RECORD_PHONE_MEDIA);

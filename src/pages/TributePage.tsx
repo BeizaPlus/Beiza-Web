@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { TributeForm } from "@/components/tribute/TributeForm";
@@ -82,7 +81,6 @@ const TributePage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
 
       <main className="space-y-24 pb-24 pt-32 lg:space-y-32 lg:pb-32">
         <section className="mx-auto max-w-4xl px-6">

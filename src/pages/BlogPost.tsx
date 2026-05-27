@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { format } from "date-fns";
 import { Footer } from "@/components/Footer";
-import { Navigation } from "@/components/Navigation";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { useBlogPost } from "@/hooks/usePublicContent";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
@@ -38,7 +37,6 @@ const BlogPost = () => {
   if (isLoading || !blogPost) {
     return (
       <div className="min-h-screen bg-background text-foreground">
-        <Navigation />
         <main className="flex flex-col pb-24 pt-4 lg:pb-32">
           <section className="mx-auto w-full max-w-4xl px-6 py-8">
             <div className="glass-panel flex flex-col items-center justify-center gap-4 rounded-lg border border-white/10 p-16 text-center">
@@ -54,7 +52,6 @@ const BlogPost = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
       <main className="flex flex-col pb-24 pt-4 lg:pb-32">
         <section className="mx-auto w-full max-w-4xl px-6">
           <div className="flex items-center justify-between gap-4 py-8">

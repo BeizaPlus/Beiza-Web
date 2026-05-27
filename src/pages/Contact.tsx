@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { TestimonialsCarousel, type Testimonial } from "@/components/framer/TestimonialsCarousel";
@@ -69,7 +68,6 @@ const ContactPage = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
       <PageLayoutStudioZone pageId="contact" applyMaxWidth={false} copyLiftTarget="children">
       <main className="space-y-24 pb-24 pt-32 lg:space-y-32 lg:pb-32">
         <section className="mx-auto max-w-6xl px-6">

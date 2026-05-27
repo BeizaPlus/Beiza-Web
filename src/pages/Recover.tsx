@@ -4,7 +4,6 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -100,7 +99,6 @@ export default function RecoverPage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <Navigation />
       <main className={`${marketingSection} border-t border-[#1a1a1a]`}>
         <div className={`${marketingContainer} max-w-xl`}>
           <p className="text-eyebrow text-primary">Heritage · Recovery</p>

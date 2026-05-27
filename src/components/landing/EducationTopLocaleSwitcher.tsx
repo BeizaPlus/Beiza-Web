@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
 import { FlagIcon } from "@/components/ui/FlagIcon";
 import { segmentToggleOption, segmentToggleShell } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
 import { useDraggableScroll } from "@/hooks/useDraggableScroll";
+import { useLocaleContext } from "@/context/LocaleContext";
+import type { BeizaLocale } from "@/lib/locale/types";
 
 type LegacyLocale = "global" | "ghana" | "spanish" | "french";
-
-const LOCALE_KEY = "beiza-legacy-locale-v3";
 
 const LOCALE_OPTIONS: { id: LegacyLocale; flagKey: string; label: string }[] = [
   { id: "global", flagKey: "GLOBAL", label: "Global" },
@@ -15,30 +14,86 @@ const LOCALE_OPTIONS: { id: LegacyLocale; flagKey: string; label: string }[] = [
   { id: "french", flagKey: "FR", label: "French" },
 ];
 
-function isLegacyLocale(value: string | null): value is LegacyLocale {
-  return value === "global" || value === "ghana" || value === "spanish" || value === "french";
-}
+const LOCALE_MAP: Record<LegacyLocale, BeizaLocale> = {
+  global: "black-american",
+  ghana: "africa",
+  spanish: "latina",
+  french: "fr",
+};
 
-export function EducationTopLocaleSwitcher() {
-  const [locale, setLocale] = useState<LegacyLocale>("global");
+type EducationTopLocaleSwitcherProps = {
+  /** `hero` — floating glass pill, bottom-right inside cinematic hero */
+  variant?: "inline" | "hero";
+};
+
+export function EducationTopLocaleSwitcher({ variant = "inline" }: EducationTopLocaleSwitcherProps) {
+  const { locale, setLocale, setLocalePinned } = useLocaleContext();
   const localeScrollRef = useDraggableScroll();
+  const activeLegacy: LegacyLocale =
+    locale === "africa" ? "ghana" : locale === "latina" ? "spanish" : locale === "fr" ? "french" : "global";
 
-  useEffect(() => {
-    const saved = localStorage.getItem(LOCALE_KEY);
-    if (isLegacyLocale(saved)) setLocale(saved);
-  }, []);
+  const pillGroup = (
+    <div
+      ref={localeScrollRef}
+      data-draggable
+      className="flex overflow-x-auto px-1 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+    >
+      <div
+        className={cn(
+          segmentToggleShell,
+          variant === "hero" &&
+            "border-white/15 bg-black/45 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.65)] backdrop-blur-md",
+          "sm:flex-wrap",
+          "gap-1.5 p-1.5",
+        )}
+        role="group"
+        aria-label="Language and region"
+      >
+            {LOCALE_OPTIONS.map(({ id, flagKey, label }) => {
+              const active = activeLegacy === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => {
+                    setLocale(LOCALE_MAP[id]);
+                    setLocalePinned(true);
+                  }}
+                  className={cn(
+                    segmentToggleOption(active),
+                    "inline-flex items-center gap-2 px-6 py-3 text-sm sm:text-base",
+                  )}
+                  aria-pressed={active}
+                >
+                  <FlagIcon country={flagKey} size={22} className="shrink-0" />
+                  {label}
+                </button>
+              );
+            })}
+      </div>
+    </div>
+  );
 
-  const setLocaleAndSave = (next: LegacyLocale) => {
-    setLocale(next);
-    localStorage.setItem(LOCALE_KEY, next);
-  };
+  if (variant === "hero") {
+    return (
+      <div
+        id="locale-rail"
+        className="studio-locale-rail pointer-events-none absolute right-12 z-20 max-[639px]:right-6"
+        style={{
+          bottom: "calc(2rem + var(--locale-rail-viewport-y, 0) * 1vh)",
+        }}
+      >
+        <div className="pointer-events-auto w-max max-w-[min(100vw-3rem,42rem)]">{pillGroup}</div>
+      </div>
+    );
+  }
 
   return (
     <section
       id="locale-rail"
       className="studio-locale-rail relative z-10 w-full min-h-[3.25rem]"
       style={{
-        marginTop: "calc(2rem + var(--locale-rail-viewport-y, 0) * 1vh)",
+        marginTop: "calc(-3rem + var(--locale-rail-viewport-y, 0) * 1vh)",
       }}
     >
       <div
@@ -48,33 +103,7 @@ export function EducationTopLocaleSwitcher() {
           transform: "translateX(-50%)",
         }}
       >
-        <div
-          ref={localeScrollRef}
-          data-draggable
-          className="flex overflow-x-auto px-1 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-        >
-          <div
-            className={cn(segmentToggleShell, "sm:flex-wrap")}
-            role="group"
-            aria-label="Language and region"
-          >
-            {LOCALE_OPTIONS.map(({ id, flagKey, label }) => {
-              const active = locale === id;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setLocaleAndSave(id)}
-                  className={cn(segmentToggleOption(active), "inline-flex items-center gap-2")}
-                  aria-pressed={active}
-                >
-                  <FlagIcon country={flagKey} size={18} className="shrink-0" />
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        {pillGroup}
       </div>
     </section>
   );

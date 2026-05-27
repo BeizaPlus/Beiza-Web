@@ -2,7 +2,7 @@ import { useEffect, useState, type RefObject } from "react";
 import type { WelcomePathKey } from "@/lib/locale/types";
 import { FRAMER_LAYOUT_BREAKPOINTS } from "@/lib/layoutBreakpoints";
 
-/** Which welcome path card is foremost in the phone carousel (≤809px). */
+/** Which welcome path card is foremost in the phone carousel (≤639px). */
 export function useWelcomeSnapPath(
   scrollRef: RefObject<HTMLElement | null>,
   paths: readonly WelcomePathKey[],

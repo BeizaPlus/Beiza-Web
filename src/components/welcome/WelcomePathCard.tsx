@@ -59,7 +59,7 @@ const EDGE_GRAY_MASK =
 
 /** Portrait 2:3 at every tier — matches desktop card proportion */
 const CARD_SURFACE_GRID =
-  "group relative aspect-[2/3] w-full min-w-0 max-w-full overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 max-[809px]:mx-auto min-[810px]:min-h-[260px] min-[1200px]:min-h-[380px] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
+  "group relative aspect-[2/3] w-full min-w-0 max-w-full overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 max-[639px]:mx-auto min-[640px]:min-h-[260px] min-[1200px]:min-h-[380px] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
 
 const CARD_SURFACE_SCROLL =
   "group relative h-full min-h-0 w-full max-w-lg overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
@@ -111,7 +111,7 @@ export function WelcomePathCard({
       : layout === "scroll"
         ? CARD_SURFACE_SCROLL
         : CARD_SURFACE_GRID,
-    phoneFixedHeight && layout !== "carousel" && "max-[809px]:aspect-auto",
+    phoneFixedHeight && layout !== "carousel" && "max-[639px]:aspect-auto",
   );
   const phoneCardStyle =
     phoneCardMaxWidthRem != null || phoneFixedHeight
@@ -347,13 +347,24 @@ export function WelcomePathCard({
         )}
         style={copyOffsetStyle({ offsetX: copyOffsetX, offsetY: copyOffsetY, copyLift })}
       >
-        <h2 className="text-[1.15rem] font-semibold leading-tight text-white sm:text-[1.35rem] md:text-[1.5rem] lg:text-[1.65rem]">
+        <h2
+          className="font-semibold leading-tight text-white"
+          style={{ fontSize: "var(--welcome-card-title-rem, 1.05rem)" }}
+        >
           {title}
         </h2>
-        <p className="mt-2 min-w-0 w-full break-words text-[13px] font-normal leading-snug text-white/90 sm:text-sm">
+        <p
+          className="mt-2 min-w-0 w-full break-words font-normal leading-snug text-white/90"
+          style={{ fontSize: "var(--welcome-card-subtitle-rem, 0.75rem)" }}
+        >
           {subtitle}
         </p>
-        <p className="mt-3 text-[11px] font-medium uppercase tracking-[0.12em] text-white/65">{meta}</p>
+        <p
+          className="mt-2.5 font-medium uppercase tracking-[0.12em] text-white/65"
+          style={{ fontSize: "var(--welcome-card-meta-rem, 0.625rem)" }}
+        >
+          {meta}
+        </p>
       </div>
     </>
   );

@@ -13,10 +13,16 @@ export function instagramReelPermalink(shortCode: string): string {
   return `https://www.instagram.com/reel/${shortCode}/`;
 }
 
+const PATH_TYPE_RE = /instagram\.com\/(p|reel|tv)\//i;
+
 export function instagramEmbedSrc(url: string, shortCodeFallback?: string): string {
   const code = instagramShortCode(url, shortCodeFallback);
   if (!code) {
     return `${url.replace(/\/$/, "")}/embed/`;
   }
-  return `https://www.instagram.com/reel/${code}/embed/`;
+  // Preserve original path type so /p/ posts don't get a /reel/ 404 when they
+  // haven't been migrated to Reels on Instagram's side.
+  const typeMatch = url.match(PATH_TYPE_RE);
+  const type = typeMatch?.[1] ?? "reel";
+  return `https://www.instagram.com/${type}/${code}/embed/`;
 }

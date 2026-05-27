@@ -22,6 +22,13 @@ export const BRAND_IMAGES = {
 export const HERO_OVERLAY_GRADIENT =
   "linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15) 100%)";
 
+/** Education `/home` — dark left negative space, subject right, top/left vignette. */
+export const HERO_OVERLAY_CINEMATIC =
+  "linear-gradient(105deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.72) 32%, rgba(0,0,0,0.28) 58%, rgba(0,0,0,0.08) 78%, rgba(0,0,0,0.18) 100%), linear-gradient(180deg, rgba(0,0,0,0.55) 0%, transparent 42%), radial-gradient(ellipse 70% 55% at 72% 48%, rgba(0,0,0,0.15) 0%, transparent 68%)";
+
+/** Default focal point — hands / blocks in upper-right quadrant. */
+export const HERO_CINEMATIC_BG_POSITION = "62% 42%";
+
 /** Matches `Hero` header shell — full viewport width, no card radius. */
 export const HERO_SHELL_CLASS =
   "relative -mt-20 flex w-full min-h-[calc(100dvh+5rem)] items-stretch justify-center overflow-hidden sm:-mt-24 sm:min-h-[calc(100vh+6rem)]";

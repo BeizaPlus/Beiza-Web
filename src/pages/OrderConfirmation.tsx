@@ -5,7 +5,6 @@
 
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -81,7 +80,6 @@ const OrderConfirmation = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navigation />
       <main className="mx-auto max-w-4xl px-6 py-24">
         <div className="space-y-6">
           <h1 className="text-4xl font-semibold text-white">Order Confirmation</h1>
