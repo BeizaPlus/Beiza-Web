@@ -21,12 +21,16 @@ import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { HomeFaqSection } from "@/components/framer/HomeFaqSection";
 import type { FaqAccordionEntry } from "@/components/framer/FaqAccordionGroup";
 import { ArmAnchorMenu } from "@/components/marketing/ArmAnchorMenu";
-import { EDUCATION_FAQ } from "@/lib/auditFaqContent";
+import {
+  EDUCATION_HOME_FAQ_TITLE,
+  resolveEducationHomeFaqs,
+} from "@/lib/educationHomeFaqs";
 import { EDUCATION_ARM_ANCHORS } from "@/lib/armNavLinks";
 import { ProductsPanel } from "@/components/shopify/ProductsPanel";
 import { AdZone } from "@/components/AdZone";
 import { CulturePdfLeadSection } from "@/components/landing/CulturePdfLeadSection";
 import { AdinkraSymbolsListSection } from "@/components/landing/AdinkraSymbolsListSection";
+import { InstagramReelsSection } from "@/components/landing/InstagramReelsSection";
 import { Palette, Heart, FileText, Monitor, Box, Cloud, Sparkles } from "lucide-react";
 import {
   useFaqs,
@@ -122,26 +126,25 @@ const Landing = () => {
     [faqs],
   );
 
-  const homeFaqItems = useMemo((): FaqAccordionEntry[] => {
-    if (faqList.length > 0) {
-      return faqList.map((faq) => ({
-        id: faq.id,
-        question: faq.question,
-        answer: faq.answer,
-      }));
-    }
-    return EDUCATION_FAQ.map((item, index) => ({
-      id: `education-faq-${index}`,
-      question: item.q,
-      answer: item.a,
-    }));
-  }, [faqList]);
+  const homeFaqItems = useMemo(
+    (): FaqAccordionEntry[] =>
+      resolveEducationHomeFaqs(
+        faqList.map((faq) => ({
+          id: faq.id,
+          question: faq.question,
+          answer: faq.answer,
+          displayOrder: faq.displayOrder,
+        })),
+      ),
+    [faqList],
+  );
 
   /** Heritage hero panel targets /heritage — never blank education home in studio mode. */
   const studioExclusive = studio && focus !== "heritageHero";
   const landingFocus = studioExclusive ? focus : "hero";
 
   const showHero = !studioExclusive || landingFocus === "hero";
+  const showLocaleRail = !studioExclusive || landingFocus === "localeRail";
   const showOfferings = !studioExclusive || landingFocus === "offerings";
   const showFaq = !studioExclusive || landingFocus === "faq";
   const showPricing = !studioExclusive || landingFocus === "pricing";
@@ -156,7 +159,7 @@ const Landing = () => {
       <Navigation />
       <ArmAnchorMenu
         links={EDUCATION_ARM_ANCHORS}
-        className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-40 hidden min-[810px]:block"
+        className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-40"
       />
       {showHero ? (
         <Hero
@@ -180,9 +183,12 @@ const Landing = () => {
       ) : null}
 
       <main className="flex flex-col pb-24 lg:pb-32">
-        {showRest ? <EducationTopLocaleSwitcher /> : null}
-        {showRest ? <CulturePdfLeadSection /> : null}
+        {showLocaleRail ? <EducationTopLocaleSwitcher /> : null}
         {showRest ? <AdinkraSymbolsListSection /> : null}
+        {showRest ? (
+          <InstagramReelsSection id="cultural-films" variant="bare" className="mt-8 md:mt-12" />
+        ) : null}
+        {showRest ? <CulturePdfLeadSection /> : null}
         {showRest ? (
           <div className="mx-auto mt-8 w-full max-w-6xl px-6">
             <AdZone placement="home_hero" />
@@ -219,7 +225,7 @@ const Landing = () => {
                 : undefined
             }
           >
-            <HomeFaqSection items={homeFaqItems} />
+            <HomeFaqSection items={homeFaqItems} title={EDUCATION_HOME_FAQ_TITLE} />
           </div>
         ) : null}
 

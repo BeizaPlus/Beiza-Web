@@ -87,11 +87,8 @@ export const Hero = ({
         <div className="hero-overlay" />
       )}
 
-      <div
-        className="relative z-10 flex w-full min-w-0 flex-1 items-end pt-24 sm:pt-28 md:pt-32 pl-[var(--beiza-site-padding-x,1.25rem)] pr-[var(--beiza-site-padding-x,1.25rem)]"
-        style={HERO_CONTENT_BOTTOM_STYLE}
-      >
-        <div className="max-w-[680px] min-w-0 text-left sm:pl-4 md:pl-12 lg:pl-20" style={copyOffsetStyle}>
+      <div className={HERO_CONTENT_CLASS} style={HERO_CONTENT_BOTTOM_STYLE}>
+        <div className="max-w-[640px] min-w-0 text-left sm:pl-3 md:pl-8 lg:pl-14" style={copyOffsetStyle}>
           <motion.h1
             initial={{ opacity: 0, filter: "blur(16px)", scale: 1.12 }}
             animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}
@@ -105,7 +102,7 @@ export const Hero = ({
             initial={{ opacity: 0, y: 32 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.12, 0.23, 0.5, 1] }}
-            className="mt-5 max-w-[680px] text-lg leading-relaxed text-white/90 md:text-xl"
+            className="mt-5 max-w-[620px] text-base leading-relaxed text-white/90 sm:text-lg md:text-[1.45rem]"
           >
             {heroDescription}
           </motion.p>
@@ -124,16 +121,16 @@ export const Hero = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.45, ease: [0.12, 0.23, 0.5, 1] }}
-              className="mt-8 flex items-center gap-3 text-white"
+            className="mt-9 flex items-center gap-3 text-white"
             >
-              <div className="flex gap-1 text-primary">
+              <div className="flex gap-1 text-[#e6a817]">
                 {Array.from({ length: 5 }).map((_, index) => (
-                  <svg key={index} width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg key={index} width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d="M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z" />
                   </svg>
                 ))}
               </div>
-              <span className="text-sm font-medium uppercase tracking-[0.3em] text-subtle">{reviews}</span>
+              <span className="text-xs font-semibold uppercase tracking-[0.24em] text-white/75 sm:text-sm">{reviews}</span>
             </motion.div>
           ) : null}
         </div>

@@ -23,7 +23,7 @@ export function AdinkraSymbolsListSection() {
   ];
 
   return (
-    <section id="adinkra-symbols" className="mx-auto w-full max-w-6xl px-6">
+    <section id="symbols" className="scroll-mt-24 mx-auto w-full max-w-6xl px-6">
       <div className="bg-black py-10">
         <SectionHeader
           eyebrow="ADINKRA SYMBOLS"
@@ -33,7 +33,9 @@ export function AdinkraSymbolsListSection() {
           variant="dark"
         />
 
-        <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          className="mt-7 grid gap-5 min-[810px]:grid-cols-2 min-[1200px]:grid-cols-4"
+        >
           {symbols.map((symbol) => (
             <article key={symbol.id} className="min-h-[88px] p-1">
               <div className="flex items-start gap-3">

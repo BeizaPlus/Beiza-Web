@@ -44,6 +44,9 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
   const patchHero = (hero: Partial<LandingLayoutStudioState["hero"]>) =>
     patch({ hero: { ...state.hero, ...hero } });
 
+  const patchLocaleRail = (localeRail: Partial<LandingLayoutStudioState["localeRail"]>) =>
+    patch({ localeRail: { ...state.localeRail, ...localeRail } });
+
   const patchOfferings = (offerings: Partial<LandingLayoutStudioState["offerings"]>) =>
     patch({ offerings: { ...state.offerings, ...offerings } });
 
@@ -169,6 +172,32 @@ export function LandingLayoutStudioPanel({ state, onChange }: Props) {
             saveHeroStudioFrame("heritage", next);
           }}
         />
+        </StudioAccordionSection>
+
+        <StudioAccordionSection value="localeRail" title="Locale pills (Global · Ghana…)">
+          <div className="space-y-3">
+            <p className="text-[11px] text-muted-foreground">
+              Slide the language rail along the viewport. 0 = left edge, 50 = center, 100 = right edge.
+            </p>
+            <StudioSlider
+              label="Horizontal (viewport %)"
+              value={state.localeRail.viewportX}
+              defaultValue={DEFAULT_STUDIO_STATE.localeRail.viewportX}
+              min={0}
+              max={100}
+              displayValue={`${state.localeRail.viewportX}%`}
+              onChange={(viewportX) => patchLocaleRail({ viewportX })}
+            />
+            <StudioSlider
+              label="Vertical offset (vh)"
+              value={state.localeRail.viewportY}
+              defaultValue={DEFAULT_STUDIO_STATE.localeRail.viewportY}
+              min={0}
+              max={100}
+              displayValue={`${state.localeRail.viewportY}vh`}
+              onChange={(viewportY) => patchLocaleRail({ viewportY })}
+            />
+          </div>
         </StudioAccordionSection>
 
         <StudioAccordionSection value="offerings" title="2. What we do">

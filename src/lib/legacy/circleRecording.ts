@@ -1,7 +1,10 @@
 import { getStoredCircleToken } from "@/lib/circleAccess";
 import type { LegacyRecording, MemoryAboutChoice } from "@/lib/legacy/types";
 import type { StoryPrompt } from "@/lib/prompts";
-import { FREE_VAULT_STORAGE_BYTES } from "@/lib/legacy/audioRecording";
+import {
+  CIRCLE_VAULT_MAX_BYTES,
+  circleVaultExceededMessage,
+} from "@/lib/legacy/vaultStorageLimits";
 
 async function blobToBase64(blob: Blob): Promise<string> {
   const buffer = await blob.arrayBuffer();
@@ -43,10 +46,8 @@ export async function uploadCircleRecording(params: {
     throw new Error("Session expired — re-enter your circle access code.");
   }
 
-  if (params.blob.size > FREE_VAULT_STORAGE_BYTES) {
-    throw new Error(
-      "This recording exceeds your vault storage limit (5 GB on Circle). Free space or upgrade to Keeper.",
-    );
+  if (params.blob.size > CIRCLE_VAULT_MAX_BYTES) {
+    throw new Error(circleVaultExceededMessage());
   }
 
   const dataBase64 = await blobToBase64(params.blob);

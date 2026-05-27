@@ -2,7 +2,14 @@ import { useEffect, useState, type CSSProperties } from "react";
 import { FlagIcon } from "@/components/ui/FlagIcon";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FeatureCard } from "@/components/framer/FeatureCard";
-import { marketingContainer, marketingSection, segmentToggleOption, segmentToggleShell } from "@/lib/brandUi";
+import {
+  marketingSection,
+  segmentToggleOption,
+  segmentToggleShell,
+  siteBoundedContainer,
+  siteBounds,
+} from "@/lib/brandUi";
+import { LAYOUT_TW } from "@/lib/layoutBreakpoints";
 import { useDraggableScroll } from "@/hooks/useDraggableScroll";
 import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
@@ -115,9 +122,10 @@ export function WhatWeDoSection({
   return (
     <section
       id={id}
-      className={cn("studio-offerings scroll-mt-24", marketingSection, marketingContainer, className)}
+      className={cn("studio-offerings scroll-mt-24", marketingSection, siteBounds, className)}
       style={style}
     >
+      <div className={siteBoundedContainer}>
       <SectionHeader
         eyebrow="What We Do"
         title="How We Preserve Your Legacy"
@@ -141,8 +149,18 @@ export function WhatWeDoSection({
         ) : null}
       </div>
 
-      <div className="mt-12 grid w-full grid-cols-1 gap-6 lg:grid-cols-[58%_38%] lg:items-stretch lg:gap-[4%]">
-        <div className="grid w-full grid-cols-1 gap-[4%] sm:grid-cols-2 sm:auto-rows-fr">
+      <div
+        className={cn(
+          "mt-12 grid w-full grid-cols-1 gap-6",
+          `${LAYOUT_TW.tabletUp}:grid-cols-[58%_38%] ${LAYOUT_TW.tabletUp}:items-stretch ${LAYOUT_TW.tabletUp}:gap-[4%]`,
+        )}
+      >
+        <div
+          className={cn(
+            "grid w-full grid-cols-1 gap-[4%] sm:auto-rows-fr",
+            `${LAYOUT_TW.tabletUp}:grid-cols-2`,
+          )}
+        >
           {visibleOfferings.map((feature) => (
             <FeatureCard
               key={feature.id}
@@ -154,7 +172,10 @@ export function WhatWeDoSection({
         </div>
 
         <div
-          className="relative min-h-[20rem] w-full overflow-hidden rounded-lg border border-white/10 sm:min-h-[24rem] lg:min-h-0 lg:h-full"
+          className={cn(
+            "relative min-h-[20rem] w-full overflow-hidden rounded-lg border border-white/10 sm:min-h-[24rem]",
+            `${LAYOUT_TW.tabletUp}:min-h-0 ${LAYOUT_TW.tabletUp}:h-full`,
+          )}
           aria-label="Product mockup placeholder"
         >
           {mockupSrc && !mockupFailed ? (
@@ -176,6 +197,7 @@ export function WhatWeDoSection({
             </div>
           )}
         </div>
+      </div>
       </div>
     </section>
   );

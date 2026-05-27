@@ -34,31 +34,48 @@ export function EducationTopLocaleSwitcher() {
   };
 
   return (
-    <section className="mx-auto mt-8 w-full max-w-6xl px-6 md:mt-10">
+    <section
+      id="locale-rail"
+      className="studio-locale-rail relative z-10 w-full min-h-[3.25rem]"
+      style={{
+        marginTop: "calc(2rem + var(--locale-rail-viewport-y, 0) * 1vh)",
+      }}
+    >
       <div
-        ref={localeScrollRef}
-        data-draggable
-        className="flex justify-center overflow-x-auto px-1 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        className="absolute top-0 z-10 w-max max-w-[min(100%,calc(100vw-2*var(--beiza-site-padding-x,1.25rem)))]"
+        style={{
+          left: "calc(var(--locale-rail-viewport-x, 50) * 1vw)",
+          transform: "translateX(-50%)",
+        }}
       >
-        <div className={cn(segmentToggleShell, "sm:flex-wrap sm:justify-center")} role="group" aria-label="Language and region">
-          {LOCALE_OPTIONS.map(({ id, flagKey, label }) => {
-            const active = locale === id;
-            return (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setLocaleAndSave(id)}
-                className={cn(segmentToggleOption(active), "inline-flex items-center gap-2")}
-                aria-pressed={active}
-              >
-                <FlagIcon country={flagKey} size={18} className="shrink-0" />
-                {label}
-              </button>
-            );
-          })}
+        <div
+          ref={localeScrollRef}
+          data-draggable
+          className="flex overflow-x-auto px-1 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        >
+          <div
+            className={cn(segmentToggleShell, "sm:flex-wrap")}
+            role="group"
+            aria-label="Language and region"
+          >
+            {LOCALE_OPTIONS.map(({ id, flagKey, label }) => {
+              const active = locale === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setLocaleAndSave(id)}
+                  className={cn(segmentToggleOption(active), "inline-flex items-center gap-2")}
+                  aria-pressed={active}
+                >
+                  <FlagIcon country={flagKey} size={18} className="shrink-0" />
+                  {label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
   );
 }
-

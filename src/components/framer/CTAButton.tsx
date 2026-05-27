@@ -29,8 +29,8 @@ type CTAButtonButtonProps = CTAButtonBaseProps & React.ButtonHTMLAttributes<HTML
 export type CTAButtonProps = CTAButtonLinkProps | CTAButtonAnchorProps | CTAButtonButtonProps;
 
 const DefaultArrow = () => (
-  <span className="ring-background flex h-8 w-8 items-center justify-center rounded-full bg-black text-white">
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-black text-white">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M4 12L12 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M6 4H12V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>

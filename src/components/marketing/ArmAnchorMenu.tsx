@@ -3,6 +3,8 @@ import { Link, useLocation } from "react-router-dom";
 import { legacyTabLinkTo } from "@/hooks/useLegacyTabNavigate";
 import { Menu, X } from "lucide-react";
 import { isInternalAppHref } from "@/lib/internalLink";
+import { isBeizaLiveSite } from "@/lib/layoutStudio";
+import { LAYOUT_TW } from "@/lib/layoutBreakpoints";
 import { cn } from "@/lib/utils";
 
 export type AnchorLink = { href: string; label: string };
@@ -12,13 +14,17 @@ type Props = {
   className?: string;
 };
 
-/** Per-arm hamburger: anchor scroll within the current page. */
+/** Per-arm hamburger: anchor scroll within the current page. Hidden on live site; phone-only in dev. */
 export function ArmAnchorMenu({ links, className }: Props) {
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
+  if (isBeizaLiveSite()) {
+    return null;
+  }
+
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative hidden", `${LAYOUT_TW.phoneOnly}:block`, className)}>
       <button
         type="button"
         className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/80 text-white backdrop-blur-sm"

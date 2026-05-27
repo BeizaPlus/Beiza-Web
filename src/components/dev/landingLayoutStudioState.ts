@@ -5,11 +5,19 @@ import {
 } from "@/lib/landingPricingContent";
 import { migrateCopyOffsetFields } from "@/lib/copyLayoutOffset";
 
-export type StudioFocus = "hero" | "heritageHero" | "offerings" | "faq" | "pricing" | "outro";
+export type StudioFocus =
+  | "hero"
+  | "heritageHero"
+  | "localeRail"
+  | "offerings"
+  | "faq"
+  | "pricing"
+  | "outro";
 
 const STUDIO_FOCUS_VALUES: StudioFocus[] = [
   "hero",
   "heritageHero",
+  "localeRail",
   "offerings",
   "faq",
   "pricing",
@@ -32,6 +40,8 @@ export type LandingLayoutStudioState = {
     copyOffsetX: number;
     copyOffsetY: number;
   };
+  /** Global · Ghana locale pills — horizontal anchor across viewport (0=left, 100=right). */
+  localeRail: { viewportX: number; viewportY: number };
   offerings: { offsetY: number; paddingTop: number };
   faq: { offsetY: number; paddingTop: number };
   pricing: { offsetY: number; paddingTop: number };
@@ -43,6 +53,7 @@ export type LandingLayoutStudioState = {
 export const DEFAULT_STUDIO_STATE: LandingLayoutStudioState = {
   focus: "hero",
   hero: { posX: 18, posY: 84, scale: 106, copyBottomVh: 18, copyOffsetX: 0, copyOffsetY: 0 },
+  localeRail: { viewportX: 50, viewportY: 0 },
   offerings: { offsetY: -32, paddingTop: 80 },
   faq: { offsetY: -48, paddingTop: 72 },
   pricing: { offsetY: 0, paddingTop: 96 },
@@ -63,6 +74,7 @@ export function mergeStudioState(partial: Partial<LandingLayoutStudioState>): La
       copyOffsetX: partial.hero?.copyOffsetX ?? DEFAULT_STUDIO_STATE.hero.copyOffsetX,
       copyOffsetY: partial.hero?.copyOffsetY ?? DEFAULT_STUDIO_STATE.hero.copyOffsetY,
     },
+    localeRail: { ...DEFAULT_STUDIO_STATE.localeRail, ...partial.localeRail },
     offerings: { ...DEFAULT_STUDIO_STATE.offerings, ...partial.offerings },
     faq: { ...DEFAULT_STUDIO_STATE.faq, ...partial.faq },
     pricing: { ...DEFAULT_STUDIO_STATE.pricing, ...partial.pricing },
@@ -115,6 +127,8 @@ export function studioCssVars(state: LandingLayoutStudioState): Record<string, s
     "--hero-bg-pos-y": `${state.hero.posY}%`,
     "--hero-bg-scale": `${state.hero.scale}%`,
     "--hero-copy-raise": `${state.hero.copyBottomVh}`,
+    "--locale-rail-viewport-x": `${state.localeRail.viewportX}`,
+    "--locale-rail-viewport-y": `${state.localeRail.viewportY}`,
     "--offerings-offset-y": `${state.offerings.offsetY}px`,
     "--offerings-padding-top": `${state.offerings.paddingTop}px`,
     "--faq-offset-y": `${state.faq.offsetY}px`,

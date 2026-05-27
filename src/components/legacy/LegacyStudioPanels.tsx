@@ -11,8 +11,6 @@ import {
   type RecordPageStudioFrame,
 } from "@/lib/legacy/recordPageStudio";
 import { useState } from "react";
-import { StudioModeBanner } from "@/components/dev/StudioModeBanner";
-
 /** Floating studio panels shared across /legacy/* when layout studio is on. */
 export function LegacyStudioPanels() {
   const studioOn = isLayoutStudioEnabled();
@@ -32,7 +30,6 @@ export function LegacyStudioPanels() {
 
   return (
     <>
-      <StudioModeBanner />
       <LegacyNavTabStudioPanel frame={ctx.tabFrame} onChange={ctx.setTabFrame} />
       {isRecordRoute ? (
         <>

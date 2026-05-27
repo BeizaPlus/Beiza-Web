@@ -16,7 +16,11 @@ import type {
   MemoryAboutChoice,
 } from "@/lib/legacy/types";
 import { linkRecordingToPeople } from "@/hooks/useFamilyTree";
-import { extensionForMime, FREE_VAULT_STORAGE_BYTES } from "@/lib/legacy/audioRecording";
+import { extensionForMime } from "@/lib/legacy/audioRecording";
+import {
+  CIRCLE_VAULT_MAX_BYTES,
+  circleVaultExceededMessage,
+} from "@/lib/legacy/vaultStorageLimits";
 import { generateShareToken } from "@/lib/legacy/shareUrl";
 import type { StoryPrompt } from "@/lib/prompts";
 
@@ -213,10 +217,8 @@ export async function uploadLegacyRecording(params: {
   const userId = userData.user?.id;
   if (!userId) throw new Error("Sign in to record a memory.");
 
-  if (params.blob.size > FREE_VAULT_STORAGE_BYTES) {
-    throw new Error(
-      "This recording exceeds your vault storage limit (5 GB on Circle). Free space or upgrade to Keeper.",
-    );
+  if (params.blob.size > CIRCLE_VAULT_MAX_BYTES) {
+    throw new Error(circleVaultExceededMessage());
   }
 
   const recordingId = crypto.randomUUID();

@@ -10,6 +10,7 @@ import {
 import { BeizaLogoLink } from "@/components/BeizaLogoLink";
 import { Button } from "./ui/button";
 import { sitePaddingX } from "@/lib/brandUi";
+import { LAYOUT_TW } from "@/lib/layoutBreakpoints";
 import { cn } from "@/lib/utils";
 
 const CTA = { label: "Contact", href: BEIZA_LINKS.marketing.contact };
@@ -114,7 +115,12 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
               wordmarkClassName={isLandingHero ? "h-5 w-auto" : undefined}
             />
 
-            <div className="hidden min-w-0 items-center gap-6 lg:flex lg:gap-10">
+            <div
+              className={cn(
+                "hidden min-w-0 items-center gap-6",
+                `${LAYOUT_TW.tabletUp}:flex ${LAYOUT_TW.tabletUp}:gap-10`,
+              )}
+            >
               {navLinks.map((link) => (
                 <NavItem
                   key={link.id}
@@ -124,7 +130,7 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
               ))}
             </div>
 
-            <div className="hidden shrink-0 lg:block">
+            <div className={cn("hidden shrink-0", `${LAYOUT_TW.tabletUp}:block`)}>
               <Link to={CTA.href}>
                 <Button
                   className={cn(
@@ -139,7 +145,7 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
 
             <button
               type="button"
-              className="shrink-0 text-white lg:hidden"
+              className={cn("shrink-0 text-white", `${LAYOUT_TW.tabletUp}:hidden`)}
               aria-label={drawerOpen ? "Close menu" : "Open menu"}
               onClick={() => setDrawerOpen((o) => !o)}
             >
@@ -150,7 +156,7 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
       </nav>
 
       {drawerOpen ? (
-        <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
+        <div className={cn("fixed inset-0 z-50", `${LAYOUT_TW.tabletUp}:hidden`)} role="dialog" aria-modal="true">
           <button
             type="button"
             className="absolute inset-0 bg-black/80"

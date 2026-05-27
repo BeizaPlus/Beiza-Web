@@ -7,7 +7,8 @@ import {
 import { applyMemoryAboutLinks } from "../../../api/lib/recordMemoryLinks.js";
 
 const BUCKET = "legacy-recordings";
-const MAX_BYTES = 5 * 1024 * 1024 * 1024; // 5 GB Circle vault limit
+/** Keep in sync with `src/lib/legacy/vaultStorageLimits.ts` */
+const MAX_BYTES = 50 * 1024 * 1024; // 50 MB Circle vault limit
 
 type Body = {
   circle_id?: string;
@@ -70,7 +71,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const buffer = Buffer.from(dataBase64, "base64");
   if (buffer.length > MAX_BYTES) {
-    return res.status(400).json({ error: "Recording exceeds vault storage limit (5 GB)." });
+    return res.status(400).json({ error: "Recording exceeds vault storage limit (50 MB)." });
   }
 
   const { data: circle, error: circleError } = await supabase

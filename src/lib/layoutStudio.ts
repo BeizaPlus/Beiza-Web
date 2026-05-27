@@ -6,11 +6,19 @@
  */
 const PRODUCTION_HOST_SUFFIXES = ["beizaplus.com", "beiza.tv"] as const;
 
-function isProductionHostname(hostname: string): boolean {
+export function isProductionHostname(hostname: string): boolean {
   const host = hostname.toLowerCase();
   return PRODUCTION_HOST_SUFFIXES.some(
     (suffix) => host === suffix || host.endsWith(`.${suffix}`),
   );
+}
+
+/** Public marketing / product UI — hide dev-only chrome (e.g. arm hamburger) on live domains. */
+export function isBeizaLiveSite(): boolean {
+  if (typeof window === "undefined") {
+    return import.meta.env.PROD;
+  }
+  return import.meta.env.PROD || isProductionHostname(window.location.hostname);
 }
 
 export function isLayoutStudioEnabled(): boolean {

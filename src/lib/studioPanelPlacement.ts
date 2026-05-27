@@ -4,18 +4,26 @@ export const STUDIO_PANEL_SHARED_POS_KEY = "beiza-studio-panel-shared-pos";
 const PANEL_W = 352;
 const PANEL_MIN_TOP = 48;
 
-/** PANELS dock + Layout studio toggle — bottom-right of the current viewport (easy to spot). */
-export function studioControlsDockPosition(): { x: number; y: number } {
+/** PANELS dock + Layout studio toggle — bottom-right, or bottom-left when a panel is open on the right. */
+export function studioControlsDockPosition(activePanelId?: string | null): { x: number; y: number } {
   if (typeof window === "undefined") {
     return { x: 16, y: 16 };
   }
   const margin = 16;
   const dockWidth = 300;
-  const dockHeight = 220;
-  return {
+  const dockHeight = 260;
+  const defaultPos = {
     x: Math.max(margin, window.innerWidth - dockWidth - margin),
     y: Math.max(margin, window.innerHeight - dockHeight - margin),
   };
+  if (!activePanelId) return defaultPos;
+
+  const saved = loadStudioPanelSharedPosition();
+  const panelX = saved?.x ?? studioPanelDefaultPosition().x;
+  if (panelX > window.innerWidth * 0.45) {
+    return { x: margin, y: defaultPos.y };
+  }
+  return defaultPos;
 }
 
 /** Prefer the monitor to the right of the primary display (typical dual-monitor setup). */

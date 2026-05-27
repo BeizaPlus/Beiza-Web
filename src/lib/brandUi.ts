@@ -6,7 +6,10 @@ export { siteBounds, siteBoundedContainer, sitePaddingX, siteContentIndentX, sit
 /** Shared layout shells for public marketing pages. */
 export const marketingSection = "bg-background py-16 text-foreground sm:py-20 lg:py-32";
 
-/** Centered column with boundary padding (for pages without a siteBounds section wrapper) */
+/**
+ * Centered column with boundary padding — use on an *inner* wrapper only.
+ * Do not put on `<section>` roots (caps width at max-w-6xl); use `siteBounds` + `siteBoundedContainer` instead.
+ */
 export const marketingContainer = cn(siteBoundedContainer, sitePaddingX);
 
 /** Pill selector (locale, region, etc.) — matches Voices / What We Do. */

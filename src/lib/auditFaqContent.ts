@@ -1,4 +1,4 @@
-/** FAQ copy from BEIZA_IMPLEMENTATION_AUDIT.md (May 2026) */
+/** FAQ copy — lane-specific. Education list matches docs/product/PHILOSOPHY-UX-BRIEF.md */
 
 export const RECORDING_HOME_FAQ = [
   {
@@ -23,7 +23,7 @@ export const RECORDING_HOME_FAQ = [
   },
   {
     q: "How many recordings can I save?",
-    a: "Free circles include generous vault space. Keeper unlocks unlimited storage and downloads.",
+    a: "Circle includes 50 MB of shared vault storage. Keeper expands to 500 MB plus downloads. Heritage is unlimited.",
   },
   {
     q: "Can family members add their own stories?",
@@ -71,6 +71,14 @@ export const EDUCATION_FAQ = [
   {
     q: "How do I start recording my family's history?",
     a: "Open the recording station from Welcome, answer one prompt, and link the memory to a person on your tree.",
+  },
+  {
+    q: "Can I use Beiza from outside Ghana?",
+    a: "Yes. Beiza is Ghana-first and open to families everywhere. Learn symbols and films here, then record into your vault from any country.",
+  },
+  {
+    q: "How do I get the full Adinkra symbol guide?",
+    a: "Subscribe on the education home page and we will email the starter guide and cultural story prompts for your family.",
   },
 ] as const;
 

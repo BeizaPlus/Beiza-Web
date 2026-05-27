@@ -49,3 +49,14 @@ Documented in brief tables; product surfaces:
 - Education PDF lead: `CulturePdfLeadSection.tsx`
 - Keeper tier: `LegacyKeeperUpsellDialog.tsx`, `useLegacyEntitlement`
 - Farewell commerce: `pages/Heritage.tsx`, Shopify panels
+
+## Education `/home` FAQs
+
+| Brief rule | Code |
+|------------|------|
+| Death-free, symbol/culture focused | `auditFaqContent.ts` → `EDUCATION_FAQ` |
+| Reject legacy/tribute CMS rows | `educationHomeFaqs.ts` → `resolveEducationHomeFaqs()` |
+| Wired on page | `pages/Landing.tsx` → `HomeFaqSection` |
+| Static fallback (dev) | `fallbackContent.ts` → `FALLBACK_FAQS` from `EDUCATION_FAQ` |
+
+Legacy marketing questions (*"What do I need to start preserving…"*, *"How long does the process take"*, etc.) belong on **Farewell** (`FAREWELL_FAQ`), not `/home`.

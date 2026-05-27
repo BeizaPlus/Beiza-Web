@@ -1,4 +1,5 @@
 import type { NavigationLink, FooterLink } from "@/hooks/usePublicContent";
+import { EDUCATION_FAQ } from "@/lib/auditFaqContent";
 import { BEIZA_LINKS, BEIZA_REDIRECTS } from "@/lib/beizaMasterLinks";
 import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 
@@ -184,43 +185,18 @@ export const FALLBACK_TESTIMONIALS = [
   },
 ] as const;
 
-export const FALLBACK_FAQS = [
-  {
-    id: "fallback-faq-1",
-    question: "What do I need to start preserving my family's legacy?",
-    answer:
-      "Start with your loved one’s story. We’ll guide you through gathering photos, milestones, and the voices of family and friends to build a meaningful narrative.",
-    display_order: 1,
-  },
-  {
-    id: "fallback-faq-2",
-    question: "When is the right time to start?",
-    answer:
-      "If you’re seeking a celebration that feels personal and thoughtfully produced, we’ll meet you where you are, even if all you have is a desire to honor their legacy.",
-    display_order: 2,
-  },
-  {
-    id: "fallback-faq-3",
-    question: "Can I use Beiza Legacy from outside Ghana?",
-    answer:
-      "Yes. Our team works across time zones with remote production, live streaming, and digital Keepsakes so every relative can participate.",
-    display_order: 3,
-  },
-  {
-    id: "fallback-faq-4",
-    question: "How long does the process take?",
-    answer:
-      "Most tributes take 10 to 21 days depending on the scope. We adjust timelines to align with the family’s schedule and rites.",
-    display_order: 4,
-  },
-  {
-    id: "fallback-faq-5",
-    question: "What kind of experiences do you create?",
-    answer:
-      "We support legacy gatherings, celebration services, family archives, and legacy unveilings — from intimate circles to multi-day productions.",
-    display_order: 5,
-  },
-] as const;
+/** Education `/home` only — not legacy/tribute marketing FAQs. */
+export const FALLBACK_FAQS = EDUCATION_FAQ.map((item, index) => ({
+  id: `fallback-education-faq-${index + 1}`,
+  question: item.q,
+  answer: item.a,
+  display_order: index + 1,
+})) as readonly {
+  id: string;
+  question: string;
+  answer: string;
+  display_order: number;
+}[];
 
 export const FALLBACK_PRICING = [
   {

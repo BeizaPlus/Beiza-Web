@@ -1,5 +1,9 @@
 /** Circle tier: no max recording duration — vault storage is the only cap. */
-export const FREE_VAULT_STORAGE_BYTES = 5 * 1024 * 1024 * 1024;
+export {
+  CIRCLE_VAULT_MAX_BYTES,
+  FREE_VAULT_STORAGE_BYTES,
+  circleVaultExceededMessage,
+} from "@/lib/legacy/vaultStorageLimits";
 
 export function getAudioDurationFromBlob(blob: Blob): Promise<number> {
   return new Promise((resolve, reject) => {

@@ -10,7 +10,11 @@ import { Input } from "@/components/ui/input";
 import { fetchLegacyPrompts } from "@/hooks/useLegacy";
 import { MemoryAboutPicker } from "@/components/legacy/family-tree/MemoryAboutPicker";
 import type { FamilyPerson, MemoryAboutChoice, RecordPhase } from "@/lib/legacy/types";
-import { FREE_VAULT_STORAGE_BYTES, getAudioDurationFromBlob } from "@/lib/legacy/audioRecording";
+import { getAudioDurationFromBlob } from "@/lib/legacy/audioRecording";
+import {
+  CIRCLE_VAULT_MAX_BYTES,
+  circleVaultExceededMessage,
+} from "@/lib/legacy/vaultStorageLimits";
 import { saveRecordedMemory } from "@/lib/legacy/recordMemory";
 import { dispatchBeizaTreeUpdated } from "@/lib/legacy/personaEvents";
 import {
@@ -283,11 +287,11 @@ export function RecordMemoryView({
       return;
     }
 
-    if (blobRef.current.size > FREE_VAULT_STORAGE_BYTES) {
+    if (blobRef.current.size > CIRCLE_VAULT_MAX_BYTES) {
       toast({
         title: "Vault storage full",
         description:
-          "This recording exceeds your Circle vault limit (5 GB). Free space or upgrade to Keeper.",
+          circleVaultExceededMessage(),
         variant: "destructive",
       });
       return;

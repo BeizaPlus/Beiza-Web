@@ -1,4 +1,5 @@
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
+import { VAULT_STORAGE_FEATURE_COPY } from "@/lib/legacy/vaultStorageLimits";
 
 export type PricingTierContent = {
   id: string;
@@ -39,7 +40,7 @@ export const DEFAULT_PRICING_CONTENT: PricingSectionContent = {
         "Rename your memories",
         "Share memories via link",
         "1 Legacy Circle + family invite codes",
-        "5 GB shared vault storage",
+        VAULT_STORAGE_FEATURE_COPY.circle,
       ],
       lockedFeatures: ["Cannot delete recordings", "No raw audio downloads"],
       cta: "Start free →",
@@ -57,10 +58,9 @@ export const DEFAULT_PRICING_CONTENT: PricingSectionContent = {
         "Delete & manage recordings",
         "Download recordings as audio files",
         "Story cards from photos → family notifications",
-        "500 MB vault storage",
+        VAULT_STORAGE_FEATURE_COPY.keeper,
       ],
       cta: "Upgrade to Keeper →",
-      note: "Storage upgrade to 50 GB available · $19.99/mo",
     },
     {
       id: "heritage",
@@ -79,7 +79,7 @@ export const DEFAULT_PRICING_CONTENT: PricingSectionContent = {
         "Heirloom books & physical galleries",
         "Cross-border family coordination",
         "Dedicated legacy producer",
-        "Unlimited vault storage",
+        VAULT_STORAGE_FEATURE_COPY.heritage,
       ],
       cta: "Plan with us →",
       note: "White Swan also available standalone · $950",

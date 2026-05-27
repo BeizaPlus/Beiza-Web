@@ -350,9 +350,9 @@ export default function HeritagePage() {
           </p>
           <InstagramReelsSection
             id="farewell-events-reels"
+            variant="panel"
             title="Because their story deserves to be unforgettable."
             description="Scrollable farewell-event videos, embedded in-page."
-            insetPanel
           />
         </div>
       </section>
