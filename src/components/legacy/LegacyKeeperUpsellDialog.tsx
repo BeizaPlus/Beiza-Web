@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { KEEPER_MONTHLY_PRICE_LABEL } from "@/lib/landingPricingContent";
 
 type LegacyKeeperUpsellDialogProps = {
   open: boolean;
@@ -51,7 +52,7 @@ export function LegacyKeeperUpsellDialog({
           }}
           className="mt-4 block w-full rounded-full bg-primary py-3 text-center text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-60"
         >
-          {loading ? "Opening checkout…" : "Upgrade to Keeper — $4.99/mo"}
+          {loading ? "Opening checkout…" : `Upgrade to Keeper — ${KEEPER_MONTHLY_PRICE_LABEL}`}
         </button>
       </DialogContent>
     </Dialog>

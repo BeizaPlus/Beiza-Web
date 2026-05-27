@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Lock } from "lucide-react";
 import { SectionHeader } from "@/components/framer/SectionHeader";
-import { CasketIcon } from "@/components/icons/CasketIcon";
+import { WhiteSwanPricingCallout } from "@/components/landing/WhiteSwanPricingCallout";
 import { StudioEditableText } from "@/components/dev/StudioEditableText";
 import { marketingCardClassName, marketingContainer, marketingSection } from "@/lib/brandUi";
 import {
@@ -154,29 +154,17 @@ export function LegacyCurationPricing({
                   />
 
                   {tier.whiteSwan ? (
-                    <div className="mb-4 mt-4 rounded-lg border border-border bg-secondary/40 p-4">
-                      <div className="mb-2 flex items-center gap-2.5">
-                        <CasketIcon size={24} className="text-primary" />
-                        <StudioEditableText
-                          enabled={editable}
-                          value={tier.whiteSwan.title}
-                          onChange={(title) =>
-                            patchTier(tier.id, { whiteSwan: { ...tier.whiteSwan!, title } })
-                          }
-                          className="text-[13px] font-medium text-white"
-                        />
-                      </div>
-                      <StudioEditableText
-                        enabled={editable}
-                        as="p"
-                        multiline
-                        value={tier.whiteSwan.body}
-                        onChange={(body) =>
-                          patchTier(tier.id, { whiteSwan: { ...tier.whiteSwan!, body } })
-                        }
-                        className="text-xs leading-relaxed text-muted-foreground"
-                      />
-                    </div>
+                    <WhiteSwanPricingCallout
+                      title={tier.whiteSwan.title}
+                      body={tier.whiteSwan.body}
+                      editable={editable}
+                      onTitleChange={(title) =>
+                        patchTier(tier.id, { whiteSwan: { ...tier.whiteSwan!, title } })
+                      }
+                      onBodyChange={(body) =>
+                        patchTier(tier.id, { whiteSwan: { ...tier.whiteSwan!, body } })
+                      }
+                    />
                   ) : null}
 
                   <ul className="mt-4 flex-1 space-y-2 text-sm text-white/90">

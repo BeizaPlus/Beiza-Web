@@ -17,7 +17,6 @@ import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { saveStudioState, studioCssVars } from "@/components/dev/landingLayoutStudioState";
 import { BRAND_IMAGES, HERO_OVERLAY_GRADIENT } from "@/lib/brandImages";
 import { resolveHeroBackgroundSrc } from "@/lib/resolveHeroImage";
-import { MEDIA_ASSETS } from "@/lib/mediaAssets";
 import { HomeFaqSection } from "@/components/framer/HomeFaqSection";
 import type { FaqAccordionEntry } from "@/components/framer/FaqAccordionGroup";
 import { ArmAnchorMenu } from "@/components/marketing/ArmAnchorMenu";
@@ -197,7 +196,7 @@ const Landing = () => {
         {showOfferings ? (
           <WhatWeDoSection
             offerings={offeringsList}
-            mockupSrc={MEDIA_ASSETS.home.productLeaderMockup.src}
+            variant="educationSimple"
             showLocaleToggle={false}
             style={
               studio

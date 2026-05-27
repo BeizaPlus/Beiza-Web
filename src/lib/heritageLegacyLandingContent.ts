@@ -75,7 +75,7 @@ export const LEGACY_PRICING = [
   {
     id: "keeper",
     name: "Keeper",
-    price: "$4.99/mo",
+    price: "$9.99/mo",
     body: "Unlimited storage, memoir compilation, downloadable and printed book.",
     cta: "Upgrade",
     href: BEIZA_LINKS.marketing.pricing,

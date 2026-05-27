@@ -336,7 +336,7 @@ Shared overlay: `linear-gradient(to right, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.15
 | Tier | Recording | Rename | Delete | Share link | Download raw | Storage |
 |------|-----------|--------|--------|------------|--------------|---------|
 | **Circle** (free) | Unlimited length | Yes | Locked (upsell) | **Yes (free)** | Locked | 5 GB |
-| **Keeper** ($4.99/mo) | Yes | Yes | Yes | Yes | Yes | 500 MB |
+| **Keeper** ($9.99/mo) | Yes | Yes | Yes | Yes | Yes | 500 MB |
 | **Heritage** ($white-glove) | Yes | Yes | Yes | Yes | Yes | Unlimited |
 
 - No duration cap for Circle; tap-to-record toggle; 5 GB gate on upload

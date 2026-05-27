@@ -1,6 +1,10 @@
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
 import { VAULT_STORAGE_FEATURE_COPY } from "@/lib/legacy/vaultStorageLimits";
 
+/** Display + checkout copy — Stripe amount is set in STRIPE_PRICE_KEEPER_MONTHLY. */
+export const KEEPER_MONTHLY_PRICE = "$9.99";
+export const KEEPER_MONTHLY_PRICE_LABEL = `${KEEPER_MONTHLY_PRICE}/mo`;
+
 export type PricingTierContent = {
   id: string;
   name: string;
@@ -48,7 +52,7 @@ export const DEFAULT_PRICING_CONTENT: PricingSectionContent = {
     {
       id: "keeper",
       name: "Keeper",
-      price: "$4.99",
+      price: KEEPER_MONTHLY_PRICE,
       tagline: "Per month",
       badge: "Most popular",
       description:

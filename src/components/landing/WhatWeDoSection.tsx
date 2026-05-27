@@ -2,6 +2,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 import { FlagIcon } from "@/components/ui/FlagIcon";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { FeatureCard } from "@/components/framer/FeatureCard";
+import { RecordStationCuriosityLoop } from "@/components/landing/RecordStationCuriosityLoop";
 import {
   marketingSection,
   segmentToggleOption,
@@ -25,29 +26,6 @@ export type LegacyLocale = "global" | "ghana" | "spanish" | "french";
 
 const LOCALE_KEY = "beiza-legacy-locale-v3";
 
-const GLOBAL_OFFERINGS: OfferingCard[] = [
-  {
-    id: "global-galleries",
-    title: "Legacy Galleries",
-    description: "Curated imagery of the people you love — shared with family anywhere.",
-  },
-  {
-    id: "global-vault",
-    title: "Voice Vault",
-    description: "Record and replay stories in your family's private archive, from any country.",
-  },
-  {
-    id: "global-circle",
-    title: "Family Circles",
-    description: "Invite relatives across borders with secure codes and role-based access.",
-  },
-  {
-    id: "global-stream",
-    title: "Live & Replay",
-    description: "Stream gatherings and keep HD replays for relatives who cannot travel.",
-  },
-];
-
 const LOCALE_OPTIONS: { id: LegacyLocale; flagKey: string; label: string }[] = [
   { id: "global", flagKey: "GLOBAL", label: "Global" },
   { id: "ghana", flagKey: "GH", label: "Ghana · Twi" },
@@ -61,22 +39,22 @@ const LOCALE_COPY: Record<
 > = {
   global: {
     description:
-      "Open to families everywhere — recorded voices, curated imagery, and cultural keepsakes your people can access from any country.",
+      "Record voices at the station, store them in your vault, and share your circle — from any country.",
   },
   ghana: {
     description:
-      "Mmienu ne mmienu — wo fifo asem wɔ hɔ. Fa wo ni ase ho asem sie wɔ Beiza mu ná wo mma nso nna ho.",
+      "Mmienu ne mmienu — fa wo fifo asem sie wɔ Beiza mu. Record at the station, keep voices in your vault.",
     secondary:
       "Your family's story belongs here. Record it in Twi — your children will hear it forever.",
   },
   spanish: {
     description:
-      "Para familias de todo el mundo — guarda las voces, las historias y el legado de los tuyos, desde cualquier país.",
+      "Graba en la estación, guarda en tu bóveda, e invita a tu círculo — desde cualquier país.",
     secondary: "Your family's story, preserved in Spanish.",
   },
   french: {
     description:
-      "Pour les familles partout dans le monde — préservez les voix, les histoires et l'héritage des vôtres, depuis n'importe quel pays.",
+      "Enregistrez à la station, conservez dans votre coffre, invitez votre cercle — partout dans le monde.",
     secondary: "Your family's story, preserved in French.",
   },
 };
@@ -92,6 +70,8 @@ type WhatWeDoSectionProps = {
   style?: CSSProperties;
   id?: string;
   showLocaleToggle?: boolean;
+  /** Education `/home` — single curiosity loop, no card grid. */
+  variant?: "default" | "educationSimple";
 };
 
 export function WhatWeDoSection({
@@ -101,10 +81,12 @@ export function WhatWeDoSection({
   style,
   id,
   showLocaleToggle = true,
+  variant = "default",
 }: WhatWeDoSectionProps) {
   const [locale, setLocale] = useState<LegacyLocale>("global");
   const [mockupFailed, setMockupFailed] = useState(false);
   const localeScrollRef = useDraggableScroll();
+  const educationSimple = variant === "educationSimple";
 
   useEffect(() => {
     const saved = localStorage.getItem(LOCALE_KEY);
@@ -116,7 +98,6 @@ export function WhatWeDoSection({
     localStorage.setItem(LOCALE_KEY, next);
   };
 
-  const visibleOfferings = offerings;
   const copy = LOCALE_COPY[locale];
 
   return (
@@ -126,78 +107,86 @@ export function WhatWeDoSection({
       style={style}
     >
       <div className={siteBoundedContainer}>
-      <SectionHeader
-        eyebrow="What We Do"
-        title="How We Preserve Your Legacy"
-        align="center"
-      />
+        <SectionHeader
+          eyebrow="What We Do"
+          title="How We Preserve Your Legacy"
+          align="center"
+        />
 
-      {showLocaleToggle ? (
-        <div
-          ref={localeScrollRef}
-          data-draggable
-          className="mt-8 flex justify-center overflow-x-auto px-1 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-        >
-          <LocaleToggle locale={locale} onChange={setLocaleAndSave} />
-        </div>
-      ) : null}
-
-      <div className="mx-auto mt-6 max-w-2xl px-2 text-center">
-        <p className="text-base leading-relaxed text-subtle">{copy.description}</p>
-        {copy.secondary ? (
-          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{copy.secondary}</p>
+        {showLocaleToggle && !educationSimple ? (
+          <div
+            ref={localeScrollRef}
+            data-draggable
+            className="mt-8 flex justify-center overflow-x-auto px-1 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
+            <LocaleToggle locale={locale} onChange={setLocaleAndSave} />
+          </div>
         ) : null}
-      </div>
 
-      <div
-        className={cn(
-          "mt-12 grid w-full grid-cols-1 gap-6",
-          `${LAYOUT_TW.tabletUp}:grid-cols-[58%_38%] ${LAYOUT_TW.tabletUp}:items-stretch ${LAYOUT_TW.tabletUp}:gap-[4%]`,
-        )}
-      >
-        <div
-          className={cn(
-            "grid w-full grid-cols-1 gap-[4%] sm:auto-rows-fr",
-            `${LAYOUT_TW.tabletUp}:grid-cols-2`,
-          )}
-        >
-          {visibleOfferings.map((feature) => (
-            <FeatureCard
-              key={feature.id}
-              title={feature.title}
-              description={feature.description ?? ""}
-              icon={feature.icon}
-            />
-          ))}
+        <div className={cn("mx-auto max-w-2xl px-2 text-center", educationSimple ? "mt-6" : "mt-6")}>
+          <p className="text-base leading-relaxed text-subtle">{copy.description}</p>
+          {copy.secondary && !educationSimple ? (
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{copy.secondary}</p>
+          ) : null}
         </div>
 
-        <div
-          className={cn(
-            "relative min-h-[20rem] w-full overflow-hidden rounded-lg border border-white/10 sm:min-h-[24rem]",
-            `${LAYOUT_TW.tabletUp}:min-h-0 ${LAYOUT_TW.tabletUp}:h-full`,
-          )}
-          aria-label="Product mockup placeholder"
-        >
-          {mockupSrc && !mockupFailed ? (
-            <img
-              src={mockupSrc}
-              alt="Beiza Legacy product preview"
-              className="absolute inset-0 h-full w-full object-cover object-top"
-              onError={() => setMockupFailed(true)}
-            />
-          ) : (
-            <div className="flex h-full min-h-[inherit] items-center justify-center bg-white/[0.03] px-[6%] py-12 text-center">
-              <p className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
-                Mockup
-              </p>
-              <p className="mt-2 text-sm text-subtle">
-                Drop your Legacy app or gallery preview image here
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">public/images/legacy-mockup.png</p>
+        {educationSimple ? (
+          <div className="mx-auto mt-10 w-full max-w-4xl">
+            <RecordStationCuriosityLoop />
+            <ul className="mt-8 grid gap-3 text-center sm:grid-cols-3 sm:text-left">
+              {offerings.slice(0, 3).map((item) => (
+                <li key={item.id} className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-3">
+                  <p className="text-sm font-medium text-white">{item.title}</p>
+                  {item.description ? (
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{item.description}</p>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div
+            className={cn(
+              "mt-12 grid w-full grid-cols-1 gap-6",
+              `${LAYOUT_TW.tabletUp}:grid-cols-[58%_38%] ${LAYOUT_TW.tabletUp}:items-stretch ${LAYOUT_TW.tabletUp}:gap-[4%]`,
+            )}
+          >
+            <div
+              className={cn(
+                "grid w-full grid-cols-1 gap-[4%] sm:auto-rows-fr",
+                `${LAYOUT_TW.tabletUp}:grid-cols-2`,
+              )}
+            >
+              {offerings.map((feature) => (
+                <FeatureCard
+                  key={feature.id}
+                  title={feature.title}
+                  description={feature.description ?? ""}
+                  icon={feature.icon}
+                />
+              ))}
             </div>
-          )}
-        </div>
-      </div>
+
+            <div
+              className={cn(
+                "relative min-h-[20rem] w-full overflow-hidden rounded-lg border border-white/10 sm:min-h-[24rem]",
+                `${LAYOUT_TW.tabletUp}:min-h-0 ${LAYOUT_TW.tabletUp}:h-full`,
+              )}
+              aria-label="Product preview"
+            >
+              {mockupSrc && !mockupFailed ? (
+                <img
+                  src={mockupSrc}
+                  alt="Beiza Legacy product preview"
+                  className="absolute inset-0 h-full w-full object-cover object-top"
+                  onError={() => setMockupFailed(true)}
+                />
+              ) : (
+                <RecordStationCuriosityLoop className="absolute inset-0 h-full rounded-lg border-0" />
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

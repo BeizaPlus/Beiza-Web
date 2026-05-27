@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Crown, Download, Sparkles, Trash2 } from "lucide-react";
 import { legacyGoldPanel } from "@/lib/brandUi";
 import { BEIZA_LINKS } from "@/lib/beizaMasterLinks";
+import { KEEPER_MONTHLY_PRICE_LABEL } from "@/lib/landingPricingContent";
 
 const FEATURES = [
   { icon: Trash2, label: "Delete any memory at any time" },
@@ -40,7 +41,7 @@ export function LegacyVaultPlusUpsell() {
         to={BEIZA_LINKS.marketing.pricing}
         className="block w-full rounded-lg bg-primary py-2.5 text-center text-[13px] font-bold tracking-wide text-primary-foreground transition-opacity hover:opacity-90"
       >
-        Upgrade to Keeper — $4.99/mo ↗
+        Upgrade to Keeper — {KEEPER_MONTHLY_PRICE_LABEL} ↗
       </Link>
     </aside>
   );
