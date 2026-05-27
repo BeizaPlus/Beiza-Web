@@ -3,7 +3,6 @@ import { SectionHeader } from "@/components/framer/SectionHeader";
 import { InstagramReelPoster } from "@/components/landing/InstagramReelPoster";
 import { useDraggableScroll } from "@/hooks/useDraggableScroll";
 import { HISTORY_SERIES_EPISODES, type HistorySeriesEpisode } from "@/lib/instagramHistorySeries";
-import { instagramEmbedSrc } from "@/lib/instagramEmbed";
 import { cn } from "@/lib/utils";
 
 export type InstagramPost = {
@@ -12,15 +11,9 @@ export type InstagramPost = {
   label: string;
   /** Optional poster image beneath the cinematic frame */
   posterSrc?: string;
+  /** Direct video source from scraped dataset */
+  videoSrc?: string;
 };
-
-/** Crop Instagram chrome; scale fills 9:16 frame edge-to-edge. */
-const EMBED_TOP_CROP_PX = 62;
-const EMBED_BOTTOM_CROP_PX = 72;
-/** ~110% vertical; slightly wider on X to kill IG side letterbox */
-const EMBED_SCALE_X = 1.18;
-const EMBED_SCALE_Y = 1.1;
-const EMBED_WIDTH_PERCENT = 110;
 
 function isHistoryEpisode(post: InstagramPost): post is HistorySeriesEpisode {
   return "eraLabel" in post && "backdrop" in post;
@@ -52,16 +45,15 @@ function InstagramReelCard({
 }: {
   post: InstagramPost;
   isActive: boolean;
-  onActivate: () => void;
+  onActivate: (node: HTMLDivElement | null) => void;
 }) {
   const cinematic = isHistoryEpisode(post);
-  const embedSrc = instagramEmbedSrc(post.url, post.id);
 
   return (
     <article
       className={cn(
         "flex w-[min(78vw,260px)] shrink-0 snap-center flex-col",
-        "min-[810px]:w-[min(34vw,280px)]",
+        "min-[640px]:w-[min(34vw,280px)]",
         "min-[1200px]:w-[280px]",
       )}
     >
@@ -80,29 +72,31 @@ function InstagramReelCard({
           />
         ) : null}
 
-        <div className="absolute inset-0 z-10 overflow-hidden bg-black">
+        <div ref={onActivate} className="absolute inset-0 z-10 overflow-hidden bg-black">
           {isActive ? (
-            <iframe
-              key={embedSrc}
-              src={embedSrc}
-              title={`Instagram ${post.label}`}
-              loading="eager"
-              scrolling="no"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen"
-              allowFullScreen
-              className="pointer-events-auto absolute left-1/2 top-0 border-0 bg-black"
-              style={{
-                width: `${EMBED_WIDTH_PERCENT}%`,
-                height: `calc(${EMBED_WIDTH_PERCENT}% + ${EMBED_TOP_CROP_PX + EMBED_BOTTOM_CROP_PX}px)`,
-                transform: `translate(-50%, -${EMBED_TOP_CROP_PX}px) scale(${EMBED_SCALE_X}, ${EMBED_SCALE_Y})`,
-                transformOrigin: "top center",
-              }}
-            />
+            post.videoSrc ? (
+              <video
+                key={post.id}
+                src={post.videoSrc}
+                poster={post.posterSrc}
+                controls
+                autoPlay
+                playsInline
+                preload="metadata"
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center text-xs text-white/70">
+                Video unavailable
+              </div>
+            )
           ) : (
             <button
               type="button"
-              onClick={onActivate}
+              onClick={(e) => {
+                const container = e.currentTarget.parentElement as HTMLDivElement | null;
+                onActivate(container);
+              }}
               className="group absolute inset-0 flex cursor-pointer items-center justify-center bg-black/20 transition hover:bg-black/35"
               aria-label={`Play ${post.label}`}
             >
@@ -148,8 +142,13 @@ export function InstagramReelsSection({
   const rowRef = useDraggableScroll();
   const isPanel = variant === "panel";
   const [activePostId, setActivePostId] = useState<string | null>(null);
-  const activatePost = useCallback((postId: string) => {
+  const activatePost = useCallback((postId: string, node: HTMLDivElement | null) => {
     setActivePostId(postId);
+    node?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
   }, []);
 
   if (posts.length === 0) return null;
@@ -164,7 +163,7 @@ export function InstagramReelsSection({
         <div
           className={cn(
             isPanel && "rounded-[24px] border border-white/10 bg-black px-4 py-10 md:px-6",
-            !isPanel && "py-8 min-[810px]:py-10",
+            !isPanel && "py-8 min-[640px]:py-10",
           )}
         >
           <SectionHeader
@@ -181,7 +180,7 @@ export function InstagramReelsSection({
               "mt-7 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2",
               "pl-[max(0px,calc((100vw-min(78vw,260px))/2-var(--beiza-site-padding-x,1.25rem)))]",
               "pr-[max(1rem,var(--beiza-site-padding-x,1.25rem))]",
-              "min-[810px]:gap-4 min-[810px]:pl-0 min-[810px]:pr-0",
+              "min-[640px]:gap-4 min-[640px]:pl-0 min-[640px]:pr-0",
               "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
             )}
           >
@@ -190,7 +189,7 @@ export function InstagramReelsSection({
                 key={post.id}
                 post={post}
                 isActive={activePostId === post.id}
-                onActivate={() => activatePost(post.id)}
+                onActivate={(node) => activatePost(post.id, node)}
               />
             ))}
           </div>

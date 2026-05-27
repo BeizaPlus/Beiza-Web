@@ -24,7 +24,7 @@ const REEL_EP00_POSTER = "/images/beiza-history-series-reel-ep00-dvgzckrcje8.png
 
 type EpisodeMeta = Omit<
   HistorySeriesEpisode,
-  "id" | "url" | "label" | "posterSrc"
+  "id" | "url" | "label" | "posterSrc" | "videoSrc"
 >;
 
 /** Card copy + art direction keyed by Instagram short code. */
@@ -171,6 +171,7 @@ export const HISTORY_SERIES_EPISODES: HistorySeriesEpisode[] = scrapedReels.map(
       url: instagramReelPermalink(reel.shortCode),
       label: `Episode ${index + 1}`,
       posterSrc: posterForShortCode(reel.shortCode, reel.poster),
+      videoSrc: reel.videoSrc ?? undefined,
       ...meta,
     };
   },
