@@ -182,11 +182,11 @@ const Landing = () => {
       ) : null}
 
       <main className="flex flex-col pb-24 lg:pb-32">
-        {showLocaleRail ? <EducationTopLocaleSwitcher /> : null}
-        {showRest ? <AdinkraSymbolsListSection /> : null}
         {showRest ? (
           <InstagramReelsSection id="cultural-films" variant="bare" className="mt-8 md:mt-12" />
         ) : null}
+        {showLocaleRail ? <EducationTopLocaleSwitcher /> : null}
+        {showRest ? <AdinkraSymbolsListSection /> : null}
         {showRest ? <CulturePdfLeadSection /> : null}
         {showRest ? (
           <div className="mx-auto mt-8 w-full max-w-6xl px-6">

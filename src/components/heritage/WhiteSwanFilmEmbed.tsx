@@ -30,15 +30,17 @@ export function WhiteSwanFilmEmbed({
         <iframe
           src={WHITE_SWAN_FILM_EMBED_URL}
           title={title}
-          className="absolute inset-0 h-full w-full"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          className="absolute inset-0 h-full w-full border-0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           referrerPolicy="strict-origin-when-cross-origin"
-          allowFullScreen
         />
       ) : (
         <button
           type="button"
-          onClick={() => setPlaying(true)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setPlaying(true);
+          }}
           className="group absolute inset-0 h-full w-full cursor-pointer"
           aria-label="Play White Swan film"
         >

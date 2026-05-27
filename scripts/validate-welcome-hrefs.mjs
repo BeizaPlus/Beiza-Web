@@ -6,11 +6,11 @@ import { getWelcomeCardHref } from "../src/lib/beizaMasterLinks.ts";
 import { WELCOME_LANGUAGE_OPTIONS } from "../src/lib/locale/welcomeLanguageOptions.ts";
 
 const MATRIX = {
-  GH: ["/home", "/legacy/record", "/af/farewell"],
-  EN: ["/home", "/legacy/record", "/farewell"],
-  ES: ["/home", "/legacy/record", "/la/farewell"],
-  FR: ["/home", "/legacy/record", "/fr/farewell"],
-  CN: ["/home", "/legacy/record", "/zh/farewell"],
+  GH: ["/home#cultural-films", "/legacy/record", "/af/farewell"],
+  EN: ["/home#cultural-films", "/legacy/record", "/farewell"],
+  ES: ["/home#cultural-films", "/legacy/record", "/la/farewell"],
+  FR: ["/home#cultural-films", "/legacy/record", "/fr/farewell"],
+  CN: ["/home#cultural-films", "/legacy/record", "/zh/farewell"],
 };
 
 const failures = [];

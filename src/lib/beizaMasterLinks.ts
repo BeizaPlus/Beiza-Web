@@ -187,16 +187,20 @@ export function getWelcomeRoute(locale: BeizaLocale, path: WelcomePathKey): stri
   return WELCOME_REGIONAL_ROUTES[locale][path];
 }
 
+/** Education home — Instagram series anchor (welcome “Learn your culture” → Explore) */
+export const EDUCATION_HOME_CULTURAL_FILMS_HREF = `${BEIZA_LINKS.home.educationHome}#cultural-films`;
+
 /** Href for a welcome gate path card */
 export function getWelcomeCardHref(locale: BeizaLocale, path: WelcomePathKey): string {
   if (path === "legacy") return WELCOME_CARD_TARGETS.legacy;
+  if (path === "education") return EDUCATION_HOME_CULTURAL_FILMS_HREF;
   return getWelcomeRoute(locale, path);
 }
 
 /** Expected EN welcome card hrefs in DOM order: Education · Legacy · Farewell */
 export function getWelcomeCardHrefsEn(): [string, string, string] {
   return [
-    regionalEducationWrapperPath("black-american"),
+    EDUCATION_HOME_CULTURAL_FILMS_HREF,
     WELCOME_CARD_TARGETS.legacy,
     regionalFarewellPath("black-american"),
   ];

@@ -56,7 +56,7 @@ const US_COPY: WelcomeCopy = {
 
       subtitle:
 
-        "Discover Adinkra symbols and the living wisdom your people carried across generations.",
+        "Watch the Instagram history series, then explore Adinkra symbols and the wisdom your people carried across generations.",
 
       meta: "Explore",
 
