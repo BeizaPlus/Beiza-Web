@@ -5,6 +5,7 @@
 | Tag | Doc | When |
 |-----|-----|------|
 | `checkpoint/instagram-reels-2026-05-27` | [checkpoints/instagram-reels-2026-05-27.md](./checkpoints/instagram-reels-2026-05-27.md) | 12 Chloe vs History reels, 9:16 cards, desktop breakpoints |
+| *(reference)* | [checkpoints/welcome-gate-2026-05-27.md](./checkpoints/welcome-gate-2026-05-27.md) | Welcome `/welcome` on `:8080` — wordmark + 3 cards + locale rail |
 
 ```bash
 git fetch origin --tags
