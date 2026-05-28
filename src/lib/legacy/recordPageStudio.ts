@@ -1,7 +1,6 @@
 import type { CSSProperties } from "react";
 import type { HeritageHeroFrame } from "@/components/dev/heroLayoutStudioState";
 import type { LayoutStudioBreakpoint } from "@/lib/layoutBreakpoints";
-import { heritageHeroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
 import {
   clampCopyOffsetFields,
   copyOffsetStyle,
@@ -26,7 +25,7 @@ export type RecordPageStudioFrame = HeritageHeroFrame & {
   emailMaxWidthRem: number;
   /** Subtitle paragraph max width (rem) */
   subtitleMaxWidthRem: number;
-  /** Phone (≤639px) */
+  /** Phone (≤767px) */
   offsetXPhone: number;
   offsetYPhone: number;
   copyLiftPhone: number;
@@ -185,7 +184,6 @@ export function recordPageStudioToJson(frame: RecordPageStudioFrame) {
 
 export function recordPageShellCssVars(frame: RecordPageStudioFrame): CSSProperties {
   return {
-    ...heritageHeroStudioCssVars(frame),
     "--record-content-indent": `${frame.contentIndentRem}rem`,
     "--record-column-max": `${frame.columnMaxWidthRem}rem`,
     "--record-email-max": `${frame.emailMaxWidthRem}rem`,

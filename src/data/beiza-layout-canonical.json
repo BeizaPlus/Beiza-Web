@@ -22,7 +22,7 @@
       "posY": 67,
       "scale": 106,
       "textSide": "left",
-      "overlayStrength": 55,
+      "overlayStrength": 0,
       "copyRaiseVh": 4
     },
     "desktop": {

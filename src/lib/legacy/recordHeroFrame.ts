@@ -7,7 +7,7 @@ export const RECORD_HERO_GHANA_DEFAULTS: HeritageHeroFrame = {
   posY: 32,
   scale: 108,
   textSide: "left",
-  overlayStrength: 52,
+  overlayStrength: 0,
   copyRaiseVh: 6,
 };
 
