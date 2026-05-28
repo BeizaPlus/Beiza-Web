@@ -1,5 +1,7 @@
 # Beiza website progress snapshots
 
+**Full delta for Prince:** [CHANGELOG-PRINCE-TO-MAIN.md](../CHANGELOG-PRINCE-TO-MAIN.md) — `67a2b02` (last Prince commit) and `fdf0e81` (May 20 production ship) → current `main`.
+
 ## Revert checkpoints (git tags)
 
 | Tag | Doc | When |

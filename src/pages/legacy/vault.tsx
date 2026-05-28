@@ -159,6 +159,15 @@ export default function LegacyVaultPage() {
         <p className="mt-1 text-[13px] text-[#888]">
           Listen back to preserved voices and stories. Share any memory free — download on Keeper.
         </p>
+        <figure className="mt-4 overflow-hidden rounded-xl border border-[#2a2a2a] bg-[#141414]">
+          <img
+            src="/images/beiza-storyworth-legacy-vault-03-package.png"
+            alt="Legacy Vault 03 archival package concept"
+            className="h-auto w-full object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
       </header>
 
       {isLoading && (
