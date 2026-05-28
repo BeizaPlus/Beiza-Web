@@ -53,7 +53,7 @@ function InstagramReelCard({
     <article
       className={cn(
         "flex w-[min(78vw,260px)] shrink-0 snap-center flex-col",
-        "min-[640px]:w-[min(34vw,280px)]",
+        "min-[768px]:w-[min(34vw,280px)]",
         "min-[1200px]:w-[280px]",
       )}
     >
@@ -72,7 +72,13 @@ function InstagramReelCard({
           </div>
         ) : null}
 
-        <div ref={onActivate} className="absolute inset-0 z-10 overflow-hidden bg-black">
+        <div
+          ref={onActivate}
+          className={cn(
+            "absolute inset-0 z-10 overflow-hidden",
+            isActive ? "bg-black" : "bg-transparent",
+          )}
+        >
           {isActive ? (
             post.videoSrc ? (
               <video
@@ -163,7 +169,7 @@ export function InstagramReelsSection({
         <div
           className={cn(
             isPanel && "rounded-[24px] border border-white/10 bg-black px-4 py-10 md:px-6",
-            !isPanel && "py-8 min-[640px]:py-10",
+            !isPanel && "py-8 min-[768px]:py-10",
           )}
         >
           <SectionHeader
@@ -180,7 +186,7 @@ export function InstagramReelsSection({
               "mt-7 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2",
               "pl-[max(0px,calc((100vw-min(78vw,260px))/2-var(--beiza-site-padding-x,1.25rem)))]",
               "pr-[max(1rem,var(--beiza-site-padding-x,1.25rem))]",
-              "min-[640px]:gap-4 min-[640px]:pl-0 min-[640px]:pr-0",
+              "min-[768px]:gap-4 min-[768px]:pl-0 min-[768px]:pr-0",
               "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
             )}
           >
