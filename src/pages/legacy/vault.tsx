@@ -141,34 +141,41 @@ export default function LegacyVaultPage() {
     });
   };
 
+  const vaultHeader = (
+    <header>
+      <h2 className="text-xl font-bold text-white">Your Family&apos;s Legacy Vault</h2>
+      <p className="mt-1 text-[13px] text-[#888]">
+        Listen back to preserved voices and stories. Share any memory free — download on Keeper.
+      </p>
+      <figure className="mt-4 overflow-hidden rounded-xl border border-[#2a2a2a] bg-[#141414]">
+        <img
+          src="/images/beiza-storyworth-legacy-vault-03-package.png"
+          alt="Legacy Vault 03 archival package concept"
+          className="h-auto w-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+    </header>
+  );
+
   if (!circle) {
     return (
-      <div className="space-y-4 text-center">
-        <p className="text-muted-foreground">Your vault opens once you join a Legacy Circle.</p>
-        <Button asChild>
-          <Link to={BEIZA_LINKS.legacy.family}>Your Legacy Circle</Link>
-        </Button>
+      <div className="space-y-5">
+        {vaultHeader}
+        <div className="space-y-4 text-center">
+          <p className="text-muted-foreground">Your vault opens once you join a Legacy Circle.</p>
+          <Button asChild>
+            <Link to={BEIZA_LINKS.legacy.family}>Your Legacy Circle</Link>
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-5">
-      <header>
-        <h2 className="text-xl font-bold text-white">Your Family&apos;s Legacy Vault</h2>
-        <p className="mt-1 text-[13px] text-[#888]">
-          Listen back to preserved voices and stories. Share any memory free — download on Keeper.
-        </p>
-        <figure className="mt-4 overflow-hidden rounded-xl border border-[#2a2a2a] bg-[#141414]">
-          <img
-            src="/images/beiza-storyworth-legacy-vault-03-package.png"
-            alt="Legacy Vault 03 archival package concept"
-            className="h-auto w-full object-cover"
-            loading="lazy"
-            decoding="async"
-          />
-        </figure>
-      </header>
+      {vaultHeader}
 
       {isLoading && (
         <p className="text-center text-sm text-muted-foreground">Opening the vault…</p>
