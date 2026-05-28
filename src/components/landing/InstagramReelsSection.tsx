@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SectionHeader } from "@/components/framer/SectionHeader";
 import { InstagramReelPoster } from "@/components/landing/InstagramReelPoster";
 import { useDraggableScroll } from "@/hooks/useDraggableScroll";
@@ -41,13 +41,22 @@ function PlayGlyph() {
 function InstagramReelCard({
   post,
   isActive,
-  onActivate,
+  onPlay,
 }: {
   post: InstagramPost;
   isActive: boolean;
-  onActivate: (node: HTMLDivElement | null) => void;
+  onPlay: (node: HTMLDivElement | null) => void;
 }) {
   const cinematic = isHistoryEpisode(post);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (!isActive || !videoRef.current) return;
+    void videoRef.current.play().catch(() => {
+      /* Autoplay may be blocked until user interacts with controls */
+    });
+  }, [isActive, post.id]);
 
   return (
     <article
@@ -58,7 +67,7 @@ function InstagramReelCard({
       )}
     >
       <div className="relative aspect-[9/16] overflow-hidden rounded-2xl border border-white/10 bg-black">
-        {post.posterSrc ? (
+        {post.posterSrc && !isActive ? (
           <img
             src={post.posterSrc}
             alt=""
@@ -66,14 +75,14 @@ function InstagramReelCard({
             loading="lazy"
             decoding="async"
           />
-        ) : cinematic ? (
+        ) : !isActive && cinematic ? (
           <div className="pointer-events-none absolute inset-0 z-0">
             <InstagramReelPoster post={post} />
           </div>
         ) : null}
 
         <div
-          ref={onActivate}
+          ref={overlayRef}
           className={cn(
             "absolute inset-0 z-10 overflow-hidden",
             isActive ? "bg-black" : "bg-transparent",
@@ -82,14 +91,14 @@ function InstagramReelCard({
           {isActive ? (
             post.videoSrc ? (
               <video
+                ref={videoRef}
                 key={post.id}
                 src={post.videoSrc}
                 poster={post.posterSrc}
                 controls
-                autoPlay
                 playsInline
-                preload="metadata"
-                className="h-full w-full object-cover"
+                preload="auto"
+                className="relative z-10 h-full w-full object-cover"
               />
             ) : (
               <div className="flex h-full items-center justify-center text-xs text-white/70">
@@ -99,11 +108,8 @@ function InstagramReelCard({
           ) : (
             <button
               type="button"
-              onClick={(e) => {
-                const container = e.currentTarget.parentElement as HTMLDivElement | null;
-                onActivate(container);
-              }}
-              className="group absolute inset-0 flex cursor-pointer items-center justify-center bg-black/10 transition hover:bg-black/25"
+              onClick={() => onPlay(overlayRef.current)}
+              className="group absolute inset-0 z-20 flex cursor-pointer items-center justify-center bg-black/10 transition hover:bg-black/25"
               aria-label={`Play ${post.label}`}
             >
               <span className="flex h-16 w-16 items-center justify-center rounded-full bg-black/55 ring-1 ring-white/25 transition group-hover:scale-105 group-hover:bg-black/70">
@@ -148,7 +154,7 @@ export function InstagramReelsSection({
   const rowRef = useDraggableScroll();
   const isPanel = variant === "panel";
   const [activePostId, setActivePostId] = useState<string | null>(null);
-  const activatePost = useCallback((postId: string, node: HTMLDivElement | null) => {
+  const playPost = useCallback((postId: string, node: HTMLDivElement | null) => {
     setActivePostId(postId);
     node?.scrollIntoView({
       behavior: "smooth",
@@ -195,7 +201,7 @@ export function InstagramReelsSection({
                 key={post.id}
                 post={post}
                 isActive={activePostId === post.id}
-                onActivate={(node) => activatePost(post.id, node)}
+                onPlay={(node) => playPost(post.id, node)}
               />
             ))}
           </div>
