@@ -123,10 +123,10 @@ Three distinct layers; the Patterns tab synthesizes across all of them:
 - Relationship picker: drag direction infers parent / child / sibling options (`treeConnectionInference.ts`); diagonal shows full picker.
 - Relation chevron (`.node-relation-chevron`): visible on node hover only.
 
-### Homepage hero (layout only)
-- Full bleed (100vw) — no max-width on the outer hero shell
-- Nav: 100% width, padding 0 48px (`px-12`), no max-width wrapper
-- Hero copy block: max-width 680px, left-aligned, `md:pl-20` — do not change hero image asset or studio frame values
+### Hero copy (all marketing heroes — `/home`, `/events`, `/heritage`)
+- **Cyan site-bounds line** = where headline/body **starts** (left or right aligned). See `.cursor/rules/site-hero-copy-indent.mdc`.
+- Use `siteHeroCopyBlockLeft` / `siteHeroCopyBlockRight` / `siteHeroCopyInsetX` from `src/lib/siteLayout.ts` — **no** extra `sm:pl-*` / `lg:pl-14`.
+- Yellow = `--beiza-site-padding-x` only (nav/footer boundary). Tune both in Layout Studio → Site bounds.
 
 ### Link mastersheet (product routes)
 - **Source of truth:** `src/lib/beizaMasterLinks.ts` + `docs/LINK-MASTERSHEET.md`

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CTAButton } from "./framer/CTAButton";
 import { BRAND_IMAGES, HERO_OVERLAY_GRADIENT, HERO_SHELL_CLASS, HERO_CONTENT_CLASS, HERO_CONTENT_BOTTOM_STYLE } from "@/lib/brandImages";
+import { siteHeroCopyBlockLeft } from "@/lib/siteLayout";
 import { FALLBACK_SITE_SETTINGS } from "@/lib/fallbackContent";
 import { resolveHeroBackgroundSrc } from "@/lib/resolveHeroImage";
 
@@ -88,7 +89,7 @@ export const Hero = ({
       )}
 
       <div className={HERO_CONTENT_CLASS} style={HERO_CONTENT_BOTTOM_STYLE}>
-        <div className="max-w-[640px] min-w-0 text-left sm:pl-3 md:pl-8 lg:pl-14" style={copyOffsetStyle}>
+        <div className={siteHeroCopyBlockLeft} style={copyOffsetStyle}>
           <motion.h1
             initial={{ opacity: 0, filter: "blur(16px)", scale: 1.12 }}
             animate={{ opacity: 1, filter: "blur(0px)", scale: 1 }}

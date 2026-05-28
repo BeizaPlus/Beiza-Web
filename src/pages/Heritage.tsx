@@ -29,8 +29,9 @@ import {
   marketingSection,
   siteBounds,
   siteBoundedContainer,
-  siteContentIndentX,
   siteHeroContentRow,
+  siteHeroCopyBlockLeft,
+  siteHeroCopyBlockRight,
 } from "@/lib/brandUi";
 import { isWhiteSwanIncludedForUser } from "@/lib/legacy/heritage";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
@@ -173,9 +174,7 @@ export default function HeritagePage() {
       >
           <div
             className={cn(
-              "w-full min-w-0 max-w-[min(42rem,calc(100vw-2*var(--beiza-site-padding-x,1.25rem)))]",
-              siteContentIndentX,
-              heroFrame.textSide === "right" ? "text-right md:ml-auto" : "text-left md:mr-auto",
+              heroFrame.textSide === "right" ? siteHeroCopyBlockRight : siteHeroCopyBlockLeft,
               "md:py-20",
             )}
             style={heritageHeroCopyStyle(heroFrame)}

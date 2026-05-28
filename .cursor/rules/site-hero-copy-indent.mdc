@@ -1,0 +1,42 @@
+---
+description: Hero copy must start on the cyan site-bounds indent guide (left or right)
+alwaysApply: true
+---
+
+# Hero copy — cyan line rule
+
+In **Layout Studio → Site bounds** (yellow + cyan guides):
+
+| Guide | CSS | Use |
+|-------|-----|-----|
+| **Yellow** | `--beiza-site-padding-x` | Site boundary — nav, footer, full-width sections |
+| **Cyan** | `--beiza-site-padding-x` + `--beiza-content-indent` | **Hero copy start line** |
+
+## Rule
+
+**All marketing hero headlines and body copy start on the cyan line** — whether the block is left- or right-aligned.
+
+- **Left hero:** first character aligns with the **left cyan** guide.
+- **Right hero:** the copy block’s **right edge** aligns with the **right cyan** guide (`siteHeroCopyBlockRight` + `ml-auto`).
+
+Do **not** add extra `pl-*` / `pr-*` / `sm:pl-8` / `lg:pl-14` on hero copy — that breaks the guides.
+
+## Code (use these — do not invent padding)
+
+| Export | File |
+|--------|------|
+| `siteHeroCopyInsetX` | `src/lib/siteLayout.ts` — hero shell horizontal inset |
+| `siteHeroCopyBlockLeft` | left-aligned headline block |
+| `siteHeroCopyBlockRight` | right-aligned headline block (Heritage default) |
+| `siteHeroContentRow` | full-bleed hero row inside `FullBleedHero` |
+| `HERO_CONTENT_CLASS` | `src/lib/brandImages.ts` — same cyan inset |
+
+Studio offsets (`copyOffsetX` / `copyOffsetY` from hero layout studio) are **additional** nudges in vw/vh on top of the cyan anchor — not a substitute for it.
+
+## Pages
+
+- `/home` — `Hero.tsx`
+- `/events` — `FullBleedHero` + `siteHeroCopyBlockLeft`
+- `/heritage`, `/farewell` — `FullBleedHero` + `siteHeroCopyBlockLeft` / `siteHeroCopyBlockRight`
+
+Heritage (`/farewell`) is the visual reference when tuning cyan indent in studio.

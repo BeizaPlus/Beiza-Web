@@ -1,4 +1,5 @@
 import { type CSSProperties, type ReactNode } from "react";
+import { cn } from "@/lib/utils";
 
 import { Footer } from "@/components/Footer";
 import { SectionHeader } from "@/components/framer/SectionHeader";
@@ -9,6 +10,7 @@ import {
 import { heroCopyOffsetStyle, heroStudioCssVars } from "@/components/dev/heroLayoutStudioState";
 import { usePublishedEventStories, useLiveEvents, useHeroSection } from "@/hooks/usePublicContent";
 import { FullBleedHero } from "@/components/FullBleedHero";
+import { siteHeroCopyBlockLeft } from "@/lib/siteLayout";
 import { BRAND_IMAGES } from "@/lib/brandImages";
 import { allowStaticContentFallback } from "@/lib/contentPolicy";
 import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
@@ -52,7 +54,7 @@ const Events = () => {
         imageAlt={heroImageAlt}
         frame={heroFrame}
       >
-        <div className="max-w-xl text-left" style={heroCopyOffsetStyle(heroFrame)}>
+        <div className={cn(siteHeroCopyBlockLeft, "max-w-xl")} style={heroCopyOffsetStyle(heroFrame)}>
           <SectionHeader
             eyebrow="Events"
             title={heroTitle}

@@ -137,8 +137,8 @@ export function SiteIndentGuides({
         ) : null}
         <p className="max-w-[300px] text-center text-[9px] text-white/50">
           {live
-            ? "Cyan lines push copy as you drag."
-            : "Cyan lines are rulers only — page copy moves when you Apply or switch to Live push."}
+            ? "Cyan = where hero copy starts (left or right edge)."
+            : "Cyan = hero copy start line — Apply or Live push to update the page."}
         </p>
       </div>
     </>

@@ -343,7 +343,7 @@ function SitePaddingStudioPanel({
 
       <p className="mb-2 text-[9px] leading-snug text-muted-foreground">
 
-        Yellow = site boundary. Cyan handles = inner indent. Heritage (/farewell) is the reference.
+        Yellow = site boundary. Cyan = hero copy start line (left or right). Heritage (/farewell) is the reference.
 
       </p>
 
@@ -367,9 +367,9 @@ function SitePaddingStudioPanel({
 
             guidesLive
 
-              ? "Dragging cyan lines moves hero copy immediately."
+              ? "Dragging cyan lines moves where hero copy starts."
 
-              : "Dragging only moves the rulers. Copy stays at applied indent until Live push."
+              : "Cyan rulers only — hero copy updates when you Apply or Live push."
 
           }
 

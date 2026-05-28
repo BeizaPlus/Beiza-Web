@@ -1,7 +1,7 @@
 /**
  * Layout studio + on-page text edit: localhost dev server, or ?studio=1 (hide with ?studio=0).
  * Off on production unless ?studio=1. Use “Edit text on page” on any route (except /admin).
- * Site padding (bottom-right): boundary --beiza-site-padding-x + inner --beiza-content-indent.
+ * Site bounds (bottom-right): yellow = --beiza-site-padding-x; cyan = boundary + --beiza-content-indent (hero copy starts on cyan).
  * Heritage (/farewell) is the reference. Yellow guides when studio is on.
  */
 const PRODUCTION_HOST_SUFFIXES = ["beizaplus.com", "beiza.tv"] as const;

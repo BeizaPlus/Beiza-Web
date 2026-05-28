@@ -1,7 +1,16 @@
 import { cn } from "@/lib/utils";
 import { siteBoundedContainer, siteBounds, sitePaddingX } from "@/lib/siteLayout";
 
-export { siteBounds, siteBoundedContainer, sitePaddingX, siteContentIndentX, siteHeroContentRow } from "@/lib/siteLayout";
+export {
+  siteBounds,
+  siteBoundedContainer,
+  sitePaddingX,
+  siteContentIndentX,
+  siteHeroCopyInsetX,
+  siteHeroContentRow,
+  siteHeroCopyBlockLeft,
+  siteHeroCopyBlockRight,
+} from "@/lib/siteLayout";
 
 /** Shared layout shells for public marketing pages. */
 export const marketingSection = "bg-background py-16 text-foreground sm:py-20 lg:py-32";
