@@ -57,6 +57,7 @@ const iconMap: Record<string, JSX.Element> = {
 const resolveIcon = (iconKey?: string | null) => iconMap[iconKey ?? ""] ?? <Sparkles className="h-5 w-5" strokeWidth={1.5} />;
 
 const Landing = () => {
+  const locale = useLocale();
   const studioPanelEnabled = isLayoutStudioEnabled();
   const { panelEnabled: studio, state: studioState, setState: setStudioState } =
     useLandingLayoutStudio(studioPanelEnabled);
