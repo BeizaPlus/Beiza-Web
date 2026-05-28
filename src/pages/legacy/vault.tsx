@@ -31,6 +31,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import sampleFamiliesLegacyVault from "../../../sample-families-documenting-their-legacies.png";
 
 export default function LegacyVaultPage() {
   const { toast } = useToast();
@@ -149,8 +150,8 @@ export default function LegacyVaultPage() {
       </p>
       <figure className="mt-4 overflow-hidden rounded-xl border border-[#2a2a2a] bg-[#141414] p-3 sm:p-4">
         <img
-          src="/images/beiza-legacy-vault-book.png"
-          alt="Legacy Vault heirloom book — preserved family stories and voices"
+          src={sampleFamiliesLegacyVault}
+          alt="Sample — families documenting their legacies in a Legacy Vault heirloom book"
           className="mx-auto h-auto max-h-[min(72vh,520px)] w-full object-contain"
           loading="lazy"
           decoding="async"
