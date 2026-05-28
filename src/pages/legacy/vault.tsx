@@ -163,11 +163,18 @@ export default function LegacyVaultPage() {
     return (
       <div className="space-y-5">
         {vaultHeader}
-        <div className="space-y-4 text-center">
-          <p className="text-muted-foreground">Your vault opens once you join a Legacy Circle.</p>
-          <Button asChild>
-            <Link to={BEIZA_LINKS.legacy.family}>Your Legacy Circle</Link>
-          </Button>
+        <div className="space-y-4 rounded-xl border border-border bg-card p-6 text-center sm:p-8">
+          <p className="text-sm text-muted-foreground">
+            Sign in and join a Legacy Circle to open your vault and hear preserved voices.
+          </p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
+            <Button asChild variant="default">
+              <Link to={BEIZA_LINKS.legacy.family}>Your Legacy Circle</Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link to={BEIZA_LINKS.legacy.recordStation}>Record a memory</Link>
+            </Button>
+          </div>
         </div>
       </div>
     );

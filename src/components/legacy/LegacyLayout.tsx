@@ -100,6 +100,7 @@ export function LegacyLayout() {
   const isTreeRoute = location.pathname === "/legacy/circle";
   const treeFullscreen = isTreeRoute && (signedIn || studioPreview);
   const isRecordRoute = location.pathname.startsWith(BEIZA_LINKS.legacy.recordStation);
+  const isVaultRoute = location.pathname.startsWith(BEIZA_LINKS.legacy.vault);
   /** Logged out: cinematic record sign-in only on /legacy/record — other tabs render their own pages. */
   const recordSignInShell =
     !signedIn && !sessionLoading && !studioPreview && isRecordRoute;
@@ -174,9 +175,13 @@ export function LegacyLayout() {
             applyMaxWidth
             copyLiftTarget="children"
           >
-            <LegacyAuthGate>
+            {isVaultRoute ? (
               <Outlet />
-            </LegacyAuthGate>
+            ) : (
+              <LegacyAuthGate>
+                <Outlet />
+              </LegacyAuthGate>
+            )}
           </PageLayoutStudioZone>
         </main>
       </div>
