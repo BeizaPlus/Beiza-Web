@@ -38,6 +38,14 @@ export function isLayoutStudioEnabled(): boolean {
   return host === "localhost" || host === "127.0.0.1";
 }
 
+/** Apply saved studio JSON (record hero crop, overlays, etc.) — only with ?studio=1, not plain localhost. */
+export function applyPersistedLayoutStudio(): boolean {
+  if (typeof window === "undefined") return false;
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("studio") === "0") return false;
+  return params.get("studio") === "1";
+}
+
 /** Studio layout pass: skip auth gates and use mock legacy data when needed. */
 export function isLegacyStudioPreview(): boolean {
   return isLayoutStudioEnabled();

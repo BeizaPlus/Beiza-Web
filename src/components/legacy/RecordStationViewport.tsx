@@ -4,7 +4,7 @@ import { useLocaleContext } from "@/context/LocaleContext";
 import { FramedHeroImage } from "@/components/FramedHeroImage";
 import { RecordHeroCta } from "@/components/legacy/RecordHeroCta";
 import { useRecordFlowOptional } from "@/components/legacy/recordFlowContext";
-import { isLayoutStudioEnabled } from "@/lib/layoutStudio";
+import { applyPersistedLayoutStudio, isLayoutStudioEnabled } from "@/lib/layoutStudio";
 import { getRecordStationHeroSources } from "@/lib/locale/recordHeroImages";
 import { isGhanaEntryLocale } from "@/lib/locale/ghanaEntry";
 import { RECORD_HERO_GHANA_DEFAULTS, RECORD_HERO_STUDIO_DEFAULTS } from "@/lib/legacy/recordHeroFrame";
@@ -58,8 +58,9 @@ export function RecordStationViewport({
     ...RECORD_PAGE_STUDIO_DEFAULTS,
     ...(ghana ? RECORD_HERO_GHANA_DEFAULTS : RECORD_HERO_STUDIO_DEFAULTS),
   };
+  const usePersistedFrame = applyPersistedLayoutStudio();
   const frame =
-    studioFrameProp ?? (studioOn ? loadRecordPageStudioFrame() : codeDefaults);
+    studioFrameProp ?? (usePersistedFrame ? loadRecordPageStudioFrame() : codeDefaults);
   const breakpoint = useLayoutStudioBreakpoint();
   const heroFrame = recordPageFrameForViewport(frame, breakpoint);
   const cssVars = recordPageShellCssVars(heroFrame) as CSSProperties;
@@ -95,9 +96,9 @@ export function RecordStationViewport({
     >
       <style>{`
         .record-station-viewport .record-viewport-overlay {
-          background: var(--record-overlay-mobile, linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.55) 42%, rgba(0,0,0,0.15) 100%));
+          background: var(--record-overlay-mobile, linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.38) 38%, rgba(0,0,0,0.08) 100%));
         }
-        @media (max-width: 639px) {
+        @media (max-width: 767px) {
           .record-station-viewport .record-copy-column {
             transform: none !important;
             margin-left: auto;
@@ -109,7 +110,7 @@ export function RecordStationViewport({
             transform: none !important;
           }
         }
-        @media (min-width: 640px) {
+        @media (min-width: 768px) {
           .record-station-viewport .record-viewport-overlay {
             background: var(--record-overlay-md, var(--heritage-overlay-md));
           }
@@ -133,9 +134,9 @@ export function RecordStationViewport({
             "relative z-10 flex h-full min-h-0 w-full",
             "justify-center items-center",
             "px-[var(--beiza-site-padding-x,0.75rem)]",
-            "min-[640px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
-            "max-[639px]:pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] max-[639px]:pt-4",
-            textRight ? "min-[640px]:justify-end" : "min-[640px]:justify-start",
+            "min-[768px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
+            "max-[767px]:pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] max-[767px]:pt-4",
+            textRight ? "min-[768px]:justify-end" : "min-[768px]:justify-start",
           )}
         >
           {recordStationColumn({
@@ -155,9 +156,9 @@ export function RecordStationViewport({
             "relative z-10 flex h-full min-h-0 w-full",
             "justify-center items-center",
             "px-[var(--beiza-site-padding-x,0.75rem)]",
-            "min-[640px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
-            "max-[639px]:pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] max-[639px]:pt-4",
-            textRight ? "min-[640px]:justify-end" : "min-[640px]:justify-start",
+            "min-[768px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
+            "max-[767px]:pb-[calc(6.25rem+env(safe-area-inset-bottom,0px))] max-[767px]:pt-4",
+            textRight ? "min-[768px]:justify-end" : "min-[768px]:justify-start",
           )}
         >
           {recordStationColumn({
@@ -264,7 +265,7 @@ function recordStationColumn({
                 "min-h-0 w-full min-w-0 max-w-full",
                 "px-[var(--record-hud-inset-x,2vw)]",
                 "pb-[var(--record-hud-inset-bottom,4vh)]",
-                "min-[640px]:pr-[max(var(--record-hud-inset-x,2vw),5.5rem)]",
+                "min-[768px]:pr-[max(var(--record-hud-inset-x,2vw),5.5rem)]",
                 stationExpanded
                   ? "flex-none overflow-visible"
                   : signedIn

@@ -13,6 +13,7 @@ import { LegacyStudioPanels } from "@/components/legacy/LegacyStudioPanels";
 import { RecordLayoutStudioProvider } from "@/context/RecordLayoutStudioContext";
 import { PageLayoutStudioZone } from "@/components/dev/PageLayoutStudioZone";
 import {
+  applyPersistedLayoutStudio,
   isLayoutStudioEnabled,
   isLegacyStudioPreview,
   studioRecordShellMode,
@@ -45,11 +46,11 @@ function LegacyRecordRoute({
       <RecordFlowProvider>
         <RecordViewportLock />
         <div
-          className="record-page-shell relative min-h-[100dvh] w-full overflow-visible bg-black text-foreground max-md:[--beiza-content-indent:0rem] max-md:[--record-content-indent:0rem]"
+          className="record-page-shell relative min-h-[100dvh] w-full overflow-visible bg-[#0a0a0a] text-foreground max-md:[--beiza-content-indent:0rem] max-md:[--record-content-indent:0rem]"
           style={{ "--record-site-nav-h": "4.5rem" } as CSSProperties}
         >
           <RecordStationViewport
-            studioFrame={studioOn ? recordStudio : undefined}
+            studioFrame={applyPersistedLayoutStudio() ? recordStudio : undefined}
             circleLabel={circleLabel}
             signedIn={showStation}
             station={
@@ -166,7 +167,7 @@ export function LegacyLayout() {
           className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-[60] min-[1200px]:right-[calc(5.5rem+var(--beiza-site-padding-x))]"
         />
 
-        <main className="relative min-h-[calc(100dvh-8.5rem)] overflow-visible px-[var(--beiza-site-padding-x,1.25rem)] pb-24 pt-4 sm:min-h-[calc(100dvh-10.5rem)] sm:pb-28 min-[640px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]">
+        <main className="relative min-h-[calc(100dvh-8.5rem)] overflow-visible px-[var(--beiza-site-padding-x,1.25rem)] pb-24 pt-4 sm:min-h-[calc(100dvh-10.5rem)] sm:pb-28 min-[768px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]">
           <PageLayoutStudioZone
             pageId={pageStudioId}
             className="w-full py-4 sm:py-6"
