@@ -1,5 +1,5 @@
 import { FlagIcon } from "@/components/ui/FlagIcon";
-import { segmentToggleOption, segmentToggleShell } from "@/lib/brandUi";
+import { segmentToggleOption, segmentToggleShell, sitePaddingX } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
 import { useDraggableScroll } from "@/hooks/useDraggableScroll";
 import { useLocaleContext } from "@/context/LocaleContext";
@@ -41,8 +41,7 @@ export function EducationTopLocaleSwitcher({ variant = "inline" }: EducationTopL
       <div
         className={cn(
           segmentToggleShell,
-          variant === "hero" &&
-            "border-white/15 bg-black/45 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.65)] backdrop-blur-md",
+          "border-white/15 bg-black/45 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.65)] backdrop-blur-md",
           "sm:flex-wrap",
           "gap-1.5 p-1.5",
         )}
@@ -62,6 +61,7 @@ export function EducationTopLocaleSwitcher({ variant = "inline" }: EducationTopL
                   className={cn(
                     segmentToggleOption(active),
                     "inline-flex items-center gap-2 px-6 py-3 text-sm sm:text-base",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60",
                   )}
                   aria-pressed={active}
                 >
@@ -78,7 +78,7 @@ export function EducationTopLocaleSwitcher({ variant = "inline" }: EducationTopL
     return (
       <div
         id="locale-rail"
-        className="studio-locale-rail pointer-events-none absolute right-12 z-20 max-[639px]:right-6"
+        className="studio-locale-rail pointer-events-none absolute right-12 z-20 max-[767px]:right-6"
         style={{
           bottom: "calc(2rem + var(--locale-rail-viewport-y, 0) * 1vh)",
         }}
@@ -91,19 +91,23 @@ export function EducationTopLocaleSwitcher({ variant = "inline" }: EducationTopL
   return (
     <section
       id="locale-rail"
-      className="studio-locale-rail relative z-10 w-full min-h-[3.25rem]"
+      className={cn(
+        "studio-locale-rail relative z-20 w-full min-h-[3.25rem]",
+        sitePaddingX,
+      )}
       style={{
         marginTop: "calc(-3rem + var(--locale-rail-viewport-y, 0) * 1vh)",
       }}
     >
       <div
-        className="absolute top-0 z-10 w-max max-w-[min(100%,calc(100vw-2*var(--beiza-site-padding-x,1.25rem)))]"
+        className="flex w-full justify-center"
         style={{
-          left: "calc(var(--locale-rail-viewport-x, 50) * 1vw)",
-          transform: "translateX(-50%)",
+          transform: `translateX(calc((var(--locale-rail-viewport-x, 50) - 50) * 0.6vw))`,
         }}
       >
-        {pillGroup}
+        <div className="w-max max-w-[min(100%,calc(100vw-2*var(--beiza-site-padding-x,1.25rem)-11rem))]">
+          {pillGroup}
+        </div>
       </div>
     </section>
   );
