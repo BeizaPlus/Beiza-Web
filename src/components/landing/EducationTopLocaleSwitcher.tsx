@@ -1,7 +1,6 @@
 import { FlagIcon } from "@/components/ui/FlagIcon";
 import { segmentToggleOption, segmentToggleShell, sitePaddingX } from "@/lib/brandUi";
 import { cn } from "@/lib/utils";
-import { useDraggableScroll } from "@/hooks/useDraggableScroll";
 import { useLocaleContext } from "@/context/LocaleContext";
 import type { BeizaLocale } from "@/lib/locale/types";
 
@@ -28,16 +27,11 @@ type EducationTopLocaleSwitcherProps = {
 
 export function EducationTopLocaleSwitcher({ variant = "inline" }: EducationTopLocaleSwitcherProps) {
   const { locale, setLocale, setLocalePinned } = useLocaleContext();
-  const localeScrollRef = useDraggableScroll();
   const activeLegacy: LegacyLocale =
     locale === "africa" ? "ghana" : locale === "latina" ? "spanish" : locale === "fr" ? "french" : "global";
 
   const pillGroup = (
-    <div
-      ref={localeScrollRef}
-      data-draggable
-      className="flex overflow-x-auto px-1 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-    >
+    <div className="flex overflow-x-auto px-1 pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
       <div
         className={cn(
           segmentToggleShell,

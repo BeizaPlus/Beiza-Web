@@ -152,6 +152,13 @@ export function useDraggableScroll() {
 
     const onMouseDown = (e: MouseEvent) => {
       if (e.button !== 0) return;
+      const target = e.target;
+      if (
+        target instanceof Element &&
+        target.closest("button, a, input, select, textarea, label, [role='button']")
+      ) {
+        return;
+      }
       cancelMomentum();
 
       isDown = true;

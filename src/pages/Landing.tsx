@@ -1,5 +1,4 @@
 import { useMemo, type CSSProperties } from "react";
-import { Navigation } from "@/components/Navigation";
 import { Hero } from "@/components/Hero";
 import { Footer } from "@/components/Footer";
 import { LegacyCurationPricing } from "@/components/landing/LegacyCurationPricing";
@@ -39,7 +38,12 @@ import {
 } from "@/hooks/usePublicContent";
 import { FALLBACK_HERO_LANDING } from "@/lib/fallbackContent";
 import { allowStaticContentFallback } from "@/lib/contentPolicy";
-import { educationHeroHeading, educationHeroSubheading } from "@/lib/educationPageCopy";
+import {
+  educationHeroHeading,
+  educationHeroSubheading,
+  educationHomeLocaleSubheading,
+} from "@/lib/educationPageCopy";
+import { useLocale } from "@/hooks/useLocale";
 
 const iconMap: Record<string, JSX.Element> = {
   palette: <Palette className="h-5 w-5" strokeWidth={1.5} />,
@@ -64,7 +68,7 @@ const Landing = () => {
   const { data: faqs = [] } = useFaqs();
 
   const hero = useMemo(() => {
-    const educationSubheading = (raw?: string | null) => educationHeroSubheading(raw);
+    const localeSubheading = educationHeroSubheading(educationHomeLocaleSubheading(locale));
     const educationHeading = (raw?: string | null) => educationHeroHeading(raw);
 
     // Priority: 1. Database hero_sections, 2. Site settings, 3. Static fallback
@@ -72,7 +76,7 @@ const Landing = () => {
       return {
         ...heroSection,
         heading: educationHeading(heroSection.heading),
-        subheading: educationSubheading(heroSection.subheading),
+        subheading: localeSubheading,
       };
     }
 
@@ -82,7 +86,7 @@ const Landing = () => {
       return {
         slug: "landing-hero",
         heading: educationHeading(siteSettings.heroHeading),
-        subheading: educationSubheading(siteSettings.heroSubheading),
+        subheading: localeSubheading,
         ctaLabel: siteSettings.heroCtaLabel ?? null,
         ctaHref: siteSettings.heroCtaHref ?? null,
         backgroundMedia: siteSettings.heroBackgroundImage ? {
@@ -100,13 +104,13 @@ const Landing = () => {
     return {
       slug: FALLBACK_HERO_LANDING.slug,
       heading: educationHeading(FALLBACK_HERO_LANDING.heading),
-      subheading: educationSubheading(FALLBACK_HERO_LANDING.subheading),
+        subheading: localeSubheading,
       ctaLabel: FALLBACK_HERO_LANDING.ctaLabel,
       ctaHref: FALLBACK_HERO_LANDING.ctaHref,
       backgroundMedia: FALLBACK_HERO_LANDING.backgroundMedia,
       reviews: FALLBACK_HERO_LANDING.reviews,
     };
-  }, [heroSection, siteSettings]);
+  }, [heroSection, siteSettings, locale]);
 
   const offeringsList = useMemo(() => {
     return offerings
@@ -155,7 +159,6 @@ const Landing = () => {
       className="min-h-screen bg-background text-foreground"
       style={studioCssVars(studioState) as CSSProperties}
     >
-      <Navigation />
       <ArmAnchorMenu
         links={EDUCATION_ARM_ANCHORS}
         className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-40"
@@ -186,7 +189,7 @@ const Landing = () => {
           <InstagramReelsSection
             id="cultural-films"
             variant="bare"
-            className="mt-6 min-[640px]:mt-8"
+            className="mt-6 min-[768px]:mt-8"
           />
         ) : null}
         {showRest ? <AdinkraSymbolsListSection /> : null}
