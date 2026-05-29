@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   type RefObject,
@@ -24,10 +25,13 @@ import { SiblingOrderSection } from "@/components/legacy/family-tree/SiblingOrde
 import { PersonHealthSection } from "@/components/legacy/family-tree/PersonHealthSection";
 import { PersonPatternsSection } from "@/components/legacy/family-tree/PersonPatternsSection";
 import { PersonStrengthsRadar } from "@/components/legacy/family-tree/PersonStrengthsRadar";
+import { FamilyCircleStrengthsRadar } from "@/components/legacy/family-tree/FamilyCircleStrengthsRadar";
 import { PersonPanelTabs, type PersonPanelTab } from "@/components/legacy/family-tree/PersonPanelTabs";
 import type { PersonHealthCondition, PersonTrait } from "@/lib/legacy/types";
 import {
-  mergeTraitBuckets,
+  buildCircleStrengthMembers,
+  loadLocalTraitBuckets,
+  resolvePersonTraitBuckets,
   type PersonTraitBuckets,
 } from "@/lib/legacy/familyStrengths";
 import { savePersonPhoto } from "@/lib/legacy/treeCanvasPersistence";
@@ -74,14 +78,7 @@ const SECTION_LABEL_CLASS =
   "font-manrope text-[10px] font-normal uppercase tracking-[0.2em] text-[#333333]";
 
 function loadTraits(personId: string): PersonTraitBuckets {
-  if (typeof window === "undefined") return { ...EMPTY_TRAITS };
-  try {
-    const raw = localStorage.getItem(`${TRAITS_STORAGE_KEY}_${personId}`);
-    if (!raw) return { ...EMPTY_TRAITS };
-    return JSON.parse(raw) as PersonTraitBuckets;
-  } catch {
-    return { ...EMPTY_TRAITS };
-  }
+  return loadLocalTraitBuckets(personId);
 }
 
 function saveTraits(personId: string, traits: PersonTraitBuckets) {
@@ -345,6 +342,8 @@ function PanelShell({
   activeTab,
   onTabChange,
   healthConditions,
+  personTraits,
+  memoryCountByPersonId,
 }: {
   editable: boolean;
   localPerson: FamilyPerson;
@@ -370,11 +369,25 @@ function PanelShell({
   activeTab: PersonPanelTab;
   onTabChange: (tab: PersonPanelTab) => void;
   healthConditions: PersonHealthCondition[];
+  personTraits: PersonTrait[];
+  memoryCountByPersonId: Record<string, number>;
 }) {
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [nameDraft, setNameDraft] = useState(localPerson.display_name);
   const [birthDraft, setBirthDraft] = useState(
     localPerson.birth_year != null ? String(localPerson.birth_year) : "",
+  );
+
+  const circleStrengthMembers = useMemo(
+    () =>
+      localPerson.is_tree_anchor && circlePeople.length > 1
+        ? buildCircleStrengthMembers({
+            people: circlePeople,
+            dbTraits: personTraits,
+            memoryCountByPersonId,
+          })
+        : null,
+    [localPerson.is_tree_anchor, circlePeople, personTraits, memoryCountByPersonId],
   );
 
   useEffect(() => {
@@ -513,8 +526,13 @@ function PanelShell({
           person={localPerson}
           traits={traits}
           memoryCount={memoryCount}
-          className="mb-6"
+          variant="personal"
+          className="mb-4"
         />
+
+        {circleStrengthMembers && circleStrengthMembers.length > 1 ? (
+          <FamilyCircleStrengthsRadar members={circleStrengthMembers} className="mb-6" />
+        ) : null}
 
         <SectionHeader title="Identity" />
 
@@ -867,7 +885,7 @@ export function PersonBiographyPanel({
       setLocalPerson(person);
       const local = loadTraits(person.id);
       const rows = personTraits.filter((t) => t.person_id === person.id);
-      setTraits(mergeTraitBuckets(local, rows));
+      setTraits(resolvePersonTraitBuckets(person.id, rows));
     }
   }, [person, personTraits]);
 
@@ -950,6 +968,8 @@ export function PersonBiographyPanel({
       onTabChange={setActiveTab}
       healthConditions={healthConditions}
       memoryCount={memoryCount}
+      personTraits={personTraits}
+      memoryCountByPersonId={memoryCountByPersonId}
     />
   );
 

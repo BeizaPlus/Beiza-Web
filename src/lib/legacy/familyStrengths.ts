@@ -39,6 +39,71 @@ export type FamilyStrengthProfile = {
 };
 
 const STORAGE_KEY = "beiza_person_strength_overrides_v2";
+const TRAITS_STORAGE_KEY = "beiza_person_traits_v1";
+
+const EMPTY_TRAIT_BUCKETS: PersonTraitBuckets = {
+  known_for: [],
+  physical_traits: [],
+  personality_traits: [],
+  gift_traits: [],
+};
+
+export const FAMILY_RADAR_COLORS = [
+  "#5ec4c4",
+  "#c47ec4",
+  "#7ec89e",
+  "#c4a87e",
+  "#7e9ec4",
+  "#c49e7e",
+  "#9e7ec4",
+] as const;
+
+export type CircleStrengthMember = {
+  personId: string;
+  name: string;
+  isLeader: boolean;
+  profile: FamilyStrengthProfile;
+  color: string;
+};
+
+export function loadLocalTraitBuckets(personId: string): PersonTraitBuckets {
+  if (typeof window === "undefined") return { ...EMPTY_TRAIT_BUCKETS };
+  try {
+    const raw = localStorage.getItem(`${TRAITS_STORAGE_KEY}_${personId}`);
+    if (!raw) return { ...EMPTY_TRAIT_BUCKETS };
+    return JSON.parse(raw) as PersonTraitBuckets;
+  } catch {
+    return { ...EMPTY_TRAIT_BUCKETS };
+  }
+}
+
+export function resolvePersonTraitBuckets(
+  personId: string,
+  dbRows: PersonTraitRow[],
+): PersonTraitBuckets {
+  return mergeTraitBuckets(loadLocalTraitBuckets(personId), dbRows);
+}
+
+export function buildCircleStrengthMembers(params: {
+  people: FamilyPerson[];
+  dbTraits: PersonTraitRow[];
+  memoryCountByPersonId: Record<string, number>;
+}): CircleStrengthMember[] {
+  const { people, dbTraits, memoryCountByPersonId } = params;
+  return people.map((person, index) => {
+    const rows = dbTraits.filter((t) => t.person_id === person.id);
+    const traits = resolvePersonTraitBuckets(person.id, rows);
+    const memoryCount = memoryCountByPersonId[person.id] ?? 0;
+    const isLeader = Boolean(person.is_tree_anchor);
+    return {
+      personId: person.id,
+      name: person.display_name,
+      isLeader,
+      profile: computeFamilyStrengths(person, traits, memoryCount),
+      color: isLeader ? "#E6A817" : FAMILY_RADAR_COLORS[index % FAMILY_RADAR_COLORS.length]!,
+    };
+  });
+}
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));

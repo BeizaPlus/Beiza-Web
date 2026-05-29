@@ -11,9 +11,13 @@ import {
   computeFamilyStrengths,
   formatStrengthValue,
   type PersonTraitBuckets,
-  type StrengthAxis,
   type StrengthAxisKey,
 } from "@/lib/legacy/familyStrengths";
+import {
+  defaultRadarScale,
+  polarPoint,
+  radarPolygonPoints,
+} from "@/lib/legacy/radarChartGeometry";
 import { cn } from "@/lib/utils";
 
 const AXIS_ICONS: Record<StrengthAxisKey, typeof Wallet> = {
@@ -29,37 +33,16 @@ type PersonStrengthsRadarProps = {
   traits: PersonTraitBuckets;
   memoryCount?: number;
   className?: string;
+  /** personal = single person map; shown for every profile */
+  variant?: "personal";
 };
-
-function polarPoint(cx: number, cy: number, radius: number, index: number, total: number) {
-  const angle = (-Math.PI / 2) + (index * 2 * Math.PI) / total;
-  return {
-    x: cx + radius * Math.cos(angle),
-    y: cy + radius * Math.sin(angle),
-  };
-}
-
-function polygonPoints(
-  cx: number,
-  cy: number,
-  radius: number,
-  axes: StrengthAxis[],
-  scale: (value: number, potential: number) => number,
-) {
-  return axes
-    .map((axis, i) => {
-      const r = radius * scale(axis.value, axis.potential);
-      const p = polarPoint(cx, cy, r, i, axes.length);
-      return `${p.x},${p.y}`;
-    })
-    .join(" ");
-}
 
 export function PersonStrengthsRadar({
   person,
   traits,
   memoryCount = 0,
   className,
+  variant = "personal",
 }: PersonStrengthsRadarProps) {
   const profile = useMemo(
     () => computeFamilyStrengths(person, traits, memoryCount),
@@ -70,17 +53,22 @@ export function PersonStrengthsRadar({
   const cx = size / 2;
   const cy = size / 2;
   const maxR = size * 0.38;
-  const scale = (value: number, potential: number) =>
-    potential <= 0 ? 0 : value / potential;
+  const scale = defaultRadarScale;
 
-  const currentPoints = polygonPoints(cx, cy, maxR, profile.axes, scale);
-  const maxPoints = polygonPoints(
+  const currentPoints = radarPolygonPoints(cx, cy, maxR, profile.axes, scale);
+  const maxPoints = radarPolygonPoints(
     cx,
     cy,
     maxR,
     profile.axes.map((a) => ({ ...a, value: a.potential })),
     scale,
   );
+
+  const title = variant === "personal" ? "Your DNA" : "Family DNA";
+  const subtitle =
+    variant === "personal"
+      ? `${person.display_name.split(" ")[0] ?? "This person"} — finance, creativity, morale, faith, and community.`
+      : "Finance, creativity, morale, faith, and community — what runs in this line.";
 
   return (
     <div
@@ -94,9 +82,9 @@ export function PersonStrengthsRadar({
           <p className="font-manrope text-[10px] font-normal uppercase tracking-[0.22em] text-[#E6A817]">
             Family ID
           </p>
-          <h3 className="mt-1 font-manrope text-[15px] font-semibold text-white">Family DNA</h3>
+          <h3 className="mt-1 font-manrope text-[15px] font-semibold text-white">{title}</h3>
           <p className="mt-1 font-manrope text-[11px] leading-relaxed text-[#666666]">
-            Finance, creativity, morale, faith, and community — what runs in this line.
+            {subtitle}
           </p>
         </div>
         <div className="shrink-0 text-right">
@@ -136,13 +124,13 @@ export function PersonStrengthsRadar({
             height={size}
             viewBox={`0 0 ${size} ${size}`}
             className="overflow-visible"
-            aria-label="Family strengths radar chart"
+            aria-label={`${title} radar chart`}
             role="img"
           >
             {[0.25, 0.5, 0.75, 1].map((ring) => (
               <polygon
                 key={ring}
-                points={polygonPoints(
+                points={radarPolygonPoints(
                   cx,
                   cy,
                   maxR * ring,
