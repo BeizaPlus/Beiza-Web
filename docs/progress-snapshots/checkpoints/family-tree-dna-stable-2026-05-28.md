@@ -6,15 +6,12 @@ Revert here when tree connections, layout, or DNA charts break.
 
 | Field | Value |
 |-------|--------|
+| **Commit** | `f0e97da` |
+| **Short** | `f0e97da` |
 | **Tag** | `stable/family-tree-dna-2026-05-28` |
 | **Branch** | `main` |
 | **Remote** | `https://github.com/BeizaPlus/Beiza-Web.git` |
-
-Commit hash is filled in after tag is created — run:
-
-```bash
-git rev-parse stable/family-tree-dna-2026-05-28
-```
+| **Also includes** | `b78d2cf` (tree connect + auto-layout + DNA axes) |
 
 ## What this stable build includes
 

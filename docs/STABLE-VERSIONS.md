@@ -4,7 +4,7 @@ Tagged snapshots on `main` you can return to without hunting commits.
 
 | Tag | What works | Commit |
 |-----|------------|--------|
-| `stable/family-tree-dna-2026-05-28` | Tree connect + auto-layout, Family DNA axes, leader dual radar (Your DNA + circle overlay) | _(see checkpoint file)_ |
+| `stable/family-tree-dna-2026-05-28` | Tree connect + auto-layout, Family DNA axes, leader dual radar (Your DNA + circle overlay) | `f0e97da` |
 
 ## Quick revert
 
