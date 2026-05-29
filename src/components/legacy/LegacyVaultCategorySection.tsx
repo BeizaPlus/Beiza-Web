@@ -18,6 +18,7 @@ type LegacyVaultCategorySectionProps = {
   onDownloadLocked: () => void;
   onDelete: (id: string) => void;
   onDeleteLocked: () => void;
+  cardVariant?: "default" | "vault";
 };
 
 export function LegacyVaultCategorySection({
@@ -33,6 +34,7 @@ export function LegacyVaultCategorySection({
   onDownloadLocked,
   onDelete,
   onDeleteLocked,
+  cardVariant = "default",
 }: LegacyVaultCategorySectionProps) {
   const [open, setOpen] = useState(defaultOpen);
 
@@ -44,9 +46,9 @@ export function LegacyVaultCategorySection({
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
       >
-        <span className="text-xs font-semibold uppercase tracking-[0.1em] text-[#888]">
+        <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[#888888]">
           {group.label}
-          <span className="ml-2 font-normal text-muted-foreground">({group.recordings.length})</span>
+          <span className="ml-2 font-normal text-[#666666]">({group.recordings.length})</span>
         </span>
         <ChevronDown
           className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", open && "rotate-180")}
@@ -62,6 +64,7 @@ export function LegacyVaultCategorySection({
               isPlaying={playingId === rec.id}
               canDelete={canDelete}
               canDownload={canDownload}
+              variant={cardVariant}
               onPlay={() => onPlay(rec)}
               onRename={(title) => onRename(rec.id, title)}
               onShare={() => onShare(rec)}

@@ -32,7 +32,7 @@ export const PAGE_LAYOUT_PAGE_DEFAULTS: Record<string, PageLayoutFrame> = {
   })(),
   "legacy-home": { ...PAGE_LAYOUT_DEFAULTS },
   "legacy-record": { ...PAGE_LAYOUT_DEFAULTS },
-  "legacy-vault": { ...PAGE_LAYOUT_DEFAULTS },
+  "legacy-vault": { ...PAGE_LAYOUT_DEFAULTS, maxWidthRem: 56 },
   "legacy-family": { ...PAGE_LAYOUT_DEFAULTS },
 };
 

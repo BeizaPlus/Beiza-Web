@@ -115,7 +115,7 @@ export function LegacyLayout() {
     if (sessionLoading) return;
     const justSignedIn = signedIn && !hadSessionRef.current;
     hadSessionRef.current = signedIn;
-    if (!justSignedIn || isRecordRoute || isTreeRoute) return;
+    if (!justSignedIn || isRecordRoute || isTreeRoute || isVaultRoute) return;
     if (!location.pathname.startsWith("/legacy")) return;
     navigate(BEIZA_LINKS.legacy.recordStation, { replace: true });
   }, [signedIn, sessionLoading, isRecordRoute, isTreeRoute, location.pathname, navigate]);
@@ -174,10 +174,17 @@ export function LegacyLayout() {
           className="pointer-events-auto fixed right-[max(1rem,var(--beiza-site-padding-x))] top-20 z-[60] min-[1200px]:right-[calc(5.5rem+var(--beiza-site-padding-x))]"
         />
 
-        <main className="relative min-h-[calc(100dvh-8.5rem)] overflow-visible px-[var(--beiza-site-padding-x,1.25rem)] pb-24 pt-4 sm:min-h-[calc(100dvh-10.5rem)] sm:pb-28 min-[768px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]">
+        <main
+          className={cn(
+            "relative px-[var(--beiza-site-padding-x,1.25rem)] pt-4 min-[768px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
+            isVaultRoute
+              ? "min-h-[calc(100dvh-8.5rem)] overflow-hidden pb-6 sm:min-h-[calc(100dvh-10.5rem)] sm:pb-8"
+              : "min-h-[calc(100dvh-8.5rem)] overflow-visible pb-24 sm:min-h-[calc(100dvh-10.5rem)] sm:pb-28",
+          )}
+        >
           <PageLayoutStudioZone
             pageId={pageStudioId}
-            className="w-full py-4 sm:py-6"
+            className={cn("w-full py-4 sm:py-6", isVaultRoute && "flex h-full min-h-0 flex-col py-2 sm:py-4")}
             applyMaxWidth
             copyLiftTarget="children"
           >

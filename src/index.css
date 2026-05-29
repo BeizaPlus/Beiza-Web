@@ -794,6 +794,24 @@ html {
     stroke-width: 1.5;
   }
 
+  .vault-recordings-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  }
+
+  .vault-recordings-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .vault-recordings-scroll::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  .vault-recordings-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
   .glass-panel {
     background: var(--glass-overlay);
     border: 1px solid hsla(var(--glass-border) / 0.35);

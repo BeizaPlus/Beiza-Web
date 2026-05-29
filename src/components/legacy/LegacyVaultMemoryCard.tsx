@@ -17,6 +17,8 @@ type LegacyVaultMemoryCardProps = {
   onDownloadLocked?: () => void;
   onDelete?: () => void;
   onDeleteLocked?: () => void;
+  /** Vault page — dark cards on black (no grey card shell). */
+  variant?: "default" | "vault";
 };
 
 function formatDuration(seconds: number) {
@@ -81,6 +83,7 @@ export function LegacyVaultMemoryCard({
   onDownloadLocked,
   onDelete,
   onDeleteLocked,
+  variant = "default",
 }: LegacyVaultMemoryCardProps) {
   const [editing, setEditing] = useState(false);
   const [draftTitle, setDraftTitle] = useState(recording.title ?? "");
@@ -97,20 +100,25 @@ export function LegacyVaultMemoryCard({
 
   return (
     <li
-      className={cn(legacySurface, "relative flex items-start gap-3.5 overflow-hidden px-4 py-3.5")}
+      className={cn(
+        "relative flex items-start gap-3.5 overflow-hidden px-4 py-3.5",
+        variant === "vault"
+          ? "rounded-xl border border-[#1e1e1e] bg-[#0a0a0a]"
+          : legacySurface,
+      )}
       data-recording-id={recording.id}
     >
       <button
         type="button"
-        className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-0 bg-primary disabled:opacity-50"
+        className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-0 bg-[#E6A817] disabled:opacity-50"
         onClick={onPlay}
         disabled={!recording.audio_url}
         aria-label={isPlaying ? "Pause memory" : "Play memory"}
       >
         {isPlaying ? (
-          <Pause className="h-4 w-4 fill-primary-foreground text-primary-foreground" aria-hidden />
+          <Pause className="h-4 w-4 fill-[#0a0a0a] text-[#0a0a0a]" aria-hidden />
         ) : (
-          <Play className="h-4 w-4 fill-primary-foreground pl-0.5 text-primary-foreground" aria-hidden />
+          <Play className="h-4 w-4 fill-[#0a0a0a] pl-0.5 text-[#0a0a0a]" aria-hidden />
         )}
       </button>
 
@@ -158,7 +166,7 @@ export function LegacyVaultMemoryCard({
 
       <div className="mt-0.5 flex shrink-0 gap-1.5">
         <ActionButton label="Share memory link" onClick={onShare}>
-          <Share2 className="h-4 w-4 text-primary" aria-hidden />
+          <Share2 className="h-4 w-4 text-[#E6A817]" aria-hidden />
         </ActionButton>
         <ActionButton
           locked={downloadLocked}
@@ -189,6 +197,12 @@ export function LegacyVaultMemoryCard({
           />
         </ActionButton>
       </div>
+      {isPlaying ? (
+        <span
+          className="absolute right-3 top-3 h-2 w-2 rounded-full bg-[#E6A817]"
+          aria-hidden
+        />
+      ) : null}
     </li>
   );
 }

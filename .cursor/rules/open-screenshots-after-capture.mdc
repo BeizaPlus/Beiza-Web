@@ -1,0 +1,27 @@
+---
+description: After capturing a verification screenshot, open it for the user
+alwaysApply: true
+---
+
+# Open screenshots after capture
+
+When you capture a screenshot for the user (Playwright, capture script, or any saved image path):
+
+1. **Save** the file to a stable path (prefer `docs/verification-screenshots/<feature>/`).
+2. **Open it immediately** after capture so the user can view it without hunting for the file.
+3. **Tell the user** the full saved path in your reply.
+
+## Windows (this project)
+
+After the capture command succeeds, run:
+
+```powershell
+Start-Process "C:\full\path\to\screenshot.png"
+```
+
+Use the absolute path to the file you just wrote.
+
+## Do not skip
+
+- Do not only mention the path — open the file unless the user explicitly asked not to.
+- If capture fails, do not open a stale or missing file; fix capture and retry first.
