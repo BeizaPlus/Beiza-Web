@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { isLegacyStudioPreview } from "@/lib/layoutStudio";
-import { STUDIO_MOCK_CIRCLE_ID, STUDIO_MOCK_PEOPLE } from "@/lib/legacy/studioPreviewData";
+import { STUDIO_MOCK_CIRCLE_ID, STUDIO_MOCK_PEOPLE, getStudioTreeEdges } from "@/lib/legacy/studioPreviewData";
 import { supabase } from "@/lib/supabaseClient";
 import type {
   FamilyPerson,
@@ -231,14 +231,26 @@ export async function linkRecordingToPeople(params: {
 }
 
 export function useTreeEdges(circleId?: string) {
-  return useQuery({
-    queryKey: ["legacy", "tree-edges", circleId],
+  const studio = isLegacyStudioPreview();
+  const effectiveId = circleId ?? (studio ? STUDIO_MOCK_CIRCLE_ID : undefined);
+  const query = useQuery({
+    queryKey: ["legacy", "tree-edges", effectiveId],
     queryFn: async () => {
+      if (studio) return getStudioTreeEdges(STUDIO_MOCK_CIRCLE_ID);
       if (!circleId) return [];
       return fetchTreeEdges(circleId, false);
     },
-    enabled: Boolean(supabase && circleId),
+    enabled: Boolean(supabase && effectiveId) && !studio,
   });
+  if (studio) {
+    return {
+      ...query,
+      data: getStudioTreeEdges(STUDIO_MOCK_CIRCLE_ID),
+      isLoading: false,
+      isFetching: false,
+    };
+  }
+  return query;
 }
 
 export function usePersonTraits(circleId?: string) {

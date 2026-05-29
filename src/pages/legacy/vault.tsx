@@ -148,7 +148,7 @@ export default function LegacyVaultPage() {
       <p className="mt-1 text-[13px] text-[#888]">
         Listen back to preserved voices and stories. Share any memory free — download on Keeper.
       </p>
-      <figure className="mt-4 overflow-hidden rounded-xl border border-[#2a2a2a] bg-[#141414] p-3 sm:p-4">
+      <figure className="mt-4">
         <img
           src={sampleFamiliesLegacyVault}
           alt="Sample — families documenting their legacies in a Legacy Vault heirloom book"
@@ -164,8 +164,8 @@ export default function LegacyVaultPage() {
     return (
       <div className="space-y-5">
         {vaultHeader}
-        <div className="space-y-4 rounded-xl border border-border bg-card p-6 text-center sm:p-8">
-          <p className="text-sm text-muted-foreground">
+        <div className="space-y-4 py-6 text-center">
+          <p className="text-sm text-[#888]">
             Sign in and join a Legacy Circle to open your vault and hear preserved voices.
           </p>
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
@@ -190,7 +190,7 @@ export default function LegacyVaultPage() {
       )}
 
       {!isLoading && recordings.length === 0 && (
-        <div className="rounded-xl border border-dashed border-[#2a2a2a] bg-[#1a1a1a] p-8 text-center">
+        <div className="py-10 text-center">
           <p className="text-[#888]">No memories yet.</p>
           <Button asChild className="mt-4">
             <Link to={BEIZA_LINKS.legacy.recordStation}>Record a memory</Link>

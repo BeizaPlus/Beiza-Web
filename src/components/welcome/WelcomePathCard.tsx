@@ -59,7 +59,7 @@ const EDGE_GRAY_MASK =
 
 /** Portrait 2:3 at every tier — matches desktop card proportion */
 const CARD_SURFACE_GRID =
-  "group relative aspect-[2/3] w-full min-w-0 max-w-full overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 max-[639px]:mx-auto min-[640px]:min-h-[260px] min-[1200px]:min-h-[380px] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
+  "group relative aspect-[2/3] w-full min-w-0 max-w-full overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 max-[767px]:mx-auto min-[768px]:min-h-[260px] min-[1200px]:min-h-[380px] focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
 
 const CARD_SURFACE_SCROLL =
   "group relative h-full min-h-0 w-full max-w-lg overflow-hidden rounded-[10px] border-0 outline-none transition-[filter] duration-500 focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-black";
@@ -111,7 +111,7 @@ export function WelcomePathCard({
       : layout === "scroll"
         ? CARD_SURFACE_SCROLL
         : CARD_SURFACE_GRID,
-    phoneFixedHeight && layout !== "carousel" && "max-[639px]:aspect-auto",
+    phoneFixedHeight && layout !== "carousel" && "max-[767px]:aspect-auto",
   );
   const phoneCardStyle =
     phoneCardMaxWidthRem != null || phoneFixedHeight

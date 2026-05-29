@@ -226,7 +226,21 @@ export function RecordMemoryView({
     }
   };
 
-  const handleRecordTap = () => {
+  const recordFlow = useRecordFlowOptional();
+  const recordFlowRef = useRef(recordFlow);
+  recordFlowRef.current = recordFlow;
+
+  const phaseRef = useRef(phase);
+  const isRequestingMicRef = useRef(isRequestingMic);
+  const elapsedSecondsRef = useRef(elapsedSeconds);
+  const promptTextRef = useRef(prompt.text);
+  const handleRecordTapRef = useRef<() => void>(() => {});
+
+  phaseRef.current = phase;
+  isRequestingMicRef.current = isRequestingMic;
+  elapsedSecondsRef.current = elapsedSeconds;
+  promptTextRef.current = prompt.text;
+  handleRecordTapRef.current = () => {
     if (phase === "recording") {
       finishRecording();
       return;
@@ -234,33 +248,26 @@ export function RecordMemoryView({
     void startRecording();
   };
 
-  const recordFlow = useRecordFlowOptional();
-
   useLayoutEffect(() => {
-    if (!belowHero || !recordFlow) return;
-    recordFlow.registerBridge({
+    if (!belowHero) return;
+    const flow = recordFlowRef.current;
+    if (!flow) return;
+    flow.registerBridge({
       getSnapshot: () => ({
-        phase,
-        isRequestingMic,
-        elapsedSeconds,
-        promptText: prompt.text,
+        phase: phaseRef.current,
+        isRequestingMic: isRequestingMicRef.current,
+        elapsedSeconds: elapsedSecondsRef.current,
+        promptText: promptTextRef.current,
       }),
-      handleRecordTap,
+      handleRecordTap: () => handleRecordTapRef.current(),
     });
-    return () => recordFlow.registerBridge(null);
-  }, [
-    belowHero,
-    recordFlow,
-    phase,
-    isRequestingMic,
-    elapsedSeconds,
-    prompt.text,
-    handleRecordTap,
-  ]);
+    return () => recordFlowRef.current?.registerBridge(null);
+  }, [belowHero]);
 
   useEffect(() => {
-    if (belowHero && recordFlow) recordFlow.syncSnapshot();
-  }, [belowHero, recordFlow, phase, isRequestingMic, elapsedSeconds, prompt.text]);
+    if (!belowHero) return;
+    recordFlowRef.current?.syncSnapshot();
+  }, [belowHero, phase, isRequestingMic, elapsedSeconds, prompt.text]);
 
   const resetForAnother = () => {
     blobRef.current = null;

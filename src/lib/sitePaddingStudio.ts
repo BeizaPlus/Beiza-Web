@@ -10,7 +10,7 @@ export type SitePaddingFrame = {
   /** Tablet (810–1199px) */
   paddingXRemTablet: number;
   contentIndentRemTablet: number;
-  /** Phone (≤639px) */
+  /** Phone (≤767px) */
   paddingXRemPhone: number;
   contentIndentRemPhone: number;
   /** @deprecated migrated to paddingXRemPhone */

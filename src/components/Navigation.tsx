@@ -95,7 +95,7 @@ export const Navigation = ({ variant = "default" }: NavigationProps) => {
       <nav
         className={cn(
           recordOverlay
-            ? "pointer-events-none fixed inset-x-0 top-0 z-[90] w-full border-0 bg-transparent"
+            ? "pointer-events-none fixed inset-x-0 top-0 z-[90] w-full border-0 bg-gradient-to-b from-black/55 via-black/20 to-transparent"
             : isLandingHero
               ? "pointer-events-none fixed inset-x-0 top-0 z-40 w-full border-0 bg-transparent"
               : "sticky top-0 z-40 w-full border-b border-white/5 bg-black/10 backdrop-blur-sm supports-[backdrop-filter]:bg-black/20",

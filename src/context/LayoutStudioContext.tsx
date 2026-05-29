@@ -43,11 +43,45 @@ type LayoutStudioContextValue = {
   /** Open one panel (closes all others) and turn layout studio on. */
   openStudioPanel: (panelId: string) => void;
   closeStudioPanel: () => void;
+  /** Tuck panel dock + toggles to the left edge so the page layout is unobstructed */
+  controlsMinimized: boolean;
+  setControlsMinimized: (minimized: boolean) => void;
+  toggleControlsMinimized: () => void;
+  /** Hide legacy tab rail (Home · Record · Vault…) to preview page unobstructed */
+  tabRailHidden: boolean;
+  setTabRailHidden: (hidden: boolean) => void;
+  toggleTabRailHidden: () => void;
 };
 
 const LayoutStudioContext = createContext<LayoutStudioContextValue | null>(null);
 
 const STORAGE_KEY = "beiza-layout-studio-master-open";
+const CONTROLS_MINIMIZED_KEY = "beiza-layout-studio-controls-minimized";
+const TAB_RAIL_HIDDEN_KEY = "beiza-legacy-tab-rail-hidden";
+
+function readTabRailHidden(): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    const raw = localStorage.getItem(TAB_RAIL_HIDDEN_KEY);
+    if (raw === "0") return false;
+    if (raw === "1") return true;
+  } catch {
+    /* ignore */
+  }
+  return true;
+}
+
+function readControlsMinimized(): boolean {
+  if (typeof window === "undefined") return true;
+  try {
+    const raw = localStorage.getItem(CONTROLS_MINIMIZED_KEY);
+    if (raw === "0") return false;
+    if (raw === "1") return true;
+  } catch {
+    /* ignore */
+  }
+  return true;
+}
 
 function readMasterOpen(): boolean {
   if (typeof window === "undefined") return false;
@@ -69,6 +103,8 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
   const onAdmin = pathname.startsWith("/admin");
   const enabled = isLayoutStudioEnabled() && !onAdmin;
   const [masterOpen, setMasterOpenState] = useState(readMasterOpen);
+  const [controlsMinimized, setControlsMinimizedState] = useState(readControlsMinimized);
+  const [tabRailHidden, setTabRailHiddenState] = useState(readTabRailHidden);
   const [guidesVisible, setGuidesVisibleState] = useState(loadSiteGuidesVisible);
   const [studioPanels, setStudioPanels] = useState<StudioPanelEntry[]>([]);
   const [activePanelId, setActivePanelId] = useState<string | null>(null);
@@ -155,6 +191,48 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const setControlsMinimized = useCallback((minimized: boolean) => {
+    setControlsMinimizedState(minimized);
+    try {
+      localStorage.setItem(CONTROLS_MINIMIZED_KEY, minimized ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const toggleControlsMinimized = useCallback(() => {
+    setControlsMinimizedState((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(CONTROLS_MINIMIZED_KEY, next ? "1" : "0");
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }, []);
+
+  const setTabRailHidden = useCallback((hidden: boolean) => {
+    setTabRailHiddenState(hidden);
+    try {
+      localStorage.setItem(TAB_RAIL_HIDDEN_KEY, hidden ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  const toggleTabRailHidden = useCallback(() => {
+    setTabRailHiddenState((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(TAB_RAIL_HIDDEN_KEY, next ? "1" : "0");
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }, []);
+
   useEffect(() => {
     if (!enabled) return;
     const html = document.documentElement;
@@ -180,6 +258,12 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
       activePanelId,
       openStudioPanel,
       closeStudioPanel,
+      controlsMinimized,
+      setControlsMinimized,
+      toggleControlsMinimized,
+      tabRailHidden,
+      setTabRailHidden,
+      toggleTabRailHidden,
     }),
     [
       enabled,
@@ -195,6 +279,12 @@ export function LayoutStudioProvider({ children }: { children: ReactNode }) {
       activePanelId,
       openStudioPanel,
       closeStudioPanel,
+      controlsMinimized,
+      setControlsMinimized,
+      toggleControlsMinimized,
+      tabRailHidden,
+      setTabRailHidden,
+      toggleTabRailHidden,
     ],
   );
 
@@ -232,8 +322,18 @@ function LayoutStudioControls({
   activePanelId: string | null;
 }) {
   const location = useLocation();
-  const { toggleMaster, dockAllPanels, openStudioPanel, guidesVisible, toggleGuides } =
-    useLayoutStudio();
+  const {
+    toggleMaster,
+    dockAllPanels,
+    openStudioPanel,
+    guidesVisible,
+    toggleGuides,
+    controlsMinimized,
+    setControlsMinimized,
+    tabRailHidden,
+    setTabRailHidden,
+    toggleTabRailHidden,
+  } = useLayoutStudio();
   const showRecordPhases =
     isLegacyStudioPreview() && location.pathname.startsWith("/legacy/record");
 
@@ -252,16 +352,44 @@ function LayoutStudioControls({
     return params;
   }, [location.search]);
 
+  if (controlsMinimized) {
+    const minimized = (
+      <button
+        type="button"
+        className="fixed left-0 top-1/2 z-[10060] -translate-y-1/2 rounded-r-md border border-l-0 border-[#E6A817]/40 bg-black/90 px-2 py-4 text-[9px] font-semibold uppercase tracking-[0.18em] text-[#f5c518] shadow-lg backdrop-blur-sm hover:bg-black"
+        data-beiza-layout-studio-controls
+        onClick={() => setControlsMinimized(false)}
+        title="Show layout studio controls"
+        aria-label="Show layout studio controls"
+      >
+        <span className="[writing-mode:vertical-rl] rotate-180">Studio</span>
+      </button>
+    );
+    if (typeof document === "undefined") return minimized;
+    return createPortal(minimized, document.body);
+  }
+
   const controls = (
     <div
-      className="fixed z-[10060] flex max-w-[min(100vw-2rem,20rem)] flex-col items-end gap-2"
+      className="fixed z-[10060] flex max-w-[min(100vw-2rem,20rem)] flex-col items-start gap-2"
       data-beiza-layout-studio-controls
       style={{ left: dockPos.x, top: dockPos.y }}
       title="Layout studio — open panels here, then drag panel headers to your second screen"
     >
-      <p className="rounded-md border border-[#E6A817]/40 bg-black/90 px-2 py-1 text-[9px] font-semibold uppercase tracking-wider text-[#f5c518] shadow-lg">
-        Studio controls
-      </p>
+      <div className="flex w-full items-center justify-between gap-2">
+        <p className="rounded-md border border-[#E6A817]/40 bg-black/90 px-2 py-1 text-[9px] font-semibold uppercase tracking-wider text-[#f5c518] shadow-lg">
+          Studio controls
+        </p>
+        <button
+          type="button"
+          onClick={() => setControlsMinimized(true)}
+          className="shrink-0 rounded-md border border-white/15 bg-black/90 px-2 py-1 text-[9px] font-medium text-white/60 hover:text-white"
+          title="Hide studio dock (see page only)"
+          aria-label="Hide studio controls"
+        >
+          Hide
+        </button>
+      </div>
       {panels.length > 0 ? (
         <div
           className="flex w-full flex-col gap-1.5 rounded-lg border border-white/15 bg-black/90 p-2 shadow-lg backdrop-blur-sm"
@@ -338,6 +466,24 @@ function LayoutStudioControls({
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleTabRailHidden();
+          }}
+          className={cn(
+            "rounded-full px-3 py-2 text-[11px] font-semibold tracking-wide shadow-lg transition",
+            tabRailHidden
+              ? "border border-white/20 bg-black/80 text-white/55 hover:text-white/80"
+              : "bg-white/15 text-white ring-2 ring-white/40 ring-offset-2 ring-offset-black",
+          )}
+          aria-pressed={!tabRailHidden}
+          aria-label={tabRailHidden ? "Show legacy tab rail" : "Hide legacy tab rail"}
+          title="Home · Tree · Record · Vault rail on the right"
+        >
+          Tab rail
+        </button>
+        <button
+          type="button"
           data-beiza-layout-studio-guides-toggle
           onClick={(e) => {
             e.stopPropagation();
@@ -398,6 +544,12 @@ export function useLayoutStudio(): LayoutStudioContextValue {
       activePanelId: null,
       openStudioPanel: () => {},
       closeStudioPanel: () => {},
+      controlsMinimized: true,
+      setControlsMinimized: () => {},
+      toggleControlsMinimized: () => {},
+      tabRailHidden: true,
+      setTabRailHidden: () => {},
+      toggleTabRailHidden: () => {},
     }
   );
 }

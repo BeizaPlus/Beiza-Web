@@ -12,8 +12,9 @@ export function studioControlsDockPosition(activePanelId?: string | null): { x: 
   const margin = 16;
   const dockWidth = 300;
   const dockHeight = 260;
+  /** Bottom-left — keeps center/right clear for page structure + legacy tab rail */
   const defaultPos = {
-    x: Math.max(margin, window.innerWidth - dockWidth - margin),
+    x: margin,
     y: Math.max(margin, window.innerHeight - dockHeight - margin),
   };
   if (!activePanelId) return defaultPos;

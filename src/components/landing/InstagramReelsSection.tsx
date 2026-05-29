@@ -60,6 +60,7 @@ function InstagramReelCard({
 
   return (
     <article
+      data-reel-id={post.id}
       className={cn(
         "flex w-[min(78vw,260px)] shrink-0 snap-center flex-col",
         "min-[768px]:w-[min(34vw,280px)]",
@@ -67,7 +68,11 @@ function InstagramReelCard({
       )}
     >
       <div className="relative aspect-[9/16] overflow-hidden rounded-2xl border border-white/10 bg-black">
-        {post.posterSrc && !isActive ? (
+        {!isActive && cinematic ? (
+          <div className="pointer-events-none absolute inset-0 z-0">
+            <InstagramReelPoster post={post} />
+          </div>
+        ) : !isActive && post.posterSrc ? (
           <img
             src={post.posterSrc}
             alt=""
@@ -75,10 +80,6 @@ function InstagramReelCard({
             loading="lazy"
             decoding="async"
           />
-        ) : !isActive && cinematic ? (
-          <div className="pointer-events-none absolute inset-0 z-0">
-            <InstagramReelPoster post={post} />
-          </div>
         ) : null}
 
         <div
@@ -90,16 +91,32 @@ function InstagramReelCard({
         >
           {isActive ? (
             post.videoSrc ? (
-              <video
-                ref={videoRef}
-                key={post.id}
-                src={post.videoSrc}
-                poster={post.posterSrc}
-                controls
-                playsInline
-                preload="auto"
-                className="relative z-10 h-full w-full object-cover"
-              />
+              <>
+                <video
+                  ref={videoRef}
+                  key={post.id}
+                  src={post.videoSrc}
+                  poster={post.posterSrc}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="relative z-10 h-full w-full object-cover"
+                />
+                {cinematic ? (
+                  <div
+                    className="pointer-events-none absolute inset-x-0 top-0 z-20 bg-gradient-to-b from-black/75 via-black/35 to-transparent px-4 pb-8 pt-3"
+                    aria-hidden
+                  >
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#E6A817]">
+                      {post.guideLabel}
+                    </p>
+                    <p className="mt-1 font-manrope text-lg font-semibold leading-tight text-white">
+                      {post.cardTitle}
+                    </p>
+                    <p className="mt-0.5 text-xs text-white/65">{post.cardSubtitle}</p>
+                  </div>
+                ) : null}
+              </>
             ) : (
               <div className="flex h-full items-center justify-center text-xs text-white/70">
                 Video unavailable
@@ -108,9 +125,10 @@ function InstagramReelCard({
           ) : (
             <button
               type="button"
+              data-reel-play={post.id}
               onClick={() => onPlay(overlayRef.current)}
               className="group absolute inset-0 z-20 flex cursor-pointer items-center justify-center bg-black/10 transition hover:bg-black/25"
-              aria-label={`Play ${post.label}`}
+              aria-label={`Play ${post.label}: ${cinematic ? post.cardTitle : post.label}`}
             >
               <span className="flex h-16 w-16 items-center justify-center rounded-full bg-black/55 ring-1 ring-white/25 transition group-hover:scale-105 group-hover:bg-black/70">
                 <PlayGlyph />

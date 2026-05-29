@@ -134,7 +134,7 @@ function clampRecordStudioFrame(frame: RecordPageStudioFrame): RecordPageStudioF
     posX: Math.min(100, Math.max(0, frame.posX)),
     posY: Math.min(100, Math.max(0, frame.posY)),
     scale: Math.min(140, Math.max(80, frame.scale)),
-    overlayStrength: Math.min(85, Math.max(35, frame.overlayStrength)),
+    overlayStrength: Math.min(85, Math.max(0, frame.overlayStrength)),
   };
 }
 
@@ -182,8 +182,29 @@ export function recordPageStudioToJson(frame: RecordPageStudioFrame) {
   );
 }
 
+/** When canonical overlay is 0, use this so the hero is not fully raw on production. */
+export const RECORD_HERO_OVERLAY_FALLBACK = 42;
+
+export function recordHeroOverlayCssVars(
+  frame: Pick<RecordPageStudioFrame, "overlayStrength" | "textSide">,
+): Record<string, string> {
+  const strength =
+    frame.overlayStrength > 0 ? frame.overlayStrength : RECORD_HERO_OVERLAY_FALLBACK;
+  const opacity = strength / 100;
+  const desktop =
+    frame.textSide === "right"
+      ? `linear-gradient(to left, rgba(0,0,0,${opacity * 0.9}) 44%, rgba(0,0,0,0.1) 100%)`
+      : `linear-gradient(to right, rgba(0,0,0,${opacity * 0.9}) 44%, rgba(0,0,0,0.1) 100%)`;
+
+  return {
+    "--record-overlay-md": desktop,
+    "--record-overlay-mobile": `linear-gradient(to top, rgba(0,0,0,${Math.min(0.58, opacity * 0.7 + 0.18)}) 0%, rgba(0,0,0,${Math.min(0.34, opacity * 0.42)}) 40%, rgba(0,0,0,0.06) 100%)`,
+  };
+}
+
 export function recordPageShellCssVars(frame: RecordPageStudioFrame): CSSProperties {
   return {
+    ...recordHeroOverlayCssVars(frame),
     "--record-content-indent": `${frame.contentIndentRem}rem`,
     "--record-column-max": `${frame.columnMaxWidthRem}rem`,
     "--record-email-max": `${frame.emailMaxWidthRem}rem`,

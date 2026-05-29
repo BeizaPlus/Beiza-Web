@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import {
-  BookOpen,
-  Mic2,
-  Sparkles,
-  UserRound,
-  Wrench,
+  Church,
+  Heart,
+  Palette,
+  Users,
+  Wallet,
 } from "lucide-react";
 import type { FamilyPerson } from "@/lib/legacy/types";
 import {
@@ -16,12 +16,12 @@ import {
 } from "@/lib/legacy/familyStrengths";
 import { cn } from "@/lib/utils";
 
-const AXIS_ICONS: Record<StrengthAxisKey, typeof Mic2> = {
-  storytelling: Mic2,
-  craft: Wrench,
-  character: Sparkles,
-  presence: UserRound,
-  legacy: BookOpen,
+const AXIS_ICONS: Record<StrengthAxisKey, typeof Wallet> = {
+  finance: Wallet,
+  creativity: Palette,
+  morale: Heart,
+  religion: Church,
+  community: Users,
 };
 
 type PersonStrengthsRadarProps = {
@@ -94,9 +94,9 @@ export function PersonStrengthsRadar({
           <p className="font-manrope text-[10px] font-normal uppercase tracking-[0.22em] text-[#E6A817]">
             Family ID
           </p>
-          <h3 className="mt-1 font-manrope text-[15px] font-semibold text-white">Strengths</h3>
+          <h3 className="mt-1 font-manrope text-[15px] font-semibold text-white">Family DNA</h3>
           <p className="mt-1 font-manrope text-[11px] leading-relaxed text-[#666666]">
-            For the next generation — know what to lean into, not what to force.
+            Finance, creativity, morale, faith, and community — what runs in this line.
           </p>
         </div>
         <div className="shrink-0 text-right">

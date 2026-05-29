@@ -669,7 +669,7 @@ function WelcomeStudioPanel({
 
         <StudioAccordionSection
           value="phone"
-          title="Mobile carousel (≤639px)"
+          title="Mobile carousel (≤767px)"
           hint="Horizontal swipe — one card with peek. Width ~82vw; 3:4 portrait aspect is locked in CSS."
         >
           <PhoneLayoutSliders
@@ -915,7 +915,7 @@ export default function WelcomeGate() {
       <div
         className={cn(
           "relative z-10 mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col siteBounds pb-4",
-          "max-[639px]:px-3 min-[640px]:pb-6",
+          "max-[767px]:px-3 min-[768px]:pb-6",
         )}
       >
         <motion.div
@@ -926,7 +926,7 @@ export default function WelcomeGate() {
           transition={{ duration: 0.38, ease: "easeOut" }}
         >
         <motion.header
-          className="mx-auto flex w-full max-w-4xl shrink-0 flex-col items-center px-2 text-center min-[640px]:px-4"
+          className="mx-auto flex w-full max-w-4xl shrink-0 flex-col items-center px-2 text-center min-[768px]:px-4"
           style={{
             paddingTop: `max(${studio.headerTopPaddingRem}rem, env(safe-area-inset-top, 0px))`,
           }}
@@ -981,7 +981,7 @@ export default function WelcomeGate() {
             className={cn(
               "w-full min-h-0 flex-1",
               "welcome-cards-row",
-              "min-[640px]:grid min-[640px]:grid-cols-3 min-[640px]:gap-6 min-[640px]:overflow-visible",
+              "min-[768px]:grid min-[768px]:grid-cols-3 min-[768px]:gap-6 min-[768px]:overflow-visible",
             )}
             style={
               isPhone
@@ -1018,7 +1018,7 @@ export default function WelcomeGate() {
                   variants={cardVariants}
                   className={cn(
                     "welcome-card-slot flex min-h-0 min-w-0",
-                    "min-[640px]:h-full min-[640px]:max-[1199px]:min-h-[280px]",
+                    "min-[768px]:h-full min-[768px]:max-[1199px]:min-h-[280px]",
                   )}
                 >
                   <WelcomePathCard

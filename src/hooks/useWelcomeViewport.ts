@@ -21,7 +21,7 @@ export function useWelcomeLayoutBreakpoint(): LayoutStudioBreakpoint {
   return breakpoint;
 }
 
-/** Phone only (≤639px) — bottom locale bar + stacked cards */
+/** Phone only (≤767px) — bottom locale bar + stacked cards */
 export function useWelcomePhoneLayout(): boolean {
   const bp = useWelcomeLayoutBreakpoint();
   return bp === "phone";

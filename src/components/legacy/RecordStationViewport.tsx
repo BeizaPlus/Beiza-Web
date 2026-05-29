@@ -95,6 +95,17 @@ export function RecordStationViewport({
       aria-label="Recording station"
     >
       <style>{`
+        .record-station-viewport .record-viewport-overlay {
+          background: var(
+            --record-overlay-mobile,
+            linear-gradient(
+              to top,
+              rgba(0, 0, 0, 0.55) 0%,
+              rgba(0, 0, 0, 0.28) 40%,
+              rgba(0, 0, 0, 0.06) 100%
+            )
+          );
+        }
         @media (max-width: 767px) {
           .record-station-viewport .record-copy-column {
             transform: none !important;
@@ -107,6 +118,11 @@ export function RecordStationViewport({
             transform: none !important;
           }
         }
+        @media (min-width: 768px) {
+          .record-station-viewport .record-viewport-overlay {
+            background: var(--record-overlay-md);
+          }
+        }
       `}</style>
 
       <FramedHeroImage
@@ -116,6 +132,7 @@ export function RecordStationViewport({
         className="pointer-events-none"
         onErrorSrc={heroFallback.src}
       />
+      <div className="record-viewport-overlay pointer-events-none absolute inset-0 z-[1]" aria-hidden />
 
       {studioOn ? (
         <StudioSubsetZone

@@ -151,9 +151,10 @@ const EPISODE_META: Record<string, EpisodeMeta> = {
   },
 };
 
-function posterForShortCode(shortCode: string, scrapedPoster: string | null): string {
+function posterForShortCode(shortCode: string, _scrapedPoster: string | null): string | undefined {
   if (shortCode === "DVGZcKrCJE8") return REEL_EP00_POSTER;
-  return scrapedPoster ?? REEL_TEXTURE;
+  /** Scraped IG cover frames share the same intro shoot — use cinematic card art instead. */
+  return undefined;
 }
 
 /**

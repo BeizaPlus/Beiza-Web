@@ -64,7 +64,7 @@ export type ToolbarControlsLayout = {
   controlsButtonGapPx: number;
 };
 
-/** Phone (≤639px) — horizontal swipe carousel (one card + peek). */
+/** Phone (≤767px) — horizontal swipe carousel (one card + peek). */
 export type WelcomePhoneLayout = {
   /** Card width as % of viewport — ~82vw shows a peek of the next card */
   cardWidthVw: number;

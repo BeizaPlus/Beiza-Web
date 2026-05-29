@@ -32,6 +32,9 @@ export function shouldHideGlobalHeader(pathname: string): boolean {
   return (
     pathname === BEIZA_LINKS.welcome.gate ||
     pathname.startsWith(`${BEIZA_LINKS.admin.base}/`) ||
-    pathname === BEIZA_LINKS.admin.base
+    pathname === BEIZA_LINKS.admin.base ||
+    pathname === BEIZA_LINKS.legacy.app ||
+    pathname.startsWith(`${BEIZA_LINKS.legacy.app}/`) ||
+    pathname === BEIZA_LINKS.legacy.heritage
   );
 }

@@ -6,6 +6,8 @@ const MAX_SCROLL_VELOCITY = 2.2;
 const MIN_SCROLL_VELOCITY = 0.12;
 /** Velocity halves roughly every this many ms (time-based decay) */
 const HALF_LIFE_MS = 220;
+/** Movement before we treat pointer as drag (not click) */
+const DRAG_THRESHOLD_PX = 8;
 
 function clamp(n: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, n));
@@ -37,6 +39,13 @@ function snapScrollToNearestChild(el: HTMLElement, behavior: ScrollBehavior) {
   el.scrollTo({ left: target, behavior });
 }
 
+function isDragExcludedTarget(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) return false;
+  return Boolean(
+    target.closest("a, input, select, textarea, label, [data-reel-play]"),
+  );
+}
+
 export function useDraggableScroll() {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -44,13 +53,13 @@ export function useDraggableScroll() {
     const el = ref.current;
     if (!el) return;
 
-    let isDown = false;
-    let startX = 0;
+    let pointerId: number | null = null;
+    let startClientX = 0;
     let scrollLeftAtDown = 0;
+    let didDrag = false;
 
     let prevMoveT = 0;
     let prevMoveX = 0;
-    /** Signed scroll velocity (px/ms): positive = scrolling content to the right */
     let releaseVelocity = 0;
 
     let momentumRaf = 0;
@@ -63,11 +72,10 @@ export function useDraggableScroll() {
       }
     };
 
-    const endDragSurface = () => {
-      isDown = false;
+    const clearPointer = () => {
+      pointerId = null;
+      didDrag = false;
       el.classList.remove("is-dragging");
-      document.removeEventListener("mousemove", onDocumentMouseMove);
-      document.removeEventListener("mouseup", onDocumentMouseUp);
     };
 
     const finishWithSnap = (smooth: boolean) => {
@@ -123,64 +131,83 @@ export function useDraggableScroll() {
       momentumRaf = requestAnimationFrame(step);
     };
 
-    const onDocumentMouseMove = (e: MouseEvent) => {
-      if (!isDown) return;
+    const suppressClickOnce = (e: MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (pointerId === null || e.pointerId !== pointerId) return;
+
+      const deltaX = e.clientX - startClientX;
+      if (!didDrag && Math.abs(deltaX) < DRAG_THRESHOLD_PX) return;
+
+      if (!didDrag) {
+        didDrag = true;
+        el.classList.add("is-dragging");
+        el.addEventListener("click", suppressClickOnce, { capture: true, once: true });
+      }
+
       e.preventDefault();
 
       const t = performance.now();
-      const x = e.pageX - el.offsetLeft;
-      const walk = (x - startX) * 1.5;
-      el.scrollLeft = scrollLeftAtDown - walk;
+      el.scrollLeft = scrollLeftAtDown - deltaX * 1.5;
 
       if (prevMoveT > 0) {
         const dt = t - prevMoveT;
         if (dt > 0 && dt < 80) {
-          const screenDelta = e.pageX - prevMoveX;
+          const screenDelta = e.clientX - prevMoveX;
           const instant = (-screenDelta / dt) * 1.5;
           releaseVelocity = releaseVelocity * 0.35 + instant * 0.65;
         }
       }
       prevMoveT = t;
-      prevMoveX = e.pageX;
+      prevMoveX = e.clientX;
     };
 
-    const onDocumentMouseUp = () => {
-      if (!isDown) return;
-      endDragSurface();
-      runMomentum(releaseVelocity);
-    };
+    const onPointerEnd = (e: PointerEvent) => {
+      if (pointerId === null || e.pointerId !== pointerId) return;
 
-    const onMouseDown = (e: MouseEvent) => {
-      if (e.button !== 0) return;
-      const target = e.target;
-      if (
-        target instanceof Element &&
-        target.closest("button, a, input, select, textarea, label, [role='button']")
-      ) {
-        return;
+      if (el.hasPointerCapture(e.pointerId)) {
+        el.releasePointerCapture(e.pointerId);
       }
-      cancelMomentum();
 
-      isDown = true;
-      el.classList.add("is-dragging");
-      startX = e.pageX - el.offsetLeft;
+      const wasDrag = didDrag;
+      clearPointer();
+
+      if (wasDrag) {
+        runMomentum(releaseVelocity);
+      }
+    };
+
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.button !== 0 && e.pointerType === "mouse") return;
+      if (isDragExcludedTarget(e.target)) return;
+
+      cancelMomentum();
+      pointerId = e.pointerId;
+      startClientX = e.clientX;
       scrollLeftAtDown = el.scrollLeft;
+      didDrag = false;
       prevMoveT = performance.now();
-      prevMoveX = e.pageX;
+      prevMoveX = e.clientX;
       releaseVelocity = 0;
 
-      document.addEventListener("mousemove", onDocumentMouseMove);
-      document.addEventListener("mouseup", onDocumentMouseUp);
+      el.setPointerCapture(e.pointerId);
     };
 
-    el.addEventListener("mousedown", onMouseDown);
+    el.addEventListener("pointerdown", onPointerDown);
+    el.addEventListener("pointermove", onPointerMove);
+    el.addEventListener("pointerup", onPointerEnd);
+    el.addEventListener("pointercancel", onPointerEnd);
 
     return () => {
       cancelMomentum();
-      endDragSurface();
-      el.removeEventListener("mousedown", onMouseDown);
-      document.removeEventListener("mousemove", onDocumentMouseMove);
-      document.removeEventListener("mouseup", onDocumentMouseUp);
+      clearPointer();
+      el.removeEventListener("pointerdown", onPointerDown);
+      el.removeEventListener("pointermove", onPointerMove);
+      el.removeEventListener("pointerup", onPointerEnd);
+      el.removeEventListener("pointercancel", onPointerEnd);
     };
   }, []);
 

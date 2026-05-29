@@ -84,6 +84,7 @@ import {
   type ConnectionDirection,
   type InferredRelationshipChoice,
 } from "@/lib/legacy/treeConnectionInference";
+import { isLegacyStudioPreview } from "@/lib/layoutStudio";
 
 const EMPTY_PORTRAIT_POOL: ReturnType<typeof usePortraitPool>["data"] = [];
 
@@ -172,6 +173,7 @@ function FamilyTreeCanvasInner({
   const groupStateRef = useRef<TreeGroupState>(emptyTreeGroupState());
   const hasFittedRef = useRef(false);
   const fitOnLoadDoneRef = useRef(false);
+  const studioLayoutOnceRef = useRef(false);
 
   const memoirSlugByPersonId = useMemo(() => {
     const map = new Map<string, string>();
@@ -265,6 +267,55 @@ function FamilyTreeCanvasInner({
 
   const [nodes, setNodes, onNodesChange] = useNodesState(flowSnapshot.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(flowSnapshot.edges);
+
+  const applyAutoLayout = useCallback(
+    (
+      direction: LayoutDirection,
+      baseNodes: Node<FamilyTreeNodeData>[],
+      baseEdges: Edge[],
+    ): Node<FamilyTreeNodeData>[] => {
+      const laid = autoLayoutTree(
+        baseNodes,
+        baseEdges,
+        direction,
+        treeLeaderId,
+        peopleWithPortraits,
+      ) as Node<FamilyTreeNodeData>[];
+      setPositionOverrides((prev) => {
+        const next = new Map(prev);
+        for (const n of laid) {
+          if (!isPersonFlowNodeType(n.type ?? undefined)) continue;
+          next.set(n.id, { x: n.position.x, y: n.position.y });
+        }
+        return next;
+      });
+      window.requestAnimationFrame(() => {
+        void fitView({ padding: 0.28, duration: 350 });
+      });
+      return laid;
+    },
+    [treeLeaderId, peopleWithPortraits, fitView],
+  );
+
+  const handleAutoLayout = useCallback(
+    (direction: LayoutDirection) => {
+      const laid = applyAutoLayout(direction, nodes, edges);
+      setNodes(laid);
+      if (circleId) {
+        for (const n of laid) {
+          if (!isPersonFlowNodeType(n.type ?? undefined)) continue;
+          void savePersonCanvasPosition({
+            circleId,
+            personId: n.id,
+            x: n.position.x,
+            y: n.position.y,
+            useApi: persistViaApi,
+          });
+        }
+      }
+    },
+    [nodes, edges, setNodes, circleId, persistViaApi, applyAutoLayout],
+  );
 
   const applyPersonPatch = useCallback(
     (personId: string, patch: PersonEdit) => {
@@ -515,10 +566,8 @@ function FamilyTreeCanvasInner({
       window.requestAnimationFrame(() => {
         if (fitTreeOnLoad) {
           void fitView({ padding: 0.2, duration: 300 });
-        } else if (treeLeaderId) {
-          void fitView({ padding: 0.22, duration: 300, nodes: [{ id: treeLeaderId }] });
         } else {
-          void fitView({ padding: 0.2, duration: 300 });
+          void fitView({ padding: 0.28, duration: 300 });
         }
       });
     }
@@ -658,7 +707,6 @@ function FamilyTreeCanvasInner({
           relationshipType,
           useApi: persistViaApi,
         });
-        setTreeEdgeRows((rows) => [...rows.filter((r) => r.id !== row.id), row]);
         const positionMap = new Map(nodes.map((n) => [n.id, n.position]));
         const [flowEdge] = treeEdgesToFlowEdges([row], positionMap);
         const handles = defaultTreeHandles();
@@ -667,7 +715,9 @@ function FamilyTreeCanvasInner({
           sourceHandle: pendingConnection.sourceHandle ?? handles.sourceHandle,
           targetHandle: pendingConnection.targetHandle ?? handles.targetHandle,
         };
-        setEdges((eds) => [...eds.filter((e) => e.id !== connected.id), connected]);
+        const nextEdges = [...edges.filter((e) => e.id !== connected.id), connected];
+        applyAutoLayout("TB", nodes, nextEdges);
+        setTreeEdgeRows((rows) => [...rows.filter((r) => r.id !== row.id), row]);
         toast({
           title: "Connection saved",
           description: formatRelationship(relationshipType),
@@ -682,7 +732,7 @@ function FamilyTreeCanvasInner({
         cancelRelationshipPicker();
       }
     },
-    [pendingConnection, circleId, persistViaApi, cancelRelationshipPicker, setEdges, nodes, toast],
+    [pendingConnection, circleId, persistViaApi, cancelRelationshipPicker, nodes, edges, applyAutoLayout, toast],
   );
 
   const disconnectEdge = useCallback(
@@ -787,38 +837,13 @@ function FamilyTreeCanvasInner({
     setEditingEdge(null);
   }, []);
 
-  const handleAutoLayout = useCallback(
-    (direction: LayoutDirection) => {
-      const laid = autoLayoutTree(
-        nodes,
-        edges,
-        direction,
-        treeLeaderId,
-        people,
-      ) as Node<FamilyTreeNodeData>[];
-      setNodes(laid);
-      if (circleId) {
-        for (const n of laid) {
-          if (!isPersonFlowNodeType(n.type)) continue;
-          void savePersonCanvasPosition({
-            circleId,
-            personId: n.id,
-            x: n.position.x,
-            y: n.position.y,
-            useApi: persistViaApi,
-          });
-        }
-      }
-      window.requestAnimationFrame(() => {
-        if (treeLeaderId) {
-          void fitView({ padding: 0.22, duration: 350, nodes: [{ id: treeLeaderId }] });
-        } else {
-          void fitView({ padding: 0.18, duration: 350 });
-        }
-      });
-    },
-    [nodes, edges, setNodes, circleId, persistViaApi, fitView, treeLeaderId, people],
-  );
+  useEffect(() => {
+    if (!isLegacyStudioPreview() || studioLayoutOnceRef.current) return;
+    const personNodes = flowSnapshot.nodes.filter((n) => isPersonFlowNodeType(n.type ?? undefined));
+    if (personNodes.length < 2) return;
+    studioLayoutOnceRef.current = true;
+    applyAutoLayout("TB", flowSnapshot.nodes, flowSnapshot.edges);
+  }, [flowSnapshot.nodes, flowSnapshot.edges, applyAutoLayout]);
 
   const onNodeDragStop = useCallback(
     (_: React.MouseEvent, node: Node<FamilyTreeNodeData>) => {

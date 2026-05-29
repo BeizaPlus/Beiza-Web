@@ -6,11 +6,11 @@ const OUT = path.resolve("docs/verification-screenshots/reels-playing");
 const BASE = process.env.BASE_URL ?? "https://www.beizaplus.com";
 const WAIT_MS = 5000;
 
-/** Tap play on episode by index (0 = first visible). */
+/** Tap play on episode by Instagram short code. */
 const EPISODES = [
-  { index: 0, file: "01-episode-1-dancing-plague-playing.png" },
-  { index: 2, file: "02-episode-3-marathon-playing.png" },
-  { index: 4, file: "03-episode-5-ice-age-playing.png" },
+  { shortCode: "DV4BMjpjuFr", file: "01-dancing-plague-playing.png" },
+  { shortCode: "DX4pN1wOgAy", file: "02-marathon-playing.png" },
+  { shortCode: "DVli3L3iMht", file: "03-ice-age-playing.png" },
 ];
 
 await mkdir(OUT, { recursive: true });
@@ -26,28 +26,29 @@ await page.locator("#cultural-films").scrollIntoViewIfNeeded();
 await page.waitForTimeout(1000);
 
 for (const ep of EPISODES) {
-  const playBtn = page.locator("#cultural-films button[aria-label^='Play']").nth(ep.index);
+  const playBtn = page.locator(`#cultural-films button[data-reel-play="${ep.shortCode}"]`);
   await playBtn.scrollIntoViewIfNeeded();
   await playBtn.click();
   await page.waitForTimeout(800);
 
-  const video = page.locator("#cultural-films video");
+  const video = page.locator(`#cultural-films article[data-reel-id="${ep.shortCode}"] video`);
   await video.waitFor({ state: "visible", timeout: 15000 });
   await page.waitForTimeout(WAIT_MS);
 
-  const state = await page.evaluate(() => {
-    const v = document.querySelector("#cultural-films video");
+  const state = await page.evaluate((shortCode) => {
+    const v = document.querySelector(`#cultural-films article[data-reel-id="${shortCode}"] video`);
     if (!v) return null;
     return {
       paused: v.paused,
       currentTime: v.currentTime,
       readyState: v.readyState,
       width: v.videoWidth,
+      title: v.closest("article")?.querySelector(".font-manrope.text-lg")?.textContent?.trim(),
     };
-  });
+  }, ep.shortCode);
 
-  const card = page.locator("#cultural-films article").filter({ has: page.locator("video") });
-  await card.first().screenshot({ path: path.join(OUT, ep.file) });
+  const card = page.locator(`#cultural-films article[data-reel-id="${ep.shortCode}"]`);
+  await card.screenshot({ path: path.join(OUT, ep.file) });
   console.log(ep.file, state);
 }
 

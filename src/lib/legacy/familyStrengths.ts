@@ -16,11 +16,11 @@ export type PersonTraitRow = {
 };
 
 export type StrengthAxisKey =
-  | "storytelling"
-  | "craft"
-  | "character"
-  | "presence"
-  | "legacy";
+  | "finance"
+  | "creativity"
+  | "morale"
+  | "religion"
+  | "community";
 
 export type StrengthAxis = {
   key: StrengthAxisKey;
@@ -38,7 +38,7 @@ export type FamilyStrengthProfile = {
   completeness: number;
 };
 
-const STORAGE_KEY = "beiza_person_strength_overrides_v1";
+const STORAGE_KEY = "beiza_person_strength_overrides_v2";
 
 function clamp(n: number, min: number, max: number) {
   return Math.min(max, Math.max(min, n));
@@ -58,6 +58,23 @@ function profileDepthScore(person: FamilyPerson): number {
   if ((person.languages?.length ?? 0) > 0) score += 0.8;
   if (person.religion?.trim()) score += 0.6;
   return clamp(score, 1, 4.5);
+}
+
+function religionDepthScore(person: FamilyPerson): number {
+  let score = person.religion?.trim() ? 4.2 : 1.2;
+  const bio = person.bio?.toLowerCase() ?? "";
+  if (/faith|church|mosque|temple|prayer|spirit|god|allah|christ|muslim|christian|jewish|hindu/.test(bio)) {
+    score += 2;
+  }
+  return clamp(score, 1, 10);
+}
+
+function financeScore(person: FamilyPerson, traits: PersonTraitBuckets): number {
+  let score = 1.2;
+  if (person.career_path?.trim()) score += 3.2;
+  if (person.education?.trim()) score += 2.4;
+  score += tagScore(traits.gift_traits) * 0.55;
+  return clamp(score, 1, 10);
 }
 
 export function traitsFromDbRows(rows: PersonTraitRow[]): PersonTraitBuckets {
@@ -133,11 +150,31 @@ export function computeFamilyStrengths(
   const depth = profileDepthScore(person);
 
   const raw: Record<StrengthAxisKey, number> = {
-    storytelling: clamp(tagScore(traits.known_for) * 0.45 + memoryBoost * 0.55, 1, 10),
-    craft: tagScore(traits.gift_traits),
-    character: tagScore(traits.personality_traits),
-    presence: tagScore(traits.physical_traits),
-    legacy: clamp(tagScore(traits.known_for) * 0.35 + depth * 1.35, 1, 10),
+    finance: financeScore(person, traits),
+    creativity: clamp(
+      tagScore(traits.gift_traits) * 0.55 +
+        tagScore(traits.known_for) * 0.35 +
+        memoryBoost * 0.35,
+      1,
+      10,
+    ),
+    morale: clamp(
+      tagScore(traits.personality_traits) * 0.7 +
+        memoryBoost * 0.35 +
+        (person.status === "living" ? 0.6 : 0),
+      1,
+      10,
+    ),
+    religion: religionDepthScore(person),
+    community: clamp(
+      tagScore(traits.known_for) * 0.45 +
+        tagScore(traits.physical_traits) * 0.25 +
+        clamp((person.languages?.length ?? 0) * 1.15, 0, 3.5) +
+        memoryBoost * 0.3 +
+        depth * 0.35,
+      1,
+      10,
+    ),
   };
 
   const overrides = loadOverrides(person.id);
@@ -149,43 +186,43 @@ export function computeFamilyStrengths(
 
   const axes: StrengthAxis[] = [
     {
-      key: "storytelling",
-      label: "Story & voice",
-      shortLabel: "Story",
-      hint: "Memories recorded and stories they are known for",
-      value: raw.storytelling,
+      key: "finance",
+      label: "Finance & work",
+      shortLabel: "Finance",
+      hint: "Career, education, and practical gifts that sustain the family",
+      value: raw.finance,
       potential: 10,
     },
     {
-      key: "craft",
-      label: "Craft & gifts",
-      shortLabel: "Craft",
-      hint: "Skills, trades, and talents passed down",
-      value: raw.craft,
+      key: "creativity",
+      label: "Creativity",
+      shortLabel: "Creativity",
+      hint: "Talents, crafts, stories, and ideas they brought to life",
+      value: raw.creativity,
       potential: 10,
     },
     {
-      key: "character",
-      label: "Character",
-      shortLabel: "Character",
-      hint: "Personality traits the family recognizes",
-      value: raw.character,
+      key: "morale",
+      label: "Morale & spirit",
+      shortLabel: "Morale",
+      hint: "How they lifted the room — resilience, warmth, and character",
+      value: raw.morale,
       potential: 10,
     },
     {
-      key: "presence",
-      label: "Presence",
-      shortLabel: "Presence",
-      hint: "How they showed up — physical and bearing",
-      value: raw.presence,
+      key: "religion",
+      label: "Religion & faith",
+      shortLabel: "Religion",
+      hint: "Faith tradition and spiritual grounding in their story",
+      value: raw.religion,
       potential: 10,
     },
     {
-      key: "legacy",
-      label: "Legacy depth",
-      shortLabel: "Legacy",
-      hint: "Career, education, bio, and what they are known for",
-      value: raw.legacy,
+      key: "community",
+      label: "Community & roots",
+      shortLabel: "Community",
+      hint: "Languages, presence, and what they were known for in the circle",
+      value: raw.community,
       potential: 10,
     },
   ];

@@ -1,7 +1,23 @@
 import { supabase } from "@/lib/supabaseClient";
 import { getStoredCircleToken } from "@/lib/circleAccess";
+import { isLegacyStudioPreview } from "@/lib/layoutStudio";
 import type { FamilyPerson, FamilyPersonGender, FamilyPersonProfilePatch } from "@/lib/legacy/types";
+import {
+  deleteStudioTreeEdge,
+  getStudioTreeEdges,
+  saveStudioTreeEdge,
+  updateStudioTreeEdge,
+} from "@/lib/legacy/studioPreviewData";
 import type { RelationshipType, TreeEdgeRow } from "@/lib/legacy/treeRelationships";
+
+function persistenceError(err: unknown, fallback: string): Error {
+  if (err instanceof Error) return err;
+  if (typeof err === "object" && err !== null && "message" in err) {
+    const message = (err as { message: unknown }).message;
+    if (typeof message === "string" && message.trim()) return new Error(message);
+  }
+  return new Error(fallback);
+}
 
 const PHOTO_BUCKET = "family-people-photos";
 
@@ -9,6 +25,10 @@ export async function fetchTreeEdges(
   circleId: string,
   useApi = false,
 ): Promise<TreeEdgeRow[]> {
+  if (isLegacyStudioPreview() && !useApi) {
+    return getStudioTreeEdges(circleId);
+  }
+
   if (useApi) {
     const token = getStoredCircleToken(circleId);
     if (!token) return [];
@@ -42,6 +62,15 @@ export async function saveTreeEdge(params: {
 }): Promise<TreeEdgeRow> {
   const { circleId, sourcePersonId, targetPersonId, relationshipType, useApi } = params;
 
+  if (isLegacyStudioPreview() && !useApi) {
+    return saveStudioTreeEdge({
+      circleId,
+      sourcePersonId,
+      targetPersonId,
+      relationshipType,
+    });
+  }
+
   if (useApi) {
     const token = getStoredCircleToken(circleId);
     if (!token) throw new Error("Session expired.");
@@ -74,7 +103,7 @@ export async function saveTreeEdge(params: {
     })
     .select()
     .single();
-  if (error) throw error;
+  if (error) throw persistenceError(error, "Could not save connection.");
   return data as TreeEdgeRow;
 }
 
@@ -85,6 +114,10 @@ export async function updateTreeEdge(params: {
   useApi?: boolean;
 }): Promise<TreeEdgeRow> {
   const { circleId, edgeId, relationshipType, useApi } = params;
+
+  if (isLegacyStudioPreview() && !useApi) {
+    return updateStudioTreeEdge({ circleId, edgeId, relationshipType });
+  }
 
   if (useApi) {
     const token = getStoredCircleToken(circleId);
@@ -115,7 +148,7 @@ export async function updateTreeEdge(params: {
     .eq("circle_id", circleId)
     .select("*")
     .single();
-  if (error) throw error;
+  if (error) throw persistenceError(error, "Could not update connection.");
   return data as TreeEdgeRow;
 }
 
@@ -181,6 +214,11 @@ export async function deleteTreeEdge(params: {
 }): Promise<void> {
   const { edgeId, circleId, useApi } = params;
 
+  if (isLegacyStudioPreview() && !useApi) {
+    deleteStudioTreeEdge(circleId, edgeId);
+    return;
+  }
+
   if (useApi) {
     const token = getStoredCircleToken(circleId);
     if (!token) throw new Error("Session expired.");
@@ -198,7 +236,7 @@ export async function deleteTreeEdge(params: {
 
   if (!supabase) throw new Error("Not connected.");
   const { error } = await supabase.from("tree_edges").delete().eq("id", edgeId).eq("circle_id", circleId);
-  if (error) throw error;
+  if (error) throw persistenceError(error, "Could not remove connection.");
 }
 
 export type PersonProfilePatch = FamilyPersonProfilePatch & {

@@ -53,15 +53,14 @@ export function RecordFlowProvider({ children }: { children: ReactNode }) {
     if (bridgeRef.current) setSnapshot(bridgeRef.current.getSnapshot());
   }, []);
 
-  const registerBridge = useCallback(
-    (bridge: RecordFlowBridge | null) => {
-      bridgeRef.current = bridge;
-      setBridgeReady(!!bridge);
-      if (bridge) setSnapshot(bridge.getSnapshot());
-      else setSnapshot(initialSnapshot());
-    },
-    [],
-  );
+  const registerBridge = useCallback((bridge: RecordFlowBridge | null) => {
+    const hadBridge = Boolean(bridgeRef.current);
+    bridgeRef.current = bridge;
+    const hasBridge = Boolean(bridge);
+    if (hadBridge !== hasBridge) setBridgeReady(hasBridge);
+    if (bridge) setSnapshot(bridge.getSnapshot());
+    else if (hadBridge) setSnapshot(initialSnapshot());
+  }, []);
 
   const requestStart = useCallback(() => {
     bridgeRef.current?.handleRecordTap();

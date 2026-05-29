@@ -118,14 +118,14 @@ export function CulturePdfLeadSection() {
         <div
           className={cn(
             "grid items-center gap-10 px-6 py-10 sm:px-10 sm:py-12",
-            "min-[640px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] min-[640px]:gap-14 min-[640px]:py-14",
+            "min-[768px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] min-[768px]:gap-14 min-[768px]:py-14",
           )}
         >
           {/* Resource pad — stacked guides */}
           <div
             className={cn(
               "relative mx-auto flex min-h-[16rem] w-full max-w-md items-center justify-center",
-              "min-[640px]:mx-0 min-[640px]:max-w-none",
+              "min-[768px]:mx-0 min-[768px]:max-w-none",
             )}
           >
             <div

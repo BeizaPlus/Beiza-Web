@@ -23,6 +23,7 @@ import { LEGACY_AUTH_PAGE_STUDIO_ID, resolveLegacyPageStudioId } from "@/lib/pag
 import { LegacyShellProvider } from "@/components/legacy/legacyShellContext";
 import { useLegacyAuthSync } from "@/hooks/useLegacyAuthSync";
 import { useLegacySession, useMyLegacyCircle } from "@/hooks/useLegacy";
+import { cn } from "@/lib/utils";
 
 function LegacyRecordRoute({
   circleLabel,
@@ -160,7 +161,12 @@ export function LegacyLayout() {
 
   return wrapLegacyStudio(
     <LegacyShellProvider signedIn={signedIn || studioPreview}>
-      <div className="relative min-h-screen bg-background text-foreground">
+      <div
+        className={cn(
+          "relative min-h-screen text-foreground",
+          isVaultRoute ? "bg-black" : "bg-background",
+        )}
+      >
         <Navigation />
         <LegacyTabRail />
         <ArmAnchorMenu

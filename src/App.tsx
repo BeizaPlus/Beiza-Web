@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { LocaleProvider } from "@/context/LocaleContext";
 import { LayoutStudioProvider } from "@/context/LayoutStudioContext";
 import { StudioTextEditProvider } from "@/context/StudioTextEditContext";
@@ -66,6 +67,7 @@ const App = () => (
           <SitePaddingStudioProvider>
           <SeoManager />
           <Routes>
+          <Route element={<SiteChrome />}>
           <Route path="/" element={<Navigate to={BEIZA_LINKS.welcome.gate} replace />} />
           <Route path={routerPath(BEIZA_LINKS.welcome.gate)} element={<WelcomeGate />} />
           <Route path={routerPath(BEIZA_LINKS.home.educationHome)} element={<Landing />} />
@@ -129,6 +131,7 @@ const App = () => (
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
+          </Route>
           </Routes>
           </SitePaddingStudioProvider>
           </StudioTextEditProvider>

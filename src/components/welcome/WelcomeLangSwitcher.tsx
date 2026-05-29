@@ -14,7 +14,7 @@ type Props = {
 };
 
 /**
- * Mobile (≤639px) — horizontal language row under the welcome subheading.
+ * Mobile (≤767px) — horizontal language row under the welcome subheading.
  * Replaces the bottom locale pill; desktop keeps the side rail.
  */
 export function WelcomeLangSwitcher({ isLight = false, rail, className }: Props) {
@@ -24,7 +24,7 @@ export function WelcomeLangSwitcher({ isLight = false, rail, className }: Props)
   return (
     <nav
       className={cn(
-        "welcome-lang-switcher flex max-[639px]:flex min-[640px]:hidden justify-center gap-6 py-3 pb-7",
+        "welcome-lang-switcher flex max-[767px]:flex min-[768px]:hidden justify-center gap-6 py-3 pb-7",
         className,
       )}
       role="listbox"

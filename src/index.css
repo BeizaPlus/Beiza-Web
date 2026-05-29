@@ -70,8 +70,8 @@ html {
     --transition-studio: cubic-bezier(0.12, 0.23, 0.5, 1);
   }
 
-  /* Framer tiers: phone ≤639 · tablet 640–1199 · desktop ≥1200 */
-  @media (min-width: 640px) {
+  /* Framer tiers: phone ≤767 · tablet 768–1199 · desktop ≥1200 */
+  @media (min-width: 768px) {
     :root {
       --beiza-site-padding-x: 1.5rem;
       --beiza-content-indent: 0.5rem;
@@ -91,7 +91,7 @@ html {
     --beiza-content-indent: var(--beiza-studio-indent-phone, 0rem);
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 768px) {
     html[data-beiza-studio-padding] {
       --beiza-site-padding-x: var(--beiza-studio-pad-x-tablet, 1.5rem);
       --beiza-content-indent: var(--beiza-studio-indent-tablet, 0rem);
@@ -973,7 +973,7 @@ html {
 }
 
 /* /legacy/record — mobile: bottom horizontal tab rail (studio rail stays md+) */
-@media (max-width: 639px) {
+@media (max-width: 767px) {
   .legacy-record-tab-rail.legacy-nav-studio {
     left: 50% !important;
     top: auto !important;
@@ -1001,8 +1001,8 @@ html.record-route:has(.record-memory-expanded) body {
   overflow-y: auto !important;
 }
 
-/* Welcome gate — mobile path cards: horizontal swipe, one card + peek (≤639px) */
-@media (max-width: 639px) {
+/* Welcome gate — mobile path cards: horizontal swipe, one card + peek (≤767px) */
+@media (max-width: 767px) {
   .welcome-cards-row {
     display: flex;
     flex-direction: row;

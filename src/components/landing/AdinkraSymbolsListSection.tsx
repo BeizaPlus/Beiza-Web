@@ -36,7 +36,7 @@ export function AdinkraSymbolsListSection() {
         />
 
         <div
-          className="mt-7 grid gap-5 min-[640px]:grid-cols-2 min-[1200px]:grid-cols-4"
+          className="mt-7 grid gap-5 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-4"
         >
           {symbols.map((symbol) => (
             <article key={symbol.id} className="min-h-[88px] p-1">

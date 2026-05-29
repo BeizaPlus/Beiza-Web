@@ -3,8 +3,8 @@
  * Phone · Tablet · Desktop — edit gutters per tier in Site padding studio.
  */
 export const FRAMER_LAYOUT_BREAKPOINTS = {
-  phoneMaxPx: 639,
-  tabletMinPx: 640,
+  phoneMaxPx: 767,
+  tabletMinPx: 768,
   tabletMaxPx: 1199,
   desktopMinPx: 1200,
 } as const;
@@ -36,10 +36,10 @@ export const LAYOUT_BREAKPOINT_MQ = {
 
 /** Tailwind class fragments — always match Framer tiers (do not use `sm:` / `md:` for product layout). */
 export const LAYOUT_TW = {
-  phoneOnly: "max-[639px]",
-  tabletUp: "min-[640px]",
+  phoneOnly: "max-[767px]",
+  tabletUp: "min-[768px]",
   desktopUp: "min-[1200px]",
-  legacyRailClearance: "min-[640px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
+  legacyRailClearance: "min-[768px]:pr-[calc(5.5rem+var(--beiza-site-padding-x,1.25rem))]",
 } as const;
 
 /** @deprecated use LayoutStudioBreakpoint */
